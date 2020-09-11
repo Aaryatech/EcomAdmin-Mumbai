@@ -159,7 +159,7 @@ body1 {
 					</c:if>
 					<div
 						class="form-group form-group-feedback form-group-feedback-left">
-						<input type="text" id="username" name="username"
+						<input type="text" id="username" name="username" autocomplete="off"
 							class="form-control form_lgn" placeholder="Username"
 							style="border-radius: 5px;">
 						<div class="form-control-feedback" style="padding-left: 10px;">
@@ -168,7 +168,7 @@ body1 {
 					</div>
 					<div
 						class="form-group form-group-feedback form-group-feedback-left">
-						<input type="password" id="password" name="password"
+						<input type="password" id="password" name="password" autocomplete="off"
 							class="form-control form_lgn" placeholder="Password"
 							style="border-radius: 5px;"><span toggle="#password" class="icon-eye field-icon text-muted1 toggle-password"></span>
 							

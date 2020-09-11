@@ -61,8 +61,8 @@ public class HomeController {
 			
 			if (token.trim().equals(key.trim())) {
 
-				System.err.println("Key matched");
-			}
+				//System.err.println("Key matched");
+		
 			
 			String name = request.getParameter("username");
 			String password = request.getParameter("password");
@@ -75,7 +75,7 @@ public class HomeController {
 				
 				MessageDigest md = MessageDigest.getInstance("MD5");
 				byte[] messageDigest = md.digest(password.getBytes());
-				BigInteger number = new BigInteger(1, messageDigest);
+				BigInteger number = new BigInteger(1, messageDigest);	
 
 				String hashtext = number.toString(16);
 
@@ -99,7 +99,7 @@ public class HomeController {
 					} else {
 						// existing user login send to welcome page/dash board.
 					
-						mav = "redirect:/getPage/3";
+						mav = "home";
 					}
 					session.setAttribute("userId", userObj.getUserId());
 					session.setAttribute("userObj", userObj);
@@ -111,6 +111,7 @@ public class HomeController {
 					session.setAttribute("errorMsg", info.getMsg());
 
 				}
+			}
 			}
 		} catch (Exception e) {
 			mav = "redirect:/";
