@@ -55,13 +55,11 @@
 							class="font-size-sm text-uppercase font-weight-semibold card-title">
 							${title}</span>
 						<!--  -->
-						<c:if test="${addAccess==0}">
-							<span class="font-size-sm text-uppercase font-weight-semibold"><a
-								class="card-title"
-								href="${pageContext.request.contextPath}/newUom"
-								style="color: white;"><i class="icon-add-to-list ml-2"
-									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add UOM</a></span>
-						</c:if>
+						<span class="font-size-sm text-uppercase font-weight-semibold"><a
+							class="card-title"
+							href="${pageContext.request.contextPath}/addNewUser"
+							style="color: white;"><i class="icon-add-to-list ml-2"
+								style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add User</a></span>
 					</div>
 
 					<div class="form-group row"></div>
@@ -71,37 +69,52 @@
 						<thead>
 							<tr>
 								<th width="5%">SR. No.</th>
-								<th>UOM Name</th>
+								<th>Name</th>
+								<th>Mobile No.</th>
+								<th>Department</th>
+								<th>User Type</th>
 								<th>Status</th>
 								<th style="display: none;"></th>
-								<th style="display: none;"></th>
+
 								<th class="text-center">Actions</th>
 							</tr>
 						</thead>
 						<tbody>
-							<c:forEach items="${uomList}" var="uomList" varStatus="count">
+							<c:forEach items="${userList}" var="userList" varStatus="count">
 								<tr>
 									<td>${count.index+1}</td>
-									<td>${uomList.uomName}</td>
-									<td>${uomList.isActive==1 ? 'Active' : 'In-Active'}</td>
+									<td>${userList.userName}</td>
+									<td>${userList.userMobileNo}</td>
+									<td>${userList.deptId}</td>
+									<td>${userList.userTypeId}</td>
+									<c:set value="" var="status" />
+									<c:if test="${userList.isActive==1}">
+										<c:set value="Active" var="status" />
+									</c:if>
+									<c:if test="${userList.isActive==0}">
+										<c:set value="In-Active" var="status" />
+									</c:if>
+									<td>${status}</td>
+
+
 									<td style="display: none;"></td>
-									<td style="display: none;"></td>
-									<td class="text-center"><c:if test="${editAccess==0}">
-											<div class="list-icons">
-												<a
-													href="${pageContext.request.contextPath}/editUom?uomId=${uomList.exVar1}"
-													class="list-icons-item" title="Edit"> <i
-													class="icon-database-edit2"></i>
-												</a>
-											</div>
-										</c:if> <c:if test="${deleteAccess==0}">
-											<div class="list-icons">
-												<a href="javascript:void(0)"
-													class="list-icons-item text-danger-600 bootbox_custom"
-													data-uuid="${uomList.exVar1}" data-popup="tooltip" title=""
-													data-original-title="Delete"><i class="icon-trash"></i></a>
-											</div>
-										</c:if></td>
+
+
+									<td class="text-center">
+										<div class="list-icons">
+											<a
+												href="${pageContext.request.contextPath}/editUser?userId=${userList.exVar1}"
+												class="list-icons-item" title="Edit"> <i
+												class="icon-database-edit2"></i>
+											</a>
+										</div>
+										<div class="list-icons">
+											<a href="javascript:void(0)"
+												class="list-icons-item text-danger-600 bootbox_custom"
+												data-uuid="${userList.exVar1}" data-popup="tooltip" title=""
+												data-original-title="Delete"><i class="icon-trash"></i></a>
+										</div>
+									</td>
 								</tr>
 							</c:forEach>
 						</tbody>
@@ -147,7 +160,7 @@
 										},
 										callback : function(result) {
 											if (result) {
-												location.href = "${pageContext.request.contextPath}/deleteUom?uomId="
+												location.href = "${pageContext.request.contextPath}/deleteUser?userId="
 														+ uuid;
 
 											}

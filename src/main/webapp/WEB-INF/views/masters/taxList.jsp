@@ -51,25 +51,28 @@
 
 					<div
 						class="card-header bg-blue text-white d-flex justify-content-between">
-						<span class="font-size-sm text-uppercase font-weight-semibold card-title">
-						${title}</span> 
-						<!--  -->
 						<span
-							class="font-size-sm text-uppercase font-weight-semibold"><a class="card-title"
-							href="${pageContext.request.contextPath}/newTax"
-							style="color: white;"><i
-								class="icon-add-to-list ml-2" style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add Tax</a></span>
+							class="font-size-sm text-uppercase font-weight-semibold card-title">
+							${title}</span>
+						<!--  -->
+						<c:if test="${addAccess==0}">
+							<span class="font-size-sm text-uppercase font-weight-semibold"><a
+								class="card-title"
+								href="${pageContext.request.contextPath}/newTax"
+								style="color: white;"><i class="icon-add-to-list ml-2"
+									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add Tax</a></span>
+						</c:if>
 					</div>
-					
+
 					<div class="form-group row"></div>
-				<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
+					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 					<table class="table datatable-header-basic">
 						<thead>
 							<tr>
 								<th width="5%">SR. No.</th>
 								<th>Tax</th>
-								<th>HSN Code</th>		
+								<th>HSN Code</th>
 								<th>SGST%</th>
 								<th>CGST%</th>
 								<th>IGST%</th>
@@ -81,7 +84,7 @@
 						</thead>
 						<tbody>
 							<c:forEach items="${taxList}" var="taxList" varStatus="count">
-								 <tr>
+								<tr>
 									<td>${count.index+1}</td>
 									<td>${taxList.taxName}</td>
 									<td>${taxList.hsnCode}</td>
@@ -89,25 +92,26 @@
 									<td>${taxList.cgstPer}</td>
 									<td>${taxList.igstPer}</td>
 									<td>${taxList.cessPer}</td>
-									<td>${taxList.totalTaxPer}</td>									
-									<td>${taxList.isActive==1 ? 'Active' : 'In-Active'}</td>	
-									<td class="text-center">
-										<div class="list-icons">
-											<a href="${pageContext.request.contextPath}/editTax?taxId=${taxList.exVar1}"
-												class="list-icons-item" title="Edit"> <i
-												class="icon-database-edit2"></i>
-											</a>
-										</div>
-										<div class="list-icons">
-										<a href="javascript:void(0)"
+									<td>${taxList.totalTaxPer}</td>
+									<td>${taxList.isActive==1 ? 'Active' : 'In-Active'}</td>
+									<td class="text-center"><c:if test="${editAccess==0}">
+											<div class="list-icons">
+												<a
+													href="${pageContext.request.contextPath}/editTax?taxId=${taxList.exVar1}"
+													class="list-icons-item" title="Edit"> <i
+													class="icon-database-edit2"></i>
+												</a>
+											</div>
+										</c:if> <c:if test="${deleteAccess==0}">
+											<div class="list-icons">
+												<a href="javascript:void(0)"
 													class="list-icons-item text-danger-600 bootbox_custom"
-													data-uuid="${taxList.exVar1}" data-popup="tooltip"
-													title="" data-original-title="Delete"><i
-													class="icon-trash"></i></a>
-										</div>										
-									</td>								
+													data-uuid="${taxList.exVar1}" data-popup="tooltip" title=""
+													data-original-title="Delete"><i class="icon-trash"></i></a>
+											</div>
+										</c:if></td>
 								</tr>
-							</c:forEach>					
+							</c:forEach>
 						</tbody>
 					</table>
 				</div>
@@ -128,35 +132,36 @@
 	<!-- /page content -->
 
 
-<script type="text/javascript">
-//Custom bootbox dialog
-$('.bootbox_custom')
-		.on(
-				'click',
-				function() {
-					var uuid = $(this).data("uuid") // will return the number 123
-								bootbox.confirm({
-								title : 'Confirm ',
-								message : 'Are you sure you want to delete selected records ?',
-								buttons : {
-									confirm : {
-										label : 'Yes',
-										className : 'btn-success'
-									},
-									cancel : {
-										label : 'Cancel',
-										className : 'btn-link'
-									}
-								},
-								callback : function(result) {
-									if (result) {
-										location.href = "${pageContext.request.contextPath}/deleteTax?taxId="
-												+ uuid;
+	<script type="text/javascript">
+		//Custom bootbox dialog
+		$('.bootbox_custom')
+				.on(
+						'click',
+						function() {
+							var uuid = $(this).data("uuid") // will return the number 123
+							bootbox
+									.confirm({
+										title : 'Confirm ',
+										message : 'Are you sure you want to delete selected records ?',
+										buttons : {
+											confirm : {
+												label : 'Yes',
+												className : 'btn-success'
+											},
+											cancel : {
+												label : 'Cancel',
+												className : 'btn-link'
+											}
+										},
+										callback : function(result) {
+											if (result) {
+												location.href = "${pageContext.request.contextPath}/deleteTax?taxId="
+														+ uuid;
 
-									}
-								}
-							});
-				});
-</script>
+											}
+										}
+									});
+						});
+	</script>
 </body>
 </html>

@@ -55,13 +55,13 @@
 							class="font-size-sm text-uppercase font-weight-semibold card-title">
 							${title}</span>
 						<!--  -->
-						<c:if test="${addAccess==0}">
+						<%-- <c:if test="${addAccess==0}"> --%>
 							<span class="font-size-sm text-uppercase font-weight-semibold"><a
 								class="card-title"
-								href="${pageContext.request.contextPath}/newUom"
+								href="${pageContext.request.contextPath}/newCategory"
 								style="color: white;"><i class="icon-add-to-list ml-2"
-									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add UOM</a></span>
-						</c:if>
+									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add Category</a></span>
+						<%-- </c:if> --%>
 					</div>
 
 					<div class="form-group row"></div>
@@ -71,37 +71,37 @@
 						<thead>
 							<tr>
 								<th width="5%">SR. No.</th>
-								<th>UOM Name</th>
+								<th>Category</th>
+								<th>Prefix</th>
 								<th>Status</th>
-								<th style="display: none;"></th>
 								<th style="display: none;"></th>
 								<th class="text-center">Actions</th>
 							</tr>
 						</thead>
 						<tbody>
-							<c:forEach items="${uomList}" var="uomList" varStatus="count">
+							<c:forEach items="${catList}" var="catList" varStatus="count">
 								<tr>
 									<td>${count.index+1}</td>
-									<td>${uomList.uomName}</td>
-									<td>${uomList.isActive==1 ? 'Active' : 'In-Active'}</td>
+									<td>${catList.catName}</td>
+									<td>${catList.catPrefix}</td>
+									<td>${catList.isActive==1 ? 'Active' : 'In-Active'}</td>									
 									<td style="display: none;"></td>
-									<td style="display: none;"></td>
-									<td class="text-center"><c:if test="${editAccess==0}">
+									<td class="text-center"><%-- <c:if test="${editAccess==0}"> --%>
 											<div class="list-icons">
 												<a
-													href="${pageContext.request.contextPath}/editUom?uomId=${uomList.exVar1}"
+													href="${pageContext.request.contextPath}/editUom?uomId=${catList.exVar1}"
 													class="list-icons-item" title="Edit"> <i
 													class="icon-database-edit2"></i>
 												</a>
 											</div>
-										</c:if> <c:if test="${deleteAccess==0}">
+										<%-- </c:if> <c:if test="${deleteAccess==0}"> --%>
 											<div class="list-icons">
 												<a href="javascript:void(0)"
 													class="list-icons-item text-danger-600 bootbox_custom"
-													data-uuid="${uomList.exVar1}" data-popup="tooltip" title=""
+													data-uuid="${catList.exVar1}" data-popup="tooltip" title=""
 													data-original-title="Delete"><i class="icon-trash"></i></a>
 											</div>
-										</c:if></td>
+										<%-- </c:if> --%></td>
 								</tr>
 							</c:forEach>
 						</tbody>

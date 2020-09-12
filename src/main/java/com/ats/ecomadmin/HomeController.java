@@ -128,6 +128,7 @@ public class HomeController {
 					}
 					session.setAttribute("userId", userObj.getUserId());
 					session.setAttribute("userObj", userObj);
+					session.setAttribute("companyId", userObj.getCompanyId());
 					
 					
 				} else {
