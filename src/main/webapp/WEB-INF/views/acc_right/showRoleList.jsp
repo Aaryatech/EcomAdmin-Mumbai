@@ -122,9 +122,13 @@
 									id="submitInsertEmpType" method="post">
 									
 
-									<table
+									<!-- <table
 										class="table table-bordered table-hover datatable-highlight1 datatable-button-html5-basic  datatable-button-print-columns1"
-										id="printtable1">
+										id="printtable1"> -->
+										<div class="table-responsive">
+										<table
+										class="table datatable-fixed-left_custom table-bordered  table-hover   table-striped"
+										width="100%" id="printtable1">
 										
 										<thead>
 											<tr class="bg-blue">
@@ -135,7 +139,6 @@
 											</tr>
 										</thead>
 										<tbody>
-
 
 																<c:forEach items="${createdRoleList}"
 																		var="createdRoleList" varStatus="count">
@@ -166,9 +169,9 @@ title="" data-original-title="Delete"><i class="icon-trash"
 
 																	</c:forEach>
 
-
 										</tbody>
 									</table>
+									</div>
 									<%-- <span class="form-text text-muted">* If Want To Access
 										Add, Edit,Delete Then View Access is Compulsory</span>
 									<div class="form-group row">
@@ -213,6 +216,23 @@ title="" data-original-title="Delete"><i class="icon-trash"
 	
 	
 	<script>
+	$('.datatable-fixed-left_custom').DataTable({
+
+		columnDefs : [ {
+			orderable : false,
+			targets : [ 1 ]
+		} ],
+		//scrollX : true,
+		scrollX : true,
+		scrollY : '50vh',
+		scrollCollapse : true,
+		paging : false,
+		fixedColumns : {
+			leftColumns : 1,
+			rightColumns : 0
+		}
+
+	});
 		function trim(el) {
 			el.value = el.value.replace(/(^\s*)|(\s*$)/gi, ""). // removes leading and trailing spaces
 			replace(/[ ]{2,}/gi, " "). // replaces multiple spaces with one space 

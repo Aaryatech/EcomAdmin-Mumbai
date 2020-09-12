@@ -178,8 +178,8 @@
 										<thead>
 											<tr class="bg-blue">
 												<th width="7%">Sr. No.</th>
-												<th>Employee Name</th>
-												<th>Employee Type</th>
+												<th>User Name</th>
+												<th>User Type</th>
 												<th width="10%">Current Role</th>
 
 											</tr>
@@ -195,7 +195,7 @@
 														name="empIds" id="empIds${empList.userId}" class="chk" value="${empList.userId}"> &nbsp;<c:out value="${empList.userName}" />&nbsp;</td>
 																					<td></td> 
 													
-													<td><c:out value="${empList.userName}" /></td>
+													<td><c:out value="${empList.roleName}" /></td>
 												</tr>
 
 

@@ -29,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
+import com.ats.ecomadmin.model.GetUser;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.acrights.AccessRightModule;
@@ -65,7 +66,7 @@ public class AccessRightController {
 	public ModelAndView showAccessRight(HttpServletRequest request, HttpServletResponse response) {
 
 		ModelAndView model = new ModelAndView("acc_right/createRole");
-
+System.err.println("Constants url " +Constants.url);
 		try {
 			accessRightModuleList = Constants.getRestTemplate().getForObject(Constants.url + "getAllModuleAndSubModule",
 					AccessRightModuleList.class);
@@ -155,6 +156,7 @@ public class AccessRightController {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+
 		return model;
 	}
 
@@ -422,9 +424,9 @@ public class AccessRightController {
 					AccessRightModuleList.class);
 
 
-			User[] empArray = Constants.getRestTemplate()
-					.getForObject(Constants.url + "/getAllUserList", User[].class);
-			List<User> empList = new ArrayList<>(Arrays.asList(empArray));
+			GetUser[] empArray = Constants.getRestTemplate()
+					.getForObject(Constants.url + "/getUserListForAssignRole", GetUser[].class);
+			List<GetUser> empList = new ArrayList<>(Arrays.asList(empArray));
 
 			CreatedRoleList createdRoleList = Constants.getRestTemplate()
 					.getForObject(Constants.url + "getAllAccessRole", CreatedRoleList.class);

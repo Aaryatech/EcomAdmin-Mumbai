@@ -123,7 +123,7 @@
 									<div class="form-group row">
 										<label class="col-form-label col-lg-2" for="empTypeName">Role Name <span style="color: red">* </span>:
 										</label>
-										<div class="col-lg-10">
+										<div class="col-lg-6">
 											<input type="text" class="form-control"
 												placeholder="Role Name" id="empTypeName" maxlength="15"
 												name="roleName" autocomplete="off" onchange="trim(this)">
@@ -181,24 +181,23 @@
 
 										</div>
 									</div> -->
-
+<div class="col-lg-12" align="center">
 									<table
-										class="table table-bordered table-hover datatable-highlight1 datatable-button-html5-basic  datatable-button-print-columns1"
-							id="printtable1">
-										
+										class="table datatable-scroller table-bordered table-hover datatable-highlight1 datatable-button-html5-basic  datatable-button-print-columns1"
+										id="printtable1">
 										<thead>
 											<tr class="bg-blue">
-												<th width="10%">Sr. No.</th>
+												<th>Sr. No.</th>
 												<th>Module Name</th>
-												<th width="10%" style="text-align: center;">View</th>
-												<th width="10%" style="text-align: center;">Add</th>
-												<th width="10%" style="text-align: center;">Edit</th>
-												<th width="10%" style="text-align: center;">Delete</th>
+												<th>View</th>
+												<th>Add</th>
+												<th>Edit</th>
+												<th>Delete</th>
 											</tr>
 										</thead>
 										<tbody>
 
-
+<c:forEach begin="1" end="40" step="1">
 											<c:forEach items="${moduleList}" var="moduleList"
 												varStatus="count">
 												<tr>
@@ -222,22 +221,20 @@
 															id="${subModuleList.subModuleId}view${subModuleList.moduleId}"
 															class="check${subModuleList.moduleId}"
 															name="${subModuleList.subModuleId}view${subModuleList.moduleId}"
-															value="0"
-															onclick="changeValue(1,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
+															value="0" onclick="changeValue(1,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
 														<td style="text-align: center;"><input
 															type="checkbox"
 															id="${subModuleList.subModuleId}add${subModuleList.moduleId}"
 															class="check${allModuleList.moduleId}"
 															name="${subModuleList.subModuleId}add${subModuleList.moduleId}"
-															value="0"
-															onclick="changeValue(2,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
-														<td style="text-align: center;"><input
+															value="0" onclick="changeValue(2,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
+														<td><input
 															type="checkbox" class="check${allModuleList.moduleId}"
 															id="${subModuleList.subModuleId}edit${subModuleList.moduleId}"
 															name="${subModuleList.subModuleId}edit${subModuleList.moduleId}"
 															value="0"
 															onclick="changeValue(3,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
-														<td style="text-align: center;"><input
+														<td><input
 															type="checkbox" class="check${allModuleList.moduleId}"
 															id="${subModuleList.subModuleId}delete${subModuleList.moduleId}"
 															name="${subModuleList.subModuleId}delete${subModuleList.moduleId}"
@@ -247,9 +244,11 @@
 
 												</c:forEach>
 											</c:forEach>
+											</c:forEach>
 
 										</tbody>
 									</table>
+									</div>
 									<span class="form-text text-muted">* If Want To Access
 										Add, Edit,Delete Then View Access is Compulsory</span>
 									<div class="form-group row">
@@ -293,6 +292,21 @@
 	<!-- /page content -->
 	
 	<script>
+	$('.datatable-fixed-left_custom').DataTable({
+		columnDefs : [ {
+			orderable : false,
+			targets : [ 1 ]
+		} ],
+		scrollX : true,
+		scrollY : '50vh',
+		scrollCollapse : true,
+		paging : false,
+		fixedColumns : {
+			leftColumns : 1,
+			rightColumns : 0
+		}
+
+	});
 			function checkSubmodule(moduleId) {
 				
 				$.getJSON('${getSubmoduleList}', {
@@ -430,7 +444,7 @@
 			el.value = el.value.replace(/(^\s*)|(\s*$)/gi, ""). // removes leading and trailing spaces
 			replace(/[ ]{2,}/gi, " "). // replaces multiple spaces with one space 
 			replace(/\n +/, "\n"); // Removes spaces after newlines
-			checkSame();
+			//checkSame();
 			return;
 		}
 
@@ -479,7 +493,7 @@
 		});
 		//
 	</script>
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 
 function checkSame(){
 	//alert("Hii..");
@@ -502,8 +516,9 @@ function checkSame(){
 		
 	}
 }
-	
-</script>
+
+
+</script> -->
 	<!-- <script type="text/javascript">
 	$('#submtbtn').on('click', function() {
         swalInit({
