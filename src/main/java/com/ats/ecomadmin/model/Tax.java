@@ -6,12 +6,17 @@
 
 package com.ats.ecomadmin.model;
 
-public class Uom {
+public class Tax {
 	
-	private int uomId;
-	private String uomName;
-	private String uomShowName;
-	private String uomDesc;
+	private int taxId;
+	private String taxName;
+	private String taxDesc;
+	private String hsnCode;
+	private float cgstPer;
+	private float sgstPer;
+	private float igstPer;
+	private float cessPer;
+	private float totalTaxPer;
 	private int companyId;
 	private int isParent;
 	private int allowToCopy;
@@ -24,38 +29,77 @@ public class Uom {
 	private String exVar1;
 	private String exVar2;
 	private String exVar3;
-	private String exVar4;
 
-	public int getUomId() {
-		return uomId;
+	public int getTaxId() {
+		return taxId;
 	}
 
-	public void setUomId(int uomId) {
-		this.uomId = uomId;
+	public void setTaxId(int taxId) {
+		this.taxId = taxId;
 	}
 
-	public String getUomName() {
-		return uomName;
+	public String getTaxName() {
+		return taxName;
 	}
 
-	public void setUomName(String uomName) {
-		this.uomName = uomName;
+	public void setTaxName(String taxName) {
+		this.taxName = taxName;
 	}
 
-	public String getUomShowName() {
-		return uomShowName;
+	public String getTaxDesc() {
+		return taxDesc;
 	}
 
-	public void setUomShowName(String uomShowName) {
-		this.uomShowName = uomShowName;
+	public void setTaxDesc(String taxDesc) {
+		this.taxDesc = taxDesc;
 	}
 
-	public String getUomDesc() {
-		return uomDesc;
+	public String getHsnCode() {
+		return hsnCode;
 	}
 
-	public void setUomDesc(String uomDesc) {
-		this.uomDesc = uomDesc;
+	public void setHsnCode(String hsnCode) {
+		this.hsnCode = hsnCode;
+	}
+
+	public float getCgstPer() {
+		return cgstPer;
+	}
+
+	public void setCgstPer(float cgstPer) {
+		this.cgstPer = cgstPer;
+	}
+
+	public float getSgstPer() {
+		return sgstPer;
+	}
+
+	public void setSgstPer(float sgstPer) {
+		this.sgstPer = sgstPer;
+	}
+
+	public float getIgstPer() {
+		return igstPer;
+	}
+
+	public void setIgstPer(float igstPer) {
+		this.igstPer = igstPer;
+	}
+
+	public float getCessPer() {
+		return cessPer;
+	}
+
+	public void setCessPer(float cessPer) {
+		this.cessPer = cessPer;
+	}
+
+	public float getTotalTaxPer() {
+		return totalTaxPer;
+	}
+
+	public void setTotalTaxPer(float totalTaxPer) {
+		this.totalTaxPer = totalTaxPer;
 	}
 
 	public int getCompanyId() {
@@ -154,22 +198,14 @@ public class Uom {
 		this.exVar3 = exVar3;
 	}
 
-	public String getExVar4() {
-		return exVar4;
-	}
-
-	public void setExVar4(String exVar4) {
-		this.exVar4 = exVar4;
-	}
-
 	@Override
 	public String toString() {
-		return "Uom [uomId=" + uomId + ", uomName=" + uomName + ", uomShowName=" + uomShowName + ", uomDesc=" + uomDesc
-				+ ", companyId=" + companyId + ", isParent=" + isParent + ", allowToCopy=" + allowToCopy + ", sortNo="
-				+ sortNo + ", isActive=" + isActive + ", delStatus=" + delStatus + ", exInt1=" + exInt1 + ", exInt2="
-				+ exInt2 + ", exInt3=" + exInt3 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3
-				+ ", exVar4=" + exVar4 + "]";
+		return "Tax [taxId=" + taxId + ", taxName=" + taxName + ", taxDesc=" + taxDesc + ", hsnCode=" + hsnCode
+				+ ", cgstPer=" + cgstPer + ", sgstPer=" + sgstPer + ", igstPer=" + igstPer + ", cessPer=" + cessPer
+				+ ", totalTaxPer=" + totalTaxPer + ", companyId=" + companyId + ", isParent=" + isParent
+				+ ", allowToCopy=" + allowToCopy + ", sortNo=" + sortNo + ", isActive=" + isActive + ", delStatus="
+				+ delStatus + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exInt3=" + exInt3 + ", exVar1=" + exVar1
+				+ ", exVar2=" + exVar2 + ", exVar3=" + exVar3 + "]";
 	}
-
 
 }

@@ -125,17 +125,17 @@
 										<div class="col-lg-4">
 											<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="0"
+													class="form-check-input" checked value="1"
 													name="active_uom" id="uom_y"
-													${uom.isActive==0 ? 'checked' : ''}> Active
+													${uom.isActive==1 ? 'checked' : ''}> Active
 												</label>
 											</div>
 
 											<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" value="1" name="active_uom"
+													class="form-check-input" value="0" name="active_uom"
 													id="uom_n"
-													${uom.isActive==1 ? 'checked' : ''}> In-Active
+													${uom.isActive==0 ? 'checked' : ''}> In-Active
 												</label>
 											</div>
 										</div>
