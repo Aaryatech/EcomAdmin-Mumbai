@@ -5,7 +5,7 @@ public class Category {
 	private int catId;
 	private String catName;
 	private String catPrefix;
-	private int catDesc;
+	private String catDesc;
 	private int companyId;
 	private int isParent;
 	private int allowToCopy;
@@ -44,11 +44,11 @@ public class Category {
 		this.catPrefix = catPrefix;
 	}
 
-	public int getCatDesc() {
+	public String getCatDesc() {
 		return catDesc;
 	}
 
-	public void setCatDesc(int catDesc) {
+	public void setCatDesc(String catDesc) {
 		this.catDesc = catDesc;
 	}
 

@@ -44,7 +44,7 @@ public class MasterController {
 	// Created On :- 11-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Show UOM List
+	// Description :- Show UOM List
 	@RequestMapping(value = "/showUomList", method = RequestMethod.GET)
 	public String showUomList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -112,7 +112,7 @@ public class MasterController {
 	// Created On :- 11-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Redirect to Add UOM JSP Page
+	// Description :- Redirect to Add UOM JSP Page
 	@RequestMapping(value = "/newUom", method = RequestMethod.GET)
 	public String newUom(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -144,7 +144,7 @@ public class MasterController {
 	// Created On :- 11-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Insert UOM in database
+	// Description :- Insert UOM in database
 	@RequestMapping(value = "/insertUom", method = RequestMethod.POST)
 	public String insertUom(HttpServletRequest request, HttpServletResponse response) {
 
@@ -155,7 +155,6 @@ public class MasterController {
 			int uomId = Integer.parseInt(request.getParameter("uomId"));
 			int compId = (int) session.getAttribute("compId");
 
-			uom.setAllowToCopy(0);
 			uom.setCompanyId(compId);
 			uom.setDelStatus(1);
 			uom.setExInt1(0);
@@ -165,8 +164,9 @@ public class MasterController {
 			uom.setExVar2("NA");
 			uom.setExVar3("NA");
 			uom.setExVar4("NA");
+			uom.setIsParent(Integer.parseInt(request.getParameter("isParent")));
+			uom.setAllowToCopy(Integer.parseInt(request.getParameter("allowCopy")));
 			uom.setIsActive(Integer.parseInt(request.getParameter("active_uom")));
-			uom.setIsParent(0);
 			uom.setSortNo(0);
 			uom.setUomDesc(request.getParameter("description"));
 			uom.setUomId(uomId);
@@ -196,7 +196,7 @@ public class MasterController {
 	// Created On :- 11-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Update UOM
+	// Description :- Update UOM
 	@RequestMapping(value = "/editUom", method = RequestMethod.GET)
 	public String editUom(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -235,7 +235,7 @@ public class MasterController {
 	// Created On :- 11-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Delete UOM
+	// Description :- Delete UOM
 	@RequestMapping(value = "/deleteUom", method = RequestMethod.GET)
 	public String deleteUom(HttpServletRequest request, HttpServletResponse response) {
 
@@ -277,7 +277,7 @@ public class MasterController {
 	// Created On :- 12-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Show Tax List
+	// Description :- Show Tax List
 	@RequestMapping(value = "/showTaxList", method = RequestMethod.GET)
 	public String showTaxList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -343,7 +343,7 @@ public class MasterController {
 	// Created On :- 12-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Redirect to Add Tax JSP Page
+	// Description :- Redirect to Add Tax JSP Page
 	@RequestMapping(value = "/newTax", method = RequestMethod.GET)
 	public String newTax(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -374,7 +374,7 @@ public class MasterController {
 	// Created On :- 12-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Insert Tax
+	// Description :- Insert Tax
 	@RequestMapping(value = "/insertTax", method = RequestMethod.POST)
 	public String insertTax(HttpServletRequest request, HttpServletResponse response) {
 
@@ -395,7 +395,8 @@ public class MasterController {
 			tax.setIgstPer(Float.parseFloat(request.getParameter("igstPer")));
 			tax.setCessPer(Float.parseFloat(request.getParameter("cessPer")));
 			tax.setTotalTaxPer(Float.parseFloat(request.getParameter("totalTaxPer")));
-			tax.setAllowToCopy(0);
+			tax.setIsParent(Integer.parseInt(request.getParameter("isParent")));
+			tax.setAllowToCopy(Integer.parseInt(request.getParameter("allowCopy")));
 			tax.setCompanyId(compId);
 			tax.setDelStatus(1);
 			tax.setExInt1(0);
@@ -405,7 +406,6 @@ public class MasterController {
 			tax.setExVar2("NA");
 			tax.setExVar3("NA");
 			tax.setIsActive(Integer.parseInt(request.getParameter("active_tax")));
-			tax.setIsParent(0);
 			tax.setSortNo(0);
 
 			Tax res = Constants.getRestTemplate().postForObject(Constants.url + "saveTax", tax, Tax.class);
@@ -431,7 +431,7 @@ public class MasterController {
 	// Created On :- 12-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Update Tax
+	// Description :- Update Tax
 	@RequestMapping(value = "/editTax", method = RequestMethod.GET)
 	public String editTax(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -470,7 +470,7 @@ public class MasterController {
 	// Created On :- 12-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Delete Tax
+	// Description :- Delete Tax
 	@RequestMapping(value = "/deleteTax", method = RequestMethod.GET)
 	public String deleteTax(HttpServletRequest request, HttpServletResponse response) {
 
@@ -516,7 +516,7 @@ public class MasterController {
 	// Created On :- 12-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Show All Users
+	// Description :- Show All Users
 	@RequestMapping(value = "/showUsers", method = RequestMethod.GET)
 	public String showMnUsers(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -524,23 +524,52 @@ public class MasterController {
 
 		try {
 			HttpSession session = request.getSession();
-			int compId = (int) session.getAttribute("companyId");
 
-			mav = "masters/userList";
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showUsers", "showUsers", "1", "0", "0", "0", newModuleList);
 
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("compId", compId);
+			if (view.isError() == true) {
 
-			User[] userArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllUsers", map,
-					User[].class);
-			List<User> userList = new ArrayList<User>(Arrays.asList(userArr));
+				mav = "accessDenied";
 
-			for (int i = 0; i < userList.size(); i++) {
+			} else {
+				int compId = (int) session.getAttribute("companyId");
 
-				userList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(userList.get(i).getUserId())));
+				mav = "masters/userList";
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				User[] userArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllUsers", map,
+						User[].class);
+				List<User> userList = new ArrayList<User>(Arrays.asList(userArr));
+
+				for (int i = 0; i < userList.size(); i++) {
+
+					userList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(userList.get(i).getUserId())));
+				}
+				model.addAttribute("userList", userList);
+				model.addAttribute("title", "Users List");
+
+				Info add = AccessControll.checkAccess("showUsers", "showUsers", "0", "1", "0", "0", newModuleList);
+				Info edit = AccessControll.checkAccess("showUsers", "showUsers", "0", "0", "1", "0", newModuleList);
+				Info delete = AccessControll.checkAccess("showUsers", "showUsers", "0", "0", "0", "1", newModuleList);
+
+				if (add.isError() == false) {
+					// System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) {
+					// System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					// System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
 			}
-			model.addAttribute("userList", userList);
-			model.addAttribute("title", "Users List");
 
 		} catch (Exception e) {
 			System.out.println("Execption in /showUsers : " + e.getMessage());
@@ -554,30 +583,38 @@ public class MasterController {
 	// Created On :- 12-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Redirect To Add User page
+	// Description :- Redirect To Add User page
 	@RequestMapping(value = "/addNewUser", method = RequestMethod.GET)
 	public String addNewUser(HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String mav = new String();
 		User user = new User();
 		try {
-			mav = "masters/addUser";
-
 			HttpSession session = request.getSession();
-			int companyId = (int) session.getAttribute("companyId");
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("addNewUser", "showUsers", "0", "1", "0", "0", newModuleList);
 
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("compId", companyId);
+			if (view.isError() == true) {
 
-			UserTypeMaster[] userTypeArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllUserTypes",
-					UserTypeMaster[].class);
-			List<UserTypeMaster> usrTypList = new ArrayList<UserTypeMaster>(Arrays.asList(userTypeArr));
+				mav = "accessDenied";
 
-			model.addAttribute("userTypeList", usrTypList);
+			} else {
+				mav = "masters/addUser";
 
-			model.addAttribute("user", user);
-			model.addAttribute("title", "Add User");
+				int companyId = (int) session.getAttribute("companyId");
 
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);
+
+				UserTypeMaster[] userTypeArr = Constants.getRestTemplate()
+						.getForObject(Constants.url + "getAllUserTypes", UserTypeMaster[].class);
+				List<UserTypeMaster> usrTypList = new ArrayList<UserTypeMaster>(Arrays.asList(userTypeArr));
+
+				model.addAttribute("userTypeList", usrTypList);
+
+				model.addAttribute("user", user);
+				model.addAttribute("title", "Add User");
+			}
 		} catch (Exception e) {
 			System.out.println("Execption in /addNewUser : " + e.getMessage());
 			e.printStackTrace();
@@ -589,7 +626,7 @@ public class MasterController {
 	// Created On :- 12-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Add User
+	// Description :- Add User
 	@RequestMapping(value = "/insertNewUser", method = RequestMethod.POST)
 	public String insertNewUser(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
@@ -700,37 +737,45 @@ public class MasterController {
 	// Created On :- 12-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Update User
+	// Description :- Update User
 	@RequestMapping(value = "/editUser", method = RequestMethod.GET)
 	public String editUser(HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String mav = new String();
 
 		try {
-			mav = "masters/addUser";
-
 			HttpSession session = request.getSession();
-			int companyId = (int) session.getAttribute("companyId");
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("editUser", "showUsers", "0", "0", "1", "0", newModuleList);
 
-			UserTypeMaster[] userTypeArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllUserTypes",
-					UserTypeMaster[].class);
-			List<UserTypeMaster> usrTypList = new ArrayList<UserTypeMaster>(Arrays.asList(userTypeArr));
-			model.addAttribute("userTypeList", usrTypList);
+			if (view.isError() == true) {
 
-			String base64encodedString = request.getParameter("userId");
-			String userId = FormValidation.DecodeKey(base64encodedString);
+				mav = "accessDenied";
 
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("userId", Integer.parseInt(userId));
-			map.add("compId", companyId);
+			} else {
+				mav = "masters/addUser";
 
-			User user = Constants.getRestTemplate().postForObject(Constants.url + "getUserById", map, User.class);
+				int companyId = (int) session.getAttribute("companyId");
 
-			model.addAttribute("user", user);
+				UserTypeMaster[] userTypeArr = Constants.getRestTemplate()
+						.getForObject(Constants.url + "getAllUserTypes", UserTypeMaster[].class);
+				List<UserTypeMaster> usrTypList = new ArrayList<UserTypeMaster>(Arrays.asList(userTypeArr));
+				model.addAttribute("userTypeList", usrTypList);
 
-			model.addAttribute("imgPath", Constants.showDocSaveUrl);
-			model.addAttribute("title", "Edit User");
+				String base64encodedString = request.getParameter("userId");
+				String userId = FormValidation.DecodeKey(base64encodedString);
 
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("userId", Integer.parseInt(userId));
+				map.add("compId", companyId);
+
+				User user = Constants.getRestTemplate().postForObject(Constants.url + "getUserById", map, User.class);
+
+				model.addAttribute("user", user);
+
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+				model.addAttribute("title", "Edit User");
+			}
 		} catch (Exception e) {
 			System.out.println("Execption in /editUser : " + e.getMessage());
 			e.printStackTrace();
@@ -742,34 +787,48 @@ public class MasterController {
 	// Created On :- 12-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Delete User
+	// Description :- Delete User
 	@RequestMapping(value = "/deleteUser", method = RequestMethod.GET)
 	public String deleteUser(HttpServletRequest request, HttpServletResponse response) {
 
 		HttpSession session = request.getSession();
+		String mav = new String();
 		try {
 
-			String base64encodedString = request.getParameter("userId");
-			String userId = FormValidation.DecodeKey(base64encodedString);
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteUser", "showUsers", "0", "0", "0", "1", newModuleList);
+			if (view.isError() == true) {
 
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("userId", Integer.parseInt(userId));
+				mav = "accessDenied";
 
-			Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteUserById", map, Info.class);
-
-			if (!res.isError()) {
-				session.setAttribute("successMsg", res.getMsg());
 			} else {
-				session.setAttribute("errorMsg", res.getMsg());
-			}
+				mav = "redirect:/showUsers";
+				String base64encodedString = request.getParameter("userId");
+				String userId = FormValidation.DecodeKey(base64encodedString);
 
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("userId", Integer.parseInt(userId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteUserById", map, Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+			}
 		} catch (Exception e) {
 			System.out.println("Execption in /deleteUser : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showUsers";
+		return mav;
 	}
 
+	// Created By :- Mahendra Singh
+	// Created On :- 12-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Validation for unique user by mobile No.
 	@RequestMapping(value = "/getUserInfo", method = RequestMethod.GET)
 	@ResponseBody
 	public Info getUserInfo(HttpServletRequest request, HttpServletResponse response) {
@@ -805,6 +864,11 @@ public class MasterController {
 		return info;
 	}
 
+	// Created By :- Mahendra Singh
+	// Created On :- 12-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Validation for unique user by email.
 	@RequestMapping(value = "/getUserInfoByEmail", method = RequestMethod.GET)
 	@ResponseBody
 	public Info getUserInfoByEmail(HttpServletRequest request, HttpServletResponse response) {
@@ -845,55 +909,102 @@ public class MasterController {
 	// Created On :- 12-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Show All Users Types
+	// Description :- Show All Users Types
 	@RequestMapping(value = "/showCategoryList", method = RequestMethod.GET)
 	public String categoryList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String mav = new String();
 
 		try {
+
 			HttpSession session = request.getSession();
-			int companyId = (int) session.getAttribute("companyId");
-			
-			mav = "masters/categoryList";
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showCategoryList", "showCategoryList", "1", "0", "0", "0",
+					newModuleList);
 
-			List<Category> catList = new ArrayList<>();
-			
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("compId", companyId);
-			
-			Category[] catArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCategory",
-					Category[].class);
-			catList = new ArrayList<Category>(Arrays.asList(catArr));
+			if (view.isError() == true) {
 
-			model.addAttribute("catList", catList);
+				mav = "accessDenied";
 
-			model.addAttribute("imageUrl", Constants.showDocSaveUrl);
+			} else {
+				int companyId = (int) session.getAttribute("companyId");
+
+				mav = "masters/categoryList";
+
+				List<Category> catList = new ArrayList<>();
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);
+
+				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+						Category[].class);
+				catList = new ArrayList<Category>(Arrays.asList(catArr));
+
+				for (int i = 0; i < catList.size(); i++) {
+
+					catList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(catList.get(i).getCatId())));
+				}
+
+				model.addAttribute("catList", catList);
+				model.addAttribute("title", "Category List");
+				// model.addAttribute("imageUrl", Constants.showDocSaveUrl);
+				Info add = AccessControll.checkAccess("showCategoryList", "showCategoryList", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showCategoryList", "showCategoryList", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showCategoryList", "showCategoryList", "0", "0", "0", "1",
+						newModuleList);
+
+				if (add.isError() == false) {
+					// System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) {
+					// System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					// System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
+			}
 		} catch (Exception e) {
 			System.out.println("Execption in /showCategoryList : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return mav;
 	}
-	
-	
+
 	// Created By :- Mahendra Singh
 	// Created On :- 12-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Redirect To Add Category Page
+	// Description :- Redirect To Add Category Page
 	@RequestMapping(value = "/newCategory", method = RequestMethod.GET)
 	public String newCategory(HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String mav = new String();
-		
-		try {
-			mav = "masters/addCategory";
-			Category cat = new Category();
-			
-			model.addAttribute("cat", cat);
-			model.addAttribute("title", "Add Category");
 
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("newCategory", "showCategoryList", "0", "1", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addCategory";
+				Category cat = new Category();
+
+				model.addAttribute("cat", cat);
+				model.addAttribute("title", "Add Category");
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+			}
 		} catch (Exception e) {
 			System.out.println("Execption in /newCategory : " + e.getMessage());
 			e.printStackTrace();
@@ -901,4 +1012,195 @@ public class MasterController {
 		return mav;
 	}
 
+	// Created By :- Mahendra Singh
+	// Created On :- 12-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Add Category
+	@RequestMapping(value = "/insertNewCategory", method = RequestMethod.POST)
+	public String insertNewCategory(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam("doc") MultipartFile doc) {
+		try {
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String profileImage = null;
+
+			int companyId = (int) session.getAttribute("companyId");
+
+			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
+
+				System.err.println("In If ");
+
+				profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
+
+				try {
+					new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+				} catch (Exception e) {
+				}
+
+			} else {
+				System.err.println("In else ");
+				profileImage = request.getParameter("editImg");
+
+			}
+
+			Category cat = new Category();
+			int catId = Integer.parseInt(request.getParameter("catId"));
+
+			cat.setCatId(catId);
+			cat.setAllowToCopy(Integer.parseInt(request.getParameter("allowCopy")));
+			cat.setCatDesc(request.getParameter("description"));
+			cat.setCatName(request.getParameter("catName"));
+			cat.setCatPrefix(request.getParameter("prefix"));
+			cat.setIsParent(Integer.parseInt(request.getParameter("isParent")));
+			cat.setCompanyId(companyId);
+			cat.setImageName(profileImage);
+			cat.setIsActive(Integer.parseInt(request.getParameter("catActive")));
+			cat.setSortNo(0);
+
+			cat.setDelStatus(1);
+
+			cat.setExInt1(0);
+			cat.setExInt2(0);
+			cat.setExInt3(0);
+
+			cat.setExVar1("NA");
+			cat.setExVar2("NA");
+			cat.setExVar3("NA");
+
+			Category res = Constants.getRestTemplate().postForObject(Constants.url + "saveCategory", cat,
+					Category.class);
+
+			if (res.getCatId() > 0) {
+				if (catId == 0)
+					session.setAttribute("successMsg", "Category Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Category Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Category");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /insertNewCategory : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return "redirect:/showCategoryList";
+
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 12-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Update User
+	@RequestMapping(value = "/editCategory", method = RequestMethod.GET)
+	public String editCategory(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("editCategory", "showCategoryList", "0", "0", "1", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addCategory";
+
+				int companyId = (int) session.getAttribute("companyId");
+
+				String base64encodedString = request.getParameter("catId");
+				String catId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("catId", Integer.parseInt(catId));
+
+				Category cat = Constants.getRestTemplate().postForObject(Constants.url + "getCatById", map,
+						Category.class);
+
+				model.addAttribute("cat", cat);
+
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+				model.addAttribute("title", "Edit Category");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /editCategory : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 12-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Delete Category
+	@RequestMapping(value = "/deleteCategory", method = RequestMethod.GET)
+	public String deleteCategory(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession();
+		String mav = new String();
+		try {
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteCategory", "showCategoryList", "0", "0", "0", "1",
+					newModuleList);
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "redirect:/showCategoryList";
+				String base64encodedString = request.getParameter("catId");
+				String catId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("catId", Integer.parseInt(catId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteCategoryById", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteCategory : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+	
+	@RequestMapping(value = "/chkUniqPrefix", method = RequestMethod.GET)
+	@ResponseBody
+	public Info chkUniqPrefix(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		Info res = new Info();
+
+		try {
+				String prefix = request.getParameter("prefix");
+				int catId = Integer.parseInt(request.getParameter("catId"));
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("prefix", prefix);
+				map.add("catId", catId);
+
+				res = Constants.getRestTemplate().postForObject(Constants.url + "getCatByPrefix", map,
+						Info.class);
+
+				
+		} catch (Exception e) {
+			System.out.println("Execption in /chkUniqPrefix : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return res;
+	}
 }

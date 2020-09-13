@@ -70,6 +70,8 @@
 									<p class="desc text-danger fontsize11">Note : * Fields are
 										mandatory.</p>
 									<input type="hidden" class="form-control" name="uomId" id="uomId" value="${uom.uomId}">
+									 <input type="hidden" class="form-control" value="${uom.isParent}"
+										name="isParent" id="isParent">
 
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
@@ -139,6 +141,28 @@
 												</label>
 											</div>
 										</div>
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="email">Allow Copy <span class="text-danger">*
+										</span>:
+										</label>
+										<div class="col-lg-4">
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1" name="allowCopy"
+													id="copy_y" ${uom.allowToCopy==1 ? 'checked' : ''}>
+													Yes
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0" name="allowCopy"
+													id="copy_n" ${uom.allowToCopy==0 ? 'checked' : ''}>
+													No
+												</label>
+											</div>
+										</div>
+										
 									</div>
 									
 									<br>

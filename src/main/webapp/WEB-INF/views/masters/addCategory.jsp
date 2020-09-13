@@ -28,6 +28,7 @@
 </head>
 
 <body class="sidebar-xs">
+	<c:url var="chkUniqPrefix" value="chkUniqPrefix"/>
 	<c:url value="/getUserInfo" var="getUserInfo"></c:url>
 	<c:url value="/getUserInfoByEmail" var="getUserInfoByEmail"/>	
 	<!-- Main navbar -->
@@ -84,7 +85,10 @@
 									<p class="desc text-danger fontsize11">Note : * Fields are
 										mandatory.</p>
 									<input type="hidden" class="form-control"
-										value="${user.userId}" name="user_id" id="user_id">									
+										value="${cat.catId}" name="catId" id="catId">	
+										
+										<input type="hidden" class="form-control"
+										value="${cat.isParent}" name="isParent" id="isParent">								
 									
 									<div class="form-group row">
 
@@ -97,7 +101,7 @@
 											<input type="text"
 												class="form-control maxlength-badge-position" maxlength="100"
 												autocomplete="off" onchange="trim(this)"
-												value="${cate.catName}" name="catName" id="catName">
+												value="${cat.catName}" name="catName" id="catName">
 											<span class="validation-invalid-label" id="error_catName"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -110,12 +114,11 @@
 											<input type="text"
 												class="form-control maxlength-badge-position" maxlength="5"
 												autocomplete="off" onchange="trim(this)"
-												value="${cat.prefix}" name="prefix" id="prefix">
+												value="${cat.catPrefix}" name="prefix" id="prefix">
 											<span class="validation-invalid-label text-danger" id="error_prefix"
 												style="display: none;">This field is required.</span> <span
 												class="validation-invalid-label text-danger" id="unq_prefix"
-												style="display: none;">This Prefix is Already
-												Exist.</span>
+												style="display: none;">This prefix already exist.</span>
 
 
 										</div>
@@ -128,13 +131,13 @@
 											for="address">Description <span class="text-danger">*
 										</span>:
 										</label>
-										<div class="col-lg-4">
+										<div class="col-lg-10">
 											<input type="text"
 												class="form-control maxlength-badge-position" maxlength="100"
 												autocomplete="off" onchange="trim(this)"
-												value="${cat.catDesc}" name="address" id="address">
+												value="${cat.catDesc}" name="description" id="description">
 											<span class="validation-invalid-label text-danger"
-												id="error_address" style="display: none;">This field
+												id="error_description" style="display: none;">This field
 												is required.</span>
 										</div>
 									</div>
@@ -171,16 +174,16 @@
 										<div class="col-lg-4">
 											<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1" name="user"
-													id="user_y" ${user.isActive==1 ? 'checked' : ''}>
+													class="form-check-input" checked value="1" name="catActive"
+													id="cat_y" ${cat.isActive==1 ? 'checked' : ''}>
 													Active
 												</label>
 											</div>
 
 											<div class="form-check form-check-inline">
 												<label class="form-check-label "> <input
-													type="radio" class="form-check-input" value="0" name="user"
-													id="user_n" ${user.isActive==0 ? 'checked' : ''}>
+													type="radio" class="form-check-input" value="0" name="catActive"
+													id="cat_n" ${cat.isActive==0 ? 'checked' : ''}>
 													In-Active
 												</label>
 											</div>
@@ -207,7 +210,7 @@
 
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary">
+										<button type="submit" class="btn btn-primary" id="subBtn">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
 									</div>
@@ -256,23 +259,23 @@
 												var isError = false;
 												var errMsg = "";
 
-												if (!$("#user_name").val()) {
+												if (!$("#catName").val()) {
 													isError = true;
-													$("#error_user_name")
+													$("#error_catName")
 															.show()
 												} else {
-													$("#error_user_name")
+													$("#error_catName")
 															.hide()
 												}
 
-												/* if (!$("#company").val()) {
+												 if (!$("#prefix").val()) {
 													isError = true;
-													$("#error_company").show()
+													$("#error_prefix").show()
 												} else {
-													$("#error_company").hide()
+													$("#error_prefix").hide()
 												}
- */
-												if (!$("#mob_no").val()
+ 
+												/* if (!$("#mob_no").val()
 														|| !validateMobile($(
 																"#mob_no")
 																.val())) {
@@ -280,68 +283,32 @@
 													$("#error_mob_no").show()
 												} else {
 													$("#error_mob_no").hide()
+												} */
+
+
+												if (!$("#description").val()) {
+													isError = true;
+													$("#error_description").show()
+												} else {
+													$("#error_description").hide()
 												}
 
-												if (!$("#address").val()) {
-													isError = true;
-													$("#error_address").show()
-												} else {
-													$("#error_address").hide()
-												}
-
-												if (!$("#pass").val()) {
-													isError = true;
-													$("#error_pass").show()
-												} else {
-													$("#error_pass").hide()
-												}
-
-												if (!$("#department").val()) {
-													isError = true;
-													$("#error_department")
-															.show()
-												} else {
-													$("#error_department")
-															.hide()
-												}
-
-												if (!$("#reg_date").val()) {
-													isError = true;
-													$("#error_reg_date").show()
-												} else {
-													$("#error_reg_date").hide()
-												}
 												
-												if (!$("#dob").val()) {
-													isError = true;
-													$("#error_dob").show()
-												} else {
-													$("#error_dob").hide()
-												}
 
-												if (!$("#user_type").val()) {
-													isError = true;
-													$("#error_user_type")
-															.show()
-												} else {
-													$("#error_user_type")
-															.hide()
-												}
-
-												if (!$("#email").val()
+												/* if (!$("#email").val()
 														|| !validateEmail($(
 																"#email").val())) {
 													isError = true;
 													$("#error_email").show()
 												} else {
 													$("#error_email").hide()
-												}
+												} */
 
 												if (!isError) {
 													var x = true;
 													if (x == true) {
 														document
-																.getElementById("submtbtn").disabled = true;
+																.getElementById("subBtn").disabled = true;
 														return true;
 													}
 												}
@@ -351,49 +318,37 @@
 											});
 						});
 
-		$("#mob_no").change(function() { // 1st
-			var mobNo = $("#mob_no").val();
-			var userId = $("#user_id").val();
-			//alert(code)
+	
+		$( "#prefix" ).change(function() {
+			
+		  var prefix = $("#prefix").val();
+		  var catId = $("#catId").val();  
 
-			$.getJSON('${getUserInfo}', {
-				mobNo : mobNo,
-				userId : userId,
-				ajax : 'true',
-			}, function(data) {
+		  $
+			.getJSON(
+					'${chkUniqPrefix}',
+					{
+						catId : catId,
+						prefix : prefix,				
+						ajax : 'true'
 
-				if (data.error == false) {
-					$("#unq_mob").show();
-					$("#mob_no").val('');
-					document.getElementById("mob_no").focus();
-				} else {
-					$("#unq_mob").hide();
-				}
+					},
+					function(data) {
+						//alert(JSON.stringify(data))
+						if(data.error==false){
+							document.getElementById("subBtn").disabled = true;
+							$("#unq_prefix").show()
+										
+						}else{
+							$("#unq_prefix").hide()
+							document.getElementById("subBtn").disabled = false;
+							
+						}	
+
 			});
 		});
-		
-		$("#email").change(function() { 
-			var email = $("#email").val();
-			var userId = $("#user_id").val();
-			//alert(code)
-
-			$.getJSON('${getUserInfoByEmail}', {
-				email : email,
-				userId : userId,
-				ajax : 'true',
-			}, function(data) {
-
-				if (data.error == false) {
-					$("#unq_email").show();
-					$("#email").val('');
-					document.getElementById("email").focus();
-				} else {
-					$("#unq_email").hide();
-				}
-			});
-		});
-	</script>
-	<script type="text/javascript">
+		</script>
+	<script type="text/javascript">	
 	function trim(el) {
 		el.value = el.value.replace(/(^\s*)|(\s*$)/gi, ""). // removes leading and trailing spaces
 		replace(/[ ]{2,}/gi, " "). // replaces multiple spaces with one space 

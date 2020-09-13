@@ -449,10 +449,10 @@
 											});
 						});
 
-		$("#mob_no").change(function() { // 1st
+		$("#mob_no").change(function() { 
 			var mobNo = $("#mob_no").val();
 			var userId = $("#user_id").val();
-			//alert(code)
+			//alert(mobNo)
 
 			$.getJSON('${getUserInfo}', {
 				mobNo : mobNo,

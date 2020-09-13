@@ -55,11 +55,12 @@
 							class="font-size-sm text-uppercase font-weight-semibold card-title">
 							${title}</span>
 						<!--  -->
+						<c:if test="${addAccess==0}">
 						<span class="font-size-sm text-uppercase font-weight-semibold"><a
 							class="card-title"
 							href="${pageContext.request.contextPath}/addNewUser"
 							style="color: white;"><i class="icon-add-to-list ml-2"
-								style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add User</a></span>
+								style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add User</a></span></c:if>
 					</div>
 
 					<div class="form-group row"></div>
@@ -95,25 +96,22 @@
 										<c:set value="In-Active" var="status" />
 									</c:if>
 									<td>${status}</td>
-
-
 									<td style="display: none;"></td>
-
-
 									<td class="text-center">
+									<c:if test="${editAccess==0}">
 										<div class="list-icons">
 											<a
 												href="${pageContext.request.contextPath}/editUser?userId=${userList.exVar1}"
 												class="list-icons-item" title="Edit"> <i
 												class="icon-database-edit2"></i>
 											</a>
-										</div>
+										</div></c:if> <c:if test="${deleteAccess==0}">
 										<div class="list-icons">
 											<a href="javascript:void(0)"
 												class="list-icons-item text-danger-600 bootbox_custom"
 												data-uuid="${userList.exVar1}" data-popup="tooltip" title=""
 												data-original-title="Delete"><i class="icon-trash"></i></a>
-										</div>
+										</div></c:if>
 									</td>
 								</tr>
 							</c:forEach>
