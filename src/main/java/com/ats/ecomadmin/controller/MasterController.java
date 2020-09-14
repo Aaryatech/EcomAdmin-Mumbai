@@ -29,6 +29,7 @@ import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
+import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.Tax;
 import com.ats.ecomadmin.model.Uom;
@@ -63,7 +64,7 @@ public class MasterController {
 			} else {
 				session.setAttribute("compId", 1);
 
-				int compId = (int) session.getAttribute("compId");
+				int compId = (int) session.getAttribute("companyId");
 				mav = "masters/uomList";
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -153,7 +154,7 @@ public class MasterController {
 			HttpSession session = request.getSession();
 
 			int uomId = Integer.parseInt(request.getParameter("uomId"));
-			int compId = (int) session.getAttribute("compId");
+			int compId = (int) session.getAttribute("companyId");
 
 			uom.setCompanyId(compId);
 			uom.setDelStatus(1);
@@ -295,7 +296,7 @@ public class MasterController {
 			} else {
 				session.setAttribute("compId", 1);
 
-				int compId = (int) session.getAttribute("compId");
+				int compId = (int) session.getAttribute("companyId");
 				mav = "masters/taxList";
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -383,7 +384,7 @@ public class MasterController {
 			HttpSession session = request.getSession();
 
 			int taxId = Integer.parseInt(request.getParameter("taxId"));
-			int compId = (int) session.getAttribute("compId");
+			int compId = (int) session.getAttribute("companyId");
 
 			tax.setTaxId(taxId);
 			tax.setTaxName(request.getParameter("taxName"));
@@ -1178,7 +1179,7 @@ public class MasterController {
 		}
 		return mav;
 	}
-	
+
 	@RequestMapping(value = "/chkUniqPrefix", method = RequestMethod.GET)
 	@ResponseBody
 	public Info chkUniqPrefix(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -1186,21 +1187,265 @@ public class MasterController {
 		Info res = new Info();
 
 		try {
-				String prefix = request.getParameter("prefix");
-				int catId = Integer.parseInt(request.getParameter("catId"));
+			String prefix = request.getParameter("prefix");
+			int catId = Integer.parseInt(request.getParameter("catId"));
 
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("prefix", prefix);
-				map.add("catId", catId);
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("prefix", prefix);
+			map.add("catId", catId);
 
-				res = Constants.getRestTemplate().postForObject(Constants.url + "getCatByPrefix", map,
-						Info.class);
+			res = Constants.getRestTemplate().postForObject(Constants.url + "getCatByPrefix", map, Info.class);
 
-				
 		} catch (Exception e) {
 			System.out.println("Execption in /chkUniqPrefix : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return res;
+	}
+
+	/*-------------------------------------------------------------------------------*/
+	// Created By :- Mahendra Singh
+	// Created On :- 14-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Show All Filter Types
+	@RequestMapping(value = "/showFilterTypeList", method = RequestMethod.GET)
+	public String showFilterTypeList(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+
+		try {
+
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showFilterTypeList", "showFilterTypeList", "1", "0", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				int companyId = (int) session.getAttribute("companyId");
+
+				mav = "masters/filterTypeList";
+
+				List<FilterTypes> filterTypeList = new ArrayList<FilterTypes>();
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);
+
+				FilterTypes[] filterTypeArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getAllFilterTypes", map, FilterTypes[].class);
+				filterTypeList = new ArrayList<FilterTypes>(Arrays.asList(filterTypeArr));
+
+				for (int i = 0; i < filterTypeList.size(); i++) {
+
+					filterTypeList.get(i)
+							.setExVar1(FormValidation.Encrypt(String.valueOf(filterTypeList.get(i).getFilterTypeId())));
+				}
+
+				model.addAttribute("filterList", filterTypeList);
+				model.addAttribute("title", "Filter Type List");
+				// model.addAttribute("imageUrl", Constants.showDocSaveUrl);
+				Info add = AccessControll.checkAccess("showFilterTypeList", "showFilterTypeList", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showFilterTypeList", "showFilterTypeList", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showFilterTypeList", "showFilterTypeList", "0", "0", "0", "1",
+						newModuleList);
+
+				if (add.isError() == false) {
+					// System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) {
+					// System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					// System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /showFilterTypeList : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 14-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect To Add Filter Type Page
+	@RequestMapping(value = "/newFilterType", method = RequestMethod.GET)
+	public String newFilterType(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("newFilterType", "showFilterTypeList", "0", "1", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addFilterType";
+				FilterTypes filterType = new FilterTypes();
+
+				model.addAttribute("filterType", filterType);
+				model.addAttribute("title", "Add Filter Type");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /newFilterType : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 14-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Insert FilterType database
+	@RequestMapping(value = "/insertFilterType", method = RequestMethod.POST)
+	public String insertFilteType(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+
+			HttpSession session = request.getSession();
+
+			int filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
+			int compId = (int) session.getAttribute("companyId");
+
+			FilterTypes filterType = new FilterTypes();
+
+			filterType.setFilterTypeId(filterTypeId);
+			filterType.setCompanyId(compId);
+			filterType.setDelStatus(1);
+			filterType.setExInt1(0);
+			filterType.setExInt2(0);
+			filterType.setExVar1("NA");
+			filterType.setExVar2("NA");
+			filterType.setIsActive(Integer.parseInt(request.getParameter("isActive")));
+			filterType.setIsCostAffect(Integer.parseInt(request.getParameter("isContAffect")));
+			filterType.setIsUsedFilter(Integer.parseInt(request.getParameter("isUsedFilter")));
+			filterType.setFilterTypeName(request.getParameter("filterTypeName"));
+			filterType.setFilterTypeDesc(request.getParameter("description"));
+
+			FilterTypes res = Constants.getRestTemplate().postForObject(Constants.url + "saveFilterType", filterType,
+					FilterTypes.class);
+
+			if (res.getFilterTypeId() > 0) {
+				if (filterTypeId == 0)
+					session.setAttribute("successMsg", "Filter Type Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Filter Type  Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Filter Type");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /insertFilterType : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showFilterTypeList";
+
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 14-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Update Filter Type
+	@RequestMapping(value = "/editFilterType", method = RequestMethod.GET)
+	public String editFilterType(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("editFilterType", "showFilterTypeList", "0", "0", "1", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addFilterType";
+
+				int companyId = (int) session.getAttribute("companyId");
+
+				String base64encodedString = request.getParameter("filterTypeId");
+				String filterTypeId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("filterTypeId", Integer.parseInt(filterTypeId));
+
+				FilterTypes filterType = Constants.getRestTemplate().postForObject(Constants.url + "getFilterTypeById",
+						map, FilterTypes.class);
+
+				model.addAttribute("filterType", filterType);
+
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+				model.addAttribute("title", "Edit Filter Type");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /editFilterType : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 14-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Delete Filter Type
+	@RequestMapping(value = "/deleteFilterType", method = RequestMethod.GET)
+	public String deleteFilterType(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession();
+		String mav = new String();
+		try {
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteFilterType", "showFilterTypeList", "0", "0", "0", "1",
+					newModuleList);
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "redirect:/showFilterTypeList";
+				String base64encodedString = request.getParameter("filterTypeId");
+				String filterTypeId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("filterTypeId", Integer.parseInt(filterTypeId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteFilterTypeById", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteFilterType : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
 	}
 }
