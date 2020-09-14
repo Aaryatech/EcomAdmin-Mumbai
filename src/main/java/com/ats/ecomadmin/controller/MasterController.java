@@ -697,7 +697,7 @@ public class MasterController {
 			user.setExDate1(sfd.format(date));
 			user.setExDate2(sfd.format(date));
 			user.setBirthDate(request.getParameter("dob"));
-			user.setDeptId(Integer.parseInt(request.getParameter("user_type")));
+			user.setDeptId(Integer.parseInt(request.getParameter("department")));
 
 			user.setDelStatus(1);
 

@@ -279,7 +279,7 @@
 											<input type="password"
 												class="form-control maxlength-badge-position" maxlength="20"
 												autocomplete="off" onchange="trim(this)"
-												value="${user.password}" name="pass" id="pass"> <span
+												 name="pass" id="pass"> <span
 												class="validation-invalid-label text-danger" id="error_pass"
 												style="display: none;">This field is required.</span>
 										</div>
