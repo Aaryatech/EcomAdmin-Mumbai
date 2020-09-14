@@ -70,7 +70,7 @@
 								<!--  -->
 								<span class="font-size-sm text-uppercase font-weight-semibold"><a
 									class="card-title"
-									href="${pageContext.request.contextPath}/showFilterTypeList"
+									href="${pageContext.request.contextPath}/showFilterList"
 									style="color: white;" class="card-title"><i
 										class="icon-list2 ml-2"></i>&nbsp;&nbsp;&nbsp;&nbsp;View List</a></span>
 							</div>
@@ -78,36 +78,63 @@
 
 							<div class="card-body">
 
-								<form
-									action="${pageContext.request.contextPath}/insertFilterType"
+								<form action="${pageContext.request.contextPath}/insertFilter"
 									id="submitInsert" method="post">
 
 
 									<p class="desc text-danger fontsize11">Note : * Fields are
 										mandatory.</p>
 									<input type="hidden" class="form-control"
-										value="${filterType.filterTypeId}" name="filterTypeId"
-										id="filterTypeId">
+										value="${filter.filterId}" name="filterId" id="filterId">
 
-
+									<input type="hidden" class="form-control"
+										value="${filter.isParent}" name="isParent" id="isParent">
 
 									<div class="form-group row">
 
 
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="catName">Filter Type Name<span
-											class="text-danger">* </span>:
+											for="filterName">Filter Name<span class="text-danger">*
+										</span>:
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position"
-												maxlength="70" autocomplete="off" onchange="trim(this)"
-												value="${filterType.filterTypeName}" name="filterTypeName"
-												id="filterTypeName"> <span
-												class="validation-invalid-label" id="error_filterTypeName"
+												class="form-control maxlength-badge-position" maxlength="70"
+												autocomplete="off" onchange="trim(this)"
+												value="${filter.filterName}" name="filterName"
+												id="filterName"> <span
+												class="validation-invalid-label" id="error_filterName"
 												style="display: none;">This field is required.</span>
 										</div>
 
+										
+											<label class="col-form-label font-weight-bold col-lg-2"
+												for="filterType">Filter Type <span
+												class="text-danger">* </span>:
+											</label> 
+											<div class="col-lg-4">
+												<select class="form-control select-search" data-fouc
+												name="filterType" id="filterType" data-placeholder="Select User Type">
+												<option value=""></option>
+
+												<c:forEach items="${filterType}" var="list"
+													varStatus="count">
+													<c:choose>
+														<c:when test="${list.filterTypeId==filter.filterTypeId}">
+															<option selected value="${list.filterTypeId}">${list.filterTypeName}</option>
+														</c:when>
+														<c:otherwise>
+															<option value="${list.filterTypeId}">${list.filterTypeName}</option>
+														</c:otherwise>
+													</c:choose>
+												</c:forEach>
+											</select> <span class="validation-invalid-label text-danger"
+												id="error_filterType" style="display: none;">This
+												field is required.</span>
+										</div>
+									</div>
+
+									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="email">Status <span class="text-danger">*
 										</span>:
@@ -116,7 +143,7 @@
 											<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
 													class="form-check-input" checked value="1" name="isActive"
-													id="active_n" ${filterType.isActive==1 ? 'checked' : ''}>
+													id="active_n" ${filter.isActive==1 ? 'checked' : ''}>
 													Active
 												</label>
 											</div>
@@ -125,23 +152,45 @@
 												<label class="form-check-label "> <input
 													type="radio" class="form-check-input" value="0"
 													name="isActive" id="active_n"
-													${filterType.isActive==0 ? 'checked' : ''}> In-Active
+													${filter.isActive==0 ? 'checked' : ''}> In-Active
 												</label>
 											</div>
 										</div>
-									</div>
-									
-									<div class="form-group row">
+
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="isCostAffect">Is Cost Affect <span class="text-danger">*
+											for="email">Allow Copy <span class="text-danger">*
 										</span>:
 										</label>
 										<div class="col-lg-4">
 											<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1" name="isCostAffect"
-													id="costAffect_y" ${filterType.isCostAffect==1 ? 'checked' : ''}>
+													class="form-check-input" checked value="1" name="allowCopy"
+													id="copy_y" ${filter.allowToCopy==1 ? 'checked' : ''}>
 													Yes
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0"
+													name="allowCopy" id="copy_n"
+													${filter.allowToCopy==0 ? 'checked' : ''}> No
+												</label>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="isContAffect">Is Cost Affect <span
+											class="text-danger">* </span>:
+										</label>
+										<div class="col-lg-4">
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1"
+													name="isCostAffect" id="costAffect_y"
+													${filter.costAffect==1 ? 'checked' : ''}> Yes
 												</label>
 											</div>
 
@@ -149,21 +198,21 @@
 												<label class="form-check-label "> <input
 													type="radio" class="form-check-input" value="0"
 													name="isCostAffect" id="costAffect_n"
-													${filterType.isCostAffect==0 ? 'checked' : ''}> No
+													${filter.costAffect==0 ? 'checked' : ''}> No
 												</label>
 											</div>
 										</div>
-										
+
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="isUsedFilter">Is Used Filter <span class="text-danger">*
-										</span>:
+											for="isUsedFilter">Is Used Filter <span
+											class="text-danger">* </span>:
 										</label>
 										<div class="col-lg-4">
 											<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1" name="isUsedFilter"
-													id="isUsedFilter_y" ${filterType.isUsedFilter==1 ? 'checked' : ''}>
-													Yes
+													class="form-check-input" checked value="1"
+													name="isUsedFilter" id="isUsedFilter_y"
+													${filter.usedForFilter==1 ? 'checked' : ''}> Yes
 												</label>
 											</div>
 
@@ -171,9 +220,47 @@
 												<label class="form-check-label "> <input
 													type="radio" class="form-check-input" value="0"
 													name="isUsedFilter" id="isUsedFilter_n"
-													${filterType.isUsedFilter==0 ? 'checked' : ''}> No
+													${filter.usedForFilter==0 ? 'checked' : ''}> No
 												</label>
 											</div>
+										</div>
+									</div>
+									
+									<div class="form-group row">
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="isUsedDesc">Used For Description<span
+											class="text-danger">* </span>:
+										</label>
+										<div class="col-lg-4">
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1"
+													name="isUsedDesc" id="isUsedDesc_y"
+													${filter.usedForDescription==1 ? 'checked' : ''}> Yes
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0"
+													name="isUsedDesc" id="isUsedDesc_n"
+													${filter.usedForDescription==0 ? 'checked' : ''}> No
+												</label>
+											</div>
+										</div>
+
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="sortNo">Sort No.<span
+											class="text-danger"></span>:
+										</label>
+										<div class="col-lg-4">
+											<input type="text"
+												class="form-control maxlength-badge-position" maxlength="5"
+												autocomplete="off" onchange="trim(this)"
+												value="${filter.sortNo}" name="sortNo"
+												id="sortNo"> <span
+												class="validation-invalid-label" id="error_sortNo"
+												style="display: none;">This field is required.</span>
 										</div>
 									</div>
 
@@ -187,14 +274,15 @@
 											<input type="text"
 												class="form-control maxlength-badge-position"
 												maxlength="100" autocomplete="off" onchange="trim(this)"
-												value="${filterType.filterTypeDesc}" name="description" id="description">
-											<span class="validation-invalid-label text-danger"
+												value="${filter.filterDesc}" name="description"
+												id="description"> <span
+												class="validation-invalid-label text-danger"
 												id="error_description" style="display: none;">This
 												field is required.</span>
 										</div>
 									</div>
-									
-									
+
+
 
 									<br>
 									<div class="text-center">
@@ -229,21 +317,29 @@
 				var isError = false;
 				var errMsg = "";
 
-				if (!$("#filterTypeName").val()) {
+				if (!$("#filterName").val()) {
 					isError = true;
-					$("#error_filterTypeName").show()
+					$("#error_filterName").show()
 				} else {
-					$("#error_filterTypeName").hide()
+					$("#error_filterName").hide()
 				}
 				
+				if ($("#filterType").val()=="") {
+					isError = true;
+					$("#error_filterType").show()
+				} else {
+					$("#error_filterType").hide()
+				}
+				
+				
+
 				if (!$("#description").val()) {
 					isError = true;
 					$("#error_description").show()
 				} else {
 					$("#error_description").hide()
 				}
-				
-			
+
 				if (!isError) {
 					var x = true;
 					if (x == true) {

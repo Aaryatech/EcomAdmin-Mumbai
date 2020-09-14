@@ -70,7 +70,7 @@
 								<!--  -->
 								<span class="font-size-sm text-uppercase font-weight-semibold"><a
 									class="card-title"
-									href="${pageContext.request.contextPath}/showUsers"
+									href="${pageContext.request.contextPath}/showCategoryList"
 									style="color: white;" class="card-title"><i
 										class="icon-list2 ml-2"></i>&nbsp;&nbsp;&nbsp;&nbsp;View List</a></span>
 							</div>
@@ -336,6 +336,7 @@
 					function(data) {
 						//alert(JSON.stringify(data))
 						if(data.error==false){
+							$("#prefix").val("");
 							document.getElementById("subBtn").disabled = true;
 							$("#unq_prefix").show()
 										
