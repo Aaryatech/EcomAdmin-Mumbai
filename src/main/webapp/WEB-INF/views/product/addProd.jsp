@@ -113,6 +113,15 @@
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Category" id="cat_id" name="cat_id">
+												
+												<c:forEach items="${catList}" var="cat">
+												<c:when test="${1==cat.catId}">
+												<option selected value="${cat.catId}"> ${cat.catName}</option>
+												</c:when>
+												<c:otherwise>
+											<option value="${cat.catId}"> ${cat.catName}</option>
+												</c:otherwise>
+												</c:forEach>
 											</select> <span class="validation-invalid-label" id="error_cat_id"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -594,6 +603,51 @@
 
 									</div>
 
+
+<div class="form-group row">
+										<label class="col-form-label col-lg-2" for="is_veg">
+											Veg/Non Veg <span style="color: red">* </span>:
+										</label>
+										<div class="col-lg-2">
+											<select
+												class="form-control form-control-select2 select2-hidden-accessible"
+												data-fouc="" aria-hidden="true" data
+												placeholder="Select Veg Non Veg" id="is_veg" name="is_veg">
+											<option value="0">Veg</option>
+												<option value="1">Non Veg</option>
+											    <option value="2">Both</option></select> <span class="validation-invalid-label" id="error_is_veg"
+												style="display: none;">This field is required.</span>
+										</div>
+
+										<label class="col-form-label col-lg-2"  title="Product rate setting" for="rate_setting_type">
+											Rate Setting Type <span style="color: red">* </span>:
+										</label>
+										<div class="col-lg-2">
+											<select
+												class="form-control form-control-select2 select2-hidden-accessible"
+												data-fouc="" aria-hidden="true" data
+												placeholder="Rate Setting Type" id="rate_setting_type" name="rate_setting_type">
+												
+												<option value="0">Per UOM</option>
+												<option value="1">Per Kg</option>
+											    <option value="2">As of Filter</option>
+												
+											</select> <span class="validation-invalid-label" id="error_rate_setting_type"
+												style="display: none;">This field is required.</span>
+										</div>
+
+										<label class="col-form-label col-lg-2" for="prep_time" title="Prep Time in minutes">
+											Preparation Time <span style="color: red">* </span>:
+										</label>
+										<div class="col-lg-2">
+											<input type="text" class="form-control numbersOnly"
+												placeholder="Preparation Time in Minutes" maxlength="" id="prep_time" name="prep_time"
+												autocomplete="off"> <span
+												class="validation-invalid-label" id="error_prep_time"
+												style="display: none;">This field is required.</span>
+										</div>
+									</div>
+									
 									<div class="form-group row">
 										<label class="col-form-label col-lg-2" for="profilePic">
 											Primary Image: </label>
