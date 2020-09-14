@@ -109,7 +109,7 @@
 											Select Category <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-2">
-											<select
+										 	<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Category" id="cat_id" name="cat_id">
