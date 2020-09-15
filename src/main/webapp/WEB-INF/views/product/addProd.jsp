@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%><%@ taglib
-	uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -112,15 +112,12 @@
 										 	<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
-												placeholder="Select Category" id="cat_id" name="cat_id">
-												
-												<c:forEach items="${catList}" var="cat">
-												<c:when test="${1==cat.catId}">
-												<option selected value="${cat.catId}"> ${cat.catName}</option>
-												</c:when>
-												<c:otherwise>
-											<option value="${cat.catId}"> ${cat.catName}</option>
-												</c:otherwise>
+												placeholder="Select Category" id="cat_id" name="cat_id"
+												onchange="setSubCatList()">
+												<option selected disabled value="">Select Category</option>
+												<c:forEach items="${catList}" var="catList"
+												varStatus="count">
+												<option value="${catList.catId}">${catList.catName}</option>
 												</c:forEach>
 											</select> <span class="validation-invalid-label" id="error_cat_id"
 												style="display: none;">This field is required.</span>
@@ -133,7 +130,7 @@
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
-												placeholder="Sub Category" id="sub_cat_id" name="sub_cat_id">
+												placeholder="Select Sub Category" id="sub_cat_id" name="sub_cat_id">
 											</select> <span class="validation-invalid-label" id="error_sub_cat_id"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -183,6 +180,13 @@
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Tax" id="tax_id" name="tax_id">
+												
+												<option selected disabled value="">Select Tax</option>
+												<c:forEach items="${taxList}" var="taxList"
+												varStatus="count">
+												<option value="${taxList.taxId}">${taxList.taxName}</option>
+												</c:forEach>
+												
 											</select> <span class="validation-invalid-label" id="error_tax_id"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -260,10 +264,14 @@
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select UOM" id="uom_id" name="uom_id">
-												<option selected value="1">KG</option>
-												<option selected value="0">Liter</option>
+											
+											<option selected disabled value="">Select UOM</option>
+												<c:forEach items="${uomList}" var="uomList"
+												varStatus="count">
+												<option value="${uomList.uomId}">${uomList.uomShowName}</option>
+												</c:forEach>
 											</select> <span class="validation-invalid-label"
-												id="error_is_return_allow" style="display: none;">This
+												id="error_uom_id" style="display: none;">This
 												field is required.</span>
 										</div>
 
@@ -294,7 +302,7 @@
 												<option selected value="1">Yes</option>
 												<option selected value="0">No</option>
 											</select> <span class="validation-invalid-label"
-												id="error_is_return_allow" style="display: none;">This
+												id="error_is_sameDay_del" style="display: none;">This
 												field is required.</span>
 										</div>
 
@@ -307,7 +315,7 @@
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Same Day Time Slot"
 												id="sameDay_timeSlot" name="sameDay_timeSlot">
-											</select> <span class="validation-invalid-label" id="error_shape_id"
+											</select> <span class="validation-invalid-label" id="error_sameDay_timeSlot"
 												style="display: none;">This field is required.</span>
 										</div>
 									</div>
@@ -323,8 +331,7 @@
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Product Type" id="prod_type_id"
 												name="prod_type_id">
-												<option selected value="1">P1</option>
-												<option selected value="0">P2</option>
+												
 											</select> <span class="validation-invalid-label"
 												id="error_prod_type_id" style="display: none;">This
 												field is required.</span>
@@ -354,8 +361,7 @@
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Flavors" id="flav_ids" name="flav_ids">
-												<option selected value="1">P1</option>
-												<option selected value="0">P2</option>
+											
 											</select> <span class="validation-invalid-label" id="error_flav_ids"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -393,7 +399,7 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data
+												data-fouc="" multiple aria-hidden="true" data
 												placeholder="Select Events" id="event_ids" name="event_ids">
 											</select> <span class="validation-invalid-label" id="error_event_ids"
 												style="display: none;">This field is required.</span>
@@ -410,19 +416,22 @@
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Limit Yes No" id="char_limit_yn"
 												name="char_limit_yn">
+												<option value="1">Yes</option>
+												<option value="0">No</option>
+												
 											</select> <span class="validation-invalid-label"
 												id="error_char_limit_yn" style="display: none;">This
 												field is required.</span>
 										</div>
 
-										<label class="col-form-label col-lg-2" for="no_of_char">
+										<label class="col-form-label col-lg-2" for="no_of_alpha">
 											No of Alphabets <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
 											<input type="text" class="form-control numbersOnly"
-												placeholder="No of Characters" id="no_of_char"
+												placeholder="No of Characters" id="no_of_alpha"
 												name="no_of_char" autocomplete="off"> <span
-												class="validation-invalid-label" id="error_no_of_char"
+												class="validation-invalid-label" id="error_no_of_alpha"
 												style="display: none;">This field is required.</span>
 										</div>
 
@@ -484,7 +493,7 @@
 											<input type="text" class="form-control numbersOnly"
 												placeholder="No of Message Characters" id="no_of_msg_char"
 												name="no_of_msg_char" autocomplete="off"> <span
-												class="validation-invalid-label" id="error_no_of_char"
+												class="validation-invalid-label" id="error_no_of_msg_char"
 												style="display: none;">This field is required.</span>
 										</div>
 									</div>
@@ -498,8 +507,7 @@
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Bread" id="bread_id" name="bread_id">
-												<option selected value="1">B1</option>
-												<option selected value="0">B2</option>
+											
 											</select> <span class="validation-invalid-label" id="error_bread_id"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -556,9 +564,12 @@
 											Applicable Tags<span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control"
-												placeholder="Applicable Tags" id="appl_tags"
-												name="appl_tags" autocomplete="off"> <span
+											<select
+												class="form-control form-control-select2 select2-hidden-accessible"
+												data-fouc="" multiple aria-hidden="true" data
+												placeholder="Select Applicable Tags" id="appl_tags"
+												name="appl_tags">
+												</select> <span
 												class="validation-invalid-label" id="error_appl_tags"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -590,14 +601,14 @@
 												style="display: none;">This field is required.</span>
 										</div>
 
-										<label class="col-form-label col-lg-2" for="copy_item">
-											Copy Item <span style="color: red">* </span>:
+										<label class="col-form-label col-lg-2" for="prep_time" title="Prep Time in minutes">
+											Preparation Time <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control"
-												placeholder="Copy Item" id="copy_item" name="copy_item"
+											<input type="text" class="form-control numbersOnly"
+												placeholder="Preparation Time in Minutes" maxlength="3" id="prep_time" name="prep_time"
 												autocomplete="off"> <span
-												class="validation-invalid-label" id="error_copy_item"
+												class="validation-invalid-label" id="error_prep_time"
 												style="display: none;">This field is required.</span>
 										</div>
 
@@ -608,7 +619,7 @@
 										<label class="col-form-label col-lg-2" for="is_veg">
 											Veg/Non Veg <span style="color: red">* </span>:
 										</label>
-										<div class="col-lg-2">
+										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
@@ -622,7 +633,7 @@
 										<label class="col-form-label col-lg-2"  title="Product rate setting" for="rate_setting_type">
 											Rate Setting Type <span style="color: red">* </span>:
 										</label>
-										<div class="col-lg-2">
+										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
@@ -636,16 +647,7 @@
 												style="display: none;">This field is required.</span>
 										</div>
 
-										<label class="col-form-label col-lg-2" for="prep_time" title="Prep Time in minutes">
-											Preparation Time <span style="color: red">* </span>:
-										</label>
-										<div class="col-lg-2">
-											<input type="text" class="form-control numbersOnly"
-												placeholder="Preparation Time in Minutes" maxlength="" id="prep_time" name="prep_time"
-												autocomplete="off"> <span
-												class="validation-invalid-label" id="error_prep_time"
-												style="display: none;">This field is required.</span>
-										</div>
+										
 									</div>
 									
 									<div class="form-group row">
@@ -679,11 +681,6 @@
 										<div class="col-lg-4"></div>
 									</div>
 
-
-
-
-
-
 									<div class="form-group row mb-0">
 										<div class="col-lg-10 ml-lg-auto">
 											<!-- <button type="reset" class="btn btn-light legitRipple">Reset</button> -->
@@ -691,12 +688,11 @@
 												id="submtbtn">
 												Submit <i class="icon-paperplane ml-2"></i>
 											</button>
-											<a href="${pageContext.request.contextPath}/showEmployeeList"><button
+											<a href="${pageContext.request.contextPath}/showProdList"><button
 													type="button" class="btn btn-primary">
 													<i class="${sessionScope.cancelIcon}" aria-hidden="true"></i>&nbsp;&nbsp;
 													Cancel
-												</button></a> <input type="hidden" id="mobile1Exist" name="mobile1Exist"><input
-												type="hidden" id="emailExist" name="emailExist">
+												</button></a>
 										</div>
 									</div>
 								</form>
@@ -721,6 +717,195 @@
 	</div>
 	<!-- /page content -->
 	<script type="text/javascript">
+	var prod_statushtml;
+	var p = "";
+	var q = "Select Product Status";
+	prod_statushtml += '<option disabled value="'+p+'" selected>' + q
+			+ '</option>';
+			prod_statushtml += '</option>';
+	
+	var event_idshtml;
+	var p = "";
+	var q = "Select Events";
+	event_idshtml += '<option disabled value="'+p+'" selected>' + q
+			+ '</option>';
+			event_idshtml += '</option>';
+	
+	var bread_idhtml;
+	var p = "";
+	var q = "Select Bread Type";
+	bread_idhtml += '<option disabled value="'+p+'" selected>' + q
+			+ '</option>';
+	bread_idhtml += '</option>';
+	
+	var cream_idhtml;
+	var p = "";
+	var q = "Select Cream Type";
+	cream_idhtml += '<option disabled value="'+p+'" selected>' + q
+			+ '</option>';
+	cream_idhtml += '</option>';
+	
+	var layering_cream_idhtml;
+	var p = "";
+	var q = "Select Layering Cream";
+	layering_cream_idhtml += '<option disabled value="'+p+'" selected>' + q
+			+ '</option>';
+	layering_cream_idhtml += '</option>';
+	
+	var topping_cream_idhtml;
+	var p = "";
+	var q = "Select Topping Cream";
+	topping_cream_idhtml += '<option disabled value="'+p+'" selected>' + q
+			+ '</option>';
+	topping_cream_idhtml += '</option>';
+	
+	var flav_idshtml;
+	var p = "";
+	var q = "Select Flavor";
+	flav_idshtml += '<option disabled value="'+p+'" selected>' + q
+			+ '</option>';
+	flav_idshtml += '</option>';
+	
+	var shape_idhtml;
+	var p = "";
+	var q = "Select Product Shape";
+	shape_idhtml += '<option disabled value="'+p+'" selected>' + q
+			+ '</option>';
+	shape_idhtml += '</option>';
+	
+	var sameDay_timeSlothtml;
+	var p = "";
+	var q = "Select Time Slot";
+	sameDay_timeSlothtml += '<option disabled value="'+p+'" selected>' + q
+			+ '</option>';
+	sameDay_timeSlothtml += '</option>';
+	
+	var prod_type_idhtml;
+	var p = "";
+	var q = "Select Product Type";
+	prod_type_idhtml += '<option disabled value="'+p+'" selected>' + q
+			+ '</option>';
+	prod_type_idhtml += '</option>';
+	
+	var appl_tagshtml;
+	var p = "";
+	var q = "Select Applicable Tags";
+	appl_tagshtml += '<option disabled value="'+p+'" selected>' + q
+			+ '</option>';
+    appl_tagshtml += '</option>';
+	
+	data=${filterJSON};
+	
+	var len = data.length;
+	for (var i = 0; i < len; i++) {
+		if(1==parseInt(data[i].filterTypeId)){
+			shape_idhtml += '<option value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+		}//end of if
+		else if(2==parseInt(data[i].filterTypeId)){
+			sameDay_timeSlothtml += '<option value="' + data[i].filterId + '">'
+			+ data[i].filterName + '</option>';
+	}//end of if
+		else if(3==parseInt(data[i].filterTypeId)){
+			prod_type_idhtml += '<option value="' + data[i].filterId + '">'
+			+ data[i].filterName + '</option>';
+	}//end of if
+		else if(4==parseInt(data[i].filterTypeId)){
+			flav_idshtml += '<option value="' + data[i].filterId + '">'
+			+ data[i].filterName + '</option>';
+	}//end of if
+		else if(5==parseInt(data[i].filterTypeId)){
+			prod_statushtml += '<option value="' + data[i].filterId + '">'
+			+ data[i].filterName + '</option>';
+	}//end of if
+		else if(6==parseInt(data[i].filterTypeId)){
+			event_idshtml += '<option value="' + data[i].filterId + '">'
+			+ data[i].filterName + '</option>';
+	}//end of if
+		else if(7==parseInt(data[i].filterTypeId)){
+			appl_tagshtml += '<option value="' + data[i].filterId + '">'
+			+ data[i].filterName + '</option>';
+	}//end of if
+		else if(8==parseInt(data[i].filterTypeId)){
+			bread_idhtml += '<option value="' + data[i].filterId + '">'
+			+ data[i].filterName + '</option>';
+	}//end of if
+	
+		else if(9==parseInt(data[i].filterTypeId)){
+			cream_idhtml += '<option value="' + data[i].filterId + '">'
+			+ data[i].filterName + '</option>';
+	}//end of if
+		else if(10==parseInt(data[i].filterTypeId)){
+			layering_cream_idhtml += '<option value="' + data[i].filterId + '">'
+			+ data[i].filterName + '</option>';
+	}//end of if
+		else if(11==parseInt(data[i].filterTypeId)){
+			topping_cream_idhtml += '<option value="' + data[i].filterId + '">'
+			+ data[i].filterName + '</option>';
+	}//end of if
+	
+	}//end of for loop
+	
+	$('#flav_ids').html(flav_idshtml);
+	$("#flav_ids").trigger("chosen:updated");
+	
+	$('#prod_type_id').html(prod_type_idhtml);
+	$("#prod_type_id").trigger("chosen:updated");
+	
+	$('#sameDay_timeSlot').html(sameDay_timeSlothtml);
+	$("#sameDay_timeSlot").trigger("chosen:updated");
+	
+	$('#shape_id').html(shape_idhtml);
+	$("#shape_id").trigger("chosen:updated");
+	
+	$('#topping_cream_id').html(topping_cream_idhtml);
+	$("#topping_cream_id").trigger("chosen:updated");
+	
+	$('#layering_cream_id').html(layering_cream_idhtml);
+	$("#layering_cream_id").trigger("chosen:updated");
+	
+	$('#cream_id').html(cream_idhtml);
+	$("#cream_id").trigger("chosen:updated");
+	
+	$('#bread_id').html(bread_idhtml);
+	$("#bread_id").trigger("chosen:updated");
+	
+	$('#event_ids').html(event_idshtml);
+	$("#event_ids").trigger("chosen:updated");
+	
+	$('#prod_status').html(prod_statushtml);
+	$("#prod_status").trigger("chosen:updated");
+	
+	$('#appl_tags').html(appl_tagshtml);
+	$("#appl_tags").trigger("chosen:updated");
+	
+	function setSubCatList(){
+		var catId=document.getElementById("cat_id").value;
+		
+		var html;
+		var p = "";
+		var q = "Select Sub Category";
+		html += '<option disabled value="'+p+'" selected>' + q
+				+ '</option>';
+		html += '</option>';
+
+		var temp = 0;
+		var data=${subCatListJSON};
+
+		var len = data.length;
+		for (var i = 0; i < len; i++) {
+			if(parseInt(catId)==parseInt(data[i].catId)){
+			html += '<option value="' + data[i].subCatId + '">'
+					+ data[i].subCatName + '</option>';
+			}//end of if
+		}//end of for loop
+
+		$('#sub_cat_id').html(html);
+		$("#sub_cat_id").trigger("chosen:updated");
+		
+	}//end of function  
+	
+	
 		function setDate(value) {
 			///alert("Value " +value)
 			if (value == 1) {

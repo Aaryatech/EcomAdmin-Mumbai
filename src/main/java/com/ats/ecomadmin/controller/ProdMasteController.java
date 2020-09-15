@@ -58,7 +58,7 @@ public class ProdMasteController {
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 			Info view = AccessControll.checkAccess("showUomList", "showUomList", "1", "0", "0", "0", newModuleList);
 
-			if (view.isError() == false) {
+			if (view.isError() == true) {
 
 				model = new ModelAndView("accessDenied");
 
@@ -103,6 +103,7 @@ public class ProdMasteController {
 				}
 
 				model.addObject("catList", catList);
+				model.addObject("catId", 0);
 				
 				MFilter[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFilter", map,
 						MFilter[].class);
@@ -113,8 +114,10 @@ public class ProdMasteController {
 					filterList.get(i)
 							.setExVar1(FormValidation.Encrypt(String.valueOf(filterList.get(i).getFilterId())));
 				}
-
+				System.err.println("filterList "+filterList.toString());
 				model.addObject("filterList", filterList);
+				
+				model.addObject("filterJSON", CommonUtility.toJSONString(filterList));
 				
 				SubCategory[] subCatArray = Constants.getRestTemplate().postForObject(Constants.url + "getAllActiveSubCategories", map,
 						SubCategory[].class);
