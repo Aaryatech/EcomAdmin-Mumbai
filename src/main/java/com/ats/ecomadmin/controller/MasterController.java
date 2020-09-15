@@ -1498,7 +1498,7 @@ public class MasterController {
 				map.add("compId", companyId);
 				map.add("filterTypeId", filterTypeId);
 
-				MFilter[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFilter", map,
+				MFilter[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getFiltersListByTypeId", map,
 						MFilter[].class);
 				filterList = new ArrayList<MFilter>(Arrays.asList(filterArr));
 
