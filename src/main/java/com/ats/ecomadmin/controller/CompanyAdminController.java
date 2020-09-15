@@ -19,6 +19,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ats.ecomadmin.commons.AccessControll;
@@ -27,6 +28,7 @@ import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.Customer;
+import com.ats.ecomadmin.model.CustomerAddDetail;
 import com.ats.ecomadmin.model.GetCustomerInfo;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.Tax;
@@ -372,7 +374,7 @@ public class CompanyAdminController {
 	// Created On :- 14-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Add Company
+	// Descriprion :- Add Customer
 
 	@RequestMapping(value = "/showAddCustomer", method = RequestMethod.GET)
 	public String showAddCustomer(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -409,6 +411,14 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :-Edit Customer
 
 	@RequestMapping(value = "/showEditCustomer", method = RequestMethod.GET)
 	public String showEditCustomer(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -417,7 +427,8 @@ public class CompanyAdminController {
 
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showEditCustomer", "showCustomers", "0", "0", "1", "0", newModuleList);
+			Info view = AccessControll.checkAccess("showEditCustomer", "showCustomers", "0", "0", "1", "0",
+					newModuleList);
 
 			if (view.isError() == true) {
 
@@ -429,23 +440,21 @@ public class CompanyAdminController {
 				String custId = FormValidation.DecodeKey(base64encodedString);
 
 				model.addAttribute("title", "Edit Customer");
-				
-				model.addAttribute("imgPath",  Constants.showDocSaveUrl);
 
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 
 				CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCompany",
 						CompMaster[].class);
 				List<CompMaster> userList = new ArrayList<CompMaster>(Arrays.asList(userArr));
- 			 
+
 				model.addAttribute("compList", userList);
-  
-			
+
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("custId", custId);
 				Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
 						Customer.class);
 
- 				model.addAttribute("cust", cust);
+				model.addAttribute("cust", cust);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /Customer : " + e.getMessage());
@@ -454,6 +463,15 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :-Customer List
 
 	@RequestMapping(value = "/showCustomers", method = RequestMethod.GET)
 	public String showCustomers(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -517,6 +535,13 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :-delete Customer
 	@RequestMapping(value = "/deleteCustomer", method = RequestMethod.GET)
 	public String deleteCustomer(HttpServletRequest request, HttpServletResponse response) {
 
@@ -554,6 +579,14 @@ public class CompanyAdminController {
 		}
 		return mav;
 	}
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Save Customer
 
 	@RequestMapping(value = "/insertNewCustomer", method = RequestMethod.POST)
 	public String insertNewCustomer(HttpServletRequest request, HttpServletResponse response,
@@ -637,8 +670,8 @@ public class CompanyAdminController {
 					Customer.class);
 
 			System.err.println(res.toString());
-			if (res.getCompanyId() > 0) {
-				if (companyId == 0)
+			if (res.getCustId() > 0) {
+				if (cust_id == 0)
 					session.setAttribute("successMsg", "Customer Saved Sucessfully");
 				else
 					session.setAttribute("successMsg", "Customer  Update Sucessfully");
@@ -652,6 +685,359 @@ public class CompanyAdminController {
 		}
 		return "redirect:/showCustomers";
 
+	}
+
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Show  Add CustomerAddress 
+	@RequestMapping(value = "/showAddCustomerAddress", method = RequestMethod.GET)
+	public String showAddCustomerAddress(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		try {
+
+			HttpSession session = request.getSession();
+			/*
+			 * List<ModuleJson> newModuleList = (List<ModuleJson>)
+			 * session.getAttribute("newModuleList"); Info view =
+			 * AccessControll.checkAccess("showAddCustomer", "showCustomers", "0", "1", "0",
+			 * "0", newModuleList);
+			 * 
+			 * if (view.isError() == true) {
+			 * 
+			 * mav = "accessDenied";
+			 * 
+			 * } else {
+			 */
+
+			mav = "masters/addCustAddress";
+			model.addAttribute("title", "Add Customer Address");
+
+			String base64encodedString = request.getParameter("custId");
+			String custId = FormValidation.DecodeKey(base64encodedString);
+
+			CustomerAddDetail custDet = new CustomerAddDetail();
+			model.addAttribute("custDet", custDet);
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("custId", custId);
+			Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
+					Customer.class);
+			model.addAttribute("cust", cust);
+
+			// }
+		} catch (Exception e) {
+			System.out.println("Execption in /Customer : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+	
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Show CustomerAddress list
+
+
+	@RequestMapping(value = "/showCustomerAddressList", method = RequestMethod.GET)
+	public String showCustomerAddressList(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		try {
+
+			HttpSession session = request.getSession();
+
+		/*	List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showCustomerAddressList", "showCustomerAddressList", "1", "0", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+*/
+				mav = "masters/custAddressList";
+				model.addAttribute("title", " Customer Address List");
+
+				String base64encodedString = request.getParameter("custId");
+				String custId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("custId", custId);
+				Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
+						Customer.class);
+				model.addAttribute("cust", cust);
+				map = new LinkedMultiValueMap<>();
+				map.add("custId", custId);
+
+				CustomerAddDetail[] userArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getAllCustomerDetailByCustId", map, CustomerAddDetail[].class);
+				List<CustomerAddDetail> userList = new ArrayList<CustomerAddDetail>(Arrays.asList(userArr));
+
+				for (int i = 0; i < userList.size(); i++) {
+
+					userList.get(i)
+							.setExVar1(FormValidation.Encrypt(String.valueOf(userList.get(i).getCustDetailId())));
+					userList.get(i).setExVar2(FormValidation.Encrypt(String.valueOf(userList.get(i).getCustId())));
+				}
+				model.addAttribute("custAddList", userList);
+
+			//}
+		} catch (Exception e) {
+			System.out.println("Execption in /Customer : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Save CustomerAddress
+	@RequestMapping(value = "/insertNewCustomerAddress", method = RequestMethod.POST)
+	public String insertNewCustomerAddress(HttpServletRequest request, HttpServletResponse response) {
+		int cust_id = 0;
+		try {
+
+			System.err.println("hii");
+			Date date = new Date();
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			String curDateTime = dateFormat.format(cal.getTime());
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			String address = request.getParameter("address");
+			String landmark = request.getParameter("landmark");
+			String caption = request.getParameter("caption");
+			int cityId = Integer.parseInt(request.getParameter("cityId"));
+			int areaId = Integer.parseInt(request.getParameter("areaId"));
+
+			double latitude;
+			try {
+				latitude = Double.parseDouble(request.getParameter("latitude"));
+			} catch (Exception e) {
+				latitude = 0;
+			}
+			double longitude;
+			try {
+				longitude = Double.parseDouble(request.getParameter("longitude"));
+			} catch (Exception e) {
+				longitude = 0;
+			}
+			cust_id = Integer.parseInt(request.getParameter("cust_id"));
+			int custDetailId = Integer.parseInt(request.getParameter("custDetailId"));
+			CustomerAddDetail custDet = new CustomerAddDetail();
+
+			custDet.setAddress(address);
+			custDet.setAreaId(areaId);
+			custDet.setCaption(caption);
+			custDet.setCityId(cityId);
+			custDet.setCustDetailId(custDetailId);
+			custDet.setCustId(cust_id);
+			custDet.setLandmark(landmark);
+			custDet.setLatitude(latitude);
+			custDet.setLongitude(longitude);
+			custDet.setIsActive(1);
+			custDet.setDelStatus(1);
+			custDet.setExInt1(0);
+			custDet.setExInt2(0);
+			custDet.setExInt3(0);
+			custDet.setExVar1("NA");
+			custDet.setExVar2("NA");
+			custDet.setExVar3("NA");
+			custDet.setInsertDttime(curDateTime);
+			custDet.setUpdtDttime(curDateTime);
+			custDet.setMakerUserId(userObj.getCompanyId());
+
+			CustomerAddDetail res = Constants.getRestTemplate().postForObject(Constants.url + "saveCustomerDet",
+					custDet, CustomerAddDetail.class);
+
+			System.err.println(res.toString());
+			if (res.getCustDetailId() > 0) {
+				if (custDetailId == 0)
+					session.setAttribute("successMsg", "Customer Address Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Customer Address Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Customer Address");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /insertUom : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showCustomerAddressList?custId=" + FormValidation.Encrypt(String.valueOf(cust_id));
+
+	}
+
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Delete CustomerAddress
+	@RequestMapping(value = "/deleteCustomerAddress", method = RequestMethod.GET)
+	public String deleteCustomerAddress(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession();
+		String mav = new String();
+		try {
+
+		/*	List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteCustomer", "showCustomers", "0", "0", "0", "1",
+					newModuleList);
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {*/
+
+				String base64encodedString = request.getParameter("custDetailId");
+				String custDetailId = FormValidation.DecodeKey(base64encodedString);
+
+				String base64encodedString1 = request.getParameter("custId");
+				String custId = FormValidation.DecodeKey(base64encodedString1);
+				mav = "redirect:/showCustomerAddressList?custId=" + FormValidation.Encrypt(String.valueOf(custId));
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("custDetId", Integer.parseInt(custDetailId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteCustDetById", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+			//}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteUser : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+	
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- EditCustomerAddress
+	@RequestMapping(value = "/showEditCustomerAddress", method = RequestMethod.GET)
+	public String showEditCustomerAddress(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		try {
+
+			HttpSession session = request.getSession();
+			/*
+			 * List<ModuleJson> newModuleList = (List<ModuleJson>)
+			 * session.getAttribute("newModuleList"); Info view =
+			 * AccessControll.checkAccess("showAddCustomer", "showCustomers", "0", "1", "0",
+			 * "0", newModuleList);
+			 * 
+			 * if (view.isError() == true) {
+			 * 
+			 * mav = "accessDenied";
+			 * 
+			 * } else {
+			 */
+
+			mav = "masters/addCustAddress";
+			model.addAttribute("title", "Edit Customer Address");
+
+			String base64encodedString = request.getParameter("custDetailId");
+			String custDetId = FormValidation.DecodeKey(base64encodedString);
+			
+			
+			String base64encodedString1 = request.getParameter("custId");
+			String custId = FormValidation.DecodeKey(base64encodedString1);
+
+ 			
+			
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("custDetId", custDetId);
+			CustomerAddDetail custDet = Constants.getRestTemplate().postForObject(Constants.url + "getCustDetById", map,
+					CustomerAddDetail.class);
+			model.addAttribute("custDet", custDet);
+			
+			
+			model.addAttribute("custDet", custDet);
+			 map = new LinkedMultiValueMap<>();
+			map.add("custId", custId);
+			Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
+					Customer.class);
+			model.addAttribute("cust", cust);
+
+			// }
+		} catch (Exception e) {
+			System.out.println("Execption in /Customer : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+	
+	
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :-  Check unique Cust mobile
+	
+	@RequestMapping(value = "/getCustInfo", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getUserInfo(HttpServletRequest request, HttpServletResponse response) {
+
+		Info info = new Info();
+		try {
+			int userId = 0;
+			try {
+				userId = Integer.parseInt(request.getParameter("userId"));
+			} catch (Exception e) {
+				userId = 0;
+				e.printStackTrace();
+			}
+			String mobNo = request.getParameter("mobNo");
+ 
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("mobNo", mobNo);
+			map.add("userId", userId);
+ 			Customer res = Constants.getRestTemplate().postForObject(Constants.url + "getCustByMobNo", map, Customer.class);
+ 			if (res != null) {
+				info.setError(false);
+				info.setMsg("Customer Found");
+			} else {
+				info.setError(true);
+				info.setMsg("Customer Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /getUserInfo : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
 	}
 
 }
