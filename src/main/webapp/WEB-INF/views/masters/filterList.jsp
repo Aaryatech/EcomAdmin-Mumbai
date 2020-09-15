@@ -58,7 +58,7 @@
 						<c:if test="${addAccess==0}">
 							<span class="font-size-sm text-uppercase font-weight-semibold"><a
 								class="card-title"
-								href="${pageContext.request.contextPath}/newFilter"
+								href="${pageContext.request.contextPath}/newFilter/${filterTypeId}"
 								style="color: white;"><i class="icon-add-to-list ml-2"
 									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add Filter
 									</a></span>
@@ -92,7 +92,7 @@
 									<td class="text-center"><c:if test="${editAccess==0}">
 											<div class="list-icons">
 												<a
-													href="${pageContext.request.contextPath}/editFilter?filterId=${filterList.exVar1}"
+													href="${pageContext.request.contextPath}/editFilter?filterId=${filterList.exVar1}&filterTypeId=${filterTypeId}"
 													class="list-icons-item" title="Edit"> <i
 													class="icon-database-edit2"></i>
 												</a>
@@ -151,7 +151,7 @@
 										callback : function(result) {
 											if (result) {
 												location.href = "${pageContext.request.contextPath}/deleteFilter?filterId="
-														+ uuid;
+														+ uuid+'&filterTypeId='+${filterTypeId};
 
 											}
 										}

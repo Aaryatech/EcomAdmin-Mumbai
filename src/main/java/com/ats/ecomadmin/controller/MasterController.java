@@ -12,12 +12,14 @@ import javax.mail.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.websocket.server.PathParam;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -1451,13 +1453,15 @@ public class MasterController {
 	}
 
 	/*-------------------------------------------------------------------------------*/
+
 	// Created By :- Mahendra Singh
 	// Created On :- 14-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Description :- Show All Filter
-	@RequestMapping(value = "/showFilterList", method = RequestMethod.GET)
-	public String showFilterList(HttpServletRequest request, HttpServletResponse response, Model model) {
+	// Description :- Show Filter
+	@RequestMapping(value = "/showFilter/{filterTypeId}", method = RequestMethod.GET)
+	public String showFilter(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable("filterTypeId") int filterTypeId, Model model) {
 
 		String mav = new String();
 
@@ -1465,8 +1469,8 @@ public class MasterController {
 
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showFilterList", "showFilterList", "1", "0", "0", "0",
-					newModuleList);
+			Info view = AccessControll.checkAccess("showFilter/" + filterTypeId, "showFilter/" + filterTypeId, "1", "0",
+					"0", "0", newModuleList);
 
 			if (view.isError() == true) {
 
@@ -1480,7 +1484,18 @@ public class MasterController {
 				List<MFilter> filterList = new ArrayList<MFilter>();
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+				map = new LinkedMultiValueMap<>();
+				map.add("filterTypeId", filterTypeId);
+				FilterTypes filterType = Constants.getRestTemplate().postForObject(Constants.url + "getFilterTypeById",
+						map, FilterTypes.class);
+
+				model.addAttribute("title", filterType.getFilterTypeName() + " List");
+				model.addAttribute("filterTypeId", filterTypeId);
+
+				map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
+				map.add("filterTypeId", filterTypeId);
 
 				MFilter[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFilter", map,
 						MFilter[].class);
@@ -1493,14 +1508,14 @@ public class MasterController {
 				}
 
 				model.addAttribute("filterList", filterList);
-				model.addAttribute("title", "Filter List");
+
 				// model.addAttribute("imageUrl", Constants.showDocSaveUrl);
-				Info add = AccessControll.checkAccess("showFilterList", "showFilterList", "0", "1", "0", "0",
-						newModuleList);
-				Info edit = AccessControll.checkAccess("showFilterList", "showFilterList", "0", "0", "1", "0",
-						newModuleList);
-				Info delete = AccessControll.checkAccess("showFilterList", "showFilterList", "0", "0", "0", "1",
-						newModuleList);
+				Info add = AccessControll.checkAccess("showFilter/" + filterTypeId, "showFilter/" + filterTypeId, "0",
+						"1", "0", "0", newModuleList);
+				Info edit = AccessControll.checkAccess("showFilter/" + filterTypeId, "showFilter/" + filterTypeId, "0",
+						"0", "1", "0", newModuleList);
+				Info delete = AccessControll.checkAccess("showFilter/" + filterTypeId, "showFilter/" + filterTypeId,
+						"0", "0", "0", "1", newModuleList);
 
 				if (add.isError() == false) {
 					// System.out.println(" add Accessable ");
@@ -1518,7 +1533,7 @@ public class MasterController {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("Execption in /showFilterList : " + e.getMessage());
+			System.out.println("Execption in /showFilter : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return mav;
@@ -1529,15 +1544,17 @@ public class MasterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Redirect To Add Filter Page
-	@RequestMapping(value = "/newFilter", method = RequestMethod.GET)
-	public String newFilter(HttpServletRequest request, HttpServletResponse response, Model model) {
+	@RequestMapping(value = "/newFilter/{filterTypeId}", method = RequestMethod.GET)
+	public String newFilter(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable("filterTypeId") int filterTypeId, Model model) {
 
 		String mav = new String();
 
 		try {
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("newFilter", "showFilterList", "0", "1", "0", "0", newModuleList);
+			Info view = AccessControll.checkAccess("newFilter/" + filterTypeId, "showFilter/" + filterTypeId, "0", "1",
+					"0", "0", newModuleList);
 
 			if (view.isError() == true) {
 
@@ -1549,20 +1566,20 @@ public class MasterController {
 				MFilter filter = new MFilter();
 
 				model.addAttribute("filter", filter);
-				model.addAttribute("title", "Add Filter");
+				model.addAttribute("filterTypeId", filterTypeId);
 
 				int companyId = (int) session.getAttribute("companyId");
 
-				List<FilterTypes> filterTypeList = new ArrayList<FilterTypes>();
-
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("compId", companyId);
+				map = new LinkedMultiValueMap<>();
+				map.add("filterTypeId", filterTypeId);
 
-				FilterTypes[] filterTypeArr = Constants.getRestTemplate()
-						.postForObject(Constants.url + "getActiveFilterTypes", map, FilterTypes[].class);
-				filterTypeList = new ArrayList<FilterTypes>(Arrays.asList(filterTypeArr));
+				FilterTypes filterType = Constants.getRestTemplate().postForObject(Constants.url + "getFilterTypeById",
+						map, FilterTypes.class);
 
-				model.addAttribute("filterType", filterTypeList);
+				model.addAttribute("title", "Add " + filterType.getFilterTypeName());
+
+				model.addAttribute("filterType", filterType.getFilterTypeName());
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /newFilter : " + e.getMessage());
@@ -1578,18 +1595,19 @@ public class MasterController {
 	// Description :- Insert Filter database
 	@RequestMapping(value = "/insertFilter", method = RequestMethod.POST)
 	public String insertFilter(HttpServletRequest request, HttpServletResponse response) {
-
+		int filterTypeId = 0;
 		try {
 
 			HttpSession session = request.getSession();
 
 			int filterId = Integer.parseInt(request.getParameter("filterId"));
+			filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
 			int compId = (int) session.getAttribute("companyId");
 
 			MFilter filter = new MFilter();
 
 			filter.setFilterId(filterId);
-			filter.setFilterTypeId(Integer.parseInt(request.getParameter("filterType")));
+			filter.setFilterTypeId(filterTypeId);
 			filter.setIsParent(Integer.parseInt(request.getParameter("isParent")));
 			filter.setAllowToCopy(Integer.parseInt(request.getParameter("allowCopy")));
 			filter.setIsActive(Integer.parseInt(request.getParameter("isActive")));
@@ -1625,7 +1643,7 @@ public class MasterController {
 			System.out.println("Execption in /insertFilterType : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showFilterList";
+		return "redirect:/showFilter/" + filterTypeId;
 
 	}
 
@@ -1640,9 +1658,11 @@ public class MasterController {
 		String mav = new String();
 
 		try {
+			int filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("editFilter", "showFilterList", "0", "0", "1", "0", newModuleList);
+			Info view = AccessControll.checkAccess("editFilter", "showFilter/" + filterTypeId, "0", "0", "1", "0",
+					newModuleList);
 
 			if (view.isError() == true) {
 
@@ -1665,17 +1685,18 @@ public class MasterController {
 						MFilter.class);
 
 				model.addAttribute("filter", filter);
+				model.addAttribute("filterTypeId", filterTypeId);
 
 				map = new LinkedMultiValueMap<>();
-				map.add("compId", companyId);
+				map.add("filterTypeId", filterTypeId);
 
-				FilterTypes[] filterTypeArr = Constants.getRestTemplate()
-						.postForObject(Constants.url + "getActiveFilterTypes", map, FilterTypes[].class);
-				List<FilterTypes> filterTypeList = new ArrayList<FilterTypes>(Arrays.asList(filterTypeArr));
+				FilterTypes filterType = Constants.getRestTemplate().postForObject(Constants.url + "getFilterTypeById",
+						map, FilterTypes.class);
 
-				model.addAttribute("filterType", filterTypeList);
+				model.addAttribute("title", "Edit " + filterType.getFilterTypeName());
 
-				model.addAttribute("title", "Edit Filter");
+				model.addAttribute("filterType", filterType.getFilterTypeName());
+
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /editFilter : " + e.getMessage());
@@ -1694,16 +1715,19 @@ public class MasterController {
 
 		HttpSession session = request.getSession();
 		String mav = new String();
+		int filterTypeId = 0;
 		try {
+			filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
+
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("deleteFilter", "showFilterList", "0", "0", "0", "1",
+			Info view = AccessControll.checkAccess("deleteFilter", "showFilter/" + filterTypeId, "0", "0", "0", "1",
 					newModuleList);
 			if (view.isError() == true) {
 
 				mav = "accessDenied";
 
 			} else {
-				mav = "redirect:/showFilterList";
+				mav = "redirect:/showFilter/" + filterTypeId;
 				String base64encodedString = request.getParameter("filterId");
 				String filterId = FormValidation.DecodeKey(base64encodedString);
 

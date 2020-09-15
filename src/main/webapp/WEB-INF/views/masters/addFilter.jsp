@@ -70,7 +70,7 @@
 								<!--  -->
 								<span class="font-size-sm text-uppercase font-weight-semibold"><a
 									class="card-title"
-									href="${pageContext.request.contextPath}/showFilterList"
+									href="${pageContext.request.contextPath}/showFilter/${filterTypeId}"
 									style="color: white;" class="card-title"><i
 										class="icon-list2 ml-2"></i>&nbsp;&nbsp;&nbsp;&nbsp;View List</a></span>
 							</div>
@@ -109,28 +109,12 @@
 
 										
 											<label class="col-form-label font-weight-bold col-lg-2"
-												for="filterType">Filter Type <span
+												for="filterType">Filter Type<span
 												class="text-danger">* </span>:
 											</label> 
 											<div class="col-lg-4">
-												<select class="form-control select-search" data-fouc
-												name="filterType" id="filterType" data-placeholder="Select User Type">
-												<option value=""></option>
-
-												<c:forEach items="${filterType}" var="list"
-													varStatus="count">
-													<c:choose>
-														<c:when test="${list.filterTypeId==filter.filterTypeId}">
-															<option selected value="${list.filterTypeId}">${list.filterTypeName}</option>
-														</c:when>
-														<c:otherwise>
-															<option value="${list.filterTypeId}">${list.filterTypeName}</option>
-														</c:otherwise>
-													</c:choose>
-												</c:forEach>
-											</select> <span class="validation-invalid-label text-danger"
-												id="error_filterType" style="display: none;">This
-												field is required.</span>
+											<input type="text" 	class="form-control" value="${filterType}" readonly="readonly">
+											<input type="hidden" class="form-control"value="${filterTypeId}" name="filterTypeId">
 										</div>
 									</div>
 
@@ -352,6 +336,9 @@
 
 			});
 		});
+		$('#sortNo').on('input', function() {
+			 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+			});
 	</script>
 	<script type="text/javascript">
 		function trim(el) {
