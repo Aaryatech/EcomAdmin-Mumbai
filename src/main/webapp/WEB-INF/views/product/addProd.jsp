@@ -337,18 +337,7 @@
 												field is required.</span>
 										</div>
 
-										<label class="col-form-label col-lg-2" for="weight_ids">
-											Available In Weights <span style="color: red">* </span>:
-										</label>
-										<div class="col-lg-4">
-											<select
-												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data
-												placeholder="Select Weight" id="weight_ids"
-												name="weight_ids">
-											</select> <span class="validation-invalid-label" id="error_weight_ids"
-												style="display: none;">This field is required.</span>
-										</div>
+										
 									</div>
 
 
@@ -493,7 +482,7 @@
 											<input type="text" class="form-control numbersOnly"
 												placeholder="No of Message Characters" id="no_of_msg_char"
 												name="no_of_msg_char" autocomplete="off"> <span
-												class="validation-invalid-label" id="error_no_of_msg_char"
+												class="validation-invalid-label" id="error_no_of_msg_chars"
 												style="display: none;">This field is required.</span>
 										</div>
 									</div>
@@ -637,7 +626,7 @@
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
-												placeholder="Rate Setting Type" id="rate_setting_type" name="rate_setting_type">
+												placeholder="Rate Setting Type" onchange="showWeightDiv()" id="rate_setting_type" name="rate_setting_type">
 												
 												<option value="0">Per UOM</option>
 												<option value="1">Per Kg</option>
@@ -650,6 +639,39 @@
 										
 									</div>
 									
+									<div class="col-lg-12" id="weight_div">
+									<div class="form-group row">
+									<label class="col-form-label col-lg-2" for="max_wt">
+											Max Weights <span style="color: red">* </span>:
+										</label>
+										<div class="col-lg-2">
+										<input type="text" class="form-control numbersOnly"
+												placeholder="Maximum Weight Range" maxlength="3" id="max_wt" name="max_wt"
+												autocomplete="off"> <span
+												class="validation-invalid-label" id="error_max_wt"
+												style="display: none;">This field is required.</span>
+								
+										</div>
+										<div class="col-lg-1">
+										<button type="button" onclick="show_apply_weight()"
+													class="btn btn-primary"
+													id="11" >Apply</button>
+										</div>
+									<label class="col-form-label col-lg-2" for="weight_ids">
+											Available In Weights <span style="color: red">* </span>:
+										</label>
+										<div class="col-lg-4">
+											<select
+												class="form-control form-control-select2 select2-hidden-accessible"
+												data-fouc="" aria-hidden="true" data
+												placeholder="Select Weight" id="weight_ids"
+												name="weight_ids" multiple>
+											</select> <span class="validation-invalid-label" id="error_weight_ids"
+												style="display: none;">This field is required.</span>
+										</div>
+									
+									</div>
+									</div>
 									<div class="form-group row">
 										<label class="col-form-label col-lg-2" for="profilePic">
 											Primary Image: </label>
@@ -716,6 +738,32 @@
 
 	</div>
 	<!-- /page content -->
+	<script type="text/javascript">
+	function showWeightDiv(){
+		var rateType=document.getElementById("rate_setting_type").value;
+if(parseInt(rateType)==2){
+		document.getElementById("weight_div").style="display:block";
+}else{
+	document.getElementById("weight_div").style.display="none";
+}
+	}//end of function showWeightDiv
+	
+	function show_apply_weight(){
+		var maxWt=document.getElementById("max_wt").value;
+		var weightHtml;
+		var p = "";
+		var q = "Select Weight";
+		weightHtml += '<option disabled value="'+p+'" selected>' + q
+				+ '</option>';
+				weightHtml += '</option>';
+		for(var i=0.5;i<=parseFloat(maxWt);i=i+0.5){
+			weightHtml += '<option value="'+i+'">'
+			+ i +  ' Kg</option>';
+		}
+		$('#weight_ids').html(weightHtml);
+		$("#weight_ids").trigger("chosen:updated");
+	}//end of function show_apply_weight
+	</script>
 	<script type="text/javascript">
 	var prod_statushtml;
 	var p = "";
@@ -904,28 +952,6 @@
 		$("#sub_cat_id").trigger("chosen:updated");
 		
 	}//end of function  
-	
-	
-		function setDate(value) {
-			///alert("Value " +value)
-			if (value == 1) {
-				//alert(value)
-				//document.getElementById("relDate").removeAttribute("required");
-				document.getElementById("abc").style.display = "none";
-				document.getElementById("xyz").style.display = "none";
-
-				//alert(value)
-			} else {
-				//alert(value)
-				//document.getElementById("relDate").setAttribute("required","true");
-				document.getElementById("abc").style.display = "block";
-				document.getElementById("xyz").style.display = "block";
-
-				//alert(value)
-
-			}
-
-		}
 	</script>
 	<script>
 		function checkAdd() {
@@ -987,318 +1013,266 @@
 												var isError = false;
 												var errMsg = "";
 
-												if (!$("#empCode").val()) {
-
+												if (!$("#cat_id").val()) {
 													isError = true;
-
-													$("#error_empCode").show()
-													//return false;
+													$("#error_cat_id").show()
 												} else {
-													$("#error_empCode").hide()
+													$("#error_cat_id").hide()
 												}
 
-												if (!$("#fname").val()) {
-
+												if (!$("#sub_cat_id").val()) {
 													isError = true;
-
-													$("#error_fname").show()
-
+													$("#error_sub_cat_id").show()
 												} else {
-													$("#error_fname").hide()
-												}
-
-												if (!$("#mname").val()) {
-
-													isError = true;
-
-													$("#error_mname").show()
-
-												} else {
-													$("#error_mname").hide()
-												}
-
-												if (!$("#sname").val()) {
-
-													isError = true;
-
-													$("#error_sname").show()
-
-												} else {
-													$("#error_sname").hide()
-												}
-
-												if ($("#locId2").val() == "") {
-
-													isError = true;
-
-													$("#error_locId2").show()
-
-												} else {
-													$("#error_locId2").hide()
-												}
-
-												if (!$("#locId").val()) {
-
-													isError = true;
-
-													$("#error_locId").show()
-
-												} else {
-													$("#error_locId").hide()
-												}
-
-												if (!$("#catId").val()) {
-
-													isError = true;
-
-													$("#error_catId").show()
-
-												} else {
-													$("#error_catId").hide()
-												}
-												if (!$("#typeId").val()) {
-
-													isError = true;
-
-													$("#error_typeId").show()
-
-												} else {
-													$("#error_typeId").hide()
-												}
-												if (!$("#deptId").val()) {
-
-													isError = true;
-
-													$("#error_deptId").show()
-
-												} else {
-													$("#error_deptId").hide()
-												}
-												if (!$("#permntAdd").val()) {
-
-													isError = true;
-
-													$("#error_permntAdd")
-															.show()
-
-												} else {
-													$("#error_permntAdd")
-															.hide()
-												}
-
-												if (!$("#bloodGrp").val()) {
-
-													isError = true;
-
-													$("#error_bloodGrp").show()
-
-												} else {
-													$("#error_bloodGrp").hide()
-												}
-
-												if (!$("#tempAdd").val()) {
-
-													isError = true;
-
-													$("#error_tempAdd").show()
-
-												} else {
-													$("#error_tempAdd").hide()
-												}
-
-												if (!$("#emgContPrsn1").val()) {
-
-													isError = true;
-
-													$("#error_emgContPrsn1")
-															.show()
-
-												} else {
-													$("#error_emgContPrsn1")
-															.hide()
-												}
-
-												/* if (!$("#emgContPrsn2").val()) {
-
-													isError = true;
-
-													$("#error_emgContPrsn2")
-															.show()
-
-												} else {
-													$("#error_emgContPrsn2")
-															.hide()
-												} */
-
-												if (!$("#ratePerHr").val()) {
-
-													isError = true;
-
-													$("#error_ratePerHr")
-															.show()
-
-												} else {
-													$("#error_ratePerHr")
-															.hide()
-												}
-
-												if (!$("#prevsExpYr").val()) {
-
-													isError = true;
-
-													$("#error_prevsExpYr")
-															.show()
-
-												} else {
-													$("#error_prevsExpYr")
-															.hide()
-												}
-
-												if (!$("#prevsExpMn").val()) {
-
-													isError = true;
-
-													$("#error_prevsExpMn")
-															.show()
-
-												} else {
-													$("#error_prevsExpMn")
-															.hide()
-												}
-
-												if (!$("#mobile1").val()
-														|| !validateMobile($(
-																"#mobile1")
-																.val())) {
-
-													isError = true;
-
-													if (!$("#mobile1").val()) {
-														document
-																.getElementById("error_mobile1").innerHTML = "This field is required.";
-													} else {
-														document
-																.getElementById("error_mobile1").innerHTML = "Enter valid Mobile No.";
-													}
-
-													$("#error_mobile1").show()
-
-												} else {
-
-													if ($("#mobile1Exist")
-															.val() == 1) {
-
-														$("#error_mobile1")
-																.show()
-													} else {
-														$("#error_mobile1")
-																.hide()
-													}
-
-												}
-
-												if (!$("#emgContNo1").val()
-														|| !validateMobile($(
-																"#emgContNo1")
-																.val())) {
-
-													isError = true;
-
-													if (!$("#emgContNo1").val()) {
-														document
-																.getElementById("error_emgContNo1").innerHTML = "This field is required.";
-													} else {
-														document
-																.getElementById("error_emgContNo1").innerHTML = "Enter valid Mobile No.";
-													}
-
-													$("#error_emgContNo1")
-															.show()
-
-												} else {
-													$("#error_emgContNo1")
-															.hide()
-												}
-
-												if ($("#emgContNo2").val() != ""
-														&& !validateMobile($(
-																"#emgContNo2")
-																.val())) {
-													isError = true;
-													document
-															.getElementById("error_emgContNo2").innerHTML = "Enter valid Mobile No.";
-													$("#error_emgContNo2")
-															.show()
-												} else {
-													$("#error_emgContNo2")
-															.hide()
+													$("#error_sub_cat_id").hide()
 												}
 												
-										//for alternate contact no.
-										
-										
-											if ($("#mobile2").val() != ""
-														&& !validateMobile($(
-																"#mobile2")
-																.val())) {
+												if (!$("#prod_name").val()) {
 													isError = true;
-													document
-															.getElementById("error_emgContNo2_alt").innerHTML = "Enter valid Mobile No.";
-													$("#error_emgContNo2_alt")
-															.show()
+													$("#error_prod_name").show()
 												} else {
-													$("#error_emgContNo2_alt")
-															.hide()
+													$("#error_prod_name").hide()
 												}
+												
+												if (!$("#tax_id").val()) { $("#error_tax_id").show();
+												isError = true;
+													} else {
+														$("#error_tax_id").hide()
+													}	
+
+													if (!$("#sort_no").val()) { $("#error_sort_no").show();
+												isError = true;
+													} else {
+														$("#error_sort_no").hide()
+													}	
+
+													if (!$("#min_qty").val()) { $("#error_min_qty").show();
+												isError = true;
+													} else {
+														$("#error_min_qty").hide()
+													}	
+
+													if (!$("#shelf_life").val()) { $("#error_shelf_life").show();
+												isError = true;
+													} else {
+														$("#error_shelf_life").hide()
+													}
 													
-												 
-												if (!$("#email").val()
-														|| !validateEmail($(
-																"#email").val())) {
-
-													isError = true;
-
-													if (!$("#email").val()) {
-														document
-																.getElementById("error_email").innerHTML = "This field is required.";
+													if (!$("#is_return_allow").val()) { $("#error_is_return_allow").show();
+												isError = true;
 													} else {
-														document
-																.getElementById("error_email").innerHTML = "Enter valid email.";
+														$("#error_is_return_allow").hide()
 													}
 
-													$("#error_email").show()
 
-												} else {
-
-													if ($("#emailExist").val() == 1) {
-
-														$("#error_email")
-																.show()
+												if ($("#is_return_allow").val()==1){
+												if (!$("#return_per").val()) { $("#error_return_per").show();
+												isError = true;
 													} else {
-														$("#error_email")
-																.hide()
+														$("#error_return_per").hide()
+													}
+												}else{
+												$("#return_per").val()=0;
+												}
+
+												if (!$("#uom_id").val()) { $("#error_uom_id").show();
+												isError = true;
+													} else {
+														$("#error_uom_id").hide()
+													}
+												if (!$("#shape_id").val()) { $("#error_shape_id").show();
+												isError = true;
+													} else {
+														$("#error_shape_id").hide()
 													}
 
+
+												if (!$("#is_sameDay_del").val()) { $("#error_is_sameDay_del").show();
+												isError = true;
+													} else {
+														$("#error_is_sameDay_del").hide()
+													}
+
+
+												if ($("#is_sameDay_del").val()==1){
+												if (!$("#sameDay_timeSlot").val()) { $("#error_sameDay_timeSlot").show();
+												isError = true;
+													} else {
+														$("#error_sameDay_timeSlot").hide()
+													}
+												}else{
+												$("#sameDay_timeSlot").val()=0;
 												}
 
-												if (!$("#uname").val()) {
+												if (!$("#prod_type_id").val()) { $("#error_prod_type_id").show();
+												isError = true;
+													} else {
+														$("#error_prod_type_id").hide();
+													}
 
-													isError = true;
 
-													$("#error_uname").show()
 
-												} else {
-													$("#error_uname").hide()
+												if (!$("#flav_ids").val()) { $("#error_flav_ids").show();
+												isError = true;
+													} else {
+														$("#error_flav_ids").hide();
+													}
+
+												if (!$("#prod_status").val()) { $("#error_prod_status").show();
+												isError = true;
+													} else {
+														$("#error_prod_status").hide();
+													}
+
+												if (!$("#book_b4").val()) { $("#error_book_b4").show();
+												isError = true;
+													} else {
+														$("#error_book_b4").hide();
+													}
+												if (!$("#event_ids").val()) { $("#error_event_ids").show();
+												isError = true;
+													} else {
+														$("#error_event_ids").hide();
+													}
+
+												if (!$("#char_limit_yn").val()) { $("#error_char_limit_yn").show();
+												isError = true;
+													} else {
+														$("#error_char_limit_yn").hide();
+													}
+
+
+
+												if (!$("#no_of_alpha").val()) {
+														 $("#error_no_of_alpha").show();
+														isError = true;
+													} else {
+														$("#error_no_of_alpha").hide()
+													}	
+
+
+
+												if (!$("#no_of_alpha").val()) {
+														 $("#error_no_of_alpha").show();
+														isError = true;
+													} else {
+														$("#error_no_of_alpha").hide()
+													}
+
+
+												if ($("#is_msg_on_cake").val()==1) {
+
+												if ($("#no_of_msg_char").val()<1)
+												{
+														 $("#error_no_of_msg_char").show();
+														isError = true;
 												}
-												if (!$("#upass").val()) {
-
-													isError = true;
-
-													$("#error_upass").show()
-
-												} else {
-													$("#error_upass").hide()
+													 else {
+														$("#error_no_of_msg_char").hide()
+													}
 												}
+												else{
+												$("#no_of_msg_char").val()=0;
+												}
+												
+
+
+												if (!$("#bread_id").val()) {
+														 $("#error_bread_id").show();
+														isError = true;
+													} else {
+														$("#error_bread_id").hide()
+													}
+												if (!$("#cream_id").val()) {
+														 $("#error_cream_id").show();
+														isError = true;
+													} else {
+														$("#error_cream_id").hide()
+													}
+
+												if (!$("#layering_cream_id").val()) {
+														 $("#error_layering_cream_id").show();
+														isError = true;
+													} else {
+														$("#error_layering_cream_id").hide()
+													}
+												if (!$("#topping_cream_id").val()) {
+														 $("#error_topping_cream_id").show();
+														isError = true;
+													} else {
+														$("#error_topping_cream_id").hide()
+													}
+
+												if (!$("#appl_tags").val()) {
+														 $("#error_appl_tags").show();
+														isError = true;
+													} else {
+														$("#error_appl_tags").hide()
+													}
+
+												if (!$("#prod_desc").val()) {
+														 $("#error_prod_desc").show();
+														isError = true;
+													} else {
+														$("#error_prod_desc").hide()
+													}
+
+												if (!$("#Ingredients").val()) {
+														 $("#error_Ingredients").show();
+														isError = true;
+													} else {
+														$("#error_Ingredients").hide()
+													}
+
+
+												if (!$("#prep_time").val()) {
+														 $("#error_prep_time").show();
+														isError = true;
+													} else {
+														$("#error_prep_time").hide()
+													}
+
+												if (!$("#is_veg").val()) {
+														 $("#error_is_veg").show();
+														isError = true;
+													} else {
+														$("#error_is_veg").hide()
+													}
+
+												if (!$("#rate_setting_type").val()) {
+														 $("#error_rate_setting_type").show();
+														isError = true;
+													} else {
+														$("#error_rate_setting_type").hide()
+													}
+
+
+
+												if ($("#rate_setting_type").val()==2)
+												{
+												if (!$("#max_wt").val()) {		
+
+												 $("#error_max_wt").show();
+														isError = true;
+												}
+													 else {
+														$("#error_max_wt").hide()
+													}
+												}
+												else{
+												$("#error_max_wt").val()=0;
+												}
+
+												if (!$("#weight_ids").val()) {		
+
+												 $("#error_weight_ids").show();
+														isError = true;
+												}
+													 else {
+														$("#error_weight_ids").hide();
+													}
+												
+
 												if (!isError) {
 
 													var x = true;
