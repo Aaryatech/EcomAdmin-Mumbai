@@ -1230,7 +1230,7 @@ if(parseInt(rateType)==2){
 														isError = true;
 													} else {
 														$("#error_prep_time").hide()
-													}
+			 										}
 
 												if (!$("#is_veg").val()) {
 														 $("#error_is_veg").show();
