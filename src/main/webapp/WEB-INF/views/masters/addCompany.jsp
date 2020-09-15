@@ -150,7 +150,7 @@
 											for="email">Email <span class="text-danger"> </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="email"
+											<input type="text"
 												class="form-control maxlength-badge-position" maxlength="70"
 												autocomplete="off" onchange="trim(this)"
 												value="${comp.compEmailAddress}" name="email" id="email">
@@ -282,11 +282,11 @@
 										<div class="col-lg-4">
 											<select class="form-control select-search" data-fouc
 												name="compGstType" id="compGstType"
-												data-placholder="Select Department">
+												data-placholder="Select GST Type">
 												<option value=""></option>
 												<option value="1" ${comp.compGstType==1 ? 'selected' : '' }>CGST</option>
 												<option value="2" ${comp.compGstType==2 ? 'selected' : '' }>IGST</option>
-												<option value="3" ${comp.compGstType==3 ? 'selected' : '' }>SGSt</option>
+												<option value="3" ${comp.compGstType==3 ? 'selected' : '' }>SGST</option>
 												<%-- <c:forEach items="${desigList}" var="list" varStatus="count">
 													<c:choose>
 														<c:when test="${list.designationId==comp.designationId}">
@@ -762,6 +762,17 @@
 											});
 						});
 	</script>
+	<script type="text/javascript">
+		var loadFile = function(event) {
+			try {
+				var image = document.getElementById('output');
+				image.src = URL.createObjectURL(event.target.files[0]);
+			} catch (err) {
+				console.log(err);
+			}
+		};
+	</script>
+	
 	<script type="text/javascript">
 		function trim(el) {
 			el.value = el.value.replace(/(^\s*)|(\s*$)/gi, ""). // removes leading and trailing spaces
