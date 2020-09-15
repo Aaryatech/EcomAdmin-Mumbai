@@ -60,7 +60,7 @@
 								class="card-title"
 								href="${pageContext.request.contextPath}/newFilter/${filterTypeId}"
 								style="color: white;"><i class="icon-add-to-list ml-2"
-									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add Filter
+									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add ${filterType}
 									</a></span>
 						</c:if>
 					</div>
@@ -72,8 +72,8 @@
 						<thead>
 							<tr>
 								<th width="5%">SR. No.</th>
-								<th>Filter Name</th>
-								<th>Filter Type</th>
+								<th>${filterType} Name</th>
+								<%-- <th>${filterType}</th> --%>
 								<th>Status</th>
 								<th>Is Cost Affect</th>
 								<th>Is Used Filter</th>
@@ -85,7 +85,7 @@
 								<tr>
 									<td>${count.index+1}</td>
 									<td>${filterList.filterName}</td>
-									<td>${filterList.exVar3}</td>
+									<%-- <td>${filterList.exVar3}</td> --%>
 									<td>${filterList.isActive==1 ? 'Active' : 'In-Active'}</td>
 									<td>${filterList.costAffect==1 ? 'Yes' : 'No'}</td>
 									<td>${filterList.usedForFilter==1 ? 'Yes' : 'No'}</td>

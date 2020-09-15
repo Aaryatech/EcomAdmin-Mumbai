@@ -94,7 +94,7 @@
 
 
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="filterName">Filter Name<span class="text-danger">*
+											for="filterName">${filterType} Name<span class="text-danger">*
 										</span>:
 										</label>
 										<div class="col-lg-4">
@@ -188,7 +188,7 @@
 										</div>
 
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="isUsedFilter">Is Used Filter <span
+											for="isUsedFilter">Is Used<span
 											class="text-danger">* </span>:
 										</label>
 										<div class="col-lg-4">

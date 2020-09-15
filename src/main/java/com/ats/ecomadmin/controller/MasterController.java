@@ -1491,6 +1491,7 @@ public class MasterController {
 						map, FilterTypes.class);
 
 				model.addAttribute("title", filterType.getFilterTypeName() + " List");
+				model.addAttribute("filterType", filterType.getFilterTypeName());
 				model.addAttribute("filterTypeId", filterTypeId);
 
 				map = new LinkedMultiValueMap<>();
