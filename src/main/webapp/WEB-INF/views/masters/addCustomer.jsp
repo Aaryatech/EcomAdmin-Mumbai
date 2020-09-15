@@ -28,9 +28,8 @@
 </head>
 
 <body class="sidebar-xs">
-	<c:url value="/getUserInfo" var="getUserInfo"></c:url>
-	<c:url value="/getUserInfoByEmail" var="getUserInfoByEmail" />
-	<!-- Main navbar -->
+	<c:url value="/getCustInfo" var="getCustInfo"></c:url>
+ 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
 
@@ -428,12 +427,14 @@
 											});
 						});
 
-		$("#mob_no").change(function() {
-			var mobNo = $("#mob_no").val();
-			var userId = $("#user_id").val();
+		$("#custMobileNo").change(function() {
+			var mobNo = $("#custMobileNo").val();
+			var userId = $("#cust_id").val();
+			
+		 
 			//alert(mobNo)
 
-			$.getJSON('${getUserInfo}', {
+			$.getJSON('${getCustInfo}', {
 				mobNo : mobNo,
 				userId : userId,
 				ajax : 'true',
@@ -441,8 +442,8 @@
 
 				if (data.error == false) {
 					$("#unq_mob").show();
-					$("#mob_no").val('');
-					document.getElementById("mob_no").focus();
+					$("#custMobileNo").val('');
+					document.getElementById("custMobileNo").focus();
 				} else {
 					$("#unq_mob").hide();
 				}

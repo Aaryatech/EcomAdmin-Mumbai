@@ -53,16 +53,16 @@
 						class="card-header bg-blue text-white d-flex justify-content-between">
 						<span
 							class="font-size-sm text-uppercase font-weight-semibold card-title">
-							${title}</span>
+							${title}-${cust.custName}</span>
 						<!--  -->
-						<c:if test="${addAccess==0}">
+						<%-- <c:if test="${addAccess==0}"> --%>
 							<span class="font-size-sm text-uppercase font-weight-semibold"><a
 								class="card-title"
-								href="${pageContext.request.contextPath}/showAddCustomer"
+								href="${pageContext.request.contextPath}/showCustomers"
 								style="color: white;"><i class="icon-add-to-list ml-2"
-									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add
-									Customer</a></span>
-						</c:if>
+									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp; 
+									Customer List</a></span>
+						<%-- </c:if> --%>
 					</div>
 
 					<div class="form-group row"></div>
@@ -72,59 +72,42 @@
 						<thead>
 							<tr>
 								<th width="5%">SR. No.</th>
-								<th>Customer Name</th>
-								<th>Mobile No.</th>
-
-								<th>Company Name</th>
+								<th>Address</th>
+								<th>Landmark</th>
+								<th>Caption</th>
 								<th>City</th>
-								<th>Birth Date</th>
+								<th>Area</th>
 								<th class="text-center">Actions</th>
 							</tr>
 						</thead>
 						<tbody>
-							<c:forEach items="${custList}" var="custList" varStatus="count">
+							<c:forEach items="${custAddList}" var="custAddList"
+								varStatus="count">
 								<tr>
 									<td>${count.index+1}</td>
-									<td>${custList.custName}</td>
-									<td>${custList.custMobileNo}</td>
-									<td>${custList.companyName}</td>
-									<td>${custList.cityId==1 ? 'Nasik' :custList.cityId==2 ? 'Mumbai' : 'Pune'}</td>
+									<td>${custAddList.address}</td>
+									<td>${custAddList.landmark}</td>
+									<td>${custAddList.caption}</td>
+									<td>${custAddList.cityId==1 ? 'Nasik' :custAddList.cityId==2 ? 'Mumbai' : 'Pune'}</td>
+									<td>${custAddList.areaId==1 ? 'Area1' :custAddList.areaId==2 ? 'Area2' : 'Area3'}</td>
 
-									<td>${custList.dateOfBirth}</td>
-									<td class="text-center"><c:if test="${editAccess==0}">
+									<td class="text-center"><%-- <c:if test="${editAccess==0}"> --%>
 											<div class="list-icons">
 												<a
-													href="${pageContext.request.contextPath}/showEditCustomer?custId=${custList.exVar1}"
+													href="${pageContext.request.contextPath}/showEditCustomerAddress?custDetailId=${custAddList.exVar1}&custId=${custAddList.exVar2}"
 													class="list-icons-item" title="Edit"> <i
 													class="icon-database-edit2"></i>
 												</a>
 											</div>
-										</c:if> <c:if test="${deleteAccess==0}">
+										<%-- </c:if> <c:if test="${deleteAccess==0}"> --%>
 											<div class="list-icons">
 												<a href="javascript:void(0)"
 													class="list-icons-item text-danger-600 bootbox_custom"
-													data-uuid="${custList.exVar1}" data-popup="tooltip"
+													data-uuid="${custAddList.exVar1}"   	data-uuid1="${custAddList.exVar2}" data-popup="tooltip"
 													title="" data-original-title="Delete"><i
 													class="icon-trash"></i></a>
 											</div>
-										</c:if>
-										
-										
-										<div class="list-icons">
-												<a
-													href="${pageContext.request.contextPath}/showAddCustomerAddress?custId=${custList.exVar1}"
-													class="list-icons-item" title="Add Address"> <i
-													class="icon-database-edit2"></i>
-												</a>
-											</div>
-											
-												<div class="list-icons">
-												<a
-													href="${pageContext.request.contextPath}/showCustomerAddressList?custId=${custList.exVar1}"
-													class="list-icons-item" title="Address List"> <i
-													class="icon-database-edit2"></i>
-												</a>
-											</div></td>
+										<%-- </c:if> --%></td>
 								</tr>
 							</c:forEach>
 						</tbody>
@@ -154,6 +137,7 @@
 						'click',
 						function() {
 							var uuid = $(this).data("uuid") // will return the number 123
+							var uuid1 = $(this).data("uuid1") // will return the number 123
 							bootbox
 									.confirm({
 										title : 'Confirm ',
@@ -170,8 +154,8 @@
 										},
 										callback : function(result) {
 											if (result) {
-												location.href = "${pageContext.request.contextPath}/deleteCustomer?custId="
-														+ uuid;
+												location.href = "${pageContext.request.contextPath}/deleteCustomerAddress?custDetailId="
+														+ uuid+"&custId="+uuid1;
 
 											}
 										}
