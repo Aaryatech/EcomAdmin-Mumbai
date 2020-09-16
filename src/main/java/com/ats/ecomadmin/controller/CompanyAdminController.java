@@ -26,11 +26,13 @@ import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
+import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.Customer;
 import com.ats.ecomadmin.model.CustomerAddDetail;
 import com.ats.ecomadmin.model.GetCustomerInfo;
 import com.ats.ecomadmin.model.Info;
+import com.ats.ecomadmin.model.SubCategory;
 import com.ats.ecomadmin.model.Tax;
 import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.User;
@@ -233,7 +235,7 @@ public class CompanyAdminController {
 			comp.setUpdtDttime(curDateTime);
 			comp.setPaymentGatewayApplicable(paymentGatewayApplicable);
 			comp.setPaymentGatewayLink(paymentGatewayLink);
-			comp.setMakerUserId(userObj.getCompanyId());
+			comp.setMakerUserId(userObj.getUserId());
 
 			System.err.println(comp.toString());
 			CompMaster res = Constants.getRestTemplate().postForObject(Constants.url + "saveCompany", comp,
@@ -663,7 +665,7 @@ public class CompanyAdminController {
 			cust.setExVar3("NA");
 			cust.setInsertDttime(curDateTime);
 			cust.setUpdtDttime(curDateTime);
-			cust.setMakerUserId(userObj.getCompanyId());
+			cust.setMakerUserId(userObj.getUserId());
 
 			System.err.println(cust.toString());
 			Customer res = Constants.getRestTemplate().postForObject(Constants.url + "saveCustomer", cust,
@@ -862,7 +864,7 @@ public class CompanyAdminController {
 			custDet.setExVar3("NA");
 			custDet.setInsertDttime(curDateTime);
 			custDet.setUpdtDttime(curDateTime);
-			custDet.setMakerUserId(userObj.getCompanyId());
+			custDet.setMakerUserId(userObj.getUserId());
 
 			CustomerAddDetail res = Constants.getRestTemplate().postForObject(Constants.url + "saveCustomerDet",
 					custDet, CustomerAddDetail.class);
@@ -1039,5 +1041,309 @@ public class CompanyAdminController {
 		}
 		return info;
 	}
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :-  Check unique Cust mobile
+
+	
+	@RequestMapping(value = "/showAddSubCat", method = RequestMethod.GET)
+	public String showAddSubCat(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		HttpSession session = request.getSession();
+		List<Category> catList = new ArrayList<>();
+		try {
+
+ 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showAddCompany", "showSubCatList", "0", "1", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+			
+				mav = "masters/addSubCat";
+				SubCategory subCat = new SubCategory();
+				
+				int compId = (int) session.getAttribute("companyId");
+
+				model.addAttribute("subCat", subCat);
+				model.addAttribute("title", "Add Sub Category");
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+				
+				CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCompany",
+						CompMaster[].class);
+				List<CompMaster> userList = new ArrayList<CompMaster>(Arrays.asList(userArr));
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+						Category[].class);
+				catList = new ArrayList<Category>(Arrays.asList(catArr));
+ 
+				model.addAttribute("catList", catList);
+ 				model.addAttribute("compList", userList);
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /newUom : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+	
+	
+	@RequestMapping(value = "/showEditSubCat", method = RequestMethod.GET)
+	public String showEditSubCat(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		HttpSession session = request.getSession();
+		List<Category> catList = new ArrayList<>();
+		try {
+
+ 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showEditSubCat", "showSubCatList", "0", "0", "1", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+			
+				mav = "masters/addSubCat";
+		 
+				
+				String base64encodedString = request.getParameter("subCatId");
+				String subCatId = FormValidation.DecodeKey(base64encodedString);
+				
+				
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("subCatId", subCatId);
+				SubCategory subCat = Constants.getRestTemplate().postForObject(Constants.url + "getSubCatById", map,
+						SubCategory.class);
+ 				
+				int compId = (int) session.getAttribute("companyId");
+
+				model.addAttribute("subCat", subCat);
+				model.addAttribute("title", "Edit Sub Category");
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+				
+				CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCompany",
+						CompMaster[].class);
+				List<CompMaster> userList = new ArrayList<CompMaster>(Arrays.asList(userArr));
+				 map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+						Category[].class);
+				catList = new ArrayList<Category>(Arrays.asList(catArr));
+ 
+				model.addAttribute("catList", catList);
+ 				model.addAttribute("compList", userList);
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /newUom : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+	
+	
+	@RequestMapping(value = "/showSubCatList", method = RequestMethod.GET)
+	public String showSubCatList(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+
+		try {
+			HttpSession session = request.getSession();
+			List<SubCategory> subCatList = new ArrayList<SubCategory>();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showSubCatList", "showSubCatList", "1", "0", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/subCatList";
+				int compId = (int) session.getAttribute("companyId");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				SubCategory[] subCatArray = Constants.getRestTemplate().postForObject(Constants.url + "getAllActiveSubCategories", map,
+						SubCategory[].class);
+				subCatList = new ArrayList<SubCategory>(Arrays.asList(subCatArray));
+
+				for (int i = 0; i < subCatList.size(); i++) {
+					subCatList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(subCatList.get(i).getSubCatId())));
+				}
+				model.addAttribute("subCatList", subCatList);
+				model.addAttribute("title", "Sub Category List");
+
+				Info add = AccessControll.checkAccess("showSubCatList", "showSubCatList", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showSubCatList", "showSubCatList", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showSubCatList", "showSubCatList", "0", "0", "0", "1",
+						newModuleList);
+
+				if (add.isError() == false) { // System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) { // System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) { //
+					System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
+
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /Customer : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+  
+	
+	
+	
+	@RequestMapping(value = "/insertNewSubCat", method = RequestMethod.POST)
+	public String insertNewSubCat(HttpServletRequest request, HttpServletResponse response,	@RequestParam("doc") MultipartFile doc) {
+		int cust_id = 0;
+		try {
+
+			System.err.println("hii");
+			Date date = new Date();
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			String curDateTime = dateFormat.format(cal.getTime());
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+			String profileImage=new  String();
+			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
+
+				System.err.println("In If ");
+
+				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
+
+				try {
+					new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+				} catch (Exception e) {
+				}
+
+			} else {
+				System.err.println("In else ");
+				profileImage = request.getParameter("editImg");
+
+			}
+
+			String subCatName = request.getParameter("subCatName");
+			String subCatDesc = request.getParameter("subCatDesc");
+			String subCatPrefix = request.getParameter("subCatPrefix");
+ 			String subCatCode = request.getParameter("subCatCode");
+
+ 			int catId = Integer.parseInt(request.getParameter("catId"));
+ 			int allowToCopy = Integer.parseInt(request.getParameter("allowToCopy"));
+			int subCatId = Integer.parseInt(request.getParameter("subCatId"));
+ 			int companyId = Integer.parseInt(request.getParameter("companyId"));
+ 			int sortNo = Integer.parseInt(request.getParameter("sortNo"));
+
+		 
+			SubCategory subcat = new SubCategory();
+			subcat.setAllowToCopy(allowToCopy);
+			subcat.setCatId(catId);
+			subcat.setSubCatId(subCatId);
+			subcat.setCompanyId(companyId);	
+			subcat.setImageName(profileImage);
+			subcat.setIsParent(0);
+			subcat.setSubCatPrefix(subCatPrefix);
+ 			subcat.setSubCatName(subCatName);
+ 			subcat.setSubCatDesc(subCatDesc);
+ 			subcat.setSubCatCode(subCatCode);
+ 			subcat.setSortNo(sortNo);
+ 			subcat.setIsActive(1);
+			subcat.setDelStatus(1);
+			subcat.setExInt1(0);
+			subcat.setExInt2(0);
+			subcat.setExInt3(0);
+			subcat.setExVar1("NA");
+			subcat.setExVar2("NA");
+			subcat.setExVar3("NA");
+			subcat.setExFloat1(0);
+			subcat.setExFloat2(0);
+			subcat.setExFloat3(0);
+
+		 
+			SubCategory res = Constants.getRestTemplate().postForObject(Constants.url + "saveSubCat",
+					subcat, SubCategory.class);
+
+			System.err.println(res.toString());
+			if (res.getSubCatId() > 0) {
+				if (subCatId == 0)
+					session.setAttribute("successMsg", "SubCategory Address Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "SubCategory Address Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save SubCategory Address");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /insertUom : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showSubCatList";
+
+	}
+	@RequestMapping(value = "/deleteSubCat", method = RequestMethod.GET)
+	public String deleteSubCat(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession();
+		String mav = new String();
+		try {
+
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteSubCat", "showSubCatList", "0", "0", "0", "1", newModuleList);
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "redirect:/showSubCatList";
+				String base64encodedString = request.getParameter("subCatId");
+				String subCatId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("subCatId", Integer.parseInt(subCatId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteSubCatById", map, Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteUser : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+
+
 
 }
