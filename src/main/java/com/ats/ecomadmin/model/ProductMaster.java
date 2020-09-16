@@ -1,15 +1,16 @@
 package com.ats.ecomadmin.model;
 
-import java.util.Date;
 
- 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
- 
+/*****************************
+//Created Date: 16-09-2020
+//UpdateDate:16-09-2020
+//Description: Product Master Admin Side Bean m_product
+//Devloped By(Devloper Name): Sachin
+//Updated By(Devloper Name): Sachin
+ ******************************/
 public class ProductMaster {
 
 	
-	 
 	private int productId;
 	
 	private String productCode; //Based On sub Category prefix
@@ -113,10 +114,14 @@ public class ProductMaster {
 	private String insertDttime;
 	private int copyItemId;
 	
+	private int maxWt;
 	
-	
-	
-	
+	public int getMaxWt() {
+		return maxWt;
+	}
+	public void setMaxWt(int maxWt) {
+		this.maxWt = maxWt;
+	}
 	public int getIsVeg() {
 		return isVeg;
 	}
@@ -454,16 +459,16 @@ public class ProductMaster {
 		this.exFloat3 = exFloat3;
 	}
 	
- 	public String getExDate1() {
+	public String getExDate1() {
 		return exDate1;
 	}
- 	public void setExDate1(String exDate1) {
+	public void setExDate1(String exDate1) {
 		this.exDate1 = exDate1;
 	}
- 	public String getExDate2() {
+	public String getExDate2() {
 		return exDate2;
 	}
- 	public void setExDate2(String exDate2) {
+	public void setExDate2(String exDate2) {
 		this.exDate2 = exDate2;
 	}
 	
@@ -509,11 +514,12 @@ public class ProductMaster {
 				+ ", typeOfBread=" + typeOfBread + ", typeOfCream=" + typeOfCream + ", layeringCream=" + layeringCream
 				+ ", toppingCream=" + toppingCream + ", productDesc=" + productDesc + ", ingerdiants=" + ingerdiants
 				+ ", applicableTags=" + applicableTags + ", companyId=" + companyId + ", prodImagePrimary="
-				+ prodImagePrimary + ", productImages=" + productImages + ", exInt1=" + exInt1 + ", exInt2=" + exInt2
-				+ ", exInt3=" + exInt3 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3
-				+ ", exVar4=" + exVar4 + ", exFloat1=" + exFloat1 + ", exFloat2=" + exFloat2 + ", exFloat3=" + exFloat3
-				+ ", exDate1=" + exDate1 + ", exDate2=" + exDate2 + ", makerUserId=" + makerUserId + ", updtDttime="
-				+ updtDttime + ", insertDttime=" + insertDttime + ", copyItemId=" + copyItemId + "]";
+				+ prodImagePrimary + ", productImages=" + productImages + ", isVeg=" + isVeg + ", prepTime=" + prepTime
+				+ ", rateSettingType=" + rateSettingType + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exInt3="
+				+ exInt3 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3 + ", exVar4=" + exVar4
+				+ ", exFloat1=" + exFloat1 + ", exFloat2=" + exFloat2 + ", exFloat3=" + exFloat3 + ", exDate1="
+				+ exDate1 + ", exDate2=" + exDate2 + ", makerUserId=" + makerUserId + ", updtDttime=" + updtDttime
+				+ ", insertDttime=" + insertDttime + ", copyItemId=" + copyItemId + ", maxWt=" + maxWt + "]";
 	}
 	
 	

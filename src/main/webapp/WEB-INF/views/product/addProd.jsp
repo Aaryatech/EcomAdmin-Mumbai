@@ -47,19 +47,33 @@
 						</div> -->
 						<!-- /title -->
 						<div class="card">
+						<div
+						class="card-header bg-blue text-white d-flex justify-content-between">
+						<span
+							class="font-size-sm text-uppercase font-weight-semibold card-title">
+							Add Product</span>
+						<!--  -->
+						<c:if test="${addAccess==0}">
+							<span class="font-size-sm text-uppercase font-weight-semibold"><a
+								class="card-title"
+								href="${pageContext.request.contextPath}/showProdList"
+								style="color: white;"><i class="icon-add-to-list ml-2"
+									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Product List</a></span>
+						</c:if>
+					</div>
 							<div class="card-header header-elements-inline">
-								<table width="100%">
+								<%-- <table width="100%">
 									<tr width="100%">
 										<td width="60%"><h5 class="card-title">Add Product</h5></td>
 										<td width="40%" align="right">
-											<%--  <a
+											 <a
 									href="${pageContext.request.contextPath}/showEmpList"
 									class="breadcrumb-elements-item">
 										<button type="button" class="btn btn-primary">Employee List </button>
-								</a> --%>
+								</a>
 										</td>
 									</tr>
-								</table>
+								</table> --%>
 							</div>
 
 							<div class="card-body">
@@ -101,9 +115,9 @@
 								%>
 
 								<form
-									action="${pageContext.request.contextPath}/submitInsertEmployeeUserInfo"
-									id="submitInsertEmp" method="post"
-									enctype="multipart/form-data">
+									action="${pageContext.request.contextPath}/submitProductSave"
+									id="submitProdForm" method="post"
+									>
 									<div class="form-group row">
 										<label class="col-form-label col-lg-2" for="cat_id">
 											Select Category <span style="color: red">* </span>:
@@ -167,7 +181,7 @@
 											<input type="text" class="form-control  "
 												placeholder="Product Short Name" id="short_name"
 												name="short_name" autocomplete="off"> <span
-												class="validation-invalid-label" id="error_prod_name"
+												class="validation-invalid-label" id="error_short_name"
 												style="display: none;">This field is required.</span>
 										</div>
 									</div>
@@ -237,7 +251,7 @@
 												placeholder="Return Allowed" id="is_return_allow"
 												name="is_return_allow">
 												<option selected value="1">Yes</option>
-												<option selected value="0">No</option>
+												<option  value="0">No</option>
 											</select> <span class="validation-invalid-label"
 												id="error_is_return_allow" style="display: none;">This
 												field is required.</span>
@@ -300,7 +314,7 @@
 												placeholder="Select Same Day Delivery" id="is_sameDay_del"
 												name="is_sameDay_del">
 												<option selected value="1">Yes</option>
-												<option selected value="0">No</option>
+												<option value="0">No</option>
 											</select> <span class="validation-invalid-label"
 												id="error_is_sameDay_del" style="display: none;">This
 												field is required.</span>
@@ -312,7 +326,7 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data
+												data-fouc="" aria-hidden="true" multiple data
 												placeholder="Select Same Day Time Slot"
 												id="sameDay_timeSlot" name="sameDay_timeSlot">
 											</select> <span class="validation-invalid-label" id="error_sameDay_timeSlot"
@@ -348,7 +362,7 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data
+												data-fouc="" multiple aria-hidden="true" data
 												placeholder="Select Flavors" id="flav_ids" name="flav_ids">
 											
 											</select> <span class="validation-invalid-label" id="error_flav_ids"
@@ -405,7 +419,7 @@
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Limit Yes No" id="char_limit_yn"
 												name="char_limit_yn">
-												<option value="1">Yes</option>
+												<option selected value="1">Yes</option>
 												<option value="0">No</option>
 												
 											</select> <span class="validation-invalid-label"
@@ -418,8 +432,8 @@
 										</label>
 										<div class="col-lg-4">
 											<input type="text" class="form-control numbersOnly"
-												placeholder="No of Characters" id="no_of_alpha"
-												name="no_of_char" autocomplete="off"> <span
+												placeholder="No of Alphabets" id="no_of_alpha"
+												name="no_of_alpha" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_no_of_alpha"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -429,32 +443,32 @@
 									<div class="form-group row">
 										<div class="col-lg-2">
 											<input type="checkbox" class="form-control" id="is_cover_ph"
-												value="1" name="is_cover_ph" autocomplete="off">
+												  name="is_cover_ph" autocomplete="off">
 										</div>
 
 										<div class="col-lg-2">
 											<input type="checkbox" class="form-control" id="is_base_ph"
-												value="1" name="is_base_ph" autocomplete="off">
+												  name="is_base_ph" autocomplete="off">
 										</div>
 
 										<div class="col-lg-2">
 											<input type="checkbox" class="form-control" id="is_sp_inst"
-												value="1" name="is_sp_inst" autocomplete="off">
+												  name="is_sp_inst" autocomplete="off">
 										</div>
 
 										<div class="col-lg-2">
 											<input type="checkbox" class="form-control"
-												id="is_msg_on_cake" value="1" name="is_msg_on_cake"
+												id="is_msg_on_cake" name="is_msg_on_cake"
 												autocomplete="off">
 										</div>
 
 										<div class="col-lg-2">
 											<input type="checkbox" class="form-control" id="is_slot_used"
-												value="1" name="is_slot_used" autocomplete="off">
+												  name="is_slot_used" autocomplete="off">
 										</div>
 										<div class="col-lg-2">
 											<input type="checkbox" class="form-control" id="is_used"
-												value="1" name="is_used" autocomplete="off">
+												  name="is_used" autocomplete="off">
 										</div>
 									</div>
 
@@ -482,8 +496,14 @@
 											<input type="text" class="form-control numbersOnly"
 												placeholder="No of Message Characters" id="no_of_msg_char"
 												name="no_of_msg_char" autocomplete="off"> <span
-												class="validation-invalid-label" id="error_no_of_msg_chars"
+												class="validation-invalid-label" id="error_no_of_msg_char"
 												style="display: none;">This field is required.</span>
+										</div>
+										
+										<label class="col-form-label col-lg-2" for="no_of_msg_char">
+											 <span style="color: red"> </span>
+										</label>
+										<div class="col-lg-4">
 										</div>
 									</div>
 
@@ -775,9 +795,6 @@ if(parseInt(rateType)==2){
 	var event_idshtml;
 	var p = "";
 	var q = "Select Events";
-	event_idshtml += '<option disabled value="'+p+'" selected>' + q
-			+ '</option>';
-			event_idshtml += '</option>';
 	
 	var bread_idhtml;
 	var p = "";
@@ -810,9 +827,6 @@ if(parseInt(rateType)==2){
 	var flav_idshtml;
 	var p = "";
 	var q = "Select Flavor";
-	flav_idshtml += '<option disabled value="'+p+'" selected>' + q
-			+ '</option>';
-	flav_idshtml += '</option>';
 	
 	var shape_idhtml;
 	var p = "";
@@ -824,9 +838,7 @@ if(parseInt(rateType)==2){
 	var sameDay_timeSlothtml;
 	var p = "";
 	var q = "Select Time Slot";
-	sameDay_timeSlothtml += '<option disabled value="'+p+'" selected>' + q
-			+ '</option>';
-	sameDay_timeSlothtml += '</option>';
+	
 	
 	var prod_type_idhtml;
 	var p = "";
@@ -838,9 +850,6 @@ if(parseInt(rateType)==2){
 	var appl_tagshtml;
 	var p = "";
 	var q = "Select Applicable Tags";
-	appl_tagshtml += '<option disabled value="'+p+'" selected>' + q
-			+ '</option>';
-    appl_tagshtml += '</option>';
 	
 	data=${filterJSON};
 	
@@ -1006,176 +1015,197 @@ if(parseInt(rateType)==2){
 		$(document)
 				.ready(
 						function($) {
-
-							$("#submitInsertEmp")
+							$("#submitProdForm")
 									.submit(
 											function(e) {
 												var isError = false;
 												var errMsg = "";
-
 												if (!$("#cat_id").val()) {
 													isError = true;
-													$("#error_cat_id").show()
+													$("#error_cat_id").show();
 												} else {
-													$("#error_cat_id").hide()
+													$("#error_cat_id").hide();
 												}
 
 												if (!$("#sub_cat_id").val()) {
 													isError = true;
-													$("#error_sub_cat_id").show()
+													$("#error_sub_cat_id").show();
 												} else {
-													$("#error_sub_cat_id").hide()
+													$("#error_sub_cat_id").hide();
 												}
 												
 												if (!$("#prod_name").val()) {
 													isError = true;
-													$("#error_prod_name").show()
+													$("#error_prod_name").show();
 												} else {
-													$("#error_prod_name").hide()
+													$("#error_prod_name").hide();
 												}
+												if (!$("#short_name").val()) { 
+													$("#error_short_name").show();
+													isError = true;
+												} else {
+													$("#error_short_name").hide();
+												}	
 												
-												if (!$("#tax_id").val()) { $("#error_tax_id").show();
-												isError = true;
+												if (!$("#tax_id").val()) {
+													isError = true;
+													$("#error_tax_id").show();
 													} else {
-														$("#error_tax_id").hide()
+														$("#error_tax_id").hide();
 													}	
 
-													if (!$("#sort_no").val()) { $("#error_sort_no").show();
-												isError = true;
+													if (!$("#sort_no").val()) { 
+														$("#error_sort_no").show();
+														isError = true;
 													} else {
-														$("#error_sort_no").hide()
+														$("#error_sort_no").hide();
 													}	
-
-													if (!$("#min_qty").val()) { $("#error_min_qty").show();
-												isError = true;
-													} else {
-														$("#error_min_qty").hide()
-													}	
-
-													if (!$("#shelf_life").val()) { $("#error_shelf_life").show();
-												isError = true;
-													} else {
-														$("#error_shelf_life").hide()
-													}
 													
-													if (!$("#is_return_allow").val()) { $("#error_is_return_allow").show();
-												isError = true;
+													
+
+													if (!$("#min_qty").val()) { 
+														$("#error_min_qty").show();
+														isError = true;
+													} else {
+														$("#error_min_qty").hide();
+													}	
+
+													if (!$("#shelf_life").val()) { 
+														$("#error_shelf_life").show();
+														isError = true;
+													} else {
+														$("#error_shelf_life").hide();
+													}
+													if (!$("#is_return_allow").val()) { 
+														$("#error_is_return_allow").show();
+														isError = true;
 													} else {
 														$("#error_is_return_allow").hide()
 													}
 
 
-												if ($("#is_return_allow").val()==1){
-												if (!$("#return_per").val()) { $("#error_return_per").show();
-												isError = true;
+												if (parseInt($("#is_return_allow").val())==1){
+													if (!$("#return_per").val()) { 
+													$("#error_return_per").show();
+													isError = true;
 													} else {
 														$("#error_return_per").hide()
 													}
 												}else{
-												$("#return_per").val()=0;
+												//$("#return_per").val()=0;
+												$("#error_return_per").hide();
 												}
 
-												if (!$("#uom_id").val()) { $("#error_uom_id").show();
-												isError = true;
+												if (!$("#uom_id").val()) { 
+													$("#error_uom_id").show();
+													isError = true;
 													} else {
 														$("#error_uom_id").hide()
 													}
-												if (!$("#shape_id").val()) { $("#error_shape_id").show();
-												isError = true;
+												
+												if (!$("#shape_id").val()) { 
+													$("#error_shape_id").show();
+													isError = true;
 													} else {
 														$("#error_shape_id").hide()
 													}
 
 
-												if (!$("#is_sameDay_del").val()) { $("#error_is_sameDay_del").show();
-												isError = true;
+												if (!$("#is_sameDay_del").val()) { 
+													$("#error_is_sameDay_del").show();
+													isError = true;
 													} else {
 														$("#error_is_sameDay_del").hide()
 													}
 
-
-												if ($("#is_sameDay_del").val()==1){
-												if (!$("#sameDay_timeSlot").val()) { $("#error_sameDay_timeSlot").show();
-												isError = true;
+												if (parseInt($("#is_sameDay_del").val())==1){
+													var timeSlotCount = $('#sameDay_timeSlot > option:selected');
+											         if(timeSlotCount.length == 0){
+														$("#error_sameDay_timeSlot").show();
+														isError = true;
 													} else {
-														$("#error_sameDay_timeSlot").hide()
+														$("#error_sameDay_timeSlot").hide();
 													}
 												}else{
-												$("#sameDay_timeSlot").val()=0;
+													//$("#sameDay_timeSlot").val()=0;
+														$("#error_sameDay_timeSlot").hide();
 												}
 
-												if (!$("#prod_type_id").val()) { $("#error_prod_type_id").show();
-												isError = true;
+												if (!$("#prod_type_id").val()) { 
+													$("#error_prod_type_id").show();
+													isError = true;
 													} else {
 														$("#error_prod_type_id").hide();
 													}
 
-
-
-												if (!$("#flav_ids").val()) { $("#error_flav_ids").show();
+												var flavCount = $('#flav_ids > option:selected');
+										         if(flavCount.length == 0){
+													$("#error_flav_ids").show();
 												isError = true;
 													} else {
 														$("#error_flav_ids").hide();
 													}
 
-												if (!$("#prod_status").val()) { $("#error_prod_status").show();
-												isError = true;
+												if (!$("#prod_status").val()) { 
+													$("#error_prod_status").show();
+													isError = true;
 													} else {
 														$("#error_prod_status").hide();
 													}
 
-												if (!$("#book_b4").val()) { $("#error_book_b4").show();
-												isError = true;
+												if (!$("#book_b4").val()) { 
+													$("#error_book_b4").show();
+													isError = true;
 													} else {
 														$("#error_book_b4").hide();
 													}
-												if (!$("#event_ids").val()) { $("#error_event_ids").show();
-												isError = true;
+												var eventCount = $('#event_ids > option:selected');
+										         if(eventCount.length == 0){
+													$("#error_event_ids").show();
+													isError = true;
 													} else {
 														$("#error_event_ids").hide();
 													}
 
-												if (!$("#char_limit_yn").val()) { $("#error_char_limit_yn").show();
-												isError = true;
+												if (!$("#char_limit_yn").val()) { 
+													$("#error_char_limit_yn").show();
+													isError = true;
 													} else {
 														$("#error_char_limit_yn").hide();
 													}
 
-
-
-												if (!$("#no_of_alpha").val()) {
-														 $("#error_no_of_alpha").show();
-														isError = true;
-													} else {
-														$("#error_no_of_alpha").hide()
-													}	
-
-
-
+												
+												if (parseInt($("#char_limit_yn").val())==1) { 
 												if (!$("#no_of_alpha").val()) {
 														 $("#error_no_of_alpha").show();
 														isError = true;
 													} else {
 														$("#error_no_of_alpha").hide()
 													}
+												}else{
+													$("#error_no_of_alpha").hide()
+												}
 
 
-												if ($("#is_msg_on_cake").val()==1) {
 
-												if ($("#no_of_msg_char").val()<1)
-												{
+												//if (parseInt($("#is_msg_on_cake").val())==1) {
+													if($("#is_msg_on_cake").prop('checked')){
+														alert("Checked True");
+														//if (parseInt($("#no_of_msg_char").val())<1)
+															if (!$("#no_of_msg_char").val()) {
+															alert("Checked True in if Length <1");
 														 $("#error_no_of_msg_char").show();
 														isError = true;
-												}
+													}
 													 else {
-														$("#error_no_of_msg_char").hide()
+														 alert("Checked true value proper");
+														$("#error_no_of_msg_char").hide();
 													}
 												}
 												else{
-												$("#no_of_msg_char").val()=0;
+													alert("Checked false");
+													$("#error_no_of_msg_char").hide();
 												}
-												
-
 
 												if (!$("#bread_id").val()) {
 														 $("#error_bread_id").show();
@@ -1183,6 +1213,7 @@ if(parseInt(rateType)==2){
 													} else {
 														$("#error_bread_id").hide()
 													}
+												
 												if (!$("#cream_id").val()) {
 														 $("#error_cream_id").show();
 														isError = true;
@@ -1196,6 +1227,7 @@ if(parseInt(rateType)==2){
 													} else {
 														$("#error_layering_cream_id").hide()
 													}
+												
 												if (!$("#topping_cream_id").val()) {
 														 $("#error_topping_cream_id").show();
 														isError = true;
@@ -1203,7 +1235,8 @@ if(parseInt(rateType)==2){
 														$("#error_topping_cream_id").hide()
 													}
 
-												if (!$("#appl_tags").val()) {
+												var tagCount = $('#appl_tags > option:selected');
+										         if(tagCount.length == 0){
 														 $("#error_appl_tags").show();
 														isError = true;
 													} else {
@@ -1246,9 +1279,7 @@ if(parseInt(rateType)==2){
 														$("#error_rate_setting_type").hide()
 													}
 
-
-
-												if ($("#rate_setting_type").val()==2)
+												if (parseInt($("#rate_setting_type").val())==2)
 												{
 												if (!$("#max_wt").val()) {		
 
@@ -1260,24 +1291,25 @@ if(parseInt(rateType)==2){
 													}
 												}
 												else{
-												$("#error_max_wt").val()=0;
+												//$("#error_max_wt").val()=0;
 												}
 
-												if (!$("#weight_ids").val()) {		
-
+												if (parseInt($("#rate_setting_type").val())==2)
+												{
+												var wtIds = $('#weight_ids > option:selected');
+										         if(wtIds.length == 0){
 												 $("#error_weight_ids").show();
 														isError = true;
 												}
 													 else {
 														$("#error_weight_ids").hide();
 													}
-												
-
+												}
+												alert("Is Error "+isError)
 												if (!isError) {
-
+													alert("! Is Error ")
 													var x = true;
 													if (x == true) {
-
 														document
 																.getElementById("submtbtn").disabled = true;
 														return true;
