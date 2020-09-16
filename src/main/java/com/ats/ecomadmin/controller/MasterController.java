@@ -36,6 +36,7 @@ import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.Info;
+import com.ats.ecomadmin.model.Language;
 import com.ats.ecomadmin.model.MFilter;
 import com.ats.ecomadmin.model.Tax;
 import com.ats.ecomadmin.model.Uom;
@@ -2286,6 +2287,264 @@ public class MasterController {
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /deleteFranchise : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	/*----------------------------------------------------------------------------------*/
+	// Created By :- Mahendra Singh
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Show Language List
+	@RequestMapping(value = "/showLanguage", method = RequestMethod.GET)
+	public String addBasicMaster(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showLanguage", "showLanguage", "1", "0", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/languageList";
+
+				User userObj = (User) session.getAttribute("userObj");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", userObj.getCompanyId());
+				Language[] langArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllLanguages", map,
+						Language[].class);
+				List<Language> langList = new ArrayList<Language>(Arrays.asList(langArr));
+
+				for (int i = 0; i < langList.size(); i++) {
+
+					langList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(langList.get(i).getLangId())));
+				}
+
+				model.addAttribute("langList", langList);
+
+				model.addAttribute("title", "Language List");
+			}
+			Info add = AccessControll.checkAccess("showLanguage", "showLanguage", "0", "1", "0", "0", newModuleList);
+			Info edit = AccessControll.checkAccess("showLanguage", "showLanguage", "0", "0", "1", "0", newModuleList);
+			Info delete = AccessControll.checkAccess("showLanguage", "showLanguage", "0", "0", "0", "1", newModuleList);
+
+			if (add.isError() == false) {
+				// System.out.println(" add Accessable ");
+				model.addAttribute("addAccess", 0);
+
+			}
+			if (edit.isError() == false) {
+				// System.out.println(" edit Accessable ");
+				model.addAttribute("editAccess", 0);
+			}
+			if (delete.isError() == false) {
+				// System.out.println(" delete Accessable ");
+				model.addAttribute("deleteAccess", 0);
+
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /showLanguage : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect To Add Language Page
+	@RequestMapping(value = "/addLanguage", method = RequestMethod.GET)
+	public String addLanguage(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+
+		Language lang = new Language();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("addLanguage", "showLanguage", "0", "1", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addLanguage";
+				model.addAttribute("lang", lang);
+				model.addAttribute("title", "Add Language");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /addLanguage : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	@RequestMapping(value = "/insertLanguage", method = RequestMethod.POST)
+	public String insertLanguage(HttpServletRequest request, HttpServletResponse response) {
+		Language lang = new Language();
+
+		HttpSession session = request.getSession();
+		User userObj = (User) session.getAttribute("userObj");
+
+		try {
+			int langId = Integer.parseInt(request.getParameter("lang_id"));
+
+			lang.setDelStatus(1);
+			lang.setExInt1(userObj.getCompanyId());
+			lang.setExInt2(0);
+			lang.setExVar1("NA");
+			lang.setExVar2("NA");
+			lang.setCompanyId(1);
+			lang.setIsActive(Integer.parseInt(request.getParameter("language")));
+			lang.setLangCode(request.getParameter("language_code").toUpperCase());
+			lang.setLangId(langId);
+			lang.setLangName(request.getParameter("language_name"));
+
+			Language langRes = Constants.getRestTemplate().postForObject(Constants.url + "addLanguage", lang,
+					Language.class);
+
+			if (langRes.getLangId() > 0) {
+				if (langId == 0)
+					session.setAttribute("successMsg", "Language Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Language Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Language");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /addLanguage : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showLanguage";
+	}
+
+	@RequestMapping(value = "/getLangInfoByCode", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getLangInfoByCode(HttpServletRequest request, HttpServletResponse response) {
+
+		Info info = new Info();
+		try {
+			String code = request.getParameter("code");
+			int langId = Integer.parseInt(request.getParameter("langId"));
+
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("code", code);
+			map.add("langId", langId);
+			map.add("compId", userObj.getCompanyId());
+
+			Language langRes = Constants.getRestTemplate().postForObject(Constants.url + "getLanguageByCode", map,
+					Language.class);
+
+			if (langRes != null) {
+				info.setError(false);
+				info.setMsg("Language Found");
+			} else {
+				info.setError(true);
+				info.setMsg("Language Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /getLangInfoByCode : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Edit Language
+	@RequestMapping(value = "/editLang", method = RequestMethod.GET)
+	public String editLang(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("editLang", "showLanguage", "0", "0", "1", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addLanguage";
+
+				User userObj = (User) session.getAttribute("userObj");
+
+				String base64encodedString = request.getParameter("langId");
+				String langId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("langId", Integer.parseInt(langId));
+				map.add("compId", userObj.getCompanyId());
+
+				Language lang = Constants.getRestTemplate().postForObject(Constants.url + "getLanguageById", map,
+						Language.class);
+				model.addAttribute("lang", lang);
+
+				model.addAttribute("title", "Edit Language");
+
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /editLang : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Delete Language
+	@RequestMapping(value = "/deleteLang", method = RequestMethod.GET)
+	public String deleteLang(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession();
+		String mav = new String();
+		try {
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteUser", "showLanguage", "0", "0", "0", "1", newModuleList);
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				String base64encodedString = request.getParameter("langId");
+				String langId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("langId", Integer.parseInt(langId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteLanguageById", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+				mav = "redirect:/showLanguage";
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteLang : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return mav;
