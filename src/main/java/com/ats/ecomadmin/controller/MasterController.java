@@ -31,7 +31,10 @@ import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
+import com.ats.ecomadmin.model.Area;
+import com.ats.ecomadmin.model.AreaCityList;
 import com.ats.ecomadmin.model.Category;
+import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.Franchise;
@@ -2548,5 +2551,558 @@ public class MasterController {
 			e.printStackTrace();
 		}
 		return mav;
+	}
+
+	/*----------------------------------------------------------------------------------------*/
+	// Created By :- Mahendra Singh
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Show Cities
+	@RequestMapping(value = "/showCities", method = RequestMethod.GET)
+	public String showCities(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showCities", "showCities", "1", "0", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/cityList";
+
+				int compId = (int) session.getAttribute("companyId");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				City[] cityArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCities", map,
+						City[].class);
+				List<City> cityList = new ArrayList<City>(Arrays.asList(cityArr));
+
+				for (int i = 0; i < cityList.size(); i++) {
+
+					cityList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(cityList.get(i).getCityId())));
+				}
+
+				model.addAttribute("cityList", cityList);
+
+				model.addAttribute("title", "City/Village List");
+			}
+			Info add = AccessControll.checkAccess("showCities", "showCities", "0", "1", "0", "0", newModuleList);
+			Info edit = AccessControll.checkAccess("showCities", "showCities", "0", "0", "1", "0", newModuleList);
+			Info delete = AccessControll.checkAccess("showCities", "showCities", "0", "0", "0", "1", newModuleList);
+
+			if (add.isError() == false) {
+				// System.out.println(" add Accessable ");
+				model.addAttribute("addAccess", 0);
+
+			}
+			if (edit.isError() == false) {
+				// System.out.println(" edit Accessable ");
+				model.addAttribute("editAccess", 0);
+			}
+			if (delete.isError() == false) {
+				// System.out.println(" delete Accessable ");
+				model.addAttribute("deleteAccess", 0);
+
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /showCities : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect to Add New City Page
+	@RequestMapping(value = "/addNewCity", method = RequestMethod.GET)
+	public String addNewCity(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		City city = new City();
+		try {
+			HttpSession session = request.getSession();
+
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("addNewCity", "showCities", "0", "1", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/addCity";
+				model.addAttribute("city", city);
+				model.addAttribute("title", "Add City/Village");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /showCities : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	@RequestMapping(value = "/getCityInfoByCode", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getCityInfoByCode(HttpServletRequest request, HttpServletResponse response) {
+
+		Info info = new Info();
+		try {
+			String code = request.getParameter("code");
+			int cityId = Integer.parseInt(request.getParameter("cityId"));
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("code", code);
+			map.add("cityId", cityId);
+
+			City cityRes = Constants.getRestTemplate().postForObject(Constants.url + "getCityByCode", map, City.class);
+
+			if (cityRes != null) {
+				info.setError(false);
+				info.setMsg("City Found");
+			} else {
+				info.setError(true);
+				info.setMsg("City Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /getCityInfoByCode : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+	}
+
+	@RequestMapping(value = "/insertCity", method = RequestMethod.POST)
+	public String insertCity(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession();
+		User userObj = (User) session.getAttribute("userObj");
+
+		City city = new City();
+		int cityId = Integer.parseInt(request.getParameter("city_id"));
+
+		try {
+			city.setCityCode(request.getParameter("city_code").toUpperCase());
+			city.setCityId(cityId);
+			city.setCityName(request.getParameter("city_name"));
+			city.setCompanyId(userObj.getCompanyId());
+			city.setDelStatus(1);
+			city.setDescription(request.getParameter("city_decp"));
+			city.setExInt1(Integer.parseInt(request.getParameter("type")));
+			city.setExInt2(0);
+			city.setExVar1("NA");
+			city.setExVar2("NA");
+			city.setIsActive(Integer.parseInt(request.getParameter("city")));
+
+			City cityRes = Constants.getRestTemplate().postForObject(Constants.url + "addCity", city, City.class);
+
+			if (cityRes.getCityId() > 0) {
+				if (cityId == 0)
+					session.setAttribute("successMsg", "City/Village Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "City/Village Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save City/Village");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /insertCity : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return "redirect:/showCities";
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect to Add New City Page
+	@RequestMapping(value = "/editCity", method = RequestMethod.GET)
+	public String editCity(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("editUser", "showCities", "0", "0", "1", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addCity";
+
+				String base64encodedString = request.getParameter("cityId");
+				String cityId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("cityId", Integer.parseInt(cityId));
+
+				City city = Constants.getRestTemplate().postForObject(Constants.url + "getCityById", map, City.class);
+				model.addAttribute("city", city);
+
+				model.addAttribute("title", "Edit City/Village");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /editLang : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Delete City
+	@RequestMapping(value = "/deleteCity", method = RequestMethod.GET)
+	public String deleteCity(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteUser", "showCities", "0", "0", "0", "1", newModuleList);
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				String base64encodedString = request.getParameter("cityId");
+				String cityId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("cityId", Integer.parseInt(cityId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteCityById", map, Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+				mav = "redirect:/showCities";
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteCity : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Area List
+	@RequestMapping(value = "/showArea", method = RequestMethod.GET)
+	public String showArea(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showArea", "showArea", "1", "0", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/areaList";
+
+				User userObj = (User) session.getAttribute("userObj");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", userObj.getCompanyId());
+
+				AreaCityList[] areaArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllAreaCityList",
+						map, AreaCityList[].class);
+				List<AreaCityList> areaList = new ArrayList<AreaCityList>(Arrays.asList(areaArr));
+
+				for (int i = 0; i < areaList.size(); i++) {
+
+					areaList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(areaList.get(i).getAreaId())));
+				}
+				model.addAttribute("areaList", areaList);
+				model.addAttribute("title", "Area List");
+				Info add = AccessControll.checkAccess("showArea", "showArea", "0", "1", "0", "0", newModuleList);
+				Info edit = AccessControll.checkAccess("showArea", "showArea", "0", "0", "1", "0", newModuleList);
+				Info delete = AccessControll.checkAccess("showArea", "showArea", "0", "0", "0", "1", newModuleList);
+
+				if (add.isError() == false) {
+					// System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) {
+					// System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					// System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /showArea : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect to Add New Area Page
+	@RequestMapping(value = "/addNewArea", method = RequestMethod.GET)
+	public String addNewArea(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		Area area = new Area();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("addNewArea", "showArea", "0", "1", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addArea";
+
+				User userObj = (User) session.getAttribute("userObj");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", userObj.getCompanyId());
+
+				City[] cityArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCitiesOnly", map,
+						City[].class);
+				List<City> cityList = new ArrayList<City>(Arrays.asList(cityArr));
+
+				model.addAttribute("cityList", cityList);
+				model.addAttribute("area", area);
+				model.addAttribute("title", "Add Area");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /addNewArea : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	@RequestMapping(value = "/insertArea", method = RequestMethod.POST)
+	public String insertArea(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			Area area = new Area();
+
+			int areaId = Integer.parseInt(request.getParameter("area_id"));
+
+			area.setAreaCode(request.getParameter("area_code"));
+			area.setAreaId(areaId);
+			area.setAreaName(request.getParameter("area_name"));
+			area.setCityId(Integer.parseInt(request.getParameter("city_name")));
+			area.setCompanyId(userObj.getCompanyId());
+			area.setDelStatus(1);
+			area.setDescription(request.getParameter("area_decp"));
+			area.setExInt1(0);
+			area.setExInt2(0);
+			area.setExVar1("NA");
+			area.setExVar2("NA");
+			area.setIsActive(Integer.parseInt(request.getParameter("area")));
+			area.setLatitude(request.getParameter("latitude"));
+			area.setLongitude(request.getParameter("latitude"));
+			area.setPincode(request.getParameter("area_pincode"));
+
+			Area areaRes = Constants.getRestTemplate().postForObject(Constants.url + "addArea", area, Area.class);
+
+			if (areaRes.getAreaId() > 0) {
+				if (areaId == 0)
+					session.setAttribute("successMsg", "Area Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Area Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Area");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /insertArea : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showArea";
+
+	}
+
+	@RequestMapping(value = "/editArea", method = RequestMethod.GET)
+	public String editArea(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("editArea", "showArea", "0", "0", "1", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addArea";
+
+				User userObj = (User) session.getAttribute("userObj");
+
+				String base64encodedString = request.getParameter("areaId");
+				String areaId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("areaId", Integer.parseInt(areaId));
+				map.add("compId", userObj.getCompanyId());
+
+				Area area = Constants.getRestTemplate().postForObject(Constants.url + "getAreaById", map, Area.class);
+				model.addAttribute("area", area);
+
+				City[] cityArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCitiesOnly",
+						City[].class);
+				List<City> cityList = new ArrayList<City>(Arrays.asList(cityArr));
+
+				model.addAttribute("cityList", cityList);
+
+				model.addAttribute("isEdit", 1);
+				model.addAttribute("title", "Edit Area");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /editArea : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	@RequestMapping(value = "/getAreaInfoByCode", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getAreaInfoByCode(HttpServletRequest request, HttpServletResponse response) {
+
+		Info info = new Info();
+		try {
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			String code = request.getParameter("code");
+			int areaId = Integer.parseInt(request.getParameter("areaId"));
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("code", code);
+			map.add("areaId", areaId);
+			map.add("compId", userObj.getCompanyId());
+
+			Area cityRes = Constants.getRestTemplate().postForObject(Constants.url + "getAreaByCode", map, Area.class);
+			System.out.println("Area  ------  " + cityRes);
+			if (cityRes != null) {
+				info.setError(false);
+				info.setMsg("Area Found");
+			} else {
+				info.setError(true);
+				info.setMsg("Area Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /getAreaInfoByCode : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Delete Area
+	@RequestMapping(value = "/deleteArea", method = RequestMethod.GET)
+	public String deleteArea(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteArea", "showArea", "0", "0", "1", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				User userObj = (User) session.getAttribute("userObj");
+
+				String base64encodedString = request.getParameter("areaId");
+				String areaId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("areaId", Integer.parseInt(areaId));
+				map.add("compId", userObj.getCompanyId());
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteAreaById", map, Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+				mav = "redirect:/showArea";
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteArea : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	@RequestMapping(value = "/getCityBycityId", method = RequestMethod.GET)
+	@ResponseBody
+	public City getCityByCityId(HttpServletRequest request, HttpServletResponse response) {
+
+		City city = new City();
+		try {
+
+			int cityId = Integer.parseInt(request.getParameter("cityId"));
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+			map.add("cityId", cityId);
+			Integer areaNo = Constants.getRestTemplate().postForObject(Constants.url + "getAreaByCityId", map,
+					Integer.class);
+			String no = String.format("%03d", (areaNo + 1));
+
+			map.add("cityId", cityId);
+			city = Constants.getRestTemplate().postForObject(Constants.url + "getCityById", map, City.class);
+
+			city.setCityCode(city.getCityCode() + "-" + no);
+			// System.out.println("City ------ "+city);
+
+		} catch (Exception e) {
+			System.out.println("Execption in /getCityBycityId : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return city;
 	}
 }
