@@ -98,7 +98,7 @@
 											<div class="list-icons">
 												<a href="javascript:void(0)"
 													class="list-icons-item text-danger-600 bootbox_custom"
-													data-uuid="${frList.exVar1}" data-popup="tooltip" title=""
+													data-uuid="${frList.frId}" data-popup="tooltip" title=""
 													data-original-title="Delete"><i class="icon-trash"></i></a>
 											</div>
 										</c:if></td>
@@ -147,7 +147,7 @@
 										},
 										callback : function(result) {
 											if (result) {
-												location.href = "${pageContext.request.contextPath}/deleteUom?uomId="
+												location.href = "${pageContext.request.contextPath}/deleteFranchise?frId="
 														+ uuid;
 
 											}

@@ -68,13 +68,14 @@
 									<li class="nav-item"><a href="#bordered-tab1" id="tab1"
 										name="tab1" class="nav-link active" data-toggle="tab">Basic
 											Information</a></li>
-									<li class="nav-item"><a href="#bordered-tab2" id="tab2"
-										name="tab2" class="nav-link" data-toggle="tab">FDA & GST
-											Details</a></li>
-									<li class="nav-item"><a href="#bordered-tab3" id="tab3"
-										name="tab3" class="nav-link" data-toggle="tab">Bank
-											Details</a></li>
-
+									<c:if test="${frId>0}">
+										<li class="nav-item"><a href="#bordered-tab2" id="tab2"
+											name="tab2" class="nav-link" data-toggle="tab">FDA & GST
+												Details</a></li>
+										<li class="nav-item"><a href="#bordered-tab3" id="tab3"
+											name="tab3" class="nav-link" data-toggle="tab">Bank
+												Details</a></li>
+									</c:if>
 								</ul>
 
 
@@ -132,7 +133,7 @@
 												</label>
 												<div class="col-lg-4">
 													<input type="text"
-														class="form-control datepickerclass maxlength-badge-position non-char"
+														class="form-control datepickerclass maxlength-badge-position"
 														name="openDate" id="openDate" maxlength="10"
 														autocomplete="off" onchange="trim(this)"
 														value="${franchise.openingDate}"> <span
@@ -147,7 +148,7 @@
 												</label>
 												<div class="col-lg-4">
 													<input type="text"
-														class="form-control datepickerclass maxlength-badge-position non-char"
+														class="form-control datepickerclass maxlength-badge-position"
 														name="ownerDob" id="ownerDob" maxlength="10"
 														autocomplete="off" onchange="trim(this)"
 														value="${franchise.ownersBirthDay}"> <span
@@ -336,10 +337,10 @@
 												<div class="col-lg-4">
 													<input type="text"
 														class="form-control maxlength-badge-position" name="fdaNo"
-														id="fdaNo" maxlength="30" autocomplete="off"
+														id="fdaNo" maxlength="14" autocomplete="off"
 														onchange="trim(this)" value="${franchise.fdaNumber}">
 													<span class="validation-invalid-label text-danger"
-														id="error_frCode" style="display: none;">This field
+														id="error_fdaNo" style="display: none;">This field
 														is required.</span>
 												</div>
 
@@ -366,25 +367,27 @@
 													for="gstType">GST Type<span class="text-danger">*
 												</span>:
 												</label>
-												<div class="col-lg-4">
-													<input type="text"
-														class="form-control maxlength-badge-position"
-														name="gstType" id="gstType" maxlength="30"
-														autocomplete="off" onchange="trim(this)"
-														value="${franchise.gstType}"> <span
-														class="validation-invalid-label text-danger"
-														id="error_gstType" style="display: none;">This
-														field is required.</span>
+												<div class="col-lg-4">													
+														<select class="form-control select" data-fouc
+														name="gstType" id="gstType"
+														data-placholder="Select GST Type">
+														<option value="1"
+															${franchise.gstType==1 ? 'selected' : '' }>Regular</option>
+														<option value="2"
+															${franchise.gstType==2 ? 'selected' : '' }>Composite</option>
+														<option value="3"
+															${franchise.gstType==3 ? 'selected' : '' }>Non-Register</option>														
+													</select>
 												</div>
 
 												<label class="col-form-label font-weight-bold col-lg-2"
-													for="gstNo">GST No.<span class="text-danger">*
+													for="gstNo">GST No.<span class="text-danger" id="mandat">
 												</span>:
 												</label>
 												<div class="col-lg-4">
 													<input type="text"
 														class="form-control maxlength-badge-position" name="gstNo"
-														id="gstNo" maxlength="20" autocomplete="off"
+														id="gstNo" maxlength="15" autocomplete="off"
 														onchange="trim(this)" value="${franchise.gstNumber}">
 													<span class="validation-invalid-label text-danger"
 														id="error_gstNo" style="display: none;">This field
@@ -400,7 +403,7 @@
 												<div class="col-lg-4">
 													<input type="text"
 														class="form-control maxlength-badge-position"
-														name="longitude" id="longitude" maxlength="30"
+														name="longitude" id="longitude" maxlength="12"
 														autocomplete="off" onchange="trim(this)"
 														value="${franchise.shopsLogitude}"> <span
 														class="validation-invalid-label text-danger"
@@ -415,7 +418,7 @@
 												<div class="col-lg-4">
 													<input type="text"
 														class="form-control maxlength-badge-position"
-														name="latitude" id="latitude" maxlength="30"
+														name="latitude" id="latitude" maxlength="12"
 														autocomplete="off" onchange="trim(this)"
 														value="${franchise.shopsLatitude}"> <span
 														class="validation-invalid-label text-danger"
@@ -446,7 +449,7 @@
 												</label>
 												<div class="col-lg-4">
 													<input type="text"
-														class="form-control maxlength-badge-position"
+														class="form-control maxlength-badge-position non-char-float"
 														name="kmCover" id="kmCover" maxlength="30"
 														autocomplete="off" onchange="trim(this)"
 														value="${franchise.noOfKmAreaCover}"> <span
@@ -457,7 +460,7 @@
 											</div>
 											<br>
 											<div class="text-center">
-												<button type="submit" class="btn btn-primary" id="submtbtn">
+												<button type="submit" class="btn btn-primary" id="submtFdabtn">
 													Save <i class="icon-paperplane ml-2"></i>
 												</button>
 											</div>
@@ -517,7 +520,7 @@
 												<div class="col-lg-4">
 													<input type="text"
 														class="form-control maxlength-badge-position"
-														name="ifscCode" id="ifscCode" maxlength="50"
+														name="ifscCode" id="ifscCode" maxlength="11"
 														autocomplete="off" onchange="trim(this)"
 														value="${franchise.coBankIfscCode}"> <span
 														class="validation-invalid-label text-danger"
@@ -531,8 +534,8 @@
 												</label>
 												<div class="col-lg-4">
 													<input type="text"
-														class="form-control maxlength-badge-position" name="accNo"
-														id="accNo" maxlength="50" autocomplete="off"
+														class="form-control maxlength-badge-position non-char" name="accNo"
+														id="accNo" maxlength="17" autocomplete="off"
 														onchange="trim(this)" value="${franchise.coBankAccNo}">
 													<span class="validation-invalid-label text-danger"
 														id="error_accNo" style="display: none;">This field
@@ -589,17 +592,13 @@
 											</div>
 											<br>
 											<div class="text-center">
-												<button type="submit" class="btn btn-primary" id="submtbtn">
+												<button type="submit" class="btn btn-primary" id="submtbankbtn">
 													Save <i class="icon-paperplane ml-2"></i>
 												</button>
 											</div>
 										</form>
 									</div>
-
-
-
 								</div>
-
 							</div>
 						</div>
 					</div>
@@ -633,6 +632,7 @@
 	</script>
 
 	<script type="text/javascript">
+	//Basic Info Form
 	 $(document).ready(function($) {
 
 			$("#submitInsert").submit(function(e) {
@@ -726,6 +726,151 @@
 
 			});
 		});
+	 
+	//FDA & GST Info Form
+	 $(document).ready(function($) {
+			$("#submitFdaGstDtl").submit(function(e) {
+				var isError = false;
+				var errMsg = "";
+
+				if (!$("#fdaNo").val()) {
+					isError = true;
+					$("#error_fdaNo").show()
+				} else {
+					$("#error_fdaNo").hide()
+				}
+				
+				if (!$("#fdaExpDate").val()) {
+					isError = true;
+					$("#error_fdaExpDate").show()
+				} else {
+					$("#error_fdaExpDate").hide()
+				}
+				
+				 if(parseInt($("#gstType").val())==1 || parseInt($("#gstType").val())==2){						 
+					if (!$("#gstNo").val()) {
+						isError = true;		
+						document.getElementById("mandat").innerHTML = "*";				
+						$("#error_gstNo").show()
+					} else {
+						$("#error_gstNo").hide()
+					}
+				}else{	
+					document.getElementById("mandat").innerHTML = "";				
+					$("#error_gstNo").hide()
+				} 
+				 
+				 
+				 if (!$("#kmCover").val()) {
+						isError = true;
+						$("#error_kmCover").show()
+					} else {
+						$("#error_kmCover").hide()
+					}
+				 
+				 if (!$("#servePincode").val()) {
+						isError = true;
+						$("#error_servePincode").show()
+					} else {
+						$("#error_servePincode").hide()
+					}
+				 
+				 if (!$("#longitude").val()) {
+						isError = true;
+						$("#error_longitude").show()
+					} else {
+						$("#error_longitude").hide()
+					}
+				 
+				 if (!$("#latitude").val()) {
+						isError = true;
+						$("#error_latitude").show()
+					} else {
+						$("#error_latitude").hide()
+					}
+				
+				
+				if (!isError) {
+					var x = true;
+					if (x == true) {
+						document.getElementById("submtFdabtn").disabled = true;
+						return true;
+					}
+				}
+
+				return false;
+
+			});
+		});
+	
+	//Bank Detail Form
+	 $(document).ready(function($) {
+			$("#submitBankDtl").submit(function(e) {
+				var isError = false;
+				var errMsg = "";
+
+				if (!$("#coBankName").val()) {
+					isError = true;
+					$("#error_coBankName").show()
+				} else {
+					$("#error_coBankName").hide()
+				}
+				
+				if (!$("#branchName").val()) {
+					isError = true;
+					$("#error_branchName").show()
+				} else {
+					$("#error_branchName").hide()
+				}
+				
+				if (!$("#ifscCode").val()) {
+					isError = true;
+					$("#error_ifscCode").show()
+				} else {
+					$("#error_ifscCode").hide()
+				}
+				
+				if (!$("#accNo").val()) {
+					isError = true;
+					$("#error_accNo").show()
+				} else {
+					$("#error_accNo").hide()
+				}
+				
+				if (!$("#paymentGateWay").val()) {
+					isError = true;
+					$("#error_paymentGateWay").show()
+				} else {
+					$("#error_paymentGateWay").hide()
+				}
+				
+				if (!$("#samePayGateWay").val()) {
+					isError = true;
+					$("#error_samePayGateWay").show()
+				} else {
+					$("#error_samePayGateWay").hide()
+				}
+				
+				if (!$("#panNo").val()) {
+					isError = true;
+					$("#error_panNo").show()
+				} else {
+					$("#error_panNo").hide()
+				}
+				
+				if (!isError) {
+					var x = true;
+					if (x == true) {
+						document.getElementById("submtbankbtn").disabled = true;
+						return true;
+					}
+				}
+
+				return false;
+
+			});
+		});
+	
 
 	 function validateEmail(email) {
 			var eml = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
@@ -744,6 +889,10 @@
 		}
 
 		$('.non-char').on('input', function() {
+			 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+			});
+		
+		$('.non-char-float').on('input', function() {
 			 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 			});
 
