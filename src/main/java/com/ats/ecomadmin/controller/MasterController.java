@@ -28,10 +28,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ats.ecomadmin.commons.AccessControll;
+import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
+import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.FilterTypes;
+import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.MFilter;
 import com.ats.ecomadmin.model.Tax;
@@ -1498,8 +1501,8 @@ public class MasterController {
 				map.add("compId", companyId);
 				map.add("filterTypeId", filterTypeId);
 
-				MFilter[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getFiltersListByTypeId", map,
-						MFilter[].class);
+				MFilter[] filterArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getFiltersListByTypeId", map, MFilter[].class);
 				filterList = new ArrayList<MFilter>(Arrays.asList(filterArr));
 
 				for (int i = 0; i < filterList.size(); i++) {
@@ -1751,4 +1754,506 @@ public class MasterController {
 		return mav;
 	}
 
+	// Created By :- Mahendra Singh
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Show Franchise
+	@RequestMapping(value = "/showFranchises", method = RequestMethod.GET)
+	public String showFranchises(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+
+		try {
+
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showFranchises", "showFranchises", "1", "0", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				int companyId = (int) session.getAttribute("companyId");
+
+				mav = "masters/franchiseList";
+
+				List<Franchise> frList = new ArrayList<Franchise>();
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);
+
+				Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchises", map,
+						Franchise[].class);
+				frList = new ArrayList<Franchise>(Arrays.asList(frArr));
+
+				for (int i = 0; i < frList.size(); i++) {
+
+					frList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(frList.get(i).getFrId())));
+				}
+
+				model.addAttribute("frList", frList);
+
+				model.addAttribute("title", "Franchise List");
+
+				// model.addAttribute("imageUrl", Constants.showDocSaveUrl);
+				Info add = AccessControll.checkAccess("showFranchises", "showFranchises", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showFranchises", "showFranchises", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showFranchises", "showFranchises", "0", "0", "0", "1",
+						newModuleList);
+
+				if (add.isError() == false) {
+					// System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) {
+					// System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					// System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /showFranchises : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect to Add UOM JSP Page
+	@RequestMapping(value = "/newFranchise/{id}", method = RequestMethod.GET)
+	public String newFranchise(HttpServletRequest request, HttpServletResponse response, Model model,
+			@PathVariable int id) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("newFranchise/" + id, "showFranchises", "0", "1", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addFranchise";
+
+				
+				if(id>0) {
+				map = new LinkedMultiValueMap<>();
+				map.add("frId", id);
+				Franchise franchise = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseById", map,
+						Franchise.class);
+
+				model.addAttribute("franchise", franchise);
+				
+				}
+				else
+				{
+				Franchise franchise = new Franchise();
+				
+				int companyId = (int) session.getAttribute("companyId");
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);				
+				
+				CompMaster comp = Constants.getRestTemplate().postForObject(Constants.url + "getCompById", map,
+						CompMaster.class);
+
+				String coPrefix = comp.getCompanyPrefix();
+				
+				int frIdCnt = 0;
+				map = new LinkedMultiValueMap<>();
+				map.add("coPrefix", coPrefix);
+				map.add("compId", companyId);
+				frIdCnt = Constants.getRestTemplate().postForObject(Constants.url + "getFrCnt", map,
+						Integer.class);
+			
+				frIdCnt = frIdCnt+1;				
+				
+				String getFrCode = coPrefix+"00"+frIdCnt;
+				
+				franchise.setFrCode(getFrCode);
+				
+				model.addAttribute("franchise", franchise);
+				}
+				
+				model.addAttribute("title", "Add Franchise");
+				model.addAttribute("frId", id);
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /newFranchise : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Insert Franchise in database
+	@RequestMapping(value = "/insertFranchise", method = RequestMethod.POST)
+	public String insertFranchise(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam("doc") MultipartFile doc) {
+		int savedFrId = 0;
+		try {
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat sfd = new SimpleDateFormat("yyyy-MM-dd ");
+			String profileImage = null;
+
+			int companyId = (int) session.getAttribute("companyId");
+
+			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
+
+				System.err.println("In If ");
+
+				profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
+
+				try {
+					new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+				} catch (Exception e) {
+				}
+
+			} else {
+				System.err.println("In else ");
+				profileImage = request.getParameter("editImg");
+
+			}
+
+			String pass = request.getParameter("pass");
+			String password = pass;
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			byte[] messageDigest = md.digest(password.getBytes());
+			BigInteger number = new BigInteger(1, messageDigest);
+			String hashtext = number.toString(16);
+
+			
+			int frId = Integer.parseInt(request.getParameter("frId"));
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("frId", frId);
+			Franchise getFr = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseById", map,
+					Franchise.class);
+
+			Franchise franchise = new Franchise();
+			
+			franchise.setFrId(frId);
+			if (frId > 0) {
+				franchise.setEditDateTime(sf.format(date));
+			} else {
+				franchise.setAddDateTime(sf.format(date));
+			}
+
+			franchise.setFrAddress(request.getParameter("address"));
+			franchise.setFrCity(request.getParameter("city"));
+			franchise.setState(request.getParameter("state"));
+			franchise.setFrCode(request.getParameter("frCode"));
+			franchise.setFrContactNo(request.getParameter("mobNo"));
+			franchise.setFrEmailId(request.getParameter("email"));
+			franchise.setFrImage(profileImage);
+			franchise.setFrName(request.getParameter("frName"));
+			franchise.setFrPassword(hashtext);
+			franchise.setOpeningDate(request.getParameter("openDate"));
+			franchise.setOwnersBirthDay(request.getParameter("ownerDob"));
+			franchise.setPincode(request.getParameter("pincode"));
+
+			franchise.setIsActive(1);
+			franchise.setDelStatus(1);
+			franchise.setCompanyId(companyId);
+			franchise.setCity("NA");
+			
+			if(frId>0) {
+			//FDA& GST Detail	
+			franchise.setFdaLicenseDateExp(getFr.getFdaLicenseDateExp());
+			franchise.setFdaNumber(getFr.getFdaNumber());
+			franchise.setGstNumber(getFr.getGstNumber());
+			franchise.setGstType(getFr.getGstType());	
+			franchise.setPincodeWeServed(getFr.getPincodeWeServed());
+			
+			try{
+				franchise.setNoOfKmAreaCover(getFr.getNoOfKmAreaCover());
+				franchise.setShopsLatitude(getFr.getShopsLatitude());
+				franchise.setShopsLogitude(getFr.getShopsLogitude());
+				
+			}catch (Exception e) {
+				franchise.setNoOfKmAreaCover(0);
+				franchise.setShopsLatitude(0);
+				franchise.setShopsLogitude(0);
+				e.printStackTrace();
+			}
+			
+			//Bank Details
+				franchise.setPanNo(getFr.getPanNo());
+				franchise.setCoBankAccNo(getFr.getCoBankAccNo());
+				franchise.setCoBankBranchName(getFr.getCoBankBranchName());
+				franchise.setCoBankIfscCode(getFr.getCoBankIfscCode());
+				franchise.setCoBankName(getFr.getCoBankName());
+				franchise.setPaymentGetwayLink(getFr.getPaymentGetwayLink());
+				franchise.setPaymentGetwayLinkSameAsParent(getFr.getPaymentGetwayLinkSameAsParent());
+			}
+
+			franchise.setExDate1(sfd.format(date));
+			franchise.setExDate2(sfd.format(date));
+			franchise.setExFloat1(0);
+			franchise.setExFloat2(0);
+			franchise.setExFloat3(0);
+			franchise.setExFloat4(0);
+			franchise.setExFloat5(0);
+			franchise.setExInt1(0);
+			franchise.setExInt2(0);
+			franchise.setExInt3(0);
+			franchise.setExVar1("NA");
+			franchise.setExVar2("NA");
+			franchise.setExVar3("NA");
+			franchise.setExVar4("NA");
+			franchise.setExVar5("NA");
+			franchise.setExVar6("NA");
+			franchise.setExVar7("NA");
+
+			franchise.setUserId(userObj.getUserId());
+
+			try {
+				franchise.setFrRating(Float.parseFloat(request.getParameter("frRating")));
+			} catch (Exception e) {
+				franchise.setFrRating(0);
+				e.printStackTrace();
+			}
+
+			Franchise res = Constants.getRestTemplate().postForObject(Constants.url + "saveFranchise", franchise,
+					Franchise.class);
+
+			if (res.getFrId() > 0) {
+				savedFrId = res.getFrId();
+				if (frId == 0)
+					session.setAttribute("successMsg", "Franchise Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Franchise  Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Franchise");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /insertFranchise : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/newFranchise/" + savedFrId;
+
+	}
+
+	@RequestMapping(value = "/insertFrFdaAndGst", method = RequestMethod.POST)
+	public String insertFrFdaAndGst(HttpServletRequest request, HttpServletResponse response) {
+		int savedFrId = 0;
+		try {
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+			
+			int companyId = (int) session.getAttribute("companyId");
+			
+			int frId = Integer.parseInt(request.getParameter("frId"));
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("frId", frId);
+			Franchise getFr = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseById", map,
+					Franchise.class);
+			
+			
+			Franchise franchise = new Franchise();
+			//FDA & GST Details
+			franchise.setFrId(frId);
+			franchise.setFdaLicenseDateExp(request.getParameter("fdaExpDate"));
+			franchise.setFdaNumber(request.getParameter("fdaNo"));
+			franchise.setGstNumber(request.getParameter("gstNo"));
+			franchise.setGstType(request.getParameter("gstType"));	
+			franchise.setPincodeWeServed(request.getParameter("servePincode"));			
+			franchise.setState(request.getParameter("state"));
+			franchise.setPanNo(request.getParameter("panNo"));
+			try{
+				franchise.setNoOfKmAreaCover(Float.parseFloat(request.getParameter("kmCover")));
+				franchise.setShopsLatitude(Float.parseFloat(request.getParameter("latitude")));
+				franchise.setShopsLogitude(Float.parseFloat(request.getParameter("longitude")));
+				
+			}catch (Exception e) {
+				franchise.setNoOfKmAreaCover(0);
+				franchise.setShopsLatitude(0);
+				franchise.setShopsLogitude(0);
+				e.printStackTrace();
+			}
+			
+			if(frId>0) {
+				//Franchise Basic Details			
+				if (frId > 0) {
+					franchise.setEditDateTime(sf.format(date));
+				} else {
+					franchise.setAddDateTime(getFr.getAddDateTime());
+				}
+	
+				franchise.setFrAddress(getFr.getFrAddress());
+				franchise.setFrCity(getFr.getFrCity());
+				franchise.setState(getFr.getState());
+				franchise.setFrCode(getFr.getFrCode());
+				franchise.setFrContactNo(getFr.getFrContactNo());
+				franchise.setFrEmailId(getFr.getFrEmailId());
+				franchise.setFrImage(getFr.getFrImage());
+				franchise.setFrName(getFr.getFrName());
+				franchise.setFrPassword(getFr.getFrPassword());
+				franchise.setOpeningDate(getFr.getOpeningDate());
+				franchise.setOwnersBirthDay(getFr.getOwnersBirthDay());
+				franchise.setPincode(getFr.getPincode());
+				franchise.setUserId(userObj.getUserId());
+	
+				franchise.setIsActive(1);
+				franchise.setDelStatus(1);
+				franchise.setCompanyId(companyId);
+				franchise.setCity("NA");
+				
+				//Bank Details
+				franchise.setPanNo(getFr.getPanNo());
+				franchise.setCoBankAccNo(getFr.getCoBankAccNo());
+				franchise.setCoBankBranchName(getFr.getCoBankBranchName());
+				franchise.setCoBankIfscCode(getFr.getCoBankIfscCode());
+				franchise.setCoBankName(getFr.getCoBankName());
+				franchise.setPaymentGetwayLink(getFr.getPaymentGetwayLink());
+				franchise.setPaymentGetwayLinkSameAsParent(getFr.getPaymentGetwayLinkSameAsParent());
+			}
+			Franchise res = Constants.getRestTemplate().postForObject(Constants.url + "saveFranchise", franchise,
+					Franchise.class);
+
+			if (res.getFrId() > 0) {
+				 savedFrId = res.getFrId();
+				if (frId == 0)
+					session.setAttribute("successMsg", "Franchise Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Franchise  Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Franchise");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /insertFranchise : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/newFranchise/" + savedFrId;
+
+	}
+
+	@RequestMapping(value = "/submitBankDtl", method = RequestMethod.POST)
+	public String submitBankDtl(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			
+			HttpSession session = request.getSession();
+			int companyId = (int) session.getAttribute("companyId");
+			User userObj = (User) session.getAttribute("userObj");
+			
+			int frId = Integer.parseInt(request.getParameter("frId"));
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("frId", frId);
+			Franchise getFr = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseById", map,
+					Franchise.class);
+
+			Franchise franchise = new Franchise();
+			franchise.setFrId(frId);
+			franchise.setCoBankAccNo(request.getParameter("accNo"));
+			franchise.setCoBankBranchName(request.getParameter("branchName"));
+			franchise.setCoBankIfscCode(request.getParameter("ifscCode"));
+			franchise.setCoBankName(request.getParameter("coBankName"));
+			franchise.setPaymentGetwayLink(request.getParameter("paymentGateWay"));
+			franchise.setPaymentGetwayLinkSameAsParent(request.getParameter("samePayGateWay"));
+			
+			if(frId>0) {
+				//Franchise Basic Details
+				franchise.setFrId(frId);
+				if (frId > 0) {
+					franchise.setEditDateTime(sf.format(date));
+				} else {
+					franchise.setAddDateTime(getFr.getAddDateTime());
+				}
+	
+				franchise.setFrAddress(getFr.getFrAddress());
+				franchise.setFrCity(getFr.getFrCity());
+				franchise.setState(getFr.getState());
+				franchise.setFrCode(getFr.getFrCode());
+				franchise.setFrContactNo(getFr.getFrContactNo());
+				franchise.setFrEmailId(getFr.getFrEmailId());
+				franchise.setFrImage(getFr.getFrImage());
+				franchise.setFrName(getFr.getFrName());
+				franchise.setFrPassword(getFr.getFrPassword());
+				franchise.setOpeningDate(getFr.getOpeningDate());
+				franchise.setOwnersBirthDay(getFr.getOwnersBirthDay());
+				franchise.setPincode(getFr.getPincode());
+				franchise.setUserId(userObj.getUserId());
+	
+				franchise.setIsActive(1);
+				franchise.setDelStatus(1);
+				franchise.setCompanyId(companyId);
+				franchise.setCity("NA");
+				
+				
+				
+				//FDA& GST Detail	
+				franchise.setFdaLicenseDateExp(getFr.getFdaLicenseDateExp());
+				franchise.setFdaNumber(getFr.getFdaNumber());
+				franchise.setGstNumber(getFr.getGstNumber());
+				franchise.setGstType(getFr.getGstType());	
+				franchise.setPincodeWeServed(getFr.getPincodeWeServed());
+				
+				try{
+					franchise.setNoOfKmAreaCover(getFr.getNoOfKmAreaCover());
+					franchise.setShopsLatitude(getFr.getShopsLatitude());
+					franchise.setShopsLogitude(getFr.getShopsLogitude());
+					
+				}catch (Exception e) {
+					franchise.setNoOfKmAreaCover(0);
+					franchise.setShopsLatitude(0);
+					franchise.setShopsLogitude(0);
+					e.printStackTrace();
+				}
+			}
+			Franchise res = Constants.getRestTemplate().postForObject(Constants.url + "saveFranchise", franchise,
+					Franchise.class);
+
+			if (res.getFrId() > 0) {
+				if (frId == 0)
+					session.setAttribute("successMsg", "Franchise Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Franchise  Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Franchise");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /insertFranchise : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showFranchises";
+
+	}
 }
