@@ -36,6 +36,7 @@ import com.ats.ecomadmin.model.AreaCityList;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.DeliveryInstruction;
 import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.Info;
@@ -3104,5 +3105,260 @@ public class MasterController {
 			e.printStackTrace();
 		}
 		return city;
+	}
+
+	/*-----------------------------------------------------------------------------------------*/
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Show Deliver Instruction
+	@RequestMapping(value = "/showDeliveryInstructn", method = RequestMethod.GET)
+	public String showDeliveryInstructions(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showDeliveryInstructn", "showDeliveryInstructn", "1", "0", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/delvInsructList";
+				
+				User userObj = (User) session.getAttribute("userObj");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", userObj.getCompanyId());
+
+				DeliveryInstruction[] delvArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getAllDeliveryInstructions", map, DeliveryInstruction[].class);
+				List<DeliveryInstruction> delvList = new ArrayList<DeliveryInstruction>(Arrays.asList(delvArr));
+
+				for (int i = 0; i < delvList.size(); i++) {
+
+					delvList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(delvList.get(i).getInstruId())));
+				}
+				model.addAttribute("delvList", delvList);
+				model.addAttribute("title", "Delivery Instruction List");
+			}
+			Info add = AccessControll.checkAccess("showDeliveryInstructn", "showDeliveryInstructn", "0", "1", "0", "0",
+					newModuleList);
+			Info edit = AccessControll.checkAccess("showDeliveryInstructn", "showDeliveryInstructn", "0", "0", "1", "0",
+					newModuleList);
+			Info delete = AccessControll.checkAccess("showDeliveryInstructn", "showDeliveryInstructn", "0", "0", "0",
+					"1", newModuleList);
+
+			if (add.isError() == false) {
+				// System.out.println(" add Accessable ");
+				model.addAttribute("addAccess", 0);
+
+			}
+			if (edit.isError() == false) {
+				// System.out.println(" edit Accessable ");
+				model.addAttribute("editAccess", 0);
+			}
+			if (delete.isError() == false) {
+				// System.out.println(" delete Accessable ");
+				model.addAttribute("deleteAccess", 0);
+
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /showDeliveryInstructn : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect to Add New Delivery Instruction Page
+	@RequestMapping(value = "/addDeliveryInstruction", method = RequestMethod.GET)
+	public String addDeliveryInstructn(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		DeliveryInstruction instruct = new DeliveryInstruction();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("addDeliveryInstruction", "showDeliveryInstructn", "0", "1", "0",
+					"0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addDeliveryInstructn";
+
+				model.addAttribute("instruct", instruct);
+				model.addAttribute("title", "Add Delivery Instruction");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /addDeliveryInstruction : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	@RequestMapping(value = "/getCaptionInfo", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getCaptionInfo(HttpServletRequest request, HttpServletResponse response) {
+
+		Info info = new Info();
+		try {
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			String caption = request.getParameter("caption");
+			int instructId = Integer.parseInt(request.getParameter("instructId"));
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("caption", caption);
+			map.add("instructId", instructId);
+			map.add("compId", userObj.getCompanyId());
+
+			DeliveryInstruction captionRes = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getDeliveryInstructionByCaptn", map, DeliveryInstruction.class);
+			System.out.println("captionRes  ------  " + captionRes);
+			if (captionRes != null) {
+				info.setError(false);
+				info.setMsg("Caption Found");
+			} else {
+				info.setError(true);
+				info.setMsg("Caption Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /getCaptionInfo : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+	}
+
+	@RequestMapping(value = "/insertDeliveryInstruction", method = RequestMethod.POST)
+	public String insertDeliveryInstruction(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			DeliveryInstruction instructn = new DeliveryInstruction();
+
+			int instructId = Integer.parseInt(request.getParameter("instruct_id"));
+
+			instructn.setInstruId(instructId);
+			instructn.setInstructnCaption(request.getParameter("instruct_cap"));
+			instructn.setCompanyId(userObj.getCompanyId());
+			instructn.setDelStatus(1);
+			instructn.setDescription(request.getParameter("instruct_decp"));
+			instructn.setExInt1(0);
+			instructn.setExInt2(0);
+			instructn.setExVar1("NA");
+			instructn.setExVar2("NA");
+			instructn.setIsActive(Integer.parseInt(request.getParameter("instruction")));
+
+			DeliveryInstruction instructRes = Constants.getRestTemplate()
+					.postForObject(Constants.url + "addDeliveryInstrunctn", instructn, DeliveryInstruction.class);
+
+			if (instructRes.getInstruId() > 0) {
+				if (instructId == 0)
+					session.setAttribute("successMsg", "Delivery Instruction Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Delivery Instruction Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Delivery Instruction");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /insertDeliveryInstruction : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showDeliveryInstructn";
+
+	}
+
+	@RequestMapping(value = "/editDeliveryInsrtuctn", method = RequestMethod.GET)
+	public String editDeliveryInsrtuctn(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("editDeliveryInsrtuctn", "showDeliveryInstructn", "0", "1", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/addDeliveryInstructn";
+
+				String base64encodedString = request.getParameter("instructId");
+				String instructId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("instructId", Integer.parseInt(instructId));
+
+				DeliveryInstruction instruct = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getDeliveryInstructionById", map, DeliveryInstruction.class);
+				model.addAttribute("instruct", instruct);
+
+				model.addAttribute("title", "Edit Delivery Instruction");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /editDeliveryInsrtuctn : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Delete Delivery Instructions
+	@RequestMapping(value = "/deleteInstructn", method = RequestMethod.GET)
+	public String deleteInstructn(HttpServletRequest request, HttpServletResponse response) {
+		String mav = new String();
+		HttpSession session = request.getSession();
+		try {
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteInstructn", "showDeliveryInstructn", "0", "0", "0", "1", newModuleList);
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				String base64encodedString = request.getParameter("instructId");
+				String instructId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("instructId", Integer.parseInt(instructId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteDeliveryInstructnById", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteInstructn : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showDeliveryInstructn";
 	}
 }
