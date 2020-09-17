@@ -77,6 +77,9 @@
 						<div class="card">
 							<div class="card-header header-elements-inline">
 								<h6 class="card-title">Configure Related Product</h6>
+								
+								
+								
 								<!-- <div class="header-elements">
 									<div class="list-icons">
 										<a class="list-icons-item" data-action="collapse"></a>
@@ -138,7 +141,7 @@
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data placeholder="Select "
-												id="product_id" name="product_id" onchange="loadItems()">
+												id="product_id" name="product_id" >
 
 												<option selected disabled value="">Select</option>
 												<c:forEach items="${productList}" var="productList"
@@ -157,9 +160,18 @@
 											</select> <span class="validation-invalid-label" id="error_productId"
 												style="display: none;">This field is required.</span>
 										</div>
+										
+										
+									
 									</div>
-
-
+									
+									<div class="form-group row">	<div id="loader1" style="display: none;">
+											<img
+												src='${pageContext.request.contextPath}/resources/assets/images/giphy.gif'
+												width="100px" height="100px"
+												style="display: block; margin-left: auto; margin-right: auto">
+										</div></div>
+										 
 
 									<div class="col-lg-12" align="center">
 										<table class="table datatable-scroller table-border"
@@ -224,7 +236,9 @@
 										<button type="submit" class="btn bg-blue ml-3 legitRipple"
 											id="submtbtn">
 											Submit <i class="icon-paperplane ml-2"></i>
-										</button>
+										</button><a href="${pageContext.request.contextPath}/showRelProConfgList"><button
+												type="button" class="btn btn-primary">Cancel</button></a>
+										
 
 									</div>
 								</form>
@@ -249,13 +263,24 @@
 	</div>
 	<!-- /page content -->
 	<script>
+	 
+	$(function() {
+	    $("#product_id").change(function() {
+	    	
+	    	alert(11);
+	    	$('#checkbox').prop('checked',false);	     
+	    	
+	    	loadItems();
+	    });
+	});
+	
+	
 		function loadItems(){
 			//alert(11);
 			
 			var product_id=document.getElementById("product_id").value;
 			
-			 $('input:checkbox').attr('checked',false);
-		/* 	$
+ 			$
 					.getJSON(
 							'${getProductConfig}',
 							{
@@ -266,6 +291,8 @@
 							function(data) {
 								//alert( JSON.stringify(data));
 								if(data.length>0){
+									
+									$("#loader1").show();
 								
 								document.getElementById("configId").value=data[0].configId;
 							 
@@ -276,14 +303,15 @@
 										
 								 document.getElementById(data[i].productId+"view"+data[i].catId).value=1;
 
-										
+								 $("#loader1").hide();
 									}
 								}else{
+									$("#loader1").hide();
 									document.getElementById("configId").value=0;
 								}
 								 
 
-							}); */
+							}); 
 	
 }
 

@@ -50,61 +50,59 @@ public class ProductConfigurationController {
 		HttpSession session = request.getSession();
 		try {
 
-			/*
-			 * List<ModuleJson> newModuleList = (List<ModuleJson>)
-			 * session.getAttribute("newModuleList"); Info view =
-			 * AccessControll.checkAccess("showAddCompany", "showCompanys", "0", "1", "0",
-			 * "0", newModuleList);
-			 * 
-			 * if (view.isError() == true) {
-			 * 
-			 * mav = "accessDenied";
-			 * 
-			 * } else {
-			 */
-			mav = "product/addRelProConfig";
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showAddRelProConfg", "showRelProConfgList", "0", "1", "0", "0",
+					newModuleList);
 
-			String base64encodedString = new String();
+			if (view.isError() == true) {
 
-			int productId = 0;
+				mav = "accessDenied";
 
-			String base64encodedString1 = new String();
+			} else {
 
-			int configId = 0;
+				mav = "product/addRelProConfig";
+				int compId = (int) session.getAttribute("companyId");
+				System.err.println("compId**********" + compId);
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+				CategoryProduct[] userArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getAllProductAndCategory", map, CategoryProduct[].class);
+				catProList = new ArrayList<CategoryProduct>(Arrays.asList(userArr));
+				model.addAttribute("catProList", catProList);
 
-			try {
+				System.err.println("**********" + catProList.toString());
+
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+				ProductMaster[] userArr1 = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getAllProductByCompId", map, ProductMaster[].class);
+				List<ProductMaster> productList = new ArrayList<ProductMaster>(Arrays.asList(userArr1));
+				model.addAttribute("productList", productList);
+
+				String base64encodedString = new String();
+				int productId = 0;
+				String base64encodedString1 = new String();
+				int configId = 0;
+
 				base64encodedString = request.getParameter("prodId");
-				productId = Integer.parseInt(FormValidation.DecodeKey(base64encodedString));
-			} catch (Exception e) {
-				productId = 0;
-			}
 
-			try {
 				base64encodedString1 = request.getParameter("configId");
-				configId = Integer.parseInt(FormValidation.DecodeKey(base64encodedString1));
-			} catch (Exception e) {
-				configId = 0;
+
+				if (base64encodedString != null) {
+					productId = Integer.parseInt(FormValidation.DecodeKey(base64encodedString));
+
+				}
+
+				if (base64encodedString1 != null) {
+					configId = Integer.parseInt(FormValidation.DecodeKey(base64encodedString1));
+
+				}
+
+				model.addAttribute("prodId", productId);
+				model.addAttribute("configId", configId);
+				model.addAttribute("title", "Add Related Product Configuration");
+
 			}
-
-			model.addAttribute("prodId", productId);
-			model.addAttribute("configId", configId);
-			model.addAttribute("title", "Add Related Product Configuration");
-			System.err.println(" session.getAttribute(\"companyId\")" + session.getAttribute("companyId"));
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("compId", session.getAttribute("companyId"));
-			CategoryProduct[] userArr = Constants.getRestTemplate()
-					.postForObject(Constants.url + "getAllProductAndCategory", map, CategoryProduct[].class);
-			catProList = new ArrayList<CategoryProduct>(Arrays.asList(userArr));
-			model.addAttribute("catProList", catProList);
-
-			System.err.println("**********" + catProList.toString());
-
-			ProductMaster[] userArr1 = Constants.getRestTemplate()
-					.postForObject(Constants.url + "getAllProductByCompId", map, ProductMaster[].class);
-			List<ProductMaster> productList = new ArrayList<ProductMaster>(Arrays.asList(userArr1));
-			model.addAttribute("productList", productList);
-
-			// }
 		} catch (Exception e) {
 			System.out.println("Execption in /newUom : " + e.getMessage());
 			e.printStackTrace();
@@ -141,7 +139,8 @@ public class ProductConfigurationController {
 	}
 
 	@RequestMapping(value = "/getProductConfig", method = RequestMethod.GET)
-	public @ResponseBody List<GetRequreProduct> getProductConfig(HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody List<GetRequreProduct> getProductConfig(HttpServletRequest request,
+			HttpServletResponse response) {
 
 		List<GetRequreProduct> productList = new ArrayList<>();
 		try {
@@ -150,11 +149,9 @@ public class ProductConfigurationController {
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("primaryItemId", primaryItemId);
-			GetRequreProduct[] userArr1 = Constants.getRestTemplate().postForObject(Constants.url + "getRelProConfigByPrimaryItemId",
-					map, GetRequreProduct[].class);
+			GetRequreProduct[] userArr1 = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getRelProConfigByPrimaryItemId", map, GetRequreProduct[].class);
 			productList = new ArrayList<GetRequreProduct>(Arrays.asList(userArr1));
-
-			 
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -249,39 +246,59 @@ public class ProductConfigurationController {
 		HttpSession session = request.getSession();
 		try {
 
-			/*
-			 * List<ModuleJson> newModuleList = (List<ModuleJson>)
-			 * session.getAttribute("newModuleList"); Info view =
-			 * AccessControll.checkAccess("showAddCompany", "showCompanys", "0", "1", "0",
-			 * "0", newModuleList);
-			 * 
-			 * if (view.isError() == true) {
-			 * 
-			 * mav = "accessDenied";
-			 * 
-			 * } else {
-			 */
-			mav = "product/relProConfigList";
-			model.addAttribute("title", "Related Product Configuration");
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("compId", session.getAttribute("companyId"));
-			GetRelatedProductConfig[] userArr1 = Constants.getRestTemplate()
-					.postForObject(Constants.url + "getRelProConfigByCompId", map, GetRelatedProductConfig[].class);
-			ArrayList<GetRelatedProductConfig> catProList = new ArrayList<GetRelatedProductConfig>(
-					Arrays.asList(userArr1));
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showRelProConfgList", "showRelProConfgList", "0", "1", "0", "0",
+					newModuleList);
 
-			for (int i = 0; i < catProList.size(); i++) {
+			if (view.isError() == true) {
 
-				catProList.get(i)
-						.setExVar1(FormValidation.Encrypt(String.valueOf(catProList.get(i).getRelatedProductId())));
+				mav = "accessDenied";
 
-				catProList.get(i)
-						.setExVar2(FormValidation.Encrypt(String.valueOf(catProList.get(i).getPrimaryItemId())));
+			} else {
+
+				mav = "product/relProConfigList";
+				model.addAttribute("title", "Related Product Configuration");
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", session.getAttribute("companyId"));
+				GetRelatedProductConfig[] userArr1 = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getRelProConfigByCompId", map, GetRelatedProductConfig[].class);
+				ArrayList<GetRelatedProductConfig> catProList = new ArrayList<GetRelatedProductConfig>(
+						Arrays.asList(userArr1));
+
+				for (int i = 0; i < catProList.size(); i++) {
+
+					catProList.get(i)
+							.setExVar1(FormValidation.Encrypt(String.valueOf(catProList.get(i).getRelatedProductId())));
+
+					catProList.get(i)
+							.setExVar2(FormValidation.Encrypt(String.valueOf(catProList.get(i).getPrimaryItemId())));
+				}
+				model.addAttribute("configList", catProList);
+
+				System.err.println("catProList" + catProList.toString());
+
+				Info add = AccessControll.checkAccess("showRelProConfgList", "showRelProConfgList", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showRelProConfgList", "showRelProConfgList", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showRelProConfgList", "showRelProConfgList", "0", "0", "0",
+						"1", newModuleList);
+
+				if (add.isError() == false) {
+					// System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) {
+					// System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					// System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
 			}
-			model.addAttribute("configList", catProList);
-
-			System.err.println("catProList" + catProList.toString());
-			// }
 		} catch (Exception e) {
 			System.out.println("Execption in /newUom : " + e.getMessage());
 			e.printStackTrace();
@@ -297,32 +314,30 @@ public class ProductConfigurationController {
 		String mav = new String();
 		try {
 
-			/*
-			 * List<ModuleJson> newModuleList = (List<ModuleJson>)
-			 * session.getAttribute("newModuleList"); Info view =
-			 * AccessControll.checkAccess("deleteUser", "showCompanys", "0", "0", "0", "1",
-			 * newModuleList); if (view.isError() == true) {
-			 * 
-			 * mav = "accessDenied";
-			 * 
-			 * } else {
-			 */
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteProductConfig", "showRelProConfgList", "0", "0", "0", "1", newModuleList);
+			if (view.isError() == true) {
 
-			mav = "redirect:/showRelProConfgList";
-			String base64encodedString = request.getParameter("configId");
-			String configId = FormValidation.DecodeKey(base64encodedString);
+				mav = "accessDenied";
 
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("relatedProductId", Integer.parseInt(configId));
-
-			Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteProdConfig", map, Info.class);
-
-			if (!res.isError()) {
-				session.setAttribute("successMsg", res.getMsg());
 			} else {
-				session.setAttribute("errorMsg", res.getMsg());
+
+				mav = "redirect:/showRelProConfgList";
+				String base64encodedString = request.getParameter("configId");
+				String configId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("relatedProductId", Integer.parseInt(configId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteProdConfig", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
 			}
-			// }
 		} catch (Exception e) {
 			System.out.println("Execption in /deleteUser : " + e.getMessage());
 			e.printStackTrace();
