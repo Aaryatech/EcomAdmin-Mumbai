@@ -140,7 +140,7 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data placeholder="Select "
+												data-fouc="" aria-hidden="true" data placeholder="Select " onchange=" loadItems()"
 												id="product_id" name="product_id" >
 
 												<option selected disabled value="">Select</option>
@@ -264,7 +264,7 @@
 	<!-- /page content -->
 	<script>
 	 
-	$(function() {
+	/* $(function() {
 	    $("#product_id").change(function() {
 	    	
 	    	alert(11);
@@ -273,14 +273,15 @@
 	    	loadItems();
 	    });
 	});
-	
+	 */
 	
 		function loadItems(){
 			//alert(11);
-			
+			 $("input[type=checkbox]").prop('checked', false);
 			var product_id=document.getElementById("product_id").value;
+			$("#loader1").show();
 			
- 			$
+ 		 	$
 					.getJSON(
 							'${getProductConfig}',
 							{
@@ -292,8 +293,8 @@
 								//alert( JSON.stringify(data));
 								if(data.length>0){
 									
-									$("#loader1").show();
 								
+									 
 								document.getElementById("configId").value=data[0].configId;
 							 
 									for (var i = 0; i < data.length; i++) {
@@ -303,16 +304,16 @@
 										
 								 document.getElementById(data[i].productId+"view"+data[i].catId).value=1;
 
-								 $("#loader1").hide();
+							
 									}
 								}else{
-									$("#loader1").hide();
+									//$("#loader1").hide();
 									document.getElementById("configId").value=0;
 								}
 								 
 
-							}); 
-	
+							});  
+ 			 $("#loader1").hide();
 }
 
 </script>
