@@ -3370,6 +3370,274 @@ public class MasterController {
 	// Created On :- 16-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
+	// Description :- Show Grievance Type List
+	@RequestMapping(value = "/showGrievencesTypeIntructn", method = RequestMethod.GET)
+	public String GrievencesTypeInstructn(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showGrievencesTypeIntructn", "showGrievencesTypeIntructn", "1", "0",
+					"0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/grievanceTypeList";
+
+				User userObj = (User) session.getAttribute("userObj");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", userObj.getCompanyId());
+
+				GrievencesTypeInstructn[] grievArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getAllGrievTypeInstruct", map, GrievencesTypeInstructn[].class);
+				List<GrievencesTypeInstructn> grievList = new ArrayList<GrievencesTypeInstructn>(
+						Arrays.asList(grievArr));
+
+				for (int i = 0; i < grievList.size(); i++) {
+
+					grievList.get(i)
+							.setExVar1(FormValidation.Encrypt(String.valueOf(grievList.get(i).getGrevTypeId())));
+				}
+				model.addAttribute("grievList", grievList);
+				model.addAttribute("title", "Grievances Type Instruction List");
+
+				Info add = AccessControll.checkAccess("showGrievencesTypeIntructn", "showGrievencesTypeIntructn", "0",
+						"1", "0", "0", newModuleList);
+				Info edit = AccessControll.checkAccess("showGrievencesTypeIntructn", "showGrievencesTypeIntructn", "0",
+						"0", "1", "0", newModuleList);
+				Info delete = AccessControll.checkAccess("showGrievencesTypeIntructn", "showGrievencesTypeIntructn",
+						"0", "0", "0", "1", newModuleList);
+
+				if (add.isError() == false) {
+					// System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) {
+					// System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					// System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /showGrievencesTypeIntructn : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect to Add New Grievance Page
+	@RequestMapping(value = "/addGrievanceTypInstruct", method = RequestMethod.GET)
+	public String addGrievanceTypInstruct(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		GrievencesTypeInstructn griev = new GrievencesTypeInstructn();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("addGrievanceTypInstruct", "showGrievencesTypeIntructn", "0", "1",
+					"0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addGrievInstruct";
+
+				model.addAttribute("griev", griev);
+				model.addAttribute("title", "Add Grievances Type Instruction");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /addGrievanceTypInstruct : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	@RequestMapping(value = "/insertGrievanceTypeInstruction", method = RequestMethod.POST)
+	public String insertGrievanceTypeInstruction(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			GrievencesTypeInstructn griev = new GrievencesTypeInstructn();
+
+			int grievId = Integer.parseInt(request.getParameter("griev_id"));
+
+			griev.setGrevTypeId(grievId);
+			griev.setCaption(request.getParameter("griev_cap"));
+			griev.setCompanyId(userObj.getCompanyId());
+			griev.setDelStatus(1);
+			griev.setDescription(request.getParameter("griev_decp"));
+			griev.setExInt1(0);
+			griev.setExInt2(0);
+			griev.setExVar1("NA");
+			griev.setExVar2("NA");
+			griev.setIsActive(Integer.parseInt(request.getParameter("grievance")));
+
+			GrievencesTypeInstructn instructRes = Constants.getRestTemplate()
+					.postForObject(Constants.url + "addGrievTypeInstruct", griev, GrievencesTypeInstructn.class);
+
+			if (instructRes.getGrevTypeId() > 0) {
+				if (grievId == 0)
+					session.setAttribute("successMsg", "Grievances Type Instruction Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Grievances Type Instruction Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Grievances Type Instruction");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /insertGrievanceTypeInstruction : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showGrievencesTypeIntructn";
+
+	}
+
+	@RequestMapping(value = "/getGrievanceCaptionInfo", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getGrievanceCaptionInfo(HttpServletRequest request, HttpServletResponse response) {
+
+		Info info = new Info();
+		try {
+			HttpSession session = request.getSession();
+			int companyId = (int) session.getAttribute("companyId");
+
+			String caption = request.getParameter("caption");
+			int grievTypeId = Integer.parseInt(request.getParameter("grievId"));
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("caption", caption);
+			map.add("grievTypeId", grievTypeId);
+			map.add("compId", companyId);
+
+			GrievencesTypeInstructn captionRes = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getGrievTypeInstructByCaptn", map, GrievencesTypeInstructn.class);
+			System.out.println("captionRes  ------  " + captionRes);
+			if (captionRes != null) {
+				info.setError(false);
+				info.setMsg("Caption Found");
+			} else {
+				info.setError(true);
+				info.setMsg("Caption Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /getGrievanceCaptionInfo : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Edit Grievance
+	@RequestMapping(value = "/editGrievanceTypeInsrtuctn", method = RequestMethod.GET)
+	public String editGrievanceTypeInsrtuctn(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("editGrievanceTypeInsrtuctn", "showGrievencesTypeIntructn", "0", "0",
+					"1", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				int companyId = (int) session.getAttribute("companyId");
+
+				mav = "masters/addGrievInstruct";
+
+				String base64encodedString = request.getParameter("grievId");
+				String grievTypeId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("grievTypeId", Integer.parseInt(grievTypeId));
+				map.add("compId", companyId);
+
+				GrievencesTypeInstructn griev = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getGrievTypeInstructById", map, GrievencesTypeInstructn.class);
+
+				model.addAttribute("griev", griev);
+
+				model.addAttribute("title", "Edit Grievances Type Instruction");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /editGrievanceTypeInsrtuctn : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Delete Grievance
+	@RequestMapping(value = "/deleteGrievanceType", method = RequestMethod.GET)
+	public String deleteGrievanceType(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession();
+		String mav = new String();
+		try {
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteGrievanceType", "showGrievencesTypeIntructn", "0", "0", "0",
+					"1", newModuleList);
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				String base64encodedString = request.getParameter("grievId");
+				String grievTypeId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("grievTypeId", Integer.parseInt(grievTypeId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteGrievTypeInstructById", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+				mav = "redirect:/showGrievencesTypeIntructn";
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteGrievanceType : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	/*-------------------------------------------------------------------------------------*/
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
 	// Description :- Show Grievances
 	@RequestMapping(value = "/showGrievences", method = RequestMethod.GET)
 	public String showGrievences(HttpServletRequest request, HttpServletResponse response, Model model) {

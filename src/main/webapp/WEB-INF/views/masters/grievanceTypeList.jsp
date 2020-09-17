@@ -83,15 +83,8 @@
 							<c:forEach items="${grievList}" var="grievList" varStatus="count">
 								 <tr>
 									<td>${count.index+1}</td>
-									<td>${grievList.caption}</td>
-									<c:set value="" var="status"/>
-									<c:if test="${grievList.isActive==0}">
-										<c:set value="Active" var="status"/>
-									</c:if>
-									<c:if test="${grievList.isActive==1}">
-										<c:set value="In-Active" var="status"/>
-									</c:if>
-									<td>${status}</td>	
+									<td>${grievList.caption}</td>									
+									<td>${grievList.isActive==1 ? 'Active' : 'In-Active'}</td>	
 									<td style="display: none;"></td>
 									<td style="display: none;"></td>
 									<td style="display: none;"></td>	
