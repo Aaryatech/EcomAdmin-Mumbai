@@ -467,4 +467,12 @@ public class CommonUtility {
 		return cal.getTimeInMillis();
 	}
 	
+	public static long getCurrentTimeStamp() {
+
+		Calendar cal = Calendar.getInstance();
+
+		return cal.getTimeInMillis();
+
+	}
+	
 }

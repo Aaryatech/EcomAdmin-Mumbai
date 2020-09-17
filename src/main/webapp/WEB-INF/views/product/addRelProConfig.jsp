@@ -160,17 +160,17 @@
 											</select> <span class="validation-invalid-label" id="error_productId"
 												style="display: none;">This field is required.</span>
 										</div>
-										
-										
-									
-									</div>
-									
-									<div class="form-group row">	<div id="loader1" style="display: none;">
+										<div id="loader1" style="display: none;">
 											<img
 												src='${pageContext.request.contextPath}/resources/assets/images/giphy.gif'
 												width="100px" height="100px"
 												style="display: block; margin-left: auto; margin-right: auto">
-										</div></div>
+										</div>
+										
+									
+									</div>
+									
+							 
 										 
 
 									<div class="col-lg-12" align="center">
