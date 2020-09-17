@@ -93,7 +93,7 @@
 												are mandatory.</p>
 											<div class="form-group row">
 												<div class="col-lg-4">
-													<input type="text" class="form-control" name="frId"
+													<input type="hidden" class="form-control" name="frId"
 														id="frId" value="${frId}">
 												</div>
 											</div>
@@ -105,9 +105,9 @@
 													class="text-danger">* </span>:
 												</label>
 												<div class="col-lg-4">
-													<input type="text"
-														class="form-control" name="frCode"
-														id="frCode" value="${franchise.frCode}" readonly="readonly">												
+													<input type="text" class="form-control" name="frCode"
+														id="frCode" value="${franchise.frCode}"
+														readonly="readonly">
 												</div>
 
 												<label class="col-form-label font-weight-bold col-lg-2"
@@ -138,8 +138,8 @@
 														autocomplete="off" onchange="trim(this)"
 														value="${franchise.openingDate}"> <span
 														class="validation-invalid-label text-danger"
-														id="error_openDate" style="display: none;">This field
-														is required.</span>
+														id="error_openDate" style="display: none;">This
+														field is required.</span>
 												</div>
 
 												<label class="col-form-label font-weight-bold col-lg-2"
@@ -181,11 +181,11 @@
 												</label>
 												<div class="col-lg-4">
 													<input type="text"
-														class="form-control maxlength-badge-position non-char" name="mobNo"
-														id="mobNo" maxlength="10" placeholder="Contact No."
-														autocomplete="off" onchange="trim(this)"
-														value="${franchise.frContactNo}"> <span
-														class="validation-invalid-label text-danger"
+														class="form-control maxlength-badge-position non-char"
+														name="mobNo" id="mobNo" maxlength="10"
+														placeholder="Contact No." autocomplete="off"
+														onchange="trim(this)" value="${franchise.frContactNo}">
+													<span class="validation-invalid-label text-danger"
 														id="error_mobNo" style="display: none;">This field
 														is required.</span>
 												</div>
@@ -210,11 +210,24 @@
 												</span>:
 												</label>
 												<div class="col-lg-2">
-													<input type="text"
+													<%-- <input type="text"
 														class="form-control maxlength-badge-position" name="city"
 														id="city" maxlength="30" autocomplete="off"
-														onchange="trim(this)" value="${franchise.frCity}">
-													<span class="validation-invalid-label text-danger"
+														onchange="trim(this)" value="${franchise.frCity}"> --%>
+
+													<select class="form-control select-search" data-fouc
+														data-placeholder="Select City" name="city" id="city">
+														<c:forEach items="${cityList}" var="cityList">
+															<c:choose>
+																<c:when test="${cityList.cityId==franchise.frCity}">
+																	<option value="${cityList.cityId}" selected="selected">${cityList.cityName}</option>
+																</c:when>
+																<c:otherwise>
+																	<option value="${cityList.cityId}">${cityList.cityName}</option>
+																</c:otherwise>
+															</c:choose>
+														</c:forEach>
+													</select> <span class="validation-invalid-label text-danger"
 														id="error_city" style="display: none;">This field
 														is required.</span>
 												</div>
@@ -324,7 +337,7 @@
 											id="submitFdaGstDtl" method="post">
 											<div class="form-group row">
 												<div class="col-lg-4">
-													<input type="text" class="form-control" name="frId"
+													<input type="hidden" class="form-control" name="frId"
 														id="frId" value="${frId}">
 												</div>
 											</div>
@@ -367,8 +380,8 @@
 													for="gstType">GST Type<span class="text-danger">*
 												</span>:
 												</label>
-												<div class="col-lg-4">													
-														<select class="form-control select" data-fouc
+												<div class="col-lg-4">
+													<select class="form-control select" data-fouc
 														name="gstType" id="gstType"
 														data-placholder="Select GST Type">
 														<option value="1"
@@ -376,13 +389,13 @@
 														<option value="2"
 															${franchise.gstType==2 ? 'selected' : '' }>Composite</option>
 														<option value="3"
-															${franchise.gstType==3 ? 'selected' : '' }>Non-Register</option>														
+															${franchise.gstType==3 ? 'selected' : '' }>Non-Register</option>
 													</select>
 												</div>
 
 												<label class="col-form-label font-weight-bold col-lg-2"
-													for="gstNo">GST No.<span class="text-danger" id="mandat">
-												</span>:
+													for="gstNo">GST No.<span class="text-danger"
+													id="mandat"> </span>:
 												</label>
 												<div class="col-lg-4">
 													<input type="text"
@@ -460,7 +473,8 @@
 											</div>
 											<br>
 											<div class="text-center">
-												<button type="submit" class="btn btn-primary" id="submtFdabtn">
+												<button type="submit" class="btn btn-primary"
+													id="submtFdabtn">
 													Save <i class="icon-paperplane ml-2"></i>
 												</button>
 											</div>
@@ -475,7 +489,7 @@
 
 											<div class="form-group row">
 												<div class="col-lg-4">
-													<input type="text" class="form-control" name="frId"
+													<input type="hidden" class="form-control" name="frId"
 														id="frId" value="${frId}">
 												</div>
 											</div>
@@ -534,8 +548,8 @@
 												</label>
 												<div class="col-lg-4">
 													<input type="text"
-														class="form-control maxlength-badge-position non-char" name="accNo"
-														id="accNo" maxlength="17" autocomplete="off"
+														class="form-control maxlength-badge-position non-char"
+														name="accNo" id="accNo" maxlength="17" autocomplete="off"
 														onchange="trim(this)" value="${franchise.coBankAccNo}">
 													<span class="validation-invalid-label text-danger"
 														id="error_accNo" style="display: none;">This field
@@ -592,7 +606,8 @@
 											</div>
 											<br>
 											<div class="text-center">
-												<button type="submit" class="btn btn-primary" id="submtbankbtn">
+												<button type="submit" class="btn btn-primary"
+													id="submtbankbtn">
 													Save <i class="icon-paperplane ml-2"></i>
 												</button>
 											</div>
@@ -632,8 +647,8 @@
 	</script>
 
 	<script type="text/javascript">
-	//Basic Info Form
-	 $(document).ready(function($) {
+		//Basic Info Form
+		$(document).ready(function($) {
 
 			$("#submitInsert").submit(function(e) {
 				var isError = false;
@@ -651,69 +666,64 @@
 					$("#error_ownerDob").show()
 				} else {
 					$("#error_ownerDob").hide()
-				}	
-				
+				}
+
 				if (!$("#openDate").val()) {
 					isError = true;
 					$("#error_openDate").show()
 				} else {
 					$("#error_openDate").hide()
-				}	
-				
-				if (!$("#email").val()
-						|| !validateEmail($(
-								"#email").val())) {
+				}
+
+				if (!$("#email").val() || !validateEmail($("#email").val())) {
 					isError = true;
 					$("#error_email").show()
 				} else {
 					$("#error_email").hide()
 				}
-				
-				if (!$("#mobNo").val()
-						|| !validateMobile($(
-								"#mobNo")
-								.val())) {
+
+				if (!$("#mobNo").val() || !validateMobile($("#mobNo").val())) {
 					isError = true;
 					$("#error_mobNo").show()
 				} else {
 					$("#error_mobNo").hide()
 				}
-				
+
 				if (!$("#address").val()) {
 					isError = true;
 					$("#error_address").show()
 				} else {
 					$("#error_address").hide()
-				}	
-				
+				}
+
 				if (!$("#city").val()) {
 					isError = true;
 					$("#error_city").show()
 				} else {
 					$("#error_city").hide()
-				}	
-				
+				}
+
 				if (!$("#state").val()) {
 					isError = true;
 					$("#error_state").show()
 				} else {
 					$("#error_state").hide()
-				}	
-				
+				}
+
 				if (!$("#pincode").val()) {
 					isError = true;
 					$("#error_pincode").show()
 				} else {
 					$("#error_pincode").hide()
 				}
-				
+
 				if (!$("#pass").val()) {
 					isError = true;
 					$("#error_password").show()
 				} else {
 					$("#error_password").hide()
 				}
-				
+
 				if (!isError) {
 					var x = true;
 					if (x == true) {
@@ -726,153 +736,182 @@
 
 			});
 		});
-	 
-	//FDA & GST Info Form
-	 $(document).ready(function($) {
-			$("#submitFdaGstDtl").submit(function(e) {
-				var isError = false;
-				var errMsg = "";
 
-				if (!$("#fdaNo").val()) {
-					isError = true;
-					$("#error_fdaNo").show()
-				} else {
-					$("#error_fdaNo").hide()
-				}
-				
-				if (!$("#fdaExpDate").val()) {
-					isError = true;
-					$("#error_fdaExpDate").show()
-				} else {
-					$("#error_fdaExpDate").hide()
-				}
-				
-				 if(parseInt($("#gstType").val())==1 || parseInt($("#gstType").val())==2){						 
-					if (!$("#gstNo").val()) {
-						isError = true;		
-						document.getElementById("mandat").innerHTML = "*";				
-						$("#error_gstNo").show()
-					} else {
-						$("#error_gstNo").hide()
-					}
-				}else{	
-					document.getElementById("mandat").innerHTML = "";				
-					$("#error_gstNo").hide()
-				} 
-				 
-				 
-				 if (!$("#kmCover").val()) {
-						isError = true;
-						$("#error_kmCover").show()
-					} else {
-						$("#error_kmCover").hide()
-					}
-				 
-				 if (!$("#servePincode").val()) {
-						isError = true;
-						$("#error_servePincode").show()
-					} else {
-						$("#error_servePincode").hide()
-					}
-				 
-				 if (!$("#longitude").val()) {
-						isError = true;
-						$("#error_longitude").show()
-					} else {
-						$("#error_longitude").hide()
-					}
-				 
-				 if (!$("#latitude").val()) {
-						isError = true;
-						$("#error_latitude").show()
-					} else {
-						$("#error_latitude").hide()
-					}
-				
-				
-				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtFdabtn").disabled = true;
-						return true;
-					}
-				}
+		//FDA & GST Info Form
+		$(document)
+				.ready(
+						function($) {
+							$("#submitFdaGstDtl")
+									.submit(
+											function(e) {
+												var isError = false;
+												var errMsg = "";
 
-				return false;
+												if (!$("#fdaNo").val()) {
+													isError = true;
+													$("#error_fdaNo").show()
+												} else {
+													$("#error_fdaNo").hide()
+												}
 
-			});
-		});
-	
-	//Bank Detail Form
-	 $(document).ready(function($) {
-			$("#submitBankDtl").submit(function(e) {
-				var isError = false;
-				var errMsg = "";
+												if (!$("#fdaExpDate").val()) {
+													isError = true;
+													$("#error_fdaExpDate")
+															.show()
+												} else {
+													$("#error_fdaExpDate")
+															.hide()
+												}
 
-				if (!$("#coBankName").val()) {
-					isError = true;
-					$("#error_coBankName").show()
-				} else {
-					$("#error_coBankName").hide()
-				}
-				
-				if (!$("#branchName").val()) {
-					isError = true;
-					$("#error_branchName").show()
-				} else {
-					$("#error_branchName").hide()
-				}
-				
-				if (!$("#ifscCode").val()) {
-					isError = true;
-					$("#error_ifscCode").show()
-				} else {
-					$("#error_ifscCode").hide()
-				}
-				
-				if (!$("#accNo").val()) {
-					isError = true;
-					$("#error_accNo").show()
-				} else {
-					$("#error_accNo").hide()
-				}
-				
-				if (!$("#paymentGateWay").val()) {
-					isError = true;
-					$("#error_paymentGateWay").show()
-				} else {
-					$("#error_paymentGateWay").hide()
-				}
-				
-				if (!$("#samePayGateWay").val()) {
-					isError = true;
-					$("#error_samePayGateWay").show()
-				} else {
-					$("#error_samePayGateWay").hide()
-				}
-				
-				if (!$("#panNo").val()) {
-					isError = true;
-					$("#error_panNo").show()
-				} else {
-					$("#error_panNo").hide()
-				}
-				
-				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbankbtn").disabled = true;
-						return true;
-					}
-				}
+												if (parseInt($("#gstType")
+														.val()) == 1
+														|| parseInt($(
+																"#gstType")
+																.val()) == 2) {
+													if (!$("#gstNo").val()) {
+														isError = true;
+														document
+																.getElementById("mandat").innerHTML = "*";
+														$("#error_gstNo")
+																.show()
+													} else {
+														$("#error_gstNo")
+																.hide()
+													}
+												} else {
+													document
+															.getElementById("mandat").innerHTML = "";
+													$("#error_gstNo").hide()
+												}
 
-				return false;
+												if (!$("#kmCover").val()) {
+													isError = true;
+													$("#error_kmCover").show()
+												} else {
+													$("#error_kmCover").hide()
+												}
 
-			});
-		});
-	
+												if (!$("#servePincode").val()) {
+													isError = true;
+													$("#error_servePincode")
+															.show()
+												} else {
+													$("#error_servePincode")
+															.hide()
+												}
 
-	 function validateEmail(email) {
+												if (!$("#longitude").val()) {
+													isError = true;
+													$("#error_longitude")
+															.show()
+												} else {
+													$("#error_longitude")
+															.hide()
+												}
+
+												if (!$("#latitude").val()) {
+													isError = true;
+													$("#error_latitude").show()
+												} else {
+													$("#error_latitude").hide()
+												}
+
+												if (!isError) {
+													var x = true;
+													if (x == true) {
+														document
+																.getElementById("submtFdabtn").disabled = true;
+														return true;
+													}
+												}
+
+												return false;
+
+											});
+						});
+
+		//Bank Detail Form
+		$(document)
+				.ready(
+						function($) {
+							$("#submitBankDtl")
+									.submit(
+											function(e) {
+												var isError = false;
+												var errMsg = "";
+
+												if (!$("#coBankName").val()) {
+													isError = true;
+													$("#error_coBankName")
+															.show()
+												} else {
+													$("#error_coBankName")
+															.hide()
+												}
+
+												if (!$("#branchName").val()) {
+													isError = true;
+													$("#error_branchName")
+															.show()
+												} else {
+													$("#error_branchName")
+															.hide()
+												}
+
+												if (!$("#ifscCode").val()) {
+													isError = true;
+													$("#error_ifscCode").show()
+												} else {
+													$("#error_ifscCode").hide()
+												}
+
+												if (!$("#accNo").val()) {
+													isError = true;
+													$("#error_accNo").show()
+												} else {
+													$("#error_accNo").hide()
+												}
+
+												if (!$("#paymentGateWay").val()) {
+													isError = true;
+													$("#error_paymentGateWay")
+															.show()
+												} else {
+													$("#error_paymentGateWay")
+															.hide()
+												}
+
+												if (!$("#samePayGateWay").val()) {
+													isError = true;
+													$("#error_samePayGateWay")
+															.show()
+												} else {
+													$("#error_samePayGateWay")
+															.hide()
+												}
+
+												if (!$("#panNo").val()) {
+													isError = true;
+													$("#error_panNo").show()
+												} else {
+													$("#error_panNo").hide()
+												}
+
+												if (!isError) {
+													var x = true;
+													if (x == true) {
+														document
+																.getElementById("submtbankbtn").disabled = true;
+														return true;
+													}
+												}
+
+												return false;
+
+											});
+						});
+
+		function validateEmail(email) {
 			var eml = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 			if (eml.test($.trim(email)) == false) {
 				return false;
@@ -888,13 +927,19 @@
 			return true;
 		}
 
-		$('.non-char').on('input', function() {
-			 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
-			});
-		
-		$('.non-char-float').on('input', function() {
-			 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-			});
+		$('.non-char').on(
+				'input',
+				function() {
+					this.value = this.value.replace(/[^0-9]/g, '').replace(
+							/(\..*)\./g, '$1');
+				});
+
+		$('.non-char-float').on(
+				'input',
+				function() {
+					this.value = this.value.replace(/[^0-9.]/g, '').replace(
+							/(\..*)\./g, '$1');
+				});
 
 		/* Auto Resize Text Area for address */
 		var observe;

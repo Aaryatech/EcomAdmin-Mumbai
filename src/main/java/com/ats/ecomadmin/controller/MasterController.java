@@ -1860,8 +1860,19 @@ public class MasterController {
 				mav = "accessDenied";
 
 			} else {
+				
 				mav = "masters/addFranchise";
-
+				
+				int companyId = (int) session.getAttribute("companyId");
+				
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);
+				City[] cityArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCitiesByCompId", map,
+						City[].class);
+				List<City> cityList = new ArrayList<City>(Arrays.asList(cityArr));
+				
+				model.addAttribute("cityList", cityList);
+				
 				if (id > 0) {
 					map = new LinkedMultiValueMap<>();
 					map.add("frId", id);
@@ -1873,7 +1884,7 @@ public class MasterController {
 				} else {
 					Franchise franchise = new Franchise();
 
-					int companyId = (int) session.getAttribute("companyId");
+					
 					map = new LinkedMultiValueMap<>();
 					map.add("compId", companyId);
 
@@ -1969,7 +1980,7 @@ public class MasterController {
 			}
 
 			franchise.setFrAddress(request.getParameter("address"));
-			franchise.setFrCity(request.getParameter("city"));
+			franchise.setFrCity(Integer.parseInt(request.getParameter("city")));
 			franchise.setState(request.getParameter("state"));
 			franchise.setFrCode(request.getParameter("frCode"));
 			franchise.setFrContactNo(request.getParameter("mobNo"));

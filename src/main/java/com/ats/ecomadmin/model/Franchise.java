@@ -11,7 +11,7 @@ public class Franchise {
 	private String openingDate;
 	private String frImage;
 	private float frRating;
-	private String frCity;
+	private int frCity;
 	private String frEmailId;
 	private String frContactNo;	
 	
@@ -120,11 +120,11 @@ public class Franchise {
 		this.frRating = frRating;
 	}
 
-	public String getFrCity() {
+	public int getFrCity() {
 		return frCity;
 	}
 
-	public void setFrCity(String frCity) {
+	public void setFrCity(int frCity) {
 		this.frCity = frCity;
 	}
 
