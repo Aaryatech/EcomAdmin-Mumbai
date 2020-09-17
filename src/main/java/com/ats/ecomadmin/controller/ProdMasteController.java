@@ -22,6 +22,7 @@ import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
+import com.ats.ecomadmin.model.GetProdList;
 import com.ats.ecomadmin.model.GetSubCatPrefix;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.MFilter;
@@ -377,18 +378,29 @@ public class ProdMasteController {
 	}
 	
 	
-	
+	/*****************************
+	 * //Created Date: 16-09-2020 //UpdateDate:17-09-2020 
+	 * //Description: to get Product code from subcat prefix
+	 * //Devloped By(Devloper Name): Sachin //Updated By(Devloper
+	 * Name): Sachin
+	 ******************************/
 	@RequestMapping(value = "/getSubCatPrefix", method = RequestMethod.POST)
 	public @ResponseBody Object getSubCatPrefix(HttpServletRequest request, HttpServletResponse response) {
+		
 		GetSubCatPrefix subCatPref=new GetSubCatPrefix();
+		
 		try {
 			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("subCatId", Integer.parseInt(request.getParameter("subCatId")));
 			
+			subCatPref = Constants.getRestTemplate().postForObject(Constants.url + "getSubCatPrefix", map, GetSubCatPrefix.class);
 			
 		}catch (Exception e) {
-			
+			e.printStackTrace();
 		}
-		return response;
+		
+		return subCatPref;
 	}
 	
 	public String getCommaSepStringFromStrArray(String[] strArray) {
@@ -412,6 +424,46 @@ public class ProdMasteController {
 		}
 		
 		return commaSepString ;
+		
+	}
+	
+	@RequestMapping(value = "/showProdList", method = RequestMethod.GET)
+	public ModelAndView showProdList(HttpServletRequest request, HttpServletResponse response) {
+
+		ModelAndView model = new ModelAndView("product/prodList");
+
+		try {
+			
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showUomList", "showUomList", "1", "0", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				model = new ModelAndView("accessDenied");
+
+			} else {
+
+				List<GetProdList> prodList = new ArrayList<GetProdList>();
+				int compId = (int) session.getAttribute("companyId");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				GetProdList[] prodArr = Constants.getRestTemplate().postForObject(Constants.url + "getProdList", map, GetProdList[].class);
+				prodList = new ArrayList<GetProdList>(Arrays.asList(prodArr));
+				System.err.println("Prod List " +prodList.toString());
+				
+				model.addObject("prodList", prodList);
+				
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			
+		}
+		
+		return model;
 		
 	}
 }

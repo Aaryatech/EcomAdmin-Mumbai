@@ -8,6 +8,7 @@
 <jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
 <c:url var="getSubmoduleList" value="/getSubmoduleList" />
 <c:url value="/getUserInfo" var="getUserInfo"></c:url>
+<c:url value="/getSubCatPrefix" var="getSubCatPrefixData"></c:url>
 
 </head>
 
@@ -144,8 +145,9 @@
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
-												placeholder="Select Sub Category" id="sub_cat_id" name="sub_cat_id">
-											</select> <span class="validation-invalid-label" id="error_sub_cat_id"
+												placeholder="Select Sub Category" id="sub_cat_id" name="sub_cat_id"
+												onchange="getSubCatPrefixData()">
+											</select> <span class="validation-invalid-label"  id="error_sub_cat_id"
 												style="display: none;">This field is required.</span>
 										</div>
 
@@ -935,7 +937,6 @@ if(parseInt(rateType)==2){
 	
 	$('#appl_tags').html(appl_tagshtml);
 	$("#appl_tags").trigger("chosen:updated");
-	
 	function setSubCatList(){
 		var catId=document.getElementById("cat_id").value;
 		
@@ -959,7 +960,7 @@ if(parseInt(rateType)==2){
 
 		$('#sub_cat_id').html(html);
 		$("#sub_cat_id").trigger("chosen:updated");
-		
+		document.getElementById("prod_code").value="";
 	}//end of function  
 	</script>
 	<script>
@@ -1012,6 +1013,29 @@ if(parseInt(rateType)==2){
 
 		}
 
+		function getSubCatPrefixData(){
+			var fd = new FormData();
+			subCatId=document.getElementById("sub_cat_id").value;
+			if(parseInt(subCatId)>0){
+				fd.append('subCatId', subCatId);
+				$
+				.ajax({
+				url : '${pageContext.request.contextPath}/getSubCatPrefix',
+				type : 'post',
+				dataType : 'json',
+				data : fd,
+				contentType : false,
+				processData : false,
+				success : function(data) {
+										document.getElementById("prod_code").value=""+data.subCatPrefix+"-"+(parseInt(data.prodCount)+1);
+										}
+				
+				})
+				
+			}//end of if
+			
+		}//end of function
+		
 		$(document)
 				.ready(
 						function($) {
@@ -1186,24 +1210,22 @@ if(parseInt(rateType)==2){
 													$("#error_no_of_alpha").hide()
 												}
 
-
-
 												//if (parseInt($("#is_msg_on_cake").val())==1) {
 													if($("#is_msg_on_cake").prop('checked')){
-														alert("Checked True");
+														//alert("Checked True");
 														//if (parseInt($("#no_of_msg_char").val())<1)
 															if (!$("#no_of_msg_char").val()) {
-															alert("Checked True in if Length <1");
+															//alert("Checked True in if Length <1");
 														 $("#error_no_of_msg_char").show();
 														isError = true;
 													}
 													 else {
-														 alert("Checked true value proper");
+														// alert("Checked true value proper");
 														$("#error_no_of_msg_char").hide();
 													}
 												}
 												else{
-													alert("Checked false");
+													//alert("Checked false");
 													$("#error_no_of_msg_char").hide();
 												}
 
@@ -1305,9 +1327,9 @@ if(parseInt(rateType)==2){
 														$("#error_weight_ids").hide();
 													}
 												}
-												alert("Is Error "+isError)
+												//alert("Is Error "+isError)
 												if (!isError) {
-													alert("! Is Error ")
+													//alert("! Is Error ")
 													var x = true;
 													if (x == true) {
 														document
