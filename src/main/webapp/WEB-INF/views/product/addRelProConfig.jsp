@@ -7,6 +7,10 @@
 
 <jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
 <c:url var="getProductListByCat" value="/getProductListByCat" />
+<c:url var="getProductConfig" value="/getProductConfig" />
+
+
+
 </head>
 
 <body>
@@ -123,28 +127,39 @@
 
 
 
-									<input type="hidden" id="comoffallowed" name="comoffallowed"
-										value="1">
+									<input type="hidden" id="configId" name="configId"
+										value="${configId}">
 
 									<div class="form-group row">
-										<label class="col-form-label col-lg-2" for="uom_id">
+										<label class="col-form-label col-lg-2" for="product_id">
 											Select Product <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data placeholder="Select "
-												id="product_id" name="product_id">
+												id="product_id" name="product_id" onchange="loadItems()">
 
 												<option selected disabled value="">Select</option>
 												<c:forEach items="${productList}" var="productList"
 													varStatus="count">
-													<option value="${productList.productId}">${productList.productName}</option>
+
+													<c:choose>
+														<c:when test="${productList.productId==prodId}">
+															<option selected="selected"
+																value="${productList.productId}">${productList.productName}</option>
+														</c:when>
+														<c:otherwise>
+															<option value="${productList.productId}">${productList.productName}</option>
+														</c:otherwise>
+													</c:choose>
 												</c:forEach>
 											</select> <span class="validation-invalid-label" id="error_productId"
 												style="display: none;">This field is required.</span>
 										</div>
 									</div>
+
+
 
 									<div class="col-lg-12" align="center">
 										<table class="table datatable-scroller table-border"
@@ -210,8 +225,6 @@
 											id="submtbtn">
 											Submit <i class="icon-paperplane ml-2"></i>
 										</button>
-										<a href="${pageContext.request.contextPath}/showRoleList"><button
-												type="button" class="btn btn-primary">Cancel</button></a>
 
 									</div>
 								</form>
@@ -235,7 +248,46 @@
 
 	</div>
 	<!-- /page content -->
+	<script>
+		function loadItems(){
+			//alert(11);
+			
+			var product_id=document.getElementById("product_id").value;
+			
+			 $('input:checkbox').attr('checked',false);
+		/* 	$
+					.getJSON(
+							'${getProductConfig}',
+							{
+								product_id : product_id,
+								ajax : 'true',
 
+							},
+							function(data) {
+								//alert( JSON.stringify(data));
+								if(data.length>0){
+								
+								document.getElementById("configId").value=data[0].configId;
+							 
+									for (var i = 0; i < data.length; i++) {
+										
+										// alert(data[i].productId+ "view"+data[i].catId);
+										document.getElementById(data[i].productId+ "view"+data[i].catId).checked = true;
+										
+								 document.getElementById(data[i].productId+"view"+data[i].catId).value=1;
+
+										
+									}
+								}else{
+									document.getElementById("configId").value=0;
+								}
+								 
+
+							}); */
+	
+}
+
+</script>
 	<script>
 		$('.datatable-fixed-left_custom').DataTable({
 			columnDefs : [ {
@@ -267,17 +319,17 @@
 
 							},
 							function(data) {
-								alert( JSON.stringify(data));
+								//alert( JSON.stringify(data));
 								if (document
 										.getElementById("header"+catId).checked == true) {
 
 									for (var i = 0; i < data.length; i++) {
 										
-										alert(data[i].productId+"view"+catId);
+										//alert(data[i].productId+"view"+catId);
 
-										document.getElementById(data[i].productId
+										document.getElementById(data[i]
 												+ "view"+catId).checked = true;
-										 document.getElementById(data[i].productId+"view"+catId).value=1;
+										 document.getElementById(data[i]+"view"+catId).value=1;
 
 										
 									}
@@ -285,9 +337,9 @@
 								} else {
 									for (var i = 0; i < data.length; i++) {
 
-										document.getElementById(data[i].productId
+										document.getElementById(data[i]
 												+ "view"+catId).checked = false;
-										 document.getElementById(data[i].productId+"view"+catId).value=0;
+										 document.getElementById(data[i]+"view"+catId).value=0;
 
 										 
 									}
