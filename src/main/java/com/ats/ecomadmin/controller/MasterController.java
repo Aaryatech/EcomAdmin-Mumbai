@@ -2337,26 +2337,29 @@ public class MasterController {
 				model.addAttribute("langList", langList);
 
 				model.addAttribute("title", "Language List");
-			}
-			Info add = AccessControll.checkAccess("showLanguage", "showLanguage", "0", "1", "0", "0", newModuleList);
-			Info edit = AccessControll.checkAccess("showLanguage", "showLanguage", "0", "0", "1", "0", newModuleList);
-			Info delete = AccessControll.checkAccess("showLanguage", "showLanguage", "0", "0", "0", "1", newModuleList);
 
-			if (add.isError() == false) {
-				// System.out.println(" add Accessable ");
-				model.addAttribute("addAccess", 0);
+				Info add = AccessControll.checkAccess("showLanguage", "showLanguage", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showLanguage", "showLanguage", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showLanguage", "showLanguage", "0", "0", "0", "1",
+						newModuleList);
 
-			}
-			if (edit.isError() == false) {
-				// System.out.println(" edit Accessable ");
-				model.addAttribute("editAccess", 0);
-			}
-			if (delete.isError() == false) {
-				// System.out.println(" delete Accessable ");
-				model.addAttribute("deleteAccess", 0);
+				if (add.isError() == false) {
+					// System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
 
-			}
+				}
+				if (edit.isError() == false) {
+					// System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					// System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
 
+				}
+			}
 		} catch (Exception e) {
 			System.out.println("Execption in /showLanguage : " + e.getMessage());
 			e.printStackTrace();
@@ -2596,24 +2599,25 @@ public class MasterController {
 				model.addAttribute("cityList", cityList);
 
 				model.addAttribute("title", "City/Village List");
-			}
-			Info add = AccessControll.checkAccess("showCities", "showCities", "0", "1", "0", "0", newModuleList);
-			Info edit = AccessControll.checkAccess("showCities", "showCities", "0", "0", "1", "0", newModuleList);
-			Info delete = AccessControll.checkAccess("showCities", "showCities", "0", "0", "0", "1", newModuleList);
 
-			if (add.isError() == false) {
-				// System.out.println(" add Accessable ");
-				model.addAttribute("addAccess", 0);
+				Info add = AccessControll.checkAccess("showCities", "showCities", "0", "1", "0", "0", newModuleList);
+				Info edit = AccessControll.checkAccess("showCities", "showCities", "0", "0", "1", "0", newModuleList);
+				Info delete = AccessControll.checkAccess("showCities", "showCities", "0", "0", "0", "1", newModuleList);
 
-			}
-			if (edit.isError() == false) {
-				// System.out.println(" edit Accessable ");
-				model.addAttribute("editAccess", 0);
-			}
-			if (delete.isError() == false) {
-				// System.out.println(" delete Accessable ");
-				model.addAttribute("deleteAccess", 0);
+				if (add.isError() == false) {
+					// System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
 
+				}
+				if (edit.isError() == false) {
+					// System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					// System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /showCities : " + e.getMessage());
@@ -3148,29 +3152,29 @@ public class MasterController {
 				}
 				model.addAttribute("delvList", delvList);
 				model.addAttribute("title", "Delivery Instruction List");
-			}
-			Info add = AccessControll.checkAccess("showDeliveryInstructn", "showDeliveryInstructn", "0", "1", "0", "0",
-					newModuleList);
-			Info edit = AccessControll.checkAccess("showDeliveryInstructn", "showDeliveryInstructn", "0", "0", "1", "0",
-					newModuleList);
-			Info delete = AccessControll.checkAccess("showDeliveryInstructn", "showDeliveryInstructn", "0", "0", "0",
-					"1", newModuleList);
 
-			if (add.isError() == false) {
-				// System.out.println(" add Accessable ");
-				model.addAttribute("addAccess", 0);
+				Info add = AccessControll.checkAccess("showDeliveryInstructn", "showDeliveryInstructn", "0", "1", "0",
+						"0", newModuleList);
+				Info edit = AccessControll.checkAccess("showDeliveryInstructn", "showDeliveryInstructn", "0", "0", "1",
+						"0", newModuleList);
+				Info delete = AccessControll.checkAccess("showDeliveryInstructn", "showDeliveryInstructn", "0", "0",
+						"0", "1", newModuleList);
 
-			}
-			if (edit.isError() == false) {
-				// System.out.println(" edit Accessable ");
-				model.addAttribute("editAccess", 0);
-			}
-			if (delete.isError() == false) {
-				// System.out.println(" delete Accessable ");
-				model.addAttribute("deleteAccess", 0);
+				if (add.isError() == false) {
+					// System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
 
-			}
+				}
+				if (edit.isError() == false) {
+					// System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					// System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
 
+				}
+			}
 		} catch (Exception e) {
 			System.out.println("Execption in /showDeliveryInstructn : " + e.getMessage());
 			e.printStackTrace();
