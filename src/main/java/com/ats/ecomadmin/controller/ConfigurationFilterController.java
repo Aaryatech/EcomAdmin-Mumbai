@@ -148,7 +148,6 @@ public class ConfigurationFilterController {
 					map, ProductMaster[].class);
 			productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
 			
-			
 			catPrdct.setProductList(productList);
 			
 			int companyId = (int) session.getAttribute("companyId");

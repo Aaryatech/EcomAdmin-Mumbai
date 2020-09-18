@@ -71,109 +71,120 @@
 
 					</div>
 					<div class="card-body">
-					<p class="desc text-danger fontsize11">Note : * Fields are
-								mandatory.</p>
+						<p class="desc text-danger fontsize11">Note : * Fields are
+							mandatory.</p>
 
 						<div class="row">
 							<div class="col-md-12">
-							
-							<form
-								action="${pageContext.request.contextPath}/saveProductConfiguration"
-								id="submitInsert" method="post">
-								<div class="form-group row">
-									<label class="col-form-label font-weight-bold col-lg-2"
-										for="filterTypeId">Type <span class="text-danger"></span>:
-									</label>
-									<div class="col-lg-4">
-										<select class="form-control select-search" data-fouc
-											data-placeholder="Select Type" name="filterTypeId"
-											id="filterTypeId">
-											<option value="2">Same Day Time Slot</option>
-											<option value="4">Flavour Type</option>
-											<option value="6">Event Type</option>
-											<option value="7">Tags Type</option>
-										</select>
+
+								<form
+									action="${pageContext.request.contextPath}/saveProductConfiguration"
+									id="submitInsert" method="post"><!-- onsubmit="return validation()" -->
+									<div class="form-group row">
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="filterTypeId">Type <span class="text-danger"></span>:
+										</label>
+										<div class="col-lg-4">
+											<select class="form-control select-search" data-fouc
+												data-placeholder="Select Type" name="filterTypeId"
+												id="filterTypeId">
+												<option value="2">Same Day Time Slot</option>
+												<option value="4">Flavour Type</option>
+												<option value="6">Event Type</option>
+												<option value="7">Tags Type</option>
+											</select>
 
 
-										<%-- <select class="form-control select-search" data-fouc
+											<%-- <select class="form-control select-search" data-fouc
 										data-placeholder="Select Type" name="filterTypeId"
 										id="filterTypeId">
 										<c:forEach items="${filterType}" var="filterType">
 											<option value="${filterType.filterTypeId}">${filterType.filterTypeName}</option>
 										</c:forEach>
 									</select> --%>
-										<span class="validation-invalid-label text-danger"
-											id="error_city" style="display: none;">This field is
-											required.</span>
-									</div>
-
-									<label class="col-form-label font-weight-bold col-lg-2"
-										for="filterId">Filter Type<span class="text-danger"></span>:
-									</label>
-									<div class="col-lg-4">
-										<select class="form-control select-search" data-fouc
-											data-placeholder="Select Type" name="filterId" id="filterId">
-										</select>
-									</div>
-								</div>
-
-
-								<div class="form-group row">
-
-									<label class="col-form-label font-weight-bold col-lg-2"
-										for="filterTypeId">Option <span class="text-danger"></span>:
-									</label>
-									<div class="col-lg-4">
-										<div class="form-check form-check-inline">
-											<label class="form-check-label"> <input type="radio"
-												class="form-check-input" checked value="1"
-												name="radioConfig" id="add_radio"> Add
-											</label>
+											<span class="validation-invalid-label text-danger"
+												id="error_city" style="display: none;">This field is
+												required.</span>
 										</div>
 
-										<div class="form-check form-check-inline">
-											<label class="form-check-label"> <input type="radio"
-												class="form-check-input" value="0" name="radioConfig"
-												id="remove_radio"> Remove
-											</label>
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="filterId">Filter Type<span class="text-danger"></span>:
+										</label>
+										<div class="col-lg-4">
+											<select class="form-control select-search" data-fouc
+												data-placeholder="Select Type" name="filterId" id="filterId">
+											</select>
 										</div>
 									</div>
 
 
-									<div class="col-lg-2"></div>
-									<div class="col-lg-4">
-										<button type="button" class="btn btn-primary" id="searchbtn">
-											Search <i class="icon-paperplane ml-2"></i>
+									<div class="form-group row">
+
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="filterTypeId">Option <span class="text-danger"></span>:
+										</label>
+										<div class="col-lg-4">
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1"
+													name="radioConfig" id="add_radio"> Add
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" value="0" name="radioConfig"
+													id="remove_radio"> Remove
+												</label>
+											</div>
+										</div>
+
+
+										<div class="col-lg-2"></div>
+										<div class="col-lg-4">
+											<button type="button" class="btn btn-primary" id="searchbtn">
+												Search <i class="icon-paperplane ml-2"></i>
+											</button>
+										</div>
+									</div>
+
+
+									<div align="center" id="loader" style="display: none;">
+
+										<span>
+											<h4>
+												<font color="#343690">Loading</font>
+											</h4>
+										</span> <span class="l-1"></span> <span class="l-2"></span> <span
+											class="l-3"></span> <span class="l-4"></span> <span
+											class="l-5"></span> <span class="l-6"></span>
+									</div>
+									<!-- -------------------------------------------------------------- -->
+
+									<table class="table" id="config_product">
+										<thead>
+											<tr>
+												<th style="padding: .5rem 0.5rem"></th>
+												<th style="padding: .5rem 0.5rem" colspan=2>Category
+													Wise Product</th>
+
+											</tr>
+										</thead>
+										<tbody>
+
+										</tbody>
+									</table>
+									<span class="validation-invalid-label" id="error_chks"
+										style="display: none;">Select Product Check Box.</span>
+									<div class="text-center">
+										<br>
+										<button type="submit" class="btn btn-primary" id="submtbtn" disabled="disabled">
+											Submit <i class="icon-paperplane ml-2"></i>
 										</button>
 									</div>
-								</div>
-								
+								</form>
 								<!-- -------------------------------------------------------------- -->
-								
-								<table class="table" id="config_product">
-									<thead>
-										<tr>
-											<th style="padding: .5rem 0.5rem"></th>
-											<th style="padding: .5rem 0.5rem" colspan=2>Category
-												Wise Product</th>
 
-										</tr>
-									</thead>
-									<tbody>
-
-									</tbody>
-								</table>
-								<span class="validation-invalid-label" id="error_chks"
-									style="display: none;">Select Product Check Box.</span>
-								<div class="text-center">
-									<br>
-									<button type="submit" class="btn btn-primary" id="submtbtn">
-										Submit <i class="icon-paperplane ml-2"></i>
-									</button>
-								</div>
-							</form>		
-								<!-- -------------------------------------------------------------- -->
-								
 							</div>
 						</div>
 					</div>
@@ -200,6 +211,7 @@
 							var filterTypeId = $("#filterTypeId").val();
 
 							$('#config_product td').remove();
+							$('#loader').show();
 							$
 									.getJSON(
 											'${getProductsByFilterIds}',
@@ -210,9 +222,13 @@
 												ajax : 'true',
 											},
 											function(data) {
-
-												alert(JSON
-														.stringify(data.categoryList));
+												$('#loader').hide();
+												if(data==null){
+													alert("No data found.")
+												}
+												document.getElementById("submtbtn").disabled = false;
+												/* alert(JSON
+														.stringify(data.categoryList)); */
 												for (i = 0; i < data.categoryList.length; i++) {
 
 													var tr = $('<tr style="background:#03a9f4;"></tr>');
@@ -339,7 +355,7 @@
 						function() {
 
 							var filterTypeId = $("#filterTypeId").val();
-
+							$('#loader').show();
 							$
 									.getJSON(
 											'${getFilterByFilterType}',
@@ -348,7 +364,7 @@
 												ajax : 'true',
 											},
 											function(data) {
-
+												$('#loader').hide();
 												//	alert(JSON.stringify(data.filterIds))
 
 												$('#filterId').find('option')
@@ -393,6 +409,50 @@
 														"chosen:updated");
 											});
 						});
+	</script>
+	<script type="text/javascript">
+	function validation() {
+
+		var flag = 0;
+
+		$(".chkcls")
+				.each(
+						function(counter) {
+							if (document.getElementsByClassName("chkcls")[counter].checked) {
+								flag = 1;
+							}
+						});
+
+		if (flag == 0) {
+			alert("Please select product for configuration.");
+			return false;
+		}
+
+	}
+		/* $(document).ready(function($) {
+			$("#submitInsert").submit(function(e) {
+				var isError = false;
+				var errMsg = "";
+				alert("HI=");
+				
+				if(!$('input[type=checkbox]').attr('checked')) {
+					isError = true;
+   					 alert("UnChecked");
+				}else{
+					alert("Checked");
+				}
+				if (!isError) {
+					var x = true;
+					if (x == true) {
+						document.getElementById("submtbtn").disabled = true;
+						return true;
+					}
+				}
+
+				return false;
+
+			});
+		}); */
 	</script>
 </body>
 </html>
