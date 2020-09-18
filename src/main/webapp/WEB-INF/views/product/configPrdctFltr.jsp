@@ -108,12 +108,15 @@
 										</div>
 
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="filterId">Filter Type<span class="text-danger"></span>:
+											for="filterId">Filter Type<span class="text-danger">*</span>:
 										</label>
 										<div class="col-lg-4">
 											<select class="form-control select-search" data-fouc
 												data-placeholder="Select Type" name="filterId" id="filterId">
 											</select>
+											<span
+												class="validation-invalid-label text-danger" id="error_filterId"
+												style="display: none;">This field is required.</span>
 										</div>
 									</div>
 
@@ -429,18 +432,25 @@
 		}
 
 	}
-		/* $(document).ready(function($) {
+	 $(document).ready(function($) {
 			$("#submitInsert").submit(function(e) {
 				var isError = false;
 				var errMsg = "";
-				alert("HI=");
+			
 				
-				if(!$('input[type=checkbox]').attr('checked')) {
+				if (!$("#filterId").val()) {
+					isError = true;
+					$("#error_filterId").show()
+				} else {
+					$("#error_filterId").hide()
+				}	
+				
+				/* if(!$('input[type=checkbox]').attr('checked')) {
 					isError = true;
    					 alert("UnChecked");
 				}else{
 					alert("Checked");
-				}
+				} */
 				if (!isError) {
 					var x = true;
 					if (x == true) {
@@ -452,7 +462,7 @@
 				return false;
 
 			});
-		}); */
+		}); 
 	</script>
 </body>
 </html>
