@@ -202,6 +202,7 @@ public class ConfigurationFilterController {
 			map.add("filterId", filterId);
 			map.add("filterTypeId", filterTypeId);
 			map.add("prdctIdsStr", productIdsStr);
+			map.add("optnValue", optnValue);
 			
 			Info res = Constants.getRestTemplate().postForObject(Constants.url + "configProductWithFilter", map,
 					Info.class);
