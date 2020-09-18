@@ -136,7 +136,7 @@ public class ConfigurationFilterController {
 		try {
 			HttpSession session = request.getSession();
 			int companyId = (int) session.getAttribute("companyId");
-			
+
 			int filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
 			int filterIds = Integer.parseInt(request.getParameter("filterId"));
 			int optionVal = Integer.parseInt(request.getParameter("optionVal"));
@@ -152,8 +152,6 @@ public class ConfigurationFilterController {
 			productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
 
 			catPrdct.setProductList(productList);
-
-		
 
 			map = new LinkedMultiValueMap<>();
 			map.add("compId", companyId);
@@ -270,8 +268,6 @@ public class ConfigurationFilterController {
 			// int filterIds = Integer.parseInt(request.getParameter("filterId"));
 			// int optionVal = Integer.parseInt(request.getParameter("optionVal"));
 
-			System.out.println("Param--------------------" + typeConfigId);
-
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 
 			if (typeConfigId == 1) {
@@ -331,28 +327,26 @@ public class ConfigurationFilterController {
 		try {
 			HttpSession session = request.getSession();
 			int companyId = (int) session.getAttribute("companyId");
-			
+
 			int typeConfigId = Integer.parseInt(request.getParameter("typeConfigId"));
 			int filterId = Integer.parseInt(request.getParameter("filterId"));
 			int optionVal = Integer.parseInt(request.getParameter("radioConfig"));
-			System.out.println("Param--------------------" + typeConfigId + " / " + filterId+" / "+optionVal);
+
 			
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 
-			
-				map = new LinkedMultiValueMap<>();
-				map.add("filterId", filterId);
-				map.add("typeConfigId", typeConfigId);
-				map.add("compId", companyId);
-				map.add("optionVal", optionVal);	
+			map = new LinkedMultiValueMap<>();
+			map.add("filterId", filterId);
+			map.add("typeConfigId", typeConfigId);
+			map.add("compId", companyId);
+			map.add("optionVal", optionVal);
 
-				ProductMaster[] filterArr = Constants.getRestTemplate()
-						.postForObject(Constants.url + "getProductsByTaxId", map, ProductMaster[].class);
-				productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
+			ProductMaster[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getProductsByTaxId",
+					map, ProductMaster[].class);
+			productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
 
-				catPrdct.setProductList(productList);
-			
-			System.out.println("productList--------------------" + productList);
+			catPrdct.setProductList(productList);
+
 
 			map = new LinkedMultiValueMap<>();
 			map.add("compId", companyId);
@@ -369,80 +363,81 @@ public class ConfigurationFilterController {
 		return catPrdct;
 
 	}
-	
+
 	// Created By :- Mahendra Singh
-		// Created On :- 17-09-2020
-		// Modified By :- NA
-		// Modified On :- NA
-		// Description :- Configure Products with Cake Shape, Tax, Return % etc.
-		@RequestMapping(value = "/saveProductTaxCakeConfig", method = RequestMethod.POST)
-		public String saveProductTaxCakeConfig(HttpServletRequest request, HttpServletResponse response) {
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Configure Products with Cake Shape, Tax, Return % etc.
+	@RequestMapping(value = "/saveProductTaxCakeConfig", method = RequestMethod.POST)
+	public String saveProductTaxCakeConfig(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+			String productIdsStr = "";
+			float returnVal = 0;
+
+			String filterId = request.getParameter("filterId");
+			int typeConfigId = Integer.parseInt(request.getParameter("typeConfigId"));
+			int optnValue = Integer.parseInt(request.getParameter("radioConfig"));
+
 			try {
-				HttpSession session = request.getSession();
-				User userObj = (User) session.getAttribute("userObj");
-
-				Date date = new Date();
-				SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-				String productIdsStr = "";
-				float returnVal = 0;
-
-				String filterId = request.getParameter("filterId");
-				int typeConfigId = Integer.parseInt(request.getParameter("typeConfigId"));
-				int optnValue = Integer.parseInt(request.getParameter("radioConfig"));
-				
-				try {
-					returnVal = Float.parseFloat(request.getParameter("returnPer"));
-				}catch (Exception e) {
-					returnVal=0;
-				}
-				
-
-				String[] productIds = request.getParameterValues("chk");
-				if (productIds.length > 0) {
-					StringBuilder sb = new StringBuilder();
-					for (String s : productIds) {
-						sb.append(s).append(",");
-					}
-					productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
-					System.out.println("Product---" + typeConfigId + "*****" + filterId + "*****" + productIdsStr);
-
-				}
-
-				// System.out.println("List--------------"+productList);
-
-				Info res = new Info();
-				
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				
-				//map.add("optnValue", optnValue);
-				if(typeConfigId==2) {					
-					
-					map.add("prdctIdsStr", productIdsStr);
-					map.add("returnVal", returnVal);
-					res = Constants.getRestTemplate().postForObject(Constants.url + "configProductReturnPer", map,
-							Info.class);
-				}else {
-					map.add("filterId", filterId);
-					map.add("typeConfigId", typeConfigId);
-					map.add("prdctIdsStr", productIdsStr);
-					res = Constants.getRestTemplate().postForObject(Constants.url + "configProductOtherFilter", map,
-							Info.class);
-				}
-
-				
-
-				if (!res.isError()) {
-					session.setAttribute("successMsg", res.getMsg());
-				} else {
-					session.setAttribute("errorMsg", res.getMsg());
-				}
-
+				returnVal = Float.parseFloat(request.getParameter("returnPer"));
 			} catch (Exception e) {
-				System.out.println("Execption in /saveProductConfiguration : " + e.getMessage());
-				e.printStackTrace();
+				returnVal = 0;
 			}
-			return "redirect:/configProductTaxAndCakeShape";
 
+			String[] productIds = request.getParameterValues("chk");
+			if (productIds.length > 0) {
+				StringBuilder sb = new StringBuilder();
+				for (String s : productIds) {
+					sb.append(s).append(",");
+				}
+				productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
+				System.out.println("Product---" + typeConfigId + "*****" + filterId + "*****" + productIdsStr);
+
+			}
+
+			Info res = new Info();
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+			// map.add("optnValue", optnValue);
+			if (typeConfigId == 2) {
+
+				map.add("prdctIdsStr", productIdsStr);
+				map.add("returnVal", returnVal);
+				res = Constants.getRestTemplate().postForObject(Constants.url + "configProductReturnPer", map,
+						Info.class);
+			} else if (typeConfigId == 4 || typeConfigId == 5) {
+
+				map.add("prdctIdsStr", productIdsStr);
+				map.add("typeConfigId", typeConfigId);
+				res = Constants.getRestTemplate().postForObject(Constants.url + "configProductStatus", map, Info.class);
+			} else {
+				map.add("filterId", filterId);
+				map.add("typeConfigId", typeConfigId);
+				map.add("prdctIdsStr", productIdsStr);
+				map.add("optnValue", optnValue);
+				res = Constants.getRestTemplate().postForObject(Constants.url + "configProductOtherFilter", map,
+						Info.class);
+			}
+
+			if (!res.isError()) {
+				session.setAttribute("successMsg", res.getMsg());
+			} else {
+				session.setAttribute("errorMsg", res.getMsg());
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /saveProductConfiguration : " + e.getMessage());
+			e.printStackTrace();
 		}
+		return "redirect:/configProductTaxAndCakeShape";
+
+	}
 }

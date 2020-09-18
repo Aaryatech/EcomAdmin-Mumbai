@@ -235,7 +235,10 @@
 								document.getElementById("returnPerVal").innerHTML = "Return %";
 								filterId = 0;
 
-							} else {
+							}else if(typeConfigId == 4 || typeConfigId == 5){
+								document.getElementById("returnPerVal").innerHTML = "Status";
+								filterId = 0;
+							}else {
 								document.getElementById("returnPerVal").innerHTML = "";
 								filterId = $("#filterId").val();
 							}
@@ -254,6 +257,7 @@
 											},
 											function(data) {
 												$('#loader').hide();
+												var status=null;
 												if (data == null) {
 													alert("No data found.")
 												}
@@ -334,6 +338,19 @@
 																	.html(
 																			data.productList[j].retPer));
 															}
+															
+															 if (typeConfigId==4 || typeConfigId==5) {
+																if(data.productList[j].isActive==1){
+																	status = 'Active';
+																}else{
+																	status = 'In-Active';
+																}
+																tr1
+																.append($(
+																		'<td style="padding: 7px; line-height:0; border-top: 1px solid #ddd;""></td>')
+																		.html(
+																				status));
+																}
 
 															tr1
 																	.append($(
@@ -400,6 +417,8 @@
 								document.getElementById("returnDiv").style.display = "block";
 								document.getElementById("filterDiv").style.display = "none";
 
+							}else if(typeConfigId == 4 || typeConfigId == 5){
+								document.getElementById("filterDiv").style.display = "none";
 							} else {
 								document.getElementById("returnDiv").style.display = "none";
 								document.getElementById("filterDiv").style.display = "block";
@@ -496,7 +515,11 @@
 					} else {
 						$("#error_returnPer").hide()
 					}
-				} else {
+					
+				}else if($("#typeConfigId").val() == 4 || $("#typeConfigId").val() == 5) {
+					isError = false;
+					
+				}else {
 					if (!$("#filterId").val()) {
 						isError = true;
 						$("#error_filterId").show()
