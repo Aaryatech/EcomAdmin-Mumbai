@@ -31,9 +31,11 @@ import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.GetCatProduct;
 import com.ats.ecomadmin.model.GetFilterIds;
+import com.ats.ecomadmin.model.GetTaxCakeShapeList;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.MFilter;
 import com.ats.ecomadmin.model.ProductMaster;
+import com.ats.ecomadmin.model.Tax;
 import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
@@ -43,12 +45,12 @@ import com.ats.ecomadmin.model.acrights.ModuleJson;
 public class ConfigurationFilterController {
 
 	// Created By :- Mahendra Singh
-	// Created On :- 11-09-2020
+	// Created On :- 17-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Description :- Show UOM List
+	// Description :- Redirect to Product And Filter Configure Page
 	@RequestMapping(value = "/configProductAndFilter", method = RequestMethod.GET)
-	public String showUomList(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String configProductAndFilter(HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String mav = new String();
 		try {
@@ -68,7 +70,7 @@ public class ConfigurationFilterController {
 			filterTypeList = new ArrayList<FilterTypes>(Arrays.asList(filterTypeArr));
 
 			model.addAttribute("filterType", filterTypeList);
-			
+
 			List<Category> catList = new ArrayList<>();
 
 			map = new LinkedMultiValueMap<>();
@@ -88,10 +90,15 @@ public class ConfigurationFilterController {
 	}
 
 	/*---------------------------------------------------------------------------------------------*/
+	// Created By :- Mahendra Singh
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Get Filter By Filter Type Id
 	@RequestMapping(value = "/getFilterByFilterType", method = RequestMethod.GET)
 	@ResponseBody
-	public GetFilterIds getFilterByFilterType(HttpServletRequest request, HttpServletResponse response) {
-		GetFilterIds beanVal = new GetFilterIds();
+	public List<MFilter> getFilterByFilterType(HttpServletRequest request, HttpServletResponse response) {
+
 		List<MFilter> filterList = new ArrayList<MFilter>();
 		try {
 			HttpSession session = request.getSession();
@@ -107,73 +114,73 @@ public class ConfigurationFilterController {
 					map, MFilter[].class);
 			filterList = new ArrayList<MFilter>(Arrays.asList(filterArr));
 
-			beanVal.setFilterList(filterList);
-
-			map.add("filterTypeId", filterTypeId);
-			String valIds = Constants.getRestTemplate().postForObject(Constants.url + "getFilterIds", map,
-					String.class);
-
-			HashSet<String> strIds = new HashSet<String>(Arrays.asList(valIds.split(",")));
-			// Remove duplicate Ids
-
-			beanVal.setFilterIds(strIds.toString());
-
 		} catch (Exception e) {
 			System.out.println("Execption in /getFilterByFilterType : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return beanVal;
+		return filterList;
 	}
-	
+
+	// Created By :- Mahendra Singh
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Get Products By Filter Id
 	List<ProductMaster> productList = new ArrayList<ProductMaster>();
+
 	@RequestMapping(value = "/getProductsByFilterIds", method = RequestMethod.GET)
 	@ResponseBody
 	public GetCatProduct getProductsByFilterIds(HttpServletRequest request, HttpServletResponse response) {
 		GetCatProduct catPrdct = new GetCatProduct();
-		
+
 		try {
 			HttpSession session = request.getSession();
+			int companyId = (int) session.getAttribute("companyId");
 			
 			int filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
 			int filterIds = Integer.parseInt(request.getParameter("filterId"));
 			int optionVal = Integer.parseInt(request.getParameter("optionVal"));
-			
-			System.out.println("Param--------------------"+filterTypeId+" / "+filterIds+" / "+optionVal);
+
+			System.out.println("Param--------------------" + filterTypeId + " / " + filterIds + " / " + optionVal);
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("filterTypeId", filterTypeId);
 			map.add("filterId", filterIds);
 			map.add("optionVal", optionVal);
-			
-			ProductMaster[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getProductsNotConfigure",
-					map, ProductMaster[].class);
+			map.add("compId", companyId);
+			ProductMaster[] filterArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getProductsNotConfigure", map, ProductMaster[].class);
 			productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
-			
+
 			catPrdct.setProductList(productList);
-			
-			int companyId = (int) session.getAttribute("companyId");
-			
+
+		
+
 			map = new LinkedMultiValueMap<>();
 			map.add("compId", companyId);
-			
+
 			Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
 					Category[].class);
 			List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
 			catPrdct.setCategoryList(catList);
-			
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			System.out.println("Execption in /getProductsByFilterIds : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return catPrdct;
-		
+
 	}
-	
-	
+
+	// Created By :- Mahendra Singh
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Configure Products And Filter
 	@RequestMapping(value = "/saveProductConfiguration", method = RequestMethod.POST)
 	public String saveProductConfiguration(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			HttpSession session = request.getSession();
-			User userObj = (User) session.getAttribute("userObj");	
+			User userObj = (User) session.getAttribute("userObj");
 
 			Date date = new Date();
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -183,7 +190,7 @@ public class ConfigurationFilterController {
 			String filterId = request.getParameter("filterId");
 			int filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
 			int optnValue = Integer.parseInt(request.getParameter("radioConfig"));
-			
+
 			String[] productIds = request.getParameterValues("chk");
 			if (productIds.length > 0) {
 				StringBuilder sb = new StringBuilder();
@@ -191,18 +198,18 @@ public class ConfigurationFilterController {
 					sb.append(s).append(",");
 				}
 				productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
-				System.out.println("Product---" + filterTypeId +"*****"+ filterId +"*****" + productIdsStr);
+				System.out.println("Product---" + filterTypeId + "*****" + filterId + "*****" + productIdsStr);
 
 			}
-			
-			//System.out.println("List--------------"+productList);
-			
+
+			// System.out.println("List--------------"+productList);
+
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("filterId", filterId);
 			map.add("filterTypeId", filterTypeId);
 			map.add("prdctIdsStr", productIdsStr);
 			map.add("optnValue", optnValue);
-			
+
 			Info res = Constants.getRestTemplate().postForObject(Constants.url + "configProductWithFilter", map,
 					Info.class);
 
@@ -211,12 +218,231 @@ public class ConfigurationFilterController {
 			} else {
 				session.setAttribute("errorMsg", res.getMsg());
 			}
-			
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			System.out.println("Execption in /saveProductConfiguration : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return "redirect:/configProductAndFilter";
-		
+
 	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect to Product And Filter Configure Page
+	@RequestMapping(value = "/configProductTaxAndCakeShape", method = RequestMethod.GET)
+	public String configProductTaxAndCakeShape(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			mav = "product/configPrdctTaxCakShp";
+			HttpSession session = request.getSession();
+
+			int compId = (int) session.getAttribute("companyId");
+
+			model.addAttribute("title", "Configure Product, Tax And Cake Shape");
+
+		} catch (Exception e) {
+			System.out.println("Execption in /configProductTaxAndCakeShape : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Get Products By Filter Id
+	@RequestMapping(value = "/getFilterConfigList", method = RequestMethod.GET)
+	@ResponseBody
+	public List<GetTaxCakeShapeList> getFilterConfigList(HttpServletRequest request, HttpServletResponse response) {
+
+		List<GetTaxCakeShapeList> list = new ArrayList<GetTaxCakeShapeList>();
+
+		try {
+			HttpSession session = request.getSession();
+			int compId = (int) session.getAttribute("companyId");
+
+			int typeConfigId = Integer.parseInt(request.getParameter("typeConfigId"));
+			// int filterIds = Integer.parseInt(request.getParameter("filterId"));
+			// int optionVal = Integer.parseInt(request.getParameter("optionVal"));
+
+			System.out.println("Param--------------------" + typeConfigId);
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+			if (typeConfigId == 1) {
+
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				Tax[] tagArr = Constants.getRestTemplate().postForObject(Constants.url + "getTaxes", map, Tax[].class);
+				List<Tax> taxList = new ArrayList<Tax>(Arrays.asList(tagArr));
+				System.err.println("List Of---------" + taxList);
+				for (int i = 0; i < taxList.size(); i++) {
+					GetTaxCakeShapeList taxCake = new GetTaxCakeShapeList();
+
+					taxCake.setValueId(taxList.get(i).getTaxId());
+					taxCake.setValueName(taxList.get(i).getTaxName());
+
+					list.add(taxCake);
+				}
+
+			} else if (typeConfigId == 3) {
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+				map.add("filterTypeId", 1);
+
+				MFilter[] filterArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getFiltersListByTypeId", map, MFilter[].class);
+				List<MFilter> filterList = new ArrayList<MFilter>(Arrays.asList(filterArr));
+
+				for (int i = 0; i < filterList.size(); i++) {
+					GetTaxCakeShapeList taxCake = new GetTaxCakeShapeList();
+
+					taxCake.setValueId(filterList.get(i).getFilterId());
+					taxCake.setValueName(filterList.get(i).getFilterName());
+
+					list.add(taxCake);
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /getProductsByFilterIds : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return list;
+
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Get Products By Config Filter Id
+	@RequestMapping(value = "/getProductsByConfigTypeId", method = RequestMethod.GET)
+	@ResponseBody
+	public GetCatProduct getProductsConfigTypeId(HttpServletRequest request, HttpServletResponse response) {
+		GetCatProduct catPrdct = new GetCatProduct();
+
+		try {
+			HttpSession session = request.getSession();
+			int companyId = (int) session.getAttribute("companyId");
+			
+			int typeConfigId = Integer.parseInt(request.getParameter("typeConfigId"));
+			int filterId = Integer.parseInt(request.getParameter("filterId"));
+			int optionVal = Integer.parseInt(request.getParameter("radioConfig"));
+			System.out.println("Param--------------------" + typeConfigId + " / " + filterId+" / "+optionVal);
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+			
+				map = new LinkedMultiValueMap<>();
+				map.add("filterId", filterId);
+				map.add("typeConfigId", typeConfigId);
+				map.add("compId", companyId);
+				map.add("optionVal", optionVal);	
+
+				ProductMaster[] filterArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getProductsByTaxId", map, ProductMaster[].class);
+				productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
+
+				catPrdct.setProductList(productList);
+			
+			System.out.println("productList--------------------" + productList);
+
+			map = new LinkedMultiValueMap<>();
+			map.add("compId", companyId);
+
+			Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+					Category[].class);
+			List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
+			catPrdct.setCategoryList(catList);
+
+		} catch (Exception e) {
+			System.out.println("Execption in /getProductsByFilterIds : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return catPrdct;
+
+	}
+	
+	// Created By :- Mahendra Singh
+		// Created On :- 17-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Configure Products with Cake Shape, Tax, Return % etc.
+		@RequestMapping(value = "/saveProductTaxCakeConfig", method = RequestMethod.POST)
+		public String saveProductTaxCakeConfig(HttpServletRequest request, HttpServletResponse response) {
+			try {
+				HttpSession session = request.getSession();
+				User userObj = (User) session.getAttribute("userObj");
+
+				Date date = new Date();
+				SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+				String productIdsStr = "";
+				float returnVal = 0;
+
+				String filterId = request.getParameter("filterId");
+				int typeConfigId = Integer.parseInt(request.getParameter("typeConfigId"));
+				int optnValue = Integer.parseInt(request.getParameter("radioConfig"));
+				
+				try {
+					returnVal = Float.parseFloat(request.getParameter("returnPer"));
+				}catch (Exception e) {
+					returnVal=0;
+				}
+				
+
+				String[] productIds = request.getParameterValues("chk");
+				if (productIds.length > 0) {
+					StringBuilder sb = new StringBuilder();
+					for (String s : productIds) {
+						sb.append(s).append(",");
+					}
+					productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
+					System.out.println("Product---" + typeConfigId + "*****" + filterId + "*****" + productIdsStr);
+
+				}
+
+				// System.out.println("List--------------"+productList);
+
+				Info res = new Info();
+				
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				
+				//map.add("optnValue", optnValue);
+				if(typeConfigId==2) {					
+					
+					map.add("prdctIdsStr", productIdsStr);
+					map.add("returnVal", returnVal);
+					res = Constants.getRestTemplate().postForObject(Constants.url + "configProductReturnPer", map,
+							Info.class);
+				}else {
+					map.add("filterId", filterId);
+					map.add("typeConfigId", typeConfigId);
+					map.add("prdctIdsStr", productIdsStr);
+					res = Constants.getRestTemplate().postForObject(Constants.url + "configProductOtherFilter", map,
+							Info.class);
+				}
+
+				
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+
+			} catch (Exception e) {
+				System.out.println("Execption in /saveProductConfiguration : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return "redirect:/configProductTaxAndCakeShape";
+
+		}
 }
