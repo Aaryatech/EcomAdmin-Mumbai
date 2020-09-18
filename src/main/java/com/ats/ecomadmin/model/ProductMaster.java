@@ -1,5 +1,7 @@
 package com.ats.ecomadmin.model;
 
+import java.util.List;
+
 
 /*****************************
 //Created Date: 16-09-2020
@@ -116,6 +118,18 @@ public class ProductMaster {
 	
 	private int maxWt;
 	
+	
+List<TempProdConfig> tempProdConfList;
+
+
+	
+	public List<TempProdConfig> getTempProdConfList() {
+	return tempProdConfList;
+}
+public void setTempProdConfList(List<TempProdConfig> tempProdConfList) {
+	this.tempProdConfList = tempProdConfList;
+}
+
 	public int getMaxWt() {
 		return maxWt;
 	}
