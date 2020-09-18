@@ -2,11 +2,13 @@ package com.ats.ecomadmin.controller;
 
 import java.io.File;
 
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.ConcurrentModificationException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,8 +34,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
+import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Info;
+import com.ats.ecomadmin.model.User;
+import com.ats.ecomadmin.model.offer.GetConfigureOfferList;
+import com.ats.ecomadmin.model.offer.GetOfferFrConfiguredList;
 import com.ats.ecomadmin.model.offer.Images;
+import com.ats.ecomadmin.model.offer.OfferConfig;
 import com.ats.ecomadmin.model.offer.OfferDetail;
 import com.ats.ecomadmin.model.offer.OfferHeader;
  
@@ -225,7 +232,7 @@ System.err.println(fromTime+"***"+toTime);
 
 			OfferHeader offer = new OfferHeader(offerId, title, desc, type, applicableList, 0, freqType, daysList,
 					fromDate, toDate, fromTime, toTime, userId, CommonUtility.getCurrentYMDDateTime(),
-					CommonUtility.getCurrentYMDDateTime(), compId, 0, 0, 0, 0, 0, 0, "", "", "", "", 0, 0, 0, 0);
+					CommonUtility.getCurrentYMDDateTime(), compId, 1, 1, 0, 0, 0, 0, "", "", "", "", 0, 0, 0, 0);
 
 			System.err.println("OFFER = " + offer);
 
@@ -317,7 +324,7 @@ System.err.println(fromTime+"***"+toTime);
 				}
 
 				OfferDetail detail = new OfferDetail(billWiseOfferDetailId, offerId, subType, 0, 1, disc, limit, coupon,
-						0, 0, 0, 0, noOfTimes, 0, 0, 0, "", "", "", "", 0, 0, 0, 0);
+						0, 0, 1, 1, noOfTimes, 0, 0, 0, "", "", "", "", 0, 0, 0, 0);
 				detailList.add(detail);
 
 			} /*
@@ -504,7 +511,7 @@ System.err.println(fromTime+"***"+toTime);
 		float limit = Float.parseFloat(request.getParameter("limit"));
 
 		List<OfferDetail> detailList = new ArrayList<>();
-		OfferDetail detail = new OfferDetail(0, offerId, 1, 0, 1, disc, limit, coupon, 0, 0, 0, 0, 0, 0, 0, 0, "", "",
+		OfferDetail detail = new OfferDetail(0, offerId, 1, 0, 1, disc, limit, coupon, 0, 0, 1, 1, 0, 0, 0, 0, "", "",
 				"", "", 0, 0, 0, 0);
 		detailList.add(detail);
 
@@ -634,5 +641,239 @@ System.err.println(fromTime+"***"+toTime);
 		return "redirect:/showOfferList";
 	}
 
+	
+	/****************************** Offer Config *********************************/
+	@RequestMapping(value = "/showOfferConfiguration", method = RequestMethod.GET)
+	public ModelAndView showOfferConfiguration(HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView model = null;
+		try {
+			model = new ModelAndView("franchisee/offerConfiguration");
+			OfferConfig offer = new OfferConfig();
+			model.addObject("offer", offer);
+ 
+			
+			System.err.println("hii");
+			HttpSession session = request.getSession();
+			int compId = (int) session.getAttribute("companyId");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			OfferHeader[] offerArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllOfferHeads", map,
+					OfferHeader[].class);
+			List<OfferHeader> offerList = new ArrayList<OfferHeader>(Arrays.asList(offerArr));
+			
+			System.err.println("hii"+offerList.toString());
+
+			model.addObject("offerList", offerList);
+
+			model.addObject("title", "Franchise Offer Configuration");
+
+		} catch (Exception e) {
+			System.out.println("Execption in /showOfferConfiguration : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return model;
+	}
+
+	List<GetConfigureOfferList> frList = new ArrayList<GetConfigureOfferList>();
+
+	@RequestMapping(value = "/getConfigFrList", method = RequestMethod.GET)
+	@ResponseBody
+	public List<GetConfigureOfferList> getConfigFrList(HttpServletRequest request, HttpServletResponse response) {
+
+		frList = new ArrayList<GetConfigureOfferList>();
+		try {
+
+			int offerId = Integer.parseInt(request.getParameter("offerId"));
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("offerId", offerId);
+
+			GetConfigureOfferList[] areaArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getConfigureOfferList", map, GetConfigureOfferList[].class);
+			frList = new ArrayList<GetConfigureOfferList>(Arrays.asList(areaArr));
+
+		} catch (Exception e) {
+			System.out.println("Execption in /getConfigFrList : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return frList;
+
+	}
+
+	@RequestMapping(value = "/saveOfferConfiguration", method = RequestMethod.POST)
+	public String saveOfferConfiguration(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			System.err.println("saveFrConfiguration--- ");
+
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+			String frIdStr = "";
+
+			int offersId = Integer.parseInt(request.getParameter("offers"));
+
+			String[] frIds = request.getParameterValues("frIds");
+			if (frIds.length > 0) {
+				StringBuilder sb = new StringBuilder();
+				for (String s : frIds) {
+					sb.append(s).append(",");
+				}
+				frIdStr = sb.deleteCharAt(sb.length() - 1).toString();
+				// System.out.println("frIdStr---"+offersId+" **** "+frIdStr);
+
+			}
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("offerId", offersId);
+
+			OfferConfig resOffer = Constants.getRestTemplate().postForObject(Constants.url + "getOfferInfoByOfferId", map,
+					OfferConfig.class);
+			System.out.println("resOffer----" + resOffer);
+
+			if (resOffer == null) {
+
+				int offerConfigId = 0;
+				try {
+					offerConfigId = Integer.parseInt(request.getParameter("offerConfigId"));
+				} catch (Exception e) {
+					e.printStackTrace();
+					offerConfigId = 0;
+				}
+				OfferConfig offer = new OfferConfig();
+
+				offer.setDelStatus(1);
+				offer.setExInt1(0);
+				offer.setExInt2(0);
+				offer.setExVar1("NA");
+				offer.setExVar2("NA");
+				offer.setFrId(frIdStr);
+				offer.setIsActive(1);
+				offer.setMakerDatetime(sf.format(date));
+				offer.setMakerUserId(userObj.getUserId());
+				offer.setOfferConfigId(offerConfigId);
+				offer.setOfferId(offersId);
+				offer.setUpdatedDateTime(sf.format(date));
+
+				// System.out.println("Configure Offer---------------"+offer);
+
+				OfferConfig offerRes = Constants.getRestTemplate()
+						.postForObject(Constants.url + "addFrOfferConfiguration", offer, OfferConfig.class);
+
+				if (offerRes != null)
+					session.setAttribute("successMsg", "Offer Successfully Configure With Franchise");
+				else
+					session.setAttribute("errorMsg", "Failed to Configure Offer With Franchise");
+			} else {
+				map = new LinkedMultiValueMap<>();
+				map.add("frIdStr", frIdStr);
+				map.add("offerId", offersId);
+				map.add("updtTime", sf.format(date));
+				map.add("userId", userObj.getUserId());
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "updateFrOfferConfig", map,
+						Info.class);
+
+				if (!res.isError())
+					session.setAttribute("successMsg", res.getMsg());
+				else
+					session.setAttribute("errorMsg", res.getMsg());
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /saveOfferConfiguration : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showOfferConfigurationList";
+	}
+
+	@RequestMapping(value = "/showOfferConfigurationList", method = RequestMethod.GET)
+	public ModelAndView showOfferConfigurationList(HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView model = null;
+		List<GetOfferFrConfiguredList> list = new ArrayList<GetOfferFrConfiguredList>();
+		try {
+			model = new ModelAndView("franchisee/gerFrOfferConfigList");
+
+			GetOfferFrConfiguredList[] areaArr = Constants.getRestTemplate()
+					.getForObject(Constants.url + "getAllOfferFrConfiguredList", GetOfferFrConfiguredList[].class);
+			list = new ArrayList<GetOfferFrConfiguredList>(Arrays.asList(areaArr));
+
+			for (int i = 0; i < list.size(); i++) {
+
+				list.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(list.get(i).getOfferId())));
+
+				list.get(i).setExVar2(FormValidation.Encrypt(String.valueOf(list.get(i).getOfferConfigId())));
+			}
+			model.addObject("frOfferConfigList", list);
+
+			model.addObject("title", "Franchise Offer Configuration List");
+
+		} catch (Exception e) {
+			System.out.println("Execption in /showOfferConfigurationList : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return model;
+	}
+
+	@RequestMapping(value = "/editFrOfferConfig", method = RequestMethod.GET)
+	public ModelAndView editFrOfferConfig(HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView model = null;
+		try {
+			model = new ModelAndView("franchisee/offerConfiguration");
+
+			String base64encodedString = request.getParameter("editOfferId");
+			String editOffersId = FormValidation.DecodeKey(base64encodedString);
+
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+			int compId = (int) session.getAttribute("companyId");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			OfferHeader[] offerArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllOfferHeads", map,
+					OfferHeader[].class);
+			List<OfferHeader> offerList = new ArrayList<OfferHeader>(Arrays.asList(offerArr));
+			model.addObject("offerList", offerList);
+
+			model.addObject("editOfferId", editOffersId);
+
+			model.addObject("title", "Franchise Offer Configuration");
+
+		} catch (Exception e) {
+			System.out.println("Execption in /showOfferConfiguration : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return model;
+	}
+
+	@RequestMapping(value = "/deleteFrOfferConfig", method = RequestMethod.GET)
+	public String deleteIngrediantCategory(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession();
+		try {
+
+			String base64encodedString = request.getParameter("frOfferConfigId");
+			String frOfferConfigId = FormValidation.DecodeKey(base64encodedString);
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("frOfferConfigId", Integer.parseInt(frOfferConfigId));
+
+			Info info = Constants.getRestTemplate().postForObject(Constants.url + "deleteFrOfferConfigById", map,
+					Info.class);
+
+			if (!info.isError()) {
+				session.setAttribute("successMsg", info.getMsg());
+			} else {
+				session.setAttribute("errorMsg", info.getMsg());
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteFrOfferConfig : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showOfferConfigurationList";
+	}
 	 
 }

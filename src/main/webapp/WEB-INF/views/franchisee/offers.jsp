@@ -185,7 +185,7 @@
 												<div class="col-lg-10">
 													<textarea rows="3" cols="3" class="form-control"
 														placeholder="Description..." id="offerDesc"
-														name="offerDesc" >${offer.offerDesc}</textarea>
+														name="offerDesc">${offer.offerDesc}</textarea>
 												</div>
 
 											</div>
@@ -218,8 +218,8 @@
 
 													<div class="form-check form-check-inline">
 														<label class="form-check-label"> <input
-															type="radio" id="day_radio" class="form-input-styled"
-															name="freq_type" checked data-fouc value="1"
+															type="radio" id="day_radio" class="form-check-input"
+															name="freq_type" checked value="1"
 															onclick="showDiv(this.value)"
 															${offer.frequencyType=='1'?'checked':''}> Day
 														</label>
@@ -227,42 +227,37 @@
 
 													<div class="form-check form-check-inline">
 														<label class="form-check-label"> <input
-															type="radio" id="date_radio" class="form-input-styled"
-															name="freq_type" data-fouc value="2"
-															onclick="showDiv(this.value)"
+															type="radio" id="date_radio" class="form-check-input"
+															name="freq_type" value="2" onclick="showDiv(this.value)"
 															${offer.frequencyType=='2'?'checked':''}> Date
 														</label>
 													</div>
 												</div>
-												
-												
-												
-												<label class="col-form-label font-weight-bold col-lg-2"
-											for="paymentGatewayApplicable">Payment Gateway
-											Applicable <span class="text-danger">* </span>:
-										</label>
+
+
+												<%-- 		 
 										<div class="col-lg-4">
 											<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1"
-													name="paymentGatewayApplicable" id="app_y"
-													${comp.paymentGatewayApplicable ==1 ? 'checked' : ''}>
-													Yes
+													class="form-check-input" checked value="1"   
+													name="freq_type" id="day_radio"  	onclick="showDiv(this.value)"
+														${offer.frequencyType=='1'?'checked':''}>
+													Day
 												</label>
 											</div>
 
 											<div class="form-check form-check-inline">
 												<label class="form-check-label "> <input
-													type="radio" class="form-check-input" value="0"
-													name="paymentGatewayApplicable" id="app_n"
-													${comp.paymentGatewayApplicable==0 ? 'checked' : ''}>
-													No
+													type="radio" class="form-check-input" value="2"   
+													name="freq_type" id="date_radio" 	onclick="showDiv(this.value)"
+														${offer.frequencyType=='2'?'checked':''}>
+													Date
 												</label>
 											</div>
-										</div>
-												
+										</div> --%>
+
 												<!--  -->
-												
+
 											</div>
 
 
@@ -300,8 +295,7 @@
 												<div class="col-lg-2" id="date_div" style="display: none;">
 													<input type="text" class="form-control daterange-basic_new"
 														placeholder="Enter Offer Date" id="offerDate"
-														name="offerDate" autocomplete="off" onchange="trim(this)"
-														>
+														name="offerDate" autocomplete="off" onchange="trim(this)">
 												</div>
 											</div>
 
@@ -422,9 +416,8 @@
 															<div class="form-check form-check-inline">
 																<label class="form-check-label"> <input
 																	type="radio" id="billwise_radio"
-																	class="form-input-styled" name="offerTypeWise" checked
-																	data-fouc value="1"
-																	onclick="showItemWiseOfferDiv(this.value)"
+																	class="form-check-input" name="offerTypeWise" checked
+																	value="1" onclick="showItemWiseOfferDiv(this.value)"
 																	${offer.offerType=='1'?'checked':''}
 																	disabled="disabled"> Bill Wise
 																</label>
@@ -433,9 +426,8 @@
 															<div class="form-check form-check-inline">
 																<label class="form-check-label"> <input
 																	type="radio" id="itemwise_radio"
-																	class="form-input-styled" name="offerTypeWise"
-																	data-fouc value="2"
-																	onclick="showItemWiseOfferDiv(this.value)"
+																class="form-check-input" name="offerTypeWise"
+																	value="2" onclick="showItemWiseOfferDiv(this.value)"
 																	${offer.offerType=='2'?'checked':''}
 																	disabled="disabled"> Item Wise
 																</label>
@@ -850,8 +842,9 @@
 													class="text-danger">* </span>:
 												</label>
 												<div class="col-lg-10">
-													<input type="file" class="file-input-ajax1" name="files" id="files"
-														multiple="multiple" style="background: red" data-fouc>
+													<input type="file" class="file-input-ajax1" name="files"
+														id="files" multiple="multiple" style="background: red"
+														data-fouc>
 												</div>
 
 											</div>
