@@ -2,7 +2,6 @@ package com.ats.ecomadmin.controller;
 
 import java.io.File;
 
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +42,6 @@ import com.ats.ecomadmin.model.offer.Images;
 import com.ats.ecomadmin.model.offer.OfferConfig;
 import com.ats.ecomadmin.model.offer.OfferDetail;
 import com.ats.ecomadmin.model.offer.OfferHeader;
- 
 
 @Controller
 @SessionScope
@@ -188,7 +186,7 @@ public class OfferController {
 
 			int userId = (int) session.getAttribute("userId");
 			int compId = (int) session.getAttribute("companyId");
-System.err.println(fromTime+"***"+toTime);
+			System.err.println(fromTime + "***" + toTime);
 			String daysIdsArray[] = request.getParameterValues("selectDay");
 
 			String daysList = "";
@@ -252,8 +250,8 @@ System.err.println(fromTime+"***"+toTime);
 		return "redirect:/addNewOffers/" + offerId;
 	}
 
-	
 	List<Images> imageList = new ArrayList<>();
+
 	@RequestMapping(value = "/getImagesByDocIdAndDocType", method = RequestMethod.GET)
 	public @ResponseBody List<Images> getImagesByDocId(HttpServletRequest request, HttpServletResponse response) {
 
@@ -534,8 +532,6 @@ System.err.println(fromTime+"***"+toTime);
 		return info;
 	}
 
-	 
-
 	// IMAGE UPLOAD-------------------
 	@ResponseBody
 	@RequestMapping(value = "/ajaxImageUploadOffer/{offerId}", method = RequestMethod.POST)
@@ -546,8 +542,11 @@ System.err.println(fromTime+"***"+toTime);
 
 		try {
 
+			System.err.println("files" + files.toString());
 			if (offerId > 0) {
 				List<Images> imageList = new ArrayList<>();
+
+				String filesList = new String();
 
 				if (files.size() > 0) {
 
@@ -559,25 +558,37 @@ System.err.println(fromTime+"***"+toTime);
 
 						Info info = new ImageUploadController().saveUploadedImgeWithResize(files.get(i), fileName, 450,
 								250);
-						if (info != null) {
-							if (!info.isError()) {
-
-								Images image = new Images(0, 4, offerId, fileName, (i + 1), 0, 0, 0, 0, 0, "", "", "",
-										"", 0, 0, 0);
-								Constants.getRestTemplate().postForObject(Constants.url + "saveImage", image, Info.class);
-
-							}
-						}
+						/*
+						 * if (info != null) { if (!info.isError()) {
+						 * 
+						 * Images image = new Images(0, 4, offerId, fileName, (i + 1), 0, 0, 0, 0, 0,
+						 * "", "", "", "", 0, 0, 0);
+						 * Constants.getRestTemplate().postForObject(Constants.url + "saveImage", image,
+						 * Info.class);
+						 * 
+						 * } }
+						 */
 
 						// Images images = new Images(0, 4, offerId, fileName, (i + 1), 0, 0, 0, 0, 0,
 						// "", "", "", "", 0,
 						// 0, 0);
 						// imageList.add(images);
+
+						if (filesList == null) {
+							filesList = fileName;
+						} else {
+							filesList.concat("," + fileName);
+
+						}
 					}
 
-					// Info info = Constants.getRestTemplate().postForObject(Constants.url +
-					// "saveMultipleImage", imageList,
-					// Info.class);
+					
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("filesList", filesList);
+					
+					map.add("offerId", offerId);
+					Info info = Constants.getRestTemplate().postForObject(Constants.url + "updateOfferImg",
+							imageList, Info.class);
 
 				}
 			} else {
@@ -641,7 +652,6 @@ System.err.println(fromTime+"***"+toTime);
 		return "redirect:/showOfferList";
 	}
 
-	
 	/****************************** Offer Config *********************************/
 	@RequestMapping(value = "/showOfferConfiguration", method = RequestMethod.GET)
 	public ModelAndView showOfferConfiguration(HttpServletRequest request, HttpServletResponse response) {
@@ -650,8 +660,7 @@ System.err.println(fromTime+"***"+toTime);
 			model = new ModelAndView("franchisee/offerConfiguration");
 			OfferConfig offer = new OfferConfig();
 			model.addObject("offer", offer);
- 
-			
+
 			System.err.println("hii");
 			HttpSession session = request.getSession();
 			int compId = (int) session.getAttribute("companyId");
@@ -661,8 +670,8 @@ System.err.println(fromTime+"***"+toTime);
 			OfferHeader[] offerArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllOfferHeads", map,
 					OfferHeader[].class);
 			List<OfferHeader> offerList = new ArrayList<OfferHeader>(Arrays.asList(offerArr));
-			
-			System.err.println("hii"+offerList.toString());
+
+			System.err.println("hii" + offerList.toString());
 
 			model.addObject("offerList", offerList);
 
@@ -729,8 +738,8 @@ System.err.println(fromTime+"***"+toTime);
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("offerId", offersId);
 
-			OfferConfig resOffer = Constants.getRestTemplate().postForObject(Constants.url + "getOfferInfoByOfferId", map,
-					OfferConfig.class);
+			OfferConfig resOffer = Constants.getRestTemplate().postForObject(Constants.url + "getOfferInfoByOfferId",
+					map, OfferConfig.class);
 			System.out.println("resOffer----" + resOffer);
 
 			if (resOffer == null) {
@@ -875,5 +884,5 @@ System.err.println(fromTime+"***"+toTime);
 		}
 		return "redirect:/showOfferConfigurationList";
 	}
-	 
+
 }

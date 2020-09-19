@@ -6,9 +6,6 @@
 <html lang="en">
 <head>
 
-
-
-
 <style type="text/css">
 .daterangepicker {
 	width: 100%;
@@ -417,7 +414,7 @@
 																<label class="form-check-label"> <input
 																	type="radio" id="billwise_radio"
 																	class="form-check-input" name="offerTypeWise" checked
-																	value="1" onclick="showItemWiseOfferDiv(this.value)"
+															 value="1" onclick="showItemWiseOfferDiv(this.value)"
 																	${offer.offerType=='1'?'checked':''}
 																	disabled="disabled"> Bill Wise
 																</label>
@@ -427,7 +424,7 @@
 																<label class="form-check-label"> <input
 																	type="radio" id="itemwise_radio"
 																class="form-check-input" name="offerTypeWise"
-																	value="2" onclick="showItemWiseOfferDiv(this.value)"
+															 	value="2" onclick="showItemWiseOfferDiv(this.value)"
 																	${offer.offerType=='2'?'checked':''}
 																	disabled="disabled"> Item Wise
 																</label>
@@ -442,8 +439,8 @@
 															<div class="form-check form-check-inline">
 																<label class="form-check-label"> <input
 																	type="radio" id="billwise_radio"
-																	class="form-input-styled" name="offerTypeWise" checked
-																	data-fouc value="1"
+																	class="form-check-input" name="offerTypeWise" checked
+																   value="1"
 																	onclick="showItemWiseOfferDiv(this.value)"
 																	${offer.offerType=='1'?'checked':''}> Bill Wise
 																</label>
@@ -452,8 +449,8 @@
 															<div class="form-check form-check-inline">
 																<label class="form-check-label"> <input
 																	type="radio" id="itemwise_radio"
-																	class="form-input-styled" name="offerTypeWise"
-																	data-fouc value="2"
+																	class="form-check-input" name="offerTypeWise"
+																	  value="2"
 																	onclick="showItemWiseOfferDiv(this.value)"
 																	${offer.offerType=='2'?'checked':''}> Item Wise
 																</label>
@@ -939,6 +936,9 @@
 		}
 
 		function showItemWiseOfferDiv(id) {
+			
+			
+			console.log("hiii");
 
 			if (id == 1) {
 				document.getElementById("itemWiseOfferDiv").style.display = "none";
@@ -1027,14 +1027,7 @@
 
 
 	<script type="text/javascript">
-		$('.datepickerclass').daterangepicker({
-			singleDatePicker : true,
-			selectMonths : true,
-			selectYears : true,
-			locale : {
-				format : 'DD-MM-YYYY'
-			}
-		});
+	 
 
 		//daterange-basic_new
 		// Basic initialization
@@ -1047,8 +1040,11 @@
 			}
 		});
 
+		</script>
+		
+		<script type="text/javascript">
 		// Modal template
-	/* 	var modalTemplate = '<div class="modal-dialog modal-lg" role="document">\n'
+	var modalTemplate = '<div class="modal-dialog modal-lg" role="document">\n'
 				+ '  <div class="modal-content">\n'
 				+ '    <div class="modal-header align-items-center">\n'
 				+ '      <h6 class="modal-title">{heading} <small><span class="kv-zoom-title"></span></small></h6>\n'
@@ -1094,16 +1090,16 @@
 			indicatorError : '<i class="icon-cross2 text-danger"></i>',
 			indicatorLoading : '<i class="icon-spinner2 spinner text-muted"></i>'
 		};
-		 */
-		/* var offerId=document.getElementById("offerId").value; */
-
+		 
+		 var offerId=document.getElementById("offerId").value; 
+		 console.log("offerId"+offerId);
+		
 		$('.file-input-ajax1')
 				.fileinput(
 						{
 							browseLabel : 'Browse',
-							uploadUrl : "https://pos.madhvi.in/ckadmin/ajaxImageUploadOffer/", // server upload action
-							//uploadUrl: "", // server upload action
-							uploadAsync : false,
+							uploadUrl : "http://localhost:8080/ecomadmin/ajaxImageUploadOffer/"+offerId, // server upload action
+ 							uploadAsync : false,
 							maxFileCount : 100,
 							initialPreview : [],
 							browseIcon : '<i class="icon-file-plus mr-2"></i>',

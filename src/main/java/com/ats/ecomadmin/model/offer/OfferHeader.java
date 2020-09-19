@@ -34,6 +34,9 @@ public class OfferHeader {
 	private float exFloat3;
 	private float exFloat4;
 	
+	private String offerImages;
+
+	
 	
 
 	public OfferHeader() {
@@ -323,6 +326,22 @@ public class OfferHeader {
 		this.exFloat4 = exFloat4;
 	}
 
+	
+	
+	
+	
+	public String getOfferImages() {
+		return offerImages;
+	}
+
+
+
+	public void setOfferImages(String offerImages) {
+		this.offerImages = offerImages;
+	}
+
+
+
 	@Override
 	public String toString() {
 		return "OfferHeader [offerId=" + offerId + ", offerName=" + offerName + ", offerDesc=" + offerDesc + ", type="
@@ -333,7 +352,10 @@ public class OfferHeader {
 				+ isActive + ", delStatus=" + delStatus + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exInt3="
 				+ exInt3 + ", exInt4=" + exInt4 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3
 				+ ", exVar4=" + exVar4 + ", exFloat1=" + exFloat1 + ", exFloat2=" + exFloat2 + ", exFloat3=" + exFloat3
-				+ ", exFloat4=" + exFloat4 + "]";
+				+ ", exFloat4=" + exFloat4 + ", offerImages=" + offerImages + "]";
 	}
 
+
+
+	 
 }
