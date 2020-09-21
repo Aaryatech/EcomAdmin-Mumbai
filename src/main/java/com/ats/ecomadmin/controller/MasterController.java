@@ -402,8 +402,7 @@ public class MasterController {
 			tax.setTaxId(taxId);
 			tax.setTaxName(request.getParameter("taxName"));
 			tax.setTaxDesc(request.getParameter("description"));
-			tax.setHsnCode(request.getParameter("hsnCode"));
-			System.out.println("---------------------" + request.getParameter("sgstPer"));
+			tax.setHsnCode(request.getParameter("hsnCode"));			
 			tax.setSgstPer(Float.parseFloat(request.getParameter("sgstPer")));
 			tax.setCgstPer(Float.parseFloat(request.getParameter("cgstPer")));
 			tax.setIgstPer(Float.parseFloat(request.getParameter("igstPer")));
@@ -2422,11 +2421,11 @@ public class MasterController {
 			int langId = Integer.parseInt(request.getParameter("lang_id"));
 
 			lang.setDelStatus(1);
-			lang.setExInt1(userObj.getCompanyId());
+			lang.setExInt1(0);
 			lang.setExInt2(0);
 			lang.setExVar1("NA");
 			lang.setExVar2("NA");
-			lang.setCompanyId(1);
+			lang.setCompanyId(userObj.getCompanyId());
 			lang.setIsActive(Integer.parseInt(request.getParameter("language")));
 			lang.setLangCode(request.getParameter("language_code").toUpperCase());
 			lang.setLangId(langId);
@@ -3277,6 +3276,8 @@ public class MasterController {
 			instructn.setCompanyId(userObj.getCompanyId());
 			instructn.setDelStatus(1);
 			instructn.setDescription(request.getParameter("instruct_decp"));
+			instructn.setAllowToCopy(Integer.parseInt(request.getParameter("allowCopy")));
+			instructn.setIsParent(Integer.parseInt(request.getParameter("isParent")));
 			instructn.setExInt1(0);
 			instructn.setExInt2(0);
 			instructn.setExVar1("NA");
@@ -3501,6 +3502,8 @@ public class MasterController {
 			griev.setCompanyId(userObj.getCompanyId());
 			griev.setDelStatus(1);
 			griev.setDescription(request.getParameter("griev_decp"));
+			griev.setAllowToCopy(Integer.parseInt(request.getParameter("allowCopy")));
+			griev.setIsParent(Integer.parseInt(request.getParameter("isParent")));
 			griev.setExInt1(0);
 			griev.setExInt2(0);
 			griev.setExVar1("NA");
@@ -3781,6 +3784,8 @@ public class MasterController {
 			grievance.setCompanyId(companyId);
 			grievance.setDelStatus(1);
 			grievance.setDescription(request.getParameter("griev_decp"));
+			grievance.setAllowToCopy(Integer.parseInt(request.getParameter("allowCopy")));
+			grievance.setIsParent(Integer.parseInt(request.getParameter("isParent")));
 			grievance.setExInt1(0);
 			grievance.setExInt2(0);
 			grievance.setExVar1("NA");

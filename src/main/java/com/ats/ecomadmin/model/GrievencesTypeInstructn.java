@@ -8,6 +8,8 @@ public class GrievencesTypeInstructn {
 	private int delStatus;
 	private int isActive;
 	private int companyId;
+	private int allowToCopy;
+	private int isParent;
 	private int exInt1;
 	private int exInt2;
 	private String exVar1;
@@ -93,12 +95,28 @@ public class GrievencesTypeInstructn {
 		this.exVar2 = exVar2;
 	}
 
+	public int getAllowToCopy() {
+		return allowToCopy;
+	}
+
+	public void setAllowToCopy(int allowToCopy) {
+		this.allowToCopy = allowToCopy;
+	}
+
+	public int getIsParent() {
+		return isParent;
+	}
+
+	public void setIsParent(int isParent) {
+		this.isParent = isParent;
+	}
+
 	@Override
 	public String toString() {
 		return "GrievencesTypeInstructn [grevTypeId=" + grevTypeId + ", caption=" + caption + ", description="
 				+ description + ", delStatus=" + delStatus + ", isActive=" + isActive + ", companyId=" + companyId
-				+ ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
+				+ ", allowToCopy=" + allowToCopy + ", isParent=" + isParent + ", exInt1=" + exInt1 + ", exInt2="
+				+ exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
 	}
-
 	
 }

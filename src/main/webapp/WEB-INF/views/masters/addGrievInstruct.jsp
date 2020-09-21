@@ -85,7 +85,10 @@
 										mandatory.</p>
 									<input type="hidden" class="form-control" name="griev_id"
 										id="griev_id" value="${griev.grevTypeId}">
-
+									
+									<input type="hidden" class="form-control" value="${griev.isParent}"
+										name="isParent" id="isParent">
+										
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="area_code">Grievance Caption<span
@@ -103,11 +106,13 @@
 												style="display: none;">Grievance Instruction Caption
 												Already Exist.</span>
 										</div>
+									</div>
 
+									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="area_decp">Description<span class="text-danger"></span>:
 										</label>
-										<div class="col-lg-4">
+										<div class="col-lg-10">
 											<textarea class="form-control maxlength-badge-position"
 												placeholder="Enter Grievances Type Instruction Description"
 												id="griev_decp" name="griev_decp" autocomplete="off"
@@ -137,6 +142,28 @@
 												</label>
 											</div>
 										</div>
+										
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="allowCopy">Allow Copy <span class="text-danger">*
+										</span>:
+										</label>
+										 <div class="col-lg-4">
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1" name="allowCopy"
+													id="copy_y" ${griev.allowToCopy==1 ? 'checked' : ''}>
+													Yes
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0" name="allowCopy"
+													id="copy_n" ${griev.allowToCopy==0 ? 'checked' : ''}>
+													No
+												</label>
+											</div>
+										</div> 
 									</div>
 									<br>
 									<div class="text-center">

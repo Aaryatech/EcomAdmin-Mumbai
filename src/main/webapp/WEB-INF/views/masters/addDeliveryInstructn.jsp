@@ -85,6 +85,9 @@
 										mandatory.</p>
 									<input type="hidden" class="form-control" name="instruct_id"
 										id="instruct_id" value="${instruct.instruId}">
+										
+									<input type="hidden" class="form-control" value="${instruct.isParent}"
+										name="isParent" id="isParent">
 
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
@@ -104,10 +107,13 @@
 												Already Exist.</span>
 										</div>
 
-										<label class="col-form-label font-weight-bold col-lg-2"
+									</div>
+									
+									<div class="form-group row">
+									<label class="col-form-label font-weight-bold col-lg-2"
 											for="area_decp">Description<span class="text-danger"></span>:
 										</label>
-										<div class="col-lg-4">
+										<div class="col-lg-10">
 											<textarea class="form-control maxlength-badge-position"
 												placeholder="Enter Delivery Instruction Description"
 												id="instruct_decp" name="instruct_decp" autocomplete="off"
@@ -134,6 +140,28 @@
 													class="form-check-input" value="0" name="instruction"
 													id="instruction_n" ${instruct.isActive==0 ? 'checked' : ''}>
 													In-Active
+												</label>
+											</div>
+										</div>
+										
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="allowCopy">Allow Copy <span class="text-danger">*
+										</span>:
+										</label>
+										<div class="col-lg-4">
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1" name="allowCopy"
+													id="copy_y" ${instruct.allowToCopy==1 ? 'checked' : ''}>
+													Yes
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0" name="allowCopy"
+													id="copy_n" ${instruct.allowToCopy==0 ? 'checked' : ''}>
+													No
 												</label>
 											</div>
 										</div>

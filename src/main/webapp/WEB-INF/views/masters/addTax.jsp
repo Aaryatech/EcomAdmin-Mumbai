@@ -220,7 +220,7 @@
 									
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="email">Allow Copy <span class="text-danger">*
+											for="allowCopy">Allow Copy <span class="text-danger">*
 										</span>:
 										</label>
 										<div class="col-lg-4">

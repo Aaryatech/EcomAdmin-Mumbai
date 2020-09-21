@@ -85,6 +85,9 @@
 										mandatory.</p>
 									<input type="hidden" class="form-control" name="grievances_id"
 										id="grievances_id" value="${grievance.grievanceId}">
+									
+									<input type="hidden" class="form-control" value="${grievance.isParent}"
+										name="isParent" id="isParent">
 
 									<div class="form-group row">
 
@@ -130,6 +133,18 @@
 												style="display: none;">Grievance Instruction Caption
 												Already Exist.</span>
 										</div>
+									</div>									
+									
+									<div class="form-group row">
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="area_decp">Description<span class="text-danger"></span>:
+										</label>
+										<div class="col-lg-10">
+											<textarea class="form-control maxlength-badge-position"
+												placeholder="Enter Grievances Type Instruction Description"
+												id="griev_decp" name="griev_decp" autocomplete="off"
+												maxlength="100" onchange="trim(this)">${grievance.description}</textarea>
+										</div>
 									</div>
 
 									<div class="form-group row">
@@ -154,16 +169,28 @@
 												</label>
 											</div>
 										</div>
-
+										
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="area_decp">Description<span class="text-danger"></span>:
+											for="allowCopy">Allow Copy <span class="text-danger">*
+										</span>:
 										</label>
-										<div class="col-lg-4">
-											<textarea class="form-control maxlength-badge-position"
-												placeholder="Enter Grievances Type Instruction Description"
-												id="griev_decp" name="griev_decp" autocomplete="off"
-												maxlength="100" onchange="trim(this)">${grievance.description}</textarea>
-										</div>
+										 <div class="col-lg-4">
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1" name="allowCopy"
+													id="copy_y" ${grievance.allowToCopy==1 ? 'checked' : ''}>
+													Yes
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0" name="allowCopy"
+													id="copy_n" ${grievance.allowToCopy==0 ? 'checked' : ''}>
+													No
+												</label>
+											</div>
+										</div> 
 									</div>
 									<br>
 									<div class="text-center">
