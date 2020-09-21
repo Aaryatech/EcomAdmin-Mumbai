@@ -24,6 +24,7 @@ import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
+import com.ats.ecomadmin.model.GetItemConfHead;
 import com.ats.ecomadmin.model.GetProdList;
 import com.ats.ecomadmin.model.GetSubCatPrefix;
 import com.ats.ecomadmin.model.Info;
@@ -60,7 +61,7 @@ public class ProdMasteController {
 			model.addObject("isEdit", 1);
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showUomList", "showUomList", "1", "0", "0", "0", newModuleList);
+			Info view = AccessControll.checkAccess("showProdList", "showProdList", "0", "1", "0", "0", newModuleList);
 
 			if (view.isError() == true) {
 
@@ -441,7 +442,7 @@ public class ProdMasteController {
 
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showUomList", "showUomList", "1", "0", "0", "0", newModuleList);
+			Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "0", "1", "0", "0", newModuleList);
 
 			if (view.isError() == true) {
 
@@ -490,7 +491,7 @@ public class ProdMasteController {
 
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showUomList", "showUomList", "1", "0", "0", "0", newModuleList);
+			Info view = AccessControll.checkAccess("showProdList", "showProdList", "1", "0", "0", "0", newModuleList);
 
 			if (view.isError() == true) {
 
@@ -795,7 +796,7 @@ public class ProdMasteController {
 			ItemConfHeader confHeader=new ItemConfHeader();
 			confHeader.setApplicableFor("NA");
 			confHeader.setCatId(tempProdConfList.get(0).getCatId());
-			confHeader.setCompanyId(1);
+			confHeader.setCompanyId(compId);
 			confHeader.setConfigDesc("na");
 			confHeader.setConfigHeaderId(0);
 			confHeader.setConfigName(request.getParameter("conf_name"));
@@ -835,7 +836,6 @@ public class ProdMasteController {
 				String r1 = "0";
 				try {
 					r1 = request.getParameter("r1" + tempConf.getUuid() + "" + tempConf.getProductId());
-					System.err.println("R1 " + r1);
 
 					try {
 						mrpAmt = Float.parseFloat(r1);
@@ -849,8 +849,6 @@ public class ProdMasteController {
 						continue;
 					} else {
 						// Create New Object And Save.
-						System.err.println("valid r1 " + r1);
-
 						float rateAmt;
 						float spRateAmt1;
 						float spRateAmt2;
@@ -938,12 +936,141 @@ public class ProdMasteController {
 					e.printStackTrace();
 				}
 			} // End Of tempProdConfList For Loop I
+			confHeader.setItemConfDetList(confDetailList);
+			
+			ItemConfHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveProdConfHD", confHeader,
+					ItemConfHeader.class);
 
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 		}
 
 		return "redirect:/showAddProdConfig";
 
 	}
+	
+	
+	/*****************************
+	 * //Created Date: 21-09-2020 //UpdateDate:21-09-2020 
+	 * //Description: to Show  Product Config Header Based on CatId
+	 *  //Devloped By(Devloper Name): Sachin 
+	 *  //Updated By(Devloper Name): Sachin
+	 ******************************/
+
+	@RequestMapping(value = "/showViewProdConfigHeader", method = RequestMethod.GET)
+	public ModelAndView showViewProdConfigHeader(HttpServletRequest request, HttpServletResponse response) {
+
+		ModelAndView model = new ModelAndView("product/listProdConf");
+
+		try {
+
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "1", "0", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				model = new ModelAndView("accessDenied");
+
+			} else {
+				int compId = (int) session.getAttribute("companyId");
+
+				List<Category> catList = new ArrayList<>();
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+						Category[].class);
+				catList = new ArrayList<Category>(Arrays.asList(catArr));
+
+				for (int i = 0; i < catList.size(); i++) {
+
+					catList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(catList.get(i).getCatId())));
+				}
+
+				model.addObject("catList", catList);
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		return model;
+	}
+
+	/*****************************
+	 * //Created Date: 21-09-2020 //UpdateDate:21-09-2020 
+	 * //Description: to Get Product Config Header Based on CatId
+	 *  //Devloped By(Devloper Name): Sachin 
+	 *  //Updated By(Devloper Name): Sachin
+	 ******************************/
+	@RequestMapping(value = "/getViewProdConfigHeader", method = RequestMethod.POST)
+	public ModelAndView getViewProdConfigHeader(HttpServletRequest request, HttpServletResponse response) {
+
+		ModelAndView model = new ModelAndView("product/listProdConf");
+
+		try {
+
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "1", "0", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				model = new ModelAndView("accessDenied");
+
+			} else {
+				int compId = (int) session.getAttribute("companyId");
+
+				List<Category> catList = new ArrayList<>();
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+						Category[].class);
+				catList = new ArrayList<Category>(Arrays.asList(catArr));
+
+				for (int i = 0; i < catList.size(); i++) {
+
+					catList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(catList.get(i).getCatId())));
+				}
+
+				model.addObject("catList", catList);
+
+				
+				int catId = 0;
+
+				try {
+
+					catId = Integer.parseInt(request.getParameter("cat_id"));
+
+				} catch (Exception e) {
+					catId = 0;
+				}
+				model.addObject("catId", catId);
+
+				map = new LinkedMultiValueMap<>();
+				map.add("companyId", compId);
+				map.add("catIdList", catId);
+
+				GetItemConfHead[] confHeadArray = Constants.getRestTemplate().postForObject(Constants.url + "getProdConfList", map,
+						GetItemConfHead[].class);
+				List<GetItemConfHead> confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));
+
+				model.addObject("confHeadList", confHeadList);
+				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+	}
+	
 }
