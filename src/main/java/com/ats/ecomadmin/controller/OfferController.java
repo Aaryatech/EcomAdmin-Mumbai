@@ -10,6 +10,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,6 +43,9 @@ import com.ats.ecomadmin.model.offer.Images;
 import com.ats.ecomadmin.model.offer.OfferConfig;
 import com.ats.ecomadmin.model.offer.OfferDetail;
 import com.ats.ecomadmin.model.offer.OfferHeader;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @SessionScope
@@ -133,6 +137,13 @@ public class OfferController {
 				}
 
 				model.addObject("itemSubTypeOffer", itemSubTypeOffer);
+
+			} else {
+
+				// added by harsha
+				OfferHeader offer = new OfferHeader();
+
+				model.addObject("offer", offer);
 
 			}
 
@@ -248,29 +259,6 @@ public class OfferController {
 		}
 
 		return "redirect:/addNewOffers/" + offerId;
-	}
-
-	List<Images> imageList = new ArrayList<>();
-
-	@RequestMapping(value = "/getImagesByDocIdAndDocType", method = RequestMethod.GET)
-	public @ResponseBody List<Images> getImagesByDocId(HttpServletRequest request, HttpServletResponse response) {
-
-		int type = Integer.parseInt(request.getParameter("type"));
-		System.err.println("TYPE - " + type);
-		int selectId = Integer.parseInt(request.getParameter("selectId"));
-		System.err.println("selectId - " + selectId);
-
-		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-		map.add("docId", selectId);
-		map.add("docType", type);
-
-		imageList = new ArrayList<>();
-
-		Images[] imgArr = Constants.getRestTemplate().postForObject(Constants.url + "getImagesByDocIdAndDocType", map,
-				Images[].class);
-		imageList = new ArrayList<Images>(Arrays.asList(imgArr));
-
-		return imageList;
 	}
 
 	// -----------------------SAVE OFFER DETAIL----------------------------
@@ -533,74 +521,6 @@ public class OfferController {
 	}
 
 	// IMAGE UPLOAD-------------------
-	@ResponseBody
-	@RequestMapping(value = "/ajaxImageUploadOffer/{offerId}", method = RequestMethod.POST)
-	public String ajaxImageUploadOffer(@PathVariable int offerId, HttpServletRequest request,
-			HttpServletResponse response, @RequestParam("files") List<MultipartFile> files) {
-
-		System.err.println("ajaxImageUploadOffer--- " + files.size());
-
-		try {
-
-			System.err.println("files" + files.toString());
-			if (offerId > 0) {
-				List<Images> imageList = new ArrayList<>();
-
-				String filesList = new String();
-
-				if (files.size() > 0) {
-
-					for (int i = 0; i < files.size(); i++) {
-
-						String ext = files.get(i).getOriginalFilename().split("\\.")[1];
-						String fileName = CommonUtility.getCurrentTimeStamp() + "." + ext;
-						// new ImageUploadController().saveUploadedFiles(files.get(i), 1, fileName);
-
-						Info info = new ImageUploadController().saveUploadedImgeWithResize(files.get(i), fileName, 450,
-								250);
-						/*
-						 * if (info != null) { if (!info.isError()) {
-						 * 
-						 * Images image = new Images(0, 4, offerId, fileName, (i + 1), 0, 0, 0, 0, 0,
-						 * "", "", "", "", 0, 0, 0);
-						 * Constants.getRestTemplate().postForObject(Constants.url + "saveImage", image,
-						 * Info.class);
-						 * 
-						 * } }
-						 */
-
-						// Images images = new Images(0, 4, offerId, fileName, (i + 1), 0, 0, 0, 0, 0,
-						// "", "", "", "", 0,
-						// 0, 0);
-						// imageList.add(images);
-
-						if (filesList == null) {
-							filesList = fileName;
-						} else {
-							filesList.concat("," + fileName);
-
-						}
-					}
-
-					
-					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-					map.add("filesList", filesList);
-					
-					map.add("offerId", offerId);
-					Info info = Constants.getRestTemplate().postForObject(Constants.url + "updateOfferImg",
-							imageList, Info.class);
-
-				}
-			} else {
-				return "false";
-			}
-
-		} catch (Exception e) {
-			return "false";
-		}
-		return "true";
-
-	}
 
 	@RequestMapping(value = "/showOfferList", method = RequestMethod.GET)
 	public ModelAndView showOfferList(HttpServletRequest request, HttpServletResponse response) {
@@ -885,4 +805,245 @@ public class OfferController {
 		return "redirect:/showOfferConfigurationList";
 	}
 
+	/*
+	 * @RequestMapping(value = "/getItemImagesByDocIdAndDocType", method =
+	 * RequestMethod.GET) public @ResponseBody List<Images>
+	 * getItemImagesByDocIdAndDocType(HttpServletRequest request,
+	 * HttpServletResponse response) {
+	 * 
+	 * int type = Integer.parseInt(request.getParameter("type"));
+	 * System.err.println("TYPE - " + type); int selectId =
+	 * Integer.parseInt(request.getParameter("selectId"));
+	 * System.err.println("selectId - " + selectId);
+	 * 
+	 * MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+	 * map.add("docId", selectId); map.add("docType", type);
+	 * 
+	 * imageList = new ArrayList<>();
+	 * 
+	 * Images[] imgArr = Constant.getRestTemplate().postForObject(Constant.url +
+	 * "getImagesByDocIdAndDocType", map, Images[].class); imageList = new
+	 * ArrayList<Images>(Arrays.asList(imgArr));
+	 * 
+	 * return imageList; }
+	 */
+
+	/************************* Image save ******************************/
+
+	List<String> list = new ArrayList<>();
+
+	@RequestMapping(value = "/getItemImagesByDocIdAndDocType", method = RequestMethod.GET)
+	public @ResponseBody List<String> getItemImagesByDocIdAndDocType(HttpServletRequest request,
+			HttpServletResponse response) {
+
+		int selectId = Integer.parseInt(request.getParameter("selectId"));
+		System.err.println("selectId - " + selectId);
+
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+		map.add("selectId", selectId);
+
+		String[] imgArr = Constants.getRestTemplate().postForObject(Constants.url + "getImagesByDocIdAndDocType", map,
+				String[].class);
+		list = new ArrayList<String>(Arrays.asList(imgArr));
+
+		return list;
+	}
+
+	/*
+	 * @RequestMapping(value = "/updateItemImageSequenceOrderAjax", method =
+	 * RequestMethod.GET) public @ResponseBody Info
+	 * updateItemImageSequenceOrderAjax(HttpServletRequest request,
+	 * HttpServletResponse response) {
+	 * 
+	 * Info info = new Info();
+	 * 
+	 * try {
+	 * 
+	 * String jsonStr = request.getParameter("json");
+	 * 
+	 * System.err.println("jsonStr" + jsonStr);
+	 * 
+	 * ObjectMapper mapper = new ObjectMapper(); List<String> imgSeqList =
+	 * mapper.readValue(jsonStr, new TypeReference<List<String>>() { });
+	 * 
+	 * if (imgSeqList != null) {
+	 * 
+	 * List<String> imgList = new ArrayList<>();
+	 * 
+	 * for (int i = 0; i < imgSeqList.size(); i++) { for (int j = 0; i <
+	 * list.size(); j++) {
+	 * 
+	 * if (imgSeqList.get(i) == list.get(j)) {
+	 * 
+	 * String img = list.get(j); // img.setSeqNo(imgSeqList.get(i).getSeq());
+	 * imgList.add(img); break; } } } info =
+	 * Constants.getRestTemplate().postForObject(Constants.url +
+	 * "saveMultipleImage", imgList, Info.class); }
+	 * 
+	 * } catch (Exception e) { e.printStackTrace(); }
+	 * 
+	 * return info; }
+	 */
+
+	@RequestMapping(value = "/deleteOfferImageAjax", method = RequestMethod.GET)
+	public @ResponseBody Info deleteOfferImageAjax(HttpServletRequest request, HttpServletResponse response) {
+
+		Info info = new Info();
+
+		int offerId = Integer.parseInt(request.getParameter("offerId"));
+		String imageName = request.getParameter("imageName");
+
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+		map.add("offerId", offerId);
+		map.add("imageName", imageName);
+
+		info = Constants.getRestTemplate().postForObject(Constants.url + "/deleteByImageOfOffer", map, Info.class);
+
+		try {
+
+			if (!info.isError()) {
+				File f = new File(Constants.UPLOAD_URL + imageName);
+				f.delete();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return info;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/ajaxImageUploadOffer/{offerId}", method = RequestMethod.POST)
+	public String ajaxImageUploadOffer(@PathVariable int offerId, HttpServletRequest request,
+			HttpServletResponse response, @RequestParam("files") List<MultipartFile> files) {
+
+		System.err.println("ajaxImageUploadOffer--- " + files.size());
+
+		try {
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy ");
+
+			Info info = new Info();
+
+			String filesList = new String();
+
+			System.err.println("files" + files.toString());
+			if (offerId > 0) {
+				List<Images> imageList = new ArrayList<>();
+				
+				
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("offerId", offerId);
+
+				OfferHeader res = Constants.getRestTemplate().postForObject(Constants.url + "getOfferHeaderById", map,
+						OfferHeader.class);
+				
+				 
+
+			
+
+				if (files.size() > 0) {
+
+					for (int i = 0; i < files.size(); i++) {
+						Random random = new Random();
+						int randomInt = random.nextInt(100);
+
+						String ext = files.get(i).getOriginalFilename().split("\\.")[1];
+						 String fileName = CommonUtility.getCurrentTimeStamp()+ "_" + randomInt + "." + ext;
+						 new ImageUploadController().saveUploadedFiles(files.get(i), 1, fileName);
+
+						//String fileName = sf.format(date) + "_" + files.get(i).getOriginalFilename() + "_" + randomInt;
+
+						info = new ImageUploadController().saveUploadedImgeWithResize(files.get(i), fileName, 450, 250);
+
+						if (filesList.isEmpty()) {
+
+							System.err.println("empty");
+							filesList = fileName;
+						} else {
+							System.err.println("not empty" + filesList);
+
+							filesList = filesList.concat("," + fileName);
+
+						}
+
+					}
+					System.err.println("img list" + filesList);
+					
+					
+					if(res.getOfferImages().length()>0) {
+						
+						System.err.println("***********");
+
+						filesList=res.getOfferImages().concat(","+filesList);
+						
+					}
+					
+					System.err.println("img list" + filesList);
+				
+					if (info != null) {
+						if (!info.isError()) {
+						 map = new LinkedMultiValueMap<>();
+							map.add("filesList", filesList);
+							map.add("offerId", offerId);
+							Constants.getRestTemplate().postForObject(Constants.url + "updateOfferImg", map,
+									Info.class);
+						}
+					}
+				}
+			} else {
+				return "false";
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+
+			return "false";
+
+		}
+		return "true";
+
+	}
+
+	/*
+	 * @RequestMapping(value = "/addNewItemImage", method = RequestMethod.POST)
+	 * public String addNewItemImage(HttpServletRequest request, HttpServletResponse
+	 * response,
+	 * 
+	 * @RequestParam("files") List<MultipartFile> files) {
+	 * 
+	 * int itemDId = 0; try { System.err.println("addNewItemImage--- ");
+	 * 
+	 * itemDId = Integer.parseInt(request.getParameter("imgItemDId")); int itemId =
+	 * Integer.parseInt(request.getParameter("imgItemId"));
+	 * 
+	 * List<Images> imageList = new ArrayList<>();
+	 * 
+	 * if (files.size() > 0) {
+	 * 
+	 * Random random = new Random();
+	 * 
+	 * for (int i = 0; i < files.size(); i++) {
+	 * 
+	 * int randomInt = random.nextInt(100);
+	 * 
+	 * String ext = files.get(i).getOriginalFilename().split("\\.")[1]; String
+	 * fileName = Commons.getCurrentTimeStamp() + "_" + randomInt + "." + ext; new
+	 * ImageUploadController().saveUploadedFiles(files.get(i), 1, fileName);
+	 * 
+	 * Images images = new Images(0, 3, itemId, fileName, (i + 1), 0, 0, 0, 0, 0,
+	 * "", "", "", "", 0, 0, 0); imageList.add(images); }
+	 * 
+	 * Info info = Constant.getRestTemplate().postForObject(Constant.url +
+	 * "saveMultipleImage", imageList, Info.class);
+	 * 
+	 * }
+	 * 
+	 * } catch (Exception e) { e.printStackTrace(); }
+	 * 
+	 * return "redirect:/showEditItemDetail/" + itemDId; }
+	 */
 }

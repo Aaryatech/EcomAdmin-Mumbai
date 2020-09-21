@@ -52,8 +52,8 @@ public class ImageUploadController {
 
 			byte[] bytes = file.getBytes();
 
-			Files.write(path, bytes);
 
+			Files.write(path, bytes);
 			Image img = null;
 			BufferedImage tempPNG = null;
 

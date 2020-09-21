@@ -67,7 +67,7 @@
 	<c:url var="updateItemImageSequenceOrderAjax"
 		value="/updateItemImageSequenceOrderAjax"></c:url>
 
-	<c:url var="deleteItemImageAjax" value="/deleteItemImageAjax"></c:url>
+	<c:url var="deleteOfferImageAjax" value="/deleteOfferImageAjax"></c:url>
 
 
 
@@ -157,6 +157,8 @@
 
 											<p class="desc text-danger fontsize11">Note : * Fields
 												are mandatory.</p>
+
+
 
 											<input type="hidden" id="offerId" name="offerId"
 												value="${offerId}">
@@ -292,7 +294,7 @@
 												<div class="col-lg-2" id="date_div" style="display: none;">
 													<input type="text" class="form-control daterange-basic_new"
 														placeholder="Enter Offer Date" id="offerDate"
-														name="offerDate" autocomplete="off" onchange="trim(this)">
+														name="offerDate" autocomplete="off">
 												</div>
 											</div>
 
@@ -414,7 +416,7 @@
 																<label class="form-check-label"> <input
 																	type="radio" id="billwise_radio"
 																	class="form-check-input" name="offerTypeWise" checked
-															 value="1" onclick="showItemWiseOfferDiv(this.value)"
+																	value="1" onclick="showItemWiseOfferDiv(this.value)"
 																	${offer.offerType=='1'?'checked':''}
 																	disabled="disabled"> Bill Wise
 																</label>
@@ -423,8 +425,8 @@
 															<div class="form-check form-check-inline">
 																<label class="form-check-label"> <input
 																	type="radio" id="itemwise_radio"
-																class="form-check-input" name="offerTypeWise"
-															 	value="2" onclick="showItemWiseOfferDiv(this.value)"
+																	class="form-check-input" name="offerTypeWise" value="2"
+																	onclick="showItemWiseOfferDiv(this.value)"
 																	${offer.offerType=='2'?'checked':''}
 																	disabled="disabled"> Item Wise
 																</label>
@@ -440,8 +442,7 @@
 																<label class="form-check-label"> <input
 																	type="radio" id="billwise_radio"
 																	class="form-check-input" name="offerTypeWise" checked
-																   value="1"
-																	onclick="showItemWiseOfferDiv(this.value)"
+																	value="1" onclick="showItemWiseOfferDiv(this.value)"
 																	${offer.offerType=='1'?'checked':''}> Bill Wise
 																</label>
 															</div>
@@ -449,8 +450,7 @@
 															<div class="form-check form-check-inline">
 																<label class="form-check-label"> <input
 																	type="radio" id="itemwise_radio"
-																	class="form-check-input" name="offerTypeWise"
-																	  value="2"
+																	class="form-check-input" name="offerTypeWise" value="2"
 																	onclick="showItemWiseOfferDiv(this.value)"
 																	${offer.offerType=='2'?'checked':''}> Item Wise
 																</label>
@@ -814,11 +814,11 @@
 												<div class="row" style="text-align: center;"
 													id="dispImageDiv"></div>
 
-												<div class="text-center">
+												<%-- <div class="text-center">
 													<button type="button" class="btn btn-primary"
 														onclick="updateSeqNo(${offerId})">Update Image
 														Sequence</button>
-												</div>
+												</div> --%>
 												<br> <br>
 
 												<div align="center" id="loader3" style="display: none;">
@@ -911,7 +911,33 @@
 	
 	</script>
 
+	<script type="text/javascript">
+	
+		function showItemWiseOfferDiv(id) {
+			
+		 
 
+			if (id == 1) {
+				document.getElementById("itemWiseOfferDiv").style.display = "none";
+				document.getElementById("billDiscDiv").style.display = "block";
+
+				document.getElementById("itemDiscDiv").style.display = "none";
+				document.getElementById("itemBuyGetFreeDiv").style.display = "none";
+
+				$("#itemWiseOfferSelect").val("0").change();
+
+			} else {
+				document.getElementById("itemWiseOfferDiv").style.display = "block";
+				document.getElementById("billDiscDiv").style.display = "none";
+
+				document.getElementById("itemDiscDiv").style.display = "none";
+				document.getElementById("itemBuyGetFreeDiv").style.display = "none";
+				
+
+			}
+		}
+
+		</script>
 
 	<script type="text/javascript">
 		function showDiv(id) {
@@ -935,30 +961,7 @@
 			}
 		}
 
-		function showItemWiseOfferDiv(id) {
-			
-			
-			console.log("hiii");
-
-			if (id == 1) {
-				document.getElementById("itemWiseOfferDiv").style.display = "none";
-				document.getElementById("billDiscDiv").style.display = "block";
-
-				document.getElementById("itemDiscDiv").style.display = "none";
-				document.getElementById("itemBuyGetFreeDiv").style.display = "none";
-
-				$("#itemWiseOfferSelect").val("0").change();
-
-			} else {
-				document.getElementById("itemWiseOfferDiv").style.display = "block";
-				document.getElementById("billDiscDiv").style.display = "none";
-
-				document.getElementById("itemDiscDiv").style.display = "none";
-				document.getElementById("itemBuyGetFreeDiv").style.display = "none";
-				
-
-			}
-		}
+	
 
 		
 
@@ -1041,8 +1044,8 @@
 		});
 
 		</script>
-		
-		<script type="text/javascript">
+
+	<script type="text/javascript">
 		// Modal template
 	var modalTemplate = '<div class="modal-dialog modal-lg" role="document">\n'
 				+ '  <div class="modal-content">\n'
@@ -1794,12 +1797,15 @@
 		
 	</script>
 
+
+	<!--  Images -->
+
 	<script type="text/javascript">
 		function getImageData(offerId) {
 			
-			//alert(offerId);
+		 
 
-			var type = 4;
+			//var type = 4;
 
 			$('#loader3').show();
 
@@ -1807,7 +1813,7 @@
 					.getJSON(
 							'${getItemImagesByDocIdAndDocType}',
 							{
-								type : type,
+							 
 								selectId : offerId,
 								ajax : 'true'
 
@@ -1831,31 +1837,25 @@
 										.each(
 												data,
 												function(key, image) {
+													
+													
+												//	alert(image);
 
 													var divCard = "<div class=card style='width: 12%; height: 8%; margin: 10px;'>";
 
 													var divCardImg = "<div class='card-img-actions mx-1 mt-1'>"
 															+ "<img class='card-img img-fluid'"+
-						"src='${imageUrl}"+image.imageName+"' alt=''>"
-															+ "<a target='_blank'  href='${imageUrl}"+image.imageName+"'><div class='card-img-actions-overlay card-img'></div></a></div>";
+						"src='${imageUrl}"+image+"' alt=''>"
+															+ "<a target='_blank'  href='${imageUrl}"+image+"'><div class='card-img-actions-overlay card-img'></div></a></div>";
 
 													var divCardImg2 = "<div class=card-body style='padding: 5px;'>"
-															+ "<div class='d-flex align-items-start flex-nowrap'><div style='text-align: center;'><input style='display:none;' type=text value='"+image.imagesId+"' class=imgId> "
-															+ "<input type=number id='seq"
-															+ image.imagesId
-															+ "' name='seq"
-															+ image.imagesId
-															+ "' class=seq value='"
-															+ image.seqNo
-															+ "' "
-															+ "style='text-align: left; border: 1px solid #080808; border-radius: 1px; border-top: 1px solid #000000; box-sizing: border-box; width: 60%'>"
+															+ "<div class='d-flex align-items-start flex-nowrap'><div style='text-align: center;'><input style='display:none;' type=text   value='"+image+"' class=imgId> "
 															+ "</div><div class='list-icons list-icons-extended ml-auto' style='text-align: center;'>"
 															+ "<a href=# onclick=deleteImage('"
-															+ image.imagesId
-															+ "','"
-															+ image.imageName
+															+ image
 															+ "') class='list-icons-item'><i class='icon-bin top-0'></i></a></div></div></div></div>";
-
+												 
+																
 													img = img + divCard + ""
 															+ divCardImg + ""
 															+ divCardImg2;
@@ -1869,8 +1869,11 @@
 	</script>
 
 
-	<script type="text/javascript">
+	<!-- <script type="text/javascript">
 		function updateSeqNo(offerId) {
+			
+			
+			alert("updateSeqNo");
 
 			$('#loader3').show();
 
@@ -1879,12 +1882,18 @@
 			$(".imgId")
 					.each(
 							function(counter) {
-
+								
+							 
 								var id = document
 										.getElementsByClassName("imgId")[counter].value;
+								
+								
+								
+							 
 								var seq = document
 										.getElementsByClassName("seq")[counter].value;
-
+								
+ 
 								var img = {
 									id : id,
 									seq : seq
@@ -1915,19 +1924,19 @@
 
 		}
 	</script>
-
+ -->
 
 	<script type="text/javascript">
-		function deleteImage(id, name) {
+		function deleteImage(name) {
 
-			//alert(id);
+		//	 alert("hii"+name);
 			
 			var offerId=document.getElementById("offerId").value;
 
 			$('#loader3').show();
 
-			$.getJSON('${deleteItemImageAjax}', {
-				imageId : id,
+			$.getJSON('${deleteOfferImageAjax}', {
+				offerId : offerId,
 				imageName : name,
 				ajax : 'true'
 			}, function(data) {
