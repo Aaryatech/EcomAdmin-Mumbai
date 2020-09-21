@@ -192,12 +192,14 @@ public class OfferController {
 			int type = Integer.parseInt(request.getParameter("selectType"));
 			String offerDate = request.getParameter("offerDate");
 			String fromTime = request.getParameter("fromTime");
+			String time = request.getParameter("time");
+
 			String toTime = request.getParameter("toTime");
 			int freqType = Integer.parseInt(request.getParameter("freq_type"));
 
 			int userId = (int) session.getAttribute("userId");
 			int compId = (int) session.getAttribute("companyId");
-			System.err.println(fromTime + "***" + toTime);
+			System.err.println(time + "***" );
 			String daysIdsArray[] = request.getParameterValues("selectDay");
 
 			String daysList = "";
