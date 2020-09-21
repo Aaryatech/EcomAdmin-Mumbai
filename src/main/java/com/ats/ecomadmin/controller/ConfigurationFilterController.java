@@ -196,7 +196,7 @@ public class ConfigurationFilterController {
 					sb.append(s).append(",");
 				}
 				productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
-				System.out.println("Product---" + filterTypeId + "*****" + filterId + "*****" + productIdsStr);
+				//System.out.println("Product---" + filterTypeId + "*****" + filterId + "*****" + productIdsStr);
 
 			}
 

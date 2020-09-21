@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.mail.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +46,7 @@ import com.ats.ecomadmin.model.GrievencesTypeInstructn;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.Language;
 import com.ats.ecomadmin.model.MFilter;
+import com.ats.ecomadmin.model.SpDayHomePage;
 import com.ats.ecomadmin.model.Tax;
 import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.User;
@@ -402,7 +405,7 @@ public class MasterController {
 			tax.setTaxId(taxId);
 			tax.setTaxName(request.getParameter("taxName"));
 			tax.setTaxDesc(request.getParameter("description"));
-			tax.setHsnCode(request.getParameter("hsnCode"));			
+			tax.setHsnCode(request.getParameter("hsnCode"));
 			tax.setSgstPer(Float.parseFloat(request.getParameter("sgstPer")));
 			tax.setCgstPer(Float.parseFloat(request.getParameter("cgstPer")));
 			tax.setIgstPer(Float.parseFloat(request.getParameter("igstPer")));
@@ -1859,19 +1862,19 @@ public class MasterController {
 				mav = "accessDenied";
 
 			} else {
-				
+
 				mav = "masters/addFranchise";
-				
+
 				int companyId = (int) session.getAttribute("companyId");
-				
+
 				map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
 				City[] cityArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCitiesByCompId", map,
 						City[].class);
 				List<City> cityList = new ArrayList<City>(Arrays.asList(cityArr));
-				
+
 				model.addAttribute("cityList", cityList);
-				
+
 				if (id > 0) {
 					map = new LinkedMultiValueMap<>();
 					map.add("frId", id);
@@ -1883,7 +1886,6 @@ public class MasterController {
 				} else {
 					Franchise franchise = new Franchise();
 
-					
 					map = new LinkedMultiValueMap<>();
 					map.add("compId", companyId);
 
@@ -3940,4 +3942,394 @@ public class MasterController {
 		}
 		return info;
 	}
+
+	/*-------------------------------------------------------------------------------------*/
+	// Created By :- Mahendra Singh
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Show Sp Day Home Page
+	@RequestMapping(value = "/showSpHomePages", method = RequestMethod.GET)
+	public String showSpHomePages(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showSpHomePages", "showSpHomePages", "1", "0", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/spDayHomePageList";
+
+				int companyId = (int) session.getAttribute("companyId");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);
+
+				SpDayHomePage[] grievArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getSpDayHomePages", map, SpDayHomePage[].class);
+				List<SpDayHomePage> spDayList = new ArrayList<SpDayHomePage>(Arrays.asList(grievArr));
+
+				for (int i = 0; i < spDayList.size(); i++) {
+
+					spDayList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(spDayList.get(i).getSpDayId())));
+				}
+				model.addAttribute("spDayList", spDayList);
+				model.addAttribute("title", "Sp Day Home Page List");
+
+				Info add = AccessControll.checkAccess("showSpHomePages", "showSpHomePages", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showSpHomePages", "showSpHomePages", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showSpHomePages", "showSpHomePages", "0", "0", "0", "1",
+						newModuleList);
+
+				if (add.isError() == false) {
+					// System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) {
+					// System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					// System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /showSpHomePages : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 16-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect to Add New Sp Day Home Page
+	@RequestMapping(value = "/newSpDayHomePage", method = RequestMethod.GET)
+	public String addSpDayHomePage(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		GrievencesInstruction grievance = new GrievencesInstruction();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("newSpDayHomePage", "showSpHomePages", "0", "1", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addSpDayHomePage";
+
+				int companyId = (int) session.getAttribute("companyId");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);
+
+				Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchises", map,
+						Franchise[].class);
+				List<Franchise> frList = new ArrayList<Franchise>(Arrays.asList(frArr));
+
+				model.addAttribute("frList", frList);
+
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);
+				map.add("filterTypeId", 7);
+
+				MFilter[] filterArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getFiltersListByTypeId", map, MFilter[].class);
+				List<MFilter> tagsList = new ArrayList<MFilter>(Arrays.asList(filterArr));
+
+				model.addAttribute("tagsList", tagsList);
+
+				SpDayHomePage spDay = new SpDayHomePage();
+				
+				Date date = new Date();
+				SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy ");
+				
+				spDay.setFromDate(sfd.format(date));
+				spDay.setToDate(sfd.format(date));
+				
+				model.addAttribute("spDay", spDay);
+
+				model.addAttribute("title", "Add Sp Day Home Page");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /newSpDayHomePage : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 12-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Add User
+	@RequestMapping(value = "/insertSpHomePages", method = RequestMethod.POST)
+	public String insertSpHomePages(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam("doc") MultipartFile doc) {
+		try {
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy");
+			String profileImage = null;
+
+			int companyId = (int) session.getAttribute("companyId");
+
+			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
+
+				System.err.println("In If ");
+
+				profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
+
+				try {
+					new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+				} catch (Exception e) {
+				}
+
+			} else {
+				System.err.println("In else ");
+				profileImage = request.getParameter("editImg");
+
+			}
+
+			SpDayHomePage spDay = new SpDayHomePage();
+
+			int spDayId =Integer.parseInt(request.getParameter("spDayId"));
+			
+			if(spDayId>0) {
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("spDayId", spDayId);
+				SpDayHomePage res = Constants.getRestTemplate().postForObject(Constants.url + "getSpDayHomePageById",
+						map, SpDayHomePage.class);
+				
+				spDay.setInsertDateTime(res.getInsertDateTime());
+				spDay.setInsertUserId(res.getInsertUserId());
+			}
+			
+			String frIdsStr = "";
+			String[] frIds = request.getParameterValues("frId");
+			if (frIds.length > 0) {
+				StringBuilder sb = new StringBuilder();
+				for (String s : frIds) {
+					sb.append(s).append(",");
+				}
+				frIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
+				
+			}
+			
+			String tagsStr = "";
+			String[] tagIds = request.getParameterValues("tag");
+			if (tagIds.length > 0) {
+				StringBuilder sb = new StringBuilder();
+				for (String s : tagIds) {
+					sb.append(s).append(",");
+				}
+				tagsStr = sb.deleteCharAt(sb.length() - 1).toString();
+				
+			}
+			
+			String strDate = request.getParameter("dates");
+			String string = strDate;
+			String[] parts = string.split("to");
+			String part1 = parts[0]; 
+			String part2 = parts[1]; 
+			
+			spDay.setSpDayId(spDayId);		
+			spDay.setSpdayName(request.getParameter("spdayName"));
+			spDay.setCaptionOnProductPage(request.getParameter("captionOnProductPage"));			
+			spDay.setFrIds(frIdsStr);
+			spDay.setTagIds(tagsStr);
+			spDay.setFromDate(part1);
+			spDay.setToDate(part2);
+			spDay.setFromTime(request.getParameter("fromTime"));
+			spDay.setToTime(request.getParameter("toTime")); 
+			
+			if(spDayId==0) {
+				spDay.setInsertDateTime(sf.format(date));
+				spDay.setInsertUserId(userObj.getUserId());	
+			}else {				
+				spDay.setUpdateDateTime(sf.format(date));
+				spDay.setUpdateUserId(userObj.getUserId());				
+			}
+			spDay.setSpdayCaptionHomePage(request.getParameter("spdayCaption"));
+			spDay.setSpdayCaptionImageHomePage(profileImage);	
+			spDay.setSortNo(Integer.parseInt(request.getParameter("sortNo")));
+			
+			spDay.setIsActive(Integer.parseInt(request.getParameter("isActive")));
+			spDay.setCompanyId(companyId);
+			spDay.setDelStatus(1);
+			spDay.setExInt1(0);
+			spDay.setExInt2(0);
+			spDay.setExVar1("NA");
+			spDay.setExVar2("NA");
+			
+
+			SpDayHomePage res = Constants.getRestTemplate().postForObject(Constants.url + "saveSpDayHomePage", spDay, SpDayHomePage.class);
+
+			if (res.getSpDayId() > 0) {
+				if (spDayId == 0)
+					session.setAttribute("successMsg", "Special Day Home Page Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Special Day Home Page Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Special Day Home Page");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /insertSpHomePages : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return "redirect:/showSpHomePages";
+
+	}
+	
+	// Created By :- Mahendra Singh
+		// Created On :- 16-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Redirect to Edit Sp Day Home Page
+		@RequestMapping(value = "/editSpday", method = RequestMethod.GET)
+		public String editSpday(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+			String mav = new String();
+			GrievencesInstruction grievance = new GrievencesInstruction();
+			try {
+				HttpSession session = request.getSession();
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("editSpday", "showSpHomePages", "0", "1", "0", "0",
+						newModuleList);
+
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					mav = "masters/addSpDayHomePage";
+
+					int companyId = (int) session.getAttribute("companyId");
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("compId", companyId);
+
+					Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchises", map,
+							Franchise[].class);
+					List<Franchise> frList = new ArrayList<Franchise>(Arrays.asList(frArr));
+
+					model.addAttribute("frList", frList);
+
+					map = new LinkedMultiValueMap<>();
+					map.add("compId", companyId);
+					map.add("filterTypeId", 7);
+
+					MFilter[] filterArr = Constants.getRestTemplate()
+							.postForObject(Constants.url + "getFiltersListByTypeId", map, MFilter[].class);
+					List<MFilter> tagsList = new ArrayList<MFilter>(Arrays.asList(filterArr));
+
+					model.addAttribute("tagsList", tagsList);
+
+					
+					String base64encodedString = request.getParameter("spDayId");
+					String spDayId = FormValidation.DecodeKey(base64encodedString);
+					
+					map = new LinkedMultiValueMap<>();
+					map.add("spDayId", spDayId);
+					SpDayHomePage spDay = Constants.getRestTemplate().postForObject(Constants.url + "getSpDayHomePageById",
+							map, SpDayHomePage.class);
+					
+					List<Integer> tagIds = new ArrayList<>();
+					try {
+						if (!spDay.getTagIds().isEmpty()) {
+							tagIds = Stream.of(spDay.getTagIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						}
+					} catch (Exception e) {
+					}
+					
+					
+					List<Integer> frIds = new ArrayList<>();
+					try {
+						if (!spDay.getFrIds().isEmpty()) {
+							frIds = Stream.of(spDay.getFrIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						}
+					} catch (Exception e) {
+					}
+					
+					model.addAttribute("tagIds", tagIds);
+					model.addAttribute("frIds", frIds);
+					
+					model.addAttribute("spDay", spDay);
+
+					model.addAttribute("imgPath", Constants.showDocSaveUrl);
+					model.addAttribute("title", "Edit Sp Day Home Page");
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /editSpday : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return mav;
+		}
+		
+		// Created By :- Mahendra Singh
+		// Created On :- 21-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Delete Sp Day Home Page
+		@RequestMapping(value = "/deleteSpDayHomePage", method = RequestMethod.GET)
+		public String deleteSpDay(HttpServletRequest request, HttpServletResponse response) {
+
+			String mav = new String();
+			HttpSession session = request.getSession();
+			try {
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("deleteSpDayHomePage", "showSpHomePages", "0", "0", "0", "1",
+						newModuleList);
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					String base64encodedString = request.getParameter("spDayId");
+					String spDayId = FormValidation.DecodeKey(base64encodedString);
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("spDayId", Integer.parseInt(spDayId));
+
+					Info res =  Constants.getRestTemplate().postForObject(Constants.url + "deleteSpDayHomePage",
+							map, Info.class);
+
+					if (!res.isError()) {
+						session.setAttribute("successMsg", res.getMsg());
+					} else {
+						session.setAttribute("errorMsg", res.getMsg());
+					}
+					
+					mav = "redirect:/showSpHomePages";
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /deleteSpDayHomePage : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return mav;
+		}
 }
