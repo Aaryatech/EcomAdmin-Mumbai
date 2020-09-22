@@ -56,7 +56,7 @@
 						class="card-header bg-blue text-white d-flex justify-content-between">
 						<span
 							class="font-size-sm text-uppercase font-weight-semibold card-title">
-							Product Config List</span>
+							Edit Product Configuration</span>
 						<!--  -->
 						<c:if test="${addAccess==0}">
 							<span class="font-size-sm text-uppercase font-weight-semibold"><a
@@ -68,10 +68,11 @@
 						</c:if>
 					</div>
 					<div class="card-body">
-					<form action="${pageContext.request.contextPath}/getViewProdConfigHeader"
+					<form action="${pageContext.request.contextPath}/getProdConf"
 						id="submitProdForm1" method="post">
 						<div class="form-group row"></div>
 						<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
+
 
 						<div class="form-group row">
 							<label class="col-form-label col-lg-2" for="cat_id">
@@ -85,14 +86,7 @@
 									>
 									<option selected disabled value="">Select Category</option>
 									<c:forEach items="${catList}" var="catList" varStatus="count">
-									<c:choose>
-									<c:when test="${catId==catList.catId}">
-									<option selected value="${catList.catId}">${catList.catName}</option>
-									</c:when>
-									<c:otherwise>
 										<option value="${catList.catId}">${catList.catName}</option>
-									</c:otherwise>
-									</c:choose>
 									</c:forEach>
 								</select> <span class="validation-invalid-label" id="error_cat_id"
 									style="display: none;">This field is required.</span>
@@ -101,74 +95,100 @@
 							<div class="col-lg-1">
 								<button type="submit" class="btn btn-primary">Search</button>
 							</div>
+
 						</div>
 
 </form>
 <form action="${pageContext.request.contextPath}/saveInsertProdConf"
 						id="submitProdForm1" method="post">
 						
-						
-						<!-- <div class="form-group row">
+						<div class="form-group row">
 						<label class="col-form-label col-lg-2" for="conf_name">
 											Configuration Name <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-2">
 											<input type="text" class="form-control" required maxlength="50"
 												placeholder="Configuration Name" id="conf_name" name="conf_name"
-												autocomplete="off"> <span
+												autocomplete="off" value="xyz"> <span
 												class="validation-invalid-label" id="error_conf_name"
 												style="display: none;">This field is required.</span>
 										</div>
-										</div> -->
+										</div>
 						<div class="table-responsive">
 							<table
 								class="table datatable-fixed-left_custom table-bordered table-hover table-striped"
-								width="100%" id="printtable1">
+								width="100%" id="printtable2">
 
 								<thead>
 									<tr>
-										<th>Configuration Name</th>
-										<th>Category</th>
-										<th>Active/InActive</th>
-										<th>Action</th>
+										<th>Product Name</th>
+										<th>Flavor</th>
+										<th>Veg Type</th>
+										<th>Qty/Weight</th>
+										<th>Rate 1</th>
+										<th>Rate 2</th>
+										<th>Rate 3</th>
+										<th>Rate 4</th>
+										<th>Rate 5</th>
+										<th>Rate 6</th>
 									</tr>
 								</thead>
 								<tbody>
-									<c:forEach items="${confHeadList}" var="confHead" varStatus="count">
+									<c:forEach items="${tempProdConfList}" var="prod" varStatus="count">
 										<tr>
-											<td>${count.index+1}) ${confHead.configName}</td>
-											<td>${confHead.catName}</td>
-											<td>${confHead.isActive==0 ? 'In Active' :confHead.isActive==1 ? 'Active' : 'Active'}</td>
-											<td><a href="${pageContext.request.contextPath}/getProdConfDetailByConfHeader/?configHeaderId=${confHead.configHeaderId}">Edit Details</a></td>
+											<td>${count.index+1}) ${prod.productName}</td>
+											<td>${prod.flavorName}</td>
+											<td>${prod.vegType==0 ? 'Veg' :prod.vegType==1 ? 'Non Veg' : 'Veg-Non Veg'}</td>
+											<td>${prod.weight}</td>
+											<td><input type="text" id="r1${prod.uuid}${prod.productId}" name="r1${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r2${prod.uuid}${prod.productId}" name="r2${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r3${prod.uuid}${prod.productId}" name="r3${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r4${prod.uuid}${prod.productId}" name="r4${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r5${prod.uuid}${prod.productId}" name="r5${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r6${prod.uuid}${prod.productId}" name="r6${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
 										</tr>
 									</c:forEach>
+									
+									<c:forEach items="${prodConfDetList}" var="prod" varStatus="count">
+										<tr>
+											<td>${count.index+1}) ${prod.productName}</td>
+											<td>${prod.flavorName}</td>
+											<td>${prod.vegType==0 ? 'Veg' :prod.vegType==1 ? 'Non Veg' : 'Veg-Non Veg'}</td>
+											<td>${prod.weight}</td>
+											<td><input type="text" id="r1${prod.uuid}${prod.productId}" name="r1${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r2${prod.uuid}${prod.productId}" name="r2${prod.uuid}${prod.productId}" value="${prod.rateAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r3${prod.uuid}${prod.productId}" name="r3${prod.uuid}${prod.productId}" value="${prod.spRateAmt1}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r4${prod.uuid}${prod.productId}" name="r4${prod.uuid}${prod.productId}" value="${prod.spRateAmt2}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r5${prod.uuid}${prod.productId}" name="r5${prod.uuid}${prod.productId}" value="${prod.spRateAmt3}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r6${prod.uuid}${prod.productId}" name="r6${prod.uuid}${prod.productId}" value="${prod.spRateAmt4}" maxlength="7" class="form-control floatOnly"/></td>
+										</tr>
+									</c:forEach>
+									
 								</tbody>
 							</table>
 						</div>
-						
-						<div class="form-group row mb-0">
-					<div style="margin: 0 auto;">
-								<button type="submit" class="btn blue_btn ml-3 legitRipple">Save</button>
+							<div class="form-group row mb-0">
+	<div style="margin: 0 auto;">		
+								<button type="submit" class="btn bg-blue ml-3 legitRipple">Save</button>
 							</div>
-							</div>
-						
+						</div>
 					</form>
 					</div>
 					
 					<!-- /colReorder integration -->
 
-			
+				</div>
 				<!-- /content area -->
+
+
+				<!-- Footer -->
+				<jsp:include page="/WEB-INF/views/include/footer.jsp"></jsp:include>
+				<!-- /footer -->
 
 			</div>
 			<!-- /main content -->
 		</div>
-		<!-- Footer -->
-				<jsp:include page="/WEB-INF/views/include/footer.jsp"></jsp:include>
-				<!-- /footer -->
 	</div>
-	</div>
-	
 	<!-- /page content -->
 	<script>
 		$('.datatable-fixed-left_custom').DataTable({
@@ -214,6 +234,7 @@
 											if (result) {
 												location.href = "${pageContext.request.contextPath}/deleteCustomer?custId="
 														+ uuid;
+
 											}
 										}
 									});

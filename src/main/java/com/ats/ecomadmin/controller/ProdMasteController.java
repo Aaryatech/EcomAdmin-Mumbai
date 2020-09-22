@@ -1073,4 +1073,82 @@ public class ProdMasteController {
 		return model;
 	}
 	
+	
+	/*****************************
+	 * //Created Date: 22-09-2020 //UpdateDate:22-09-2020 
+	 * //Description: to Get Product Config Detail Based on Conf Header Id
+	 *  //Devloped By(Devloper Name): Sachin 
+	 *  //Updated By(Devloper Name): Sachin
+	 ******************************/
+	@RequestMapping(value = "/getProdConfDetailByConfHeader", method = RequestMethod.GET)
+	public ModelAndView getProdConfDetailByConfHeader(HttpServletRequest request, HttpServletResponse response) {
+
+		System.err.println("In Method getProdConfDetailByConfHeader");
+		
+		ModelAndView model = new ModelAndView("product/editProdConfDetail");
+
+		try {
+
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info edit = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "0", "0", "1", "0", newModuleList);
+
+			if (edit.isError() == true) {
+
+				model = new ModelAndView("accessDenied");
+
+			} else {
+				int compId = (int) session.getAttribute("companyId");
+
+				List<Category> catList = new ArrayList<>();
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+						Category[].class);
+				catList = new ArrayList<Category>(Arrays.asList(catArr));
+
+				for (int i = 0; i < catList.size(); i++) {
+
+					catList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(catList.get(i).getCatId())));
+				}
+
+				model.addObject("catList", catList);
+				
+				int configHeaderId = 0;
+
+				try {
+
+					configHeaderId = Integer.parseInt(request.getParameter("configHeaderId"));
+
+				} catch (Exception e) {
+					configHeaderId = 0;
+				}
+				model.addObject("configHeaderId", configHeaderId);
+
+				map = new LinkedMultiValueMap<>();
+				map.add("companyId", compId);
+				map.add("configHeaderId", configHeaderId);
+
+				Info infoRes = Constants.getRestTemplate().postForObject(Constants.url + "getProdConfDetailByConfHeader", map,
+						Info.class);
+				System.err.println("Info "+infoRes.toString());
+				List<TempProdConfig> tempProdConfList = new ArrayList<TempProdConfig>();
+				tempProdConfList=infoRes.getTempProdConfList();
+				
+				model.addObject("tempProdConfList", tempProdConfList);
+				
+				List<TempProdConfig> prodConfDetList = new ArrayList<TempProdConfig>();
+				prodConfDetList=infoRes.getProdConfDetailList();
+				
+				model.addObject("prodConfDetList", prodConfDetList);
+				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+	}
 }
