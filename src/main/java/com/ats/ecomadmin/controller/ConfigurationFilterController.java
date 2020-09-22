@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,12 +30,16 @@ import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
+import com.ats.ecomadmin.model.ConfigHomePageProduct;
 import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.GetCatProduct;
 import com.ats.ecomadmin.model.GetFilterIds;
+import com.ats.ecomadmin.model.GetPrdctHomePageCat;
 import com.ats.ecomadmin.model.GetTaxCakeShapeList;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.MFilter;
+import com.ats.ecomadmin.model.ProductHomPage;
+import com.ats.ecomadmin.model.ProductHomePageDetail;
 import com.ats.ecomadmin.model.ProductMaster;
 import com.ats.ecomadmin.model.Tax;
 import com.ats.ecomadmin.model.Uom;
@@ -103,7 +109,12 @@ public class ConfigurationFilterController {
 		try {
 			HttpSession session = request.getSession();
 
-			int filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
+			int filterTypeId = 0;
+			try {
+				filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			int companyId = (int) session.getAttribute("companyId");
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -196,7 +207,8 @@ public class ConfigurationFilterController {
 					sb.append(s).append(",");
 				}
 				productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
-				//System.out.println("Product---" + filterTypeId + "*****" + filterId + "*****" + productIdsStr);
+				// System.out.println("Product---" + filterTypeId + "*****" + filterId + "*****"
+				// + productIdsStr);
 
 			}
 
@@ -332,7 +344,6 @@ public class ConfigurationFilterController {
 			int filterId = Integer.parseInt(request.getParameter("filterId"));
 			int optionVal = Integer.parseInt(request.getParameter("radioConfig"));
 
-			
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 
 			map = new LinkedMultiValueMap<>();
@@ -346,7 +357,6 @@ public class ConfigurationFilterController {
 			productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
 
 			catPrdct.setProductList(productList);
-
 
 			map = new LinkedMultiValueMap<>();
 			map.add("compId", companyId);
@@ -439,5 +449,347 @@ public class ConfigurationFilterController {
 		}
 		return "redirect:/configProductTaxAndCakeShape";
 
+	}
+
+	/*----------------------------------------------------------------------------------------*/
+	// Created By :- Mahendra Singh
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :-Show Home Page Product Config List
+	@RequestMapping(value = "/showHomePagePrdctConfig", method = RequestMethod.GET)
+	public String showHomePagePrdctConfig(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			mav = "product/configHomPagPrdctList";
+
+			HttpSession session = request.getSession();
+
+			int compId = (int) session.getAttribute("companyId");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+			map.add("compId", compId);
+			ProductHomPage[] homePageArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getHomePageConfigProductList", map, ProductHomPage[].class);
+			List<ProductHomPage> homePageList = new ArrayList<ProductHomPage>(Arrays.asList(homePageArr));
+
+			for (int i = 0; i < homePageList.size(); i++) {
+
+				homePageList.get(i)
+						.setExVar1(FormValidation.Encrypt(String.valueOf(homePageList.get(i).getHomePageStatusId())));
+			}
+			model.addAttribute("homePageList", homePageList);
+
+			model.addAttribute("title", "Home Page Product Config List");
+
+		} catch (Exception e) {
+			System.out.println("Execption in /showHomePagePrdctConfig : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :-Configure Product with home page
+	@RequestMapping(value = "/configHomePageProduct", method = RequestMethod.GET)
+	public String configHomePagePrdct(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			mav = "product/configHomePagePrdct";
+
+			List<FilterTypes> filterTypeList = new ArrayList<FilterTypes>();
+
+			HttpSession session = request.getSession();
+
+			int compId = (int) session.getAttribute("companyId");
+
+			ProductHomPage homePage = new ProductHomPage();
+			model.addAttribute("homePage", homePage);
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+			map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			ProductHomPage[] homePageArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getHomePageSatusList", map, ProductHomPage[].class);
+			List<ProductHomPage> homePageList = new ArrayList<ProductHomPage>(Arrays.asList(homePageArr));
+
+			model.addAttribute("homePageList", homePageList);
+
+			map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+			map.add("filterTypeId", 5);
+
+			MFilter[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFilterForConfig",
+					map, MFilter[].class);
+			List<MFilter> filterList = new ArrayList<MFilter>(Arrays.asList(filterArr));
+
+			model.addAttribute("filterList", filterList);
+
+			model.addAttribute("isEdit", 0);
+
+			model.addAttribute("title", "Product Home Page Configuration");
+
+		} catch (Exception e) {
+			System.out.println("Execption in /configHomePageProduct : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :-Get Product For Home Page Status Configuration
+	@RequestMapping(value = "/getConfigProductsByStatusId", method = RequestMethod.GET)
+	@ResponseBody
+	public GetPrdctHomePageCat getConfigProductsByStatusId(HttpServletRequest request, HttpServletResponse response,
+			Model model) {
+		GetPrdctHomePageCat catPrdct = new GetPrdctHomePageCat();
+		try {
+
+			HttpSession session = request.getSession();
+
+			int compId = (int) session.getAttribute("companyId");
+			String filterStatus = request.getParameter("filterStatus");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+			map.add("statusType", filterStatus);
+
+			ConfigHomePageProduct[] filterArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getProductStatusConfigList", map, ConfigHomePageProduct[].class);
+			List<ConfigHomePageProduct> list = new ArrayList<ConfigHomePageProduct>(Arrays.asList(filterArr));
+			catPrdct.setProductList(list);
+
+			List<Category> catList = new ArrayList<>();
+
+			map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+			Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+					Category[].class);
+			catList = new ArrayList<Category>(Arrays.asList(catArr));
+			catPrdct.setCategoryList(catList);
+
+		} catch (Exception e) {
+			System.out.println("Execption in /getConfigProductsByStatusId : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return catPrdct;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Configure Products Home Page.
+	@RequestMapping(value = "/configurPrdctHomePage", method = RequestMethod.POST)
+	public String configurPrdctHomePage(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+			String productIdsStr = "";
+
+			int filterStatus = Integer.parseInt(request.getParameter("filterStatus"));
+			int sortNo = Integer.parseInt(request.getParameter("statusSortNo"));
+			int isActve = Integer.parseInt(request.getParameter("activeStat"));
+			int homePageSatusId = Integer.parseInt(request.getParameter("homePageStatusId"));
+
+			String[] productIds = request.getParameterValues("chk");
+			if (productIds.length > 0) {
+				StringBuilder sb = new StringBuilder();
+				for (String s : productIds) {
+					sb.append(s).append(",");
+				}
+				productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
+				System.out.println(
+						"Product---" + sortNo + "*****" + filterStatus + "*****[" + productIdsStr + "]*****" + isActve+ "*****" + homePageSatusId);
+
+			}
+			int isEdit = Integer.parseInt(request.getParameter("isEdit"));
+			if (isEdit == 0) {
+				ProductHomPage prdctHomeHead = new ProductHomPage();
+
+				prdctHomeHead.setHomePageStatusId(homePageSatusId);
+				prdctHomeHead.setSortNo(sortNo);
+				prdctHomeHead.setStatusId(filterStatus);
+				prdctHomeHead.setIsActive(isActve);
+				prdctHomeHead.setProductId(0);
+				prdctHomeHead.setCompanyId(userObj.getCompanyId());
+				prdctHomeHead.setDelStatus(1);
+				prdctHomeHead.setExInt1(0);
+				prdctHomeHead.setExInt2(0);
+				prdctHomeHead.setExVar1("NA");
+				prdctHomeHead.setExVar2("NA");
+
+				List<ProductHomePageDetail> homePageDtl = new ArrayList<ProductHomePageDetail>();
+				if (productIds.length > 0) {
+					for (int i = 0; i < productIds.length; i++) {
+
+						ProductHomePageDetail prdctHomeDtl = new ProductHomePageDetail();
+						prdctHomeDtl.setExInt1(0);
+						prdctHomeDtl.setExInt2(0);
+						prdctHomeDtl.setExVar1("NA");
+						prdctHomeDtl.setExVar2("NA");
+						prdctHomeDtl.setHomePageStatusId(0);
+						prdctHomeDtl.setHpStatusDetailId(0);
+						prdctHomeDtl.setProductId(Integer.parseInt(productIds[i]));
+						prdctHomeDtl.setSortNo(Integer.parseInt(request.getParameter("prdctSortNo" + productIds[i])));
+						homePageDtl.add(prdctHomeDtl);
+					}
+				}
+				prdctHomeHead.setPrdctHomeList(homePageDtl);
+				System.out.println("Detail-----------" + prdctHomeHead);
+
+				ProductHomPage res = Constants.getRestTemplate()
+						.postForObject(Constants.url + "savePrdctHomePageConfige", prdctHomeHead, ProductHomPage.class);
+
+				if (res.getHomePageStatusId() > 0) {
+					session.setAttribute("successMsg", "Configuration Saved Successfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Saved Configuration");
+				}
+			} else {
+				System.err.println("In Else");
+				try {
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+					map = new LinkedMultiValueMap<>();
+					map.add("configStatusId", homePageSatusId);
+
+					Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteHomePageStatusDtl", map,
+							Info.class);
+					System.err.println("res----"+res);
+					
+					
+						map = new LinkedMultiValueMap<>();
+						map.add("configStatusId", homePageSatusId);
+						map.add("sortNo", sortNo);
+						map.add("isActve", isActve);
+
+						Info val = Constants.getRestTemplate()
+								.postForObject(Constants.url + "updatePrdctHomePageSortNo", map, Info.class);
+
+						if (!val.isError()) {
+							List<ProductHomePageDetail> homePageDtlList = new ArrayList<ProductHomePageDetail>();
+							if (productIds.length > 0) {
+								for (int i = 0; i < productIds.length; i++) {
+
+									ProductHomePageDetail prdctHomeDtl = new ProductHomePageDetail();
+									prdctHomeDtl.setExInt1(0);
+									prdctHomeDtl.setExInt2(0);
+									prdctHomeDtl.setExVar1("NA");
+									prdctHomeDtl.setExVar2("NA");
+									prdctHomeDtl.setHomePageStatusId(homePageSatusId);
+									prdctHomeDtl.setHpStatusDetailId(0);
+									prdctHomeDtl.setProductId(Integer.parseInt(productIds[i]));
+									prdctHomeDtl.setSortNo(
+											Integer.parseInt(request.getParameter("prdctSortNo" + productIds[i])));
+									homePageDtlList.add(prdctHomeDtl);
+								}
+
+							}
+							List<ProductHomePageDetail> saveDtl = Constants.getRestTemplate().postForObject(
+									Constants.url + "saveHomePagePrdctConfigDtl", homePageDtlList, List.class);
+
+							if (saveDtl.get(0).getHpStatusDetailId() > 0) {
+								session.setAttribute("successMsg", "Configuration Update Successfully");
+							} else {
+								session.setAttribute("errorMsg", "Failed to Update Configuration");
+							}
+						}
+					
+				} catch (Exception e) {
+					e.getMessage();
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /saveProductConfiguration : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showHomePagePrdctConfig";
+
+	}
+
+	@RequestMapping(value = "/editHomePagePrdctConfig", method = RequestMethod.GET)
+	public String editHomePagePrdctConfig(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		try {
+			mav = "product/configHomePagePrdct";
+
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+
+			String base64encodedString = request.getParameter("homePageStatusId");
+			String homePageStatusId = FormValidation.DecodeKey(base64encodedString);
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("id", homePageStatusId);
+
+			ProductHomPage configHomePage = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getPrdctHomePageById", map, ProductHomPage.class);
+			model.addAttribute("homePage", configHomePage);
+
+			map = new LinkedMultiValueMap<>();
+			map.add("compId", userObj.getCompanyId());
+			map.add("filterTypeId", 5);
+
+			MFilter[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFilterForConfig",
+					map, MFilter[].class);
+			List<MFilter> filterList = new ArrayList<MFilter>(Arrays.asList(filterArr));
+
+			model.addAttribute("filterList", filterList);
+
+			model.addAttribute("isEdit", 1);
+		} catch (Exception e) {
+			System.out.println("Execption in /editHomePagePrdctConfig : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 22-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Delete Home Page Product Config
+	@RequestMapping(value = "/deleteHomePagePrdctConfig", method = RequestMethod.GET)
+	public String deleteHomePagePrdctConfig(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession();
+		try {
+			String base64encodedString = request.getParameter("homePageStatusId");
+			String homePageStatusId = FormValidation.DecodeKey(base64encodedString);
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("id", homePageStatusId);
+
+			Info info = Constants.getRestTemplate().postForObject(Constants.url + "deleteHomePagePrdct", map,
+					Info.class);
+
+			if (!info.isError()) {
+				session.setAttribute("successMsg", info.getMsg());
+			} else {
+				session.setAttribute("errorMsg", info.getMsg());
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteHomePagePrdctConfig : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showHomePagePrdctConfig";
 	}
 }
