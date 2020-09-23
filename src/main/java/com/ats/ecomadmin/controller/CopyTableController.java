@@ -39,7 +39,14 @@ public class CopyTableController {
 
 		String mav = new String();
 		HttpSession session = request.getSession();
+ 		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+		Info view = AccessControll.checkAccess("showCopyTable", "showCopyTable", "1", "0", "0", "0", newModuleList);
 
+		if (view.isError() == true) {
+
+			mav = "accessDenied";
+
+		} else {
 		model.addAttribute("title", "Copy Table ");
 		mav = "masters/copyTable";
 		int compId = (int) session.getAttribute("companyId");
@@ -107,6 +114,7 @@ public class CopyTableController {
 		} else {
 			System.err.println("else****");
 			session.setAttribute("errMsg", "Copy Table Functionality Not Applicable For Parent Company");
+		}
 		}
 		return mav;
 	}
