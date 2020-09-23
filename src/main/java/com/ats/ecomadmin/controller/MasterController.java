@@ -2309,6 +2309,87 @@ public class MasterController {
 		}
 		return mav;
 	}
+	
+	// Created By :- Mahendra Singh
+    // Created On :- 15-09-2020
+    // Modified By :- NA
+    // Modified On :- NA
+    // Description :- Validation for unique franchise mobile No. 
+    @RequestMapping(value = "/validateUnqFrMobNo", method = RequestMethod.GET)
+    @ResponseBody
+    public Info validateUnqFrMobNo(HttpServletRequest request, HttpServletResponse response) {
+
+        Info info = new Info();
+        try {
+            int frId = 0;
+            try {
+            	frId = Integer.parseInt(request.getParameter("frId"));
+            } catch (Exception e) {
+            	frId = 0;
+                e.printStackTrace();
+            }
+            String mobNo = request.getParameter("mobNo");
+                        
+            MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+            map.add("mobNo", mobNo);
+            map.add("frId", frId);
+
+            Franchise res = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseByMobNo", map, Franchise.class);
+            System.out.println("userRes  ------  " + res);
+            if (res != null) {
+                info.setError(false);
+                info.setMsg("User Found");
+            } else {
+                info.setError(true);
+                info.setMsg("User Not Found");
+            }
+        } catch (Exception e) {
+            System.out.println("Execption in /validateUnqFrMobNo : " + e.getMessage());
+            e.printStackTrace();
+        }
+        return info;
+    }
+	
+    
+    // Created By :- Mahendra Singh
+    // Created On :- 15-09-2020
+    // Modified By :- NA
+    // Modified On :- NA
+    // Description :- Validation for unique user by email.
+    @RequestMapping(value = "/getFrInfoByEmail", method = RequestMethod.GET)
+    @ResponseBody
+    public Info getFrInfoByEmail(HttpServletRequest request, HttpServletResponse response) {
+
+        Info info = new Info();
+        try {
+            int frId = 0;
+            try {
+            	frId = Integer.parseInt(request.getParameter("frId"));
+            } catch (Exception e) {
+            	frId = 0;
+                e.printStackTrace();
+            }
+            String email = request.getParameter("email");
+            
+            MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+            map.add("email", email);
+            map.add("frId", frId);
+
+            Franchise res = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseByEmail", map, Franchise.class);
+
+            if (res != null) {
+                info.setError(false);
+                info.setMsg("User Found");
+            } else {
+                info.setError(true);
+                info.setMsg("User Not Found");
+            }
+        } catch (Exception e) {
+            System.out.println("Execption in /getFrInfoByEmail : " + e.getMessage());
+            e.printStackTrace();
+        }
+        return info;
+    }
 
 	/*----------------------------------------------------------------------------------*/
 	// Created By :- Mahendra Singh

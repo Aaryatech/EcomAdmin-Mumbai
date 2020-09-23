@@ -26,7 +26,10 @@
 
 </head>
 <body class="sidebar-xs" onload="init();">
-	<c:url value="/getLangInfoByCode" var="getLangInfoByCode"></c:url>
+
+	<c:url value="/validateUnqFrMobNo" var="validateUnqFrMobNo"/>
+	<c:url value="/getFrInfoByEmail" var="getFrInfoByEmail"/>	
+	
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -172,7 +175,10 @@
 														onchange="trim(this)" value="${franchise.frEmailId}">
 													<span class="validation-invalid-label text-danger"
 														id="error_email" style="display: none;">This field
-														is required.</span>
+														is required.</span><span
+												class="validation-invalid-label text-danger" id="unq_email"
+												style="display: none;">This Email is Already
+												Exist.</span>
 												</div>
 
 												<label class="col-form-label font-weight-bold col-lg-2"
@@ -187,7 +193,10 @@
 														onchange="trim(this)" value="${franchise.frContactNo}">
 													<span class="validation-invalid-label text-danger"
 														id="error_mobNo" style="display: none;">This field
-														is required.</span>
+														is required.</span><span
+												class="validation-invalid-label text-danger" id="unq_mob"
+												style="display: none;">This Mobile No. is Already
+												Exist.</span>
 												</div>
 											</div>
 
@@ -1008,7 +1017,51 @@
 			}
 		});
 	</script>
+<script>
+$("#mobNo").change(function() { 
+	
+	var mobNo = $("#mobNo").val();
+	var frId = $("#frId").val();
+	
 
+	$.getJSON('${validateUnqFrMobNo}', {
+		mobNo : mobNo,
+		frId : frId,
+		ajax : 'true',
+	}, function(data) {
+
+		if (data.error == false) {
+			$("#unq_mob").show();
+			$("#mobNo").val('');
+			document.getElementById("mobNo").focus();
+		} else {
+			$("#unq_mob").hide();
+		}
+	});
+});
+
+$("#email").change(function() { 
+	var email = $("#email").val();
+	var frId = $("#frId").val();
+	//alert(code)
+
+	$.getJSON('${getFrInfoByEmail}', {
+		email : email,
+		frId : frId,
+		ajax : 'true',
+	}, function(data) {
+
+		if (data.error == false) {
+			$("#unq_email").show();
+			$("#email").val('');
+			document.getElementById("email").focus();
+		} else {
+			$("#unq_email").hide();
+		}
+	});
+});
+
+</script>
 
 </body>
 </html>
