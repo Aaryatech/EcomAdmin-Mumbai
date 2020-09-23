@@ -24,23 +24,30 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.ConfigHomePageProduct;
+import com.ats.ecomadmin.model.Designation;
 import com.ats.ecomadmin.model.FilterTypes;
+import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.GetCatProduct;
 import com.ats.ecomadmin.model.GetFilterIds;
 import com.ats.ecomadmin.model.GetPrdctHomePageCat;
 import com.ats.ecomadmin.model.GetTaxCakeShapeList;
+import com.ats.ecomadmin.model.GrievencesInstruction;
+import com.ats.ecomadmin.model.HomePageTestimonial;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.MFilter;
 import com.ats.ecomadmin.model.ProductHomPage;
 import com.ats.ecomadmin.model.ProductHomePageDetail;
 import com.ats.ecomadmin.model.ProductMaster;
+import com.ats.ecomadmin.model.SpDayHomePage;
 import com.ats.ecomadmin.model.Tax;
 import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.User;
@@ -792,4 +799,363 @@ public class ConfigurationFilterController {
 		}
 		return "redirect:/showHomePagePrdctConfig";
 	}
+	
+	
+	/*-------------------------------------------------------------------------------*/
+	
+	// Created By :- Mahendra Singh
+		// Created On :- 11-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Show UOM List
+		@RequestMapping(value = "/showHomePageTestimonial", method = RequestMethod.GET)
+		public String showUomList(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+			String mav = new String();
+			List<HomePageTestimonial> testimonialList = new ArrayList<HomePageTestimonial>();
+			try {
+
+				HttpSession session = request.getSession();
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("showHomePageTestimonial", "showHomePageTestimonial", "1", "0", "0", "0", newModuleList);
+
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					session.setAttribute("compId", 1);
+
+					int compId = (int) session.getAttribute("companyId");
+					mav = "product/testimonialList";
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("compId", compId);
+
+					HomePageTestimonial[] tagArr = Constants.getRestTemplate().postForObject(Constants.url + "getTestimonials", map, HomePageTestimonial[].class);
+					testimonialList = new ArrayList<HomePageTestimonial>(Arrays.asList(tagArr));
+
+					for (int i = 0; i < testimonialList.size(); i++) {
+
+						testimonialList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(testimonialList.get(i).getTestimonialsId())));
+					}
+					model.addAttribute("testimonialList", testimonialList);
+
+					model.addAttribute("title", "Home Page Testimonial List");
+
+					Info add = AccessControll.checkAccess("showHomePageTestimonial", "showUomList", "0", "1", "0", "0", newModuleList);
+					Info edit = AccessControll.checkAccess("showHomePageTestimonial", "showHomePageTestimonial", "0", "0", "1", "0", newModuleList);
+					Info delete = AccessControll.checkAccess("showHomePageTestimonial", "showHomePageTestimonial", "0", "0", "0", "1",
+							newModuleList);
+
+					if (add.isError() == false) {
+						// System.out.println(" add Accessable ");
+						model.addAttribute("addAccess", 0);
+
+					}
+					if (edit.isError() == false) {
+						// System.out.println(" edit Accessable ");
+						model.addAttribute("editAccess", 0);
+					}
+					if (delete.isError() == false) {
+						// System.out.println(" delete Accessable ");
+						model.addAttribute("deleteAccess", 0);
+
+					}
+				}
+
+			} catch (Exception e) {
+				System.out.println("Execption in /showHomePageTestimonial : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return mav;
+		}
+		
+		// Created By :- Mahendra Singh
+		// Created On :- 22-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Redirect to Add Home Page Testimonial JSP Page
+		@RequestMapping(value = "/newTestimonial", method = RequestMethod.GET)
+		public String newUom(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+			String mav = new String();
+			try {
+				HttpSession session = request.getSession();
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("newTestimonial", "showHomePageTestimonial", "0", "1", "0", "0", newModuleList);
+
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					mav = "product/addTestimonial";
+					
+					HomePageTestimonial testimonial = new HomePageTestimonial();
+					model.addAttribute("testimonial", testimonial);
+					
+					int compId = (int) session.getAttribute("companyId");
+					
+					List<Franchise> frList = new ArrayList<Franchise>();
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+					map = new LinkedMultiValueMap<>();
+					map.add("compId", compId);
+
+					Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchises", map,
+							Franchise[].class);
+					frList = new ArrayList<Franchise>(Arrays.asList(frArr));
+					model.addAttribute("frList", frList);
+					
+					map.add("compId", compId);
+
+					Designation[] desigArr = Constants.getRestTemplate().postForObject(Constants.url + "getDesignationsByCompId",
+							map, Designation[].class);
+					List<Designation> desigList = new ArrayList<Designation>(Arrays.asList(desigArr));
+					
+					model.addAttribute("desigList", desigList);
+					
+					model.addAttribute("title", "Add Home Page Testimonial");
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /newTestimonial : " + e.getMessage());
+				e.printStackTrace();
+			}
+
+			return mav;
+		}
+		
+		// Created By :- Mahendra Singh
+		// Created On :- 23-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Add Home Page Testimonial
+		@RequestMapping(value = "/insertHomePageTestimonial", method = RequestMethod.POST)
+		public String insertSpHomePages(HttpServletRequest request, HttpServletResponse response,
+				@RequestParam("doc") MultipartFile doc) {
+			try {
+				HttpSession session = request.getSession();
+				User userObj = (User) session.getAttribute("userObj");
+
+				Date date = new Date();
+				SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy");
+				String profileImage = null;
+
+				int companyId = (int) session.getAttribute("companyId");
+
+				if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
+
+					System.err.println("In If ");
+
+					profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
+
+					try {
+						new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					} catch (Exception e) {
+					}
+
+				} else {
+					System.err.println("In else ");
+					profileImage = request.getParameter("editImg");
+
+				}
+
+				HomePageTestimonial testimonial = new HomePageTestimonial();
+
+				int testimonialId = Integer.parseInt(request.getParameter("testimonialId"));
+				
+				if(testimonialId>0) {
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("testimonialId", testimonialId);
+					HomePageTestimonial res = Constants.getRestTemplate().postForObject(Constants.url + "getTestimonialsById",
+							map, HomePageTestimonial.class);
+					
+					testimonial.setInsertDateTime(res.getInsertDateTime());
+					testimonial.setInsertUserId(res.getInsertUserId());
+				}
+				
+				String frIdsStr = "";
+				String[] frIds = request.getParameterValues("frIds");
+				if (frIds.length > 0) {
+					StringBuilder sb = new StringBuilder();
+					for (String s : frIds) {
+						sb.append(s).append(",");
+					}
+					frIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
+					
+				}
+				
+				testimonial.setTestimonialsId(testimonialId);
+				testimonial.setCaptionName(request.getParameter("caption"));
+				testimonial.setName(request.getParameter("testimonial_name"));
+				testimonial.setMessages(request.getParameter("messages"));
+				testimonial.setDesignation(Integer.parseInt(request.getParameter("designation")));
+				testimonial.setFrIds(frIdsStr);
+				testimonial.setImages(profileImage);
+				
+				if(testimonialId==0) {
+					testimonial.setInsertDateTime(sf.format(date));
+					testimonial.setInsertUserId(userObj.getUserId());	
+				}else {				
+					testimonial.setUpdateDateTime(sf.format(date));
+					testimonial.setUpdateUserId(userObj.getUserId());				
+				}
+				
+				testimonial.setSortNo(Integer.parseInt(request.getParameter("sortNo")));				
+				testimonial.setIsActive(Integer.parseInt(request.getParameter("isActive")));
+				testimonial.setCompanyId(companyId);
+				testimonial.setDelStatus(1);
+				testimonial.setExInt1(0);
+				testimonial.setExInt2(0);
+				testimonial.setExVar1("NA");
+				testimonial.setExVar2("NA");
+				
+
+				HomePageTestimonial res = Constants.getRestTemplate().postForObject(Constants.url + "saveTestimonial", testimonial, HomePageTestimonial.class);
+
+				if (res.getTestimonialsId() > 0) {
+					if (testimonialId == 0)
+						session.setAttribute("successMsg", "Home Page Testimonial Saved Sucessfully");
+					else
+						session.setAttribute("successMsg", "Home Page Testimonial Update Sucessfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Save Home Page Testimonial");
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /insertHomePageTestimonial : " + e.getMessage());
+				e.printStackTrace();
+			}
+
+			return "redirect:/showHomePageTestimonial";
+
+		}
+		
+		// Created By :- Mahendra Singh
+		// Created On :- 23-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Redirect to Edit Home Page Testimonial
+		@RequestMapping(value = "/editTestimonial", method = RequestMethod.GET)
+		public String editSpday(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+			String mav = new String();
+			GrievencesInstruction grievance = new GrievencesInstruction();
+			try {
+				HttpSession session = request.getSession();
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("editTestimonial", "showHomePageTestimonial", "0", "1", "0", "0", newModuleList);
+
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					mav = "product/addTestimonial";
+
+					int companyId = (int) session.getAttribute("companyId");
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("compId", companyId);
+
+					Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchises", map,
+							Franchise[].class);
+					List<Franchise> frList = new ArrayList<Franchise>(Arrays.asList(frArr));
+
+					model.addAttribute("frList", frList);
+
+					map = new LinkedMultiValueMap<>();
+					map.add("compId", companyId);
+					map.add("filterTypeId", 7);
+
+					MFilter[] filterArr = Constants.getRestTemplate()
+							.postForObject(Constants.url + "getFiltersListByTypeId", map, MFilter[].class);
+					List<MFilter> tagsList = new ArrayList<MFilter>(Arrays.asList(filterArr));
+
+					model.addAttribute("tagsList", tagsList);
+
+					String base64encodedString = request.getParameter("testimonialId");
+					String testimonialId = FormValidation.DecodeKey(base64encodedString);
+
+					map = new LinkedMultiValueMap<>();
+					map.add("testimonialId", testimonialId);
+					
+					HomePageTestimonial res = Constants.getRestTemplate().postForObject(Constants.url + "getTestimonialsById",
+							map, HomePageTestimonial.class);
+
+					List<Integer> frIds = new ArrayList<>();
+					try {
+						if (!res.getFrIds().isEmpty()) {
+							frIds = Stream.of(res.getFrIds().split(",")).map(Integer::parseInt)
+									.collect(Collectors.toList());
+						}
+					} catch (Exception e) {
+					}
+
+					model.addAttribute("frIds", frIds);
+					
+					model.addAttribute("testimonial", res);
+					
+					map.add("compId", companyId);
+
+					Designation[] desigArr = Constants.getRestTemplate().postForObject(Constants.url + "getDesignationsByCompId",
+							map, Designation[].class);
+					List<Designation> desigList = new ArrayList<Designation>(Arrays.asList(desigArr));
+					
+					model.addAttribute("desigList", desigList);
+
+					model.addAttribute("imgPath", Constants.showDocSaveUrl);
+					model.addAttribute("title", "Edit Home Page Testimonial");
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /editTestimonial : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return mav;
+		}
+		
+		// Created By :- Mahendra Singh
+		// Created On :- 23-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Delete Home Page Testimonial
+		@RequestMapping(value = "/deleteTestimonial", method = RequestMethod.GET)
+		public String deleteSpDay(HttpServletRequest request, HttpServletResponse response) {
+
+			String mav = new String();
+			HttpSession session = request.getSession();
+			try {
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("deleteTestimonial", "showHomePageTestimonial", "0", "0", "0", "1",
+						newModuleList);
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					String base64encodedString = request.getParameter("testimonialId");
+					String testimonialId = FormValidation.DecodeKey(base64encodedString);
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("testimonialId", Integer.parseInt(testimonialId));
+
+					Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteTestimonialsById", map,
+							Info.class);
+
+					if (!res.isError()) {
+						session.setAttribute("successMsg", res.getMsg());
+					} else {
+						session.setAttribute("errorMsg", res.getMsg());
+					}
+
+					mav = "redirect:/showHomePageTestimonial";
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /deleteTestimonial : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return mav;
+		}
 }
