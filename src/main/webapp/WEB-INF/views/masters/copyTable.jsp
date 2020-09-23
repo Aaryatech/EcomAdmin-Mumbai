@@ -69,24 +69,19 @@
 								<span
 									class="font-size-sm text-uppercase font-weight-semibold card-title">${title}</span>
 								<!--  -->
-								<span class="font-size-sm text-uppercase font-weight-semibold"><a
-									class="card-title"
-									href="${pageContext.request.contextPath}/showBannerList"
-									style="color: white;" class="card-title"><i
-										class="icon-list2 ml-2"></i>&nbsp;&nbsp;&nbsp;&nbsp;View List</a></span>
+								<span class="font-size-sm text-uppercase font-weight-semibold"></span>
 							</div>
 
 
 							<div class="card-body">
-
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 								<form action="${pageContext.request.contextPath}/showCopyTable"
 									id="submitInsert">
 
 
 									<p class="desc text-danger fontsize11">Note : * Fields are
 										mandatory.</p>
-									<input type="hidden" class="form-control"
-										value="${banner.bannerId}" name="bannerId" id="bannerId">
+
 
 
 									<div class="form-group row">
@@ -121,22 +116,22 @@
 									</div>
 
 
-									<input type="hidden" name="lstUserText" id="txtUserText">
-
+ 
 
 								</form>
 
 
 								<form
 									action="${pageContext.request.contextPath}/submitCopyTable"
-									id="submitCopyTable">
+									id="submitCopyTable" method="post">
 
-
+									<input type="hidden" name="tblName" value="${tblName}">
 
 									<table class="table datatable-header-basic" id="printtable1">
 										<thead>
 											<tr>
-												<th width="5%">SR. No.<input type="checkbox" name="selAll" id="selAll" /></th>
+												<th width="5%">SR. No.<input type="checkbox"
+													name="selAll" id="selAll" /></th>
 												<c:forEach items="${fieldList}" var="fieldList"
 													varStatus="count">
 													<th>${fieldList}</th>
@@ -149,8 +144,9 @@
 												varStatus="count">
 												<tr>
 
-													<td>${count.index+1}<input type="checkbox" id="primId${datalist.prim_id}"
-										value="${datalist.prim_id}" name="primId" class="select_all"></td>
+													<td>${count.index+1}<input type="checkbox"
+														id="primId${datalist.prim_id}" value="${datalist.prim_id}"
+														name="primId" class="select_all"></td>
 
 													<%-- <c:set var="summary" value=".ext_field${n.index+1}" /> --%>
 
@@ -256,9 +252,16 @@
 										</tbody>
 									</table>
 
+									<div class="form-group row">
+										<div class="col-lg-4">
+											<button type="submit" id="submtbtn" class="btn btn-primary">
+												Submit <i class="icon-paperplane ml-2"></i>
+											</button>
+										</div>
 
-
-
+										<span class="validation-invalid-label" id="error_chk"
+											style="display: none;">Please Select the Records.</span>
+									</div>
 								</form>
 							</div>
 
@@ -281,7 +284,7 @@
 		<!-- /main content -->
 
 	</div>
-	<!-- /page content -->
+	<!-- <!-- /page content -->
 	<script type="text/javascript">
 		function addOptionText() {
 
@@ -290,74 +293,39 @@
 			document.getElementById("txtUserText").value = text;
 
 		}
-		
-		
-		
-	</script>
+	</script> -->
 	<script>
- 
-	
-	$(document).ready(
-			
-			function() { 
-		
-				$("#selAll").click(
-						function() {
-							$('#printtable1 tbody input[type="checkbox"]')
-									.prop('checked', this.checked);
-							 
-						});
-			});
-</Script>
+		$(document).ready(
+
+				function() {
+
+					$("#selAll").click(
+							function() {
+								$('#printtable1 tbody input[type="checkbox"]')
+										.prop('checked', this.checked);
+
+							});
+				});
+	</Script>
 
 	<script type="text/javascript">
 		$(document).ready(function($) {
 
-			$("#submitInsert").submit(function(e) {
+			$("#submitCopyTable").submit(function(e) {
 				var isError = false;
 				var errMsg = "";
+				var checked = $("#submitCopyTable input:checked").length > 0;
 
-				if (!$("#bannerEventName").val()) {
+				var count = $('#printtable1 tr').length;
+				//alert(count);
+				if (!checked || count <= 1) {
+					$("#error_chk").show()
 					isError = true;
-					$("#error_bannerName").show()
 				} else {
-					$("#error_bannerName").hide()
+					$("#error_chk").hide()
+					isError = false;
 				}
-
-				if ($("#frId").val().length == 0) {
-					isError = true;
-					$("#error_frId").show()
-				} else {
-					$("#error_frId").hide()
-				}
-				if ($("#tagId").val().length == 0) {
-					isError = true;
-					$("#error_tagId").show()
-				} else {
-					$("#error_tagId").hide()
-				}
-
-				if (!$("#captionOnproductPage").val()) {
-					isError = true;
-					$("#error_captionOnproductPage").show()
-				} else {
-					$("#error_captionOnproductPage").hide()
-				}
-
-				if (!$("#sortNo").val() || $("#sortNo").val() == 0) {
-					isError = true;
-					$("#error_sortNo").show()
-				} else {
-					$("#error_sortNo").hide()
-				}
-
-				/* if (!$("#doc").val()) {
-					isError = true;
-					$("#error_doc").show()
-				} else {
-					$("#error_doc").hide()
-				}  */
-
+			 
 				if (!isError) {
 					var x = true;
 					if (x == true) {

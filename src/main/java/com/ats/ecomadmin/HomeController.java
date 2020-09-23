@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ats.ecomadmin.commons.Constants;
+import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
@@ -126,11 +127,21 @@ public class HomeController {
 						}
 						
 					}
+					
+					
+					
+					  map = new LinkedMultiValueMap<>();
+					map.add("compId",  userObj.getCompanyId());
+
+					CompMaster comp = Constants.getRestTemplate().postForObject(Constants.url + "getCompById", map,
+							CompMaster.class);
+
 					session.setAttribute("userId", userObj.getUserId());
 					session.setAttribute("userObj", userObj);
 					session.setAttribute("companyId", userObj.getCompanyId());
 					
-					
+					session.setAttribute("company", comp);
+
 				} else {
 					// Login Failed
 					// show msg in jsp
