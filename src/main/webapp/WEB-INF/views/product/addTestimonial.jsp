@@ -57,7 +57,7 @@
 									class="card-title"
 									href="${pageContext.request.contextPath}/showHomePageTestimonial"
 									style="color: white;" class="card-title"><i
-										class="icon-list2 ml-2"></i>&nbsp;&nbsp;&nbsp;&nbsp;Home Page Testimonial List</a></span>
+										class="icon-list2 ml-2"></i>&nbsp;&nbsp;&nbsp;&nbsp;View List</a></span>
 							</div>
 
 
