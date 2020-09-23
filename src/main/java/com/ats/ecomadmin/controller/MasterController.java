@@ -103,18 +103,13 @@ public class MasterController {
 						newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
-
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
 			}
 
@@ -334,16 +329,13 @@ public class MasterController {
 						newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
 
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
 
 				}
@@ -572,16 +564,12 @@ public class MasterController {
 				Info delete = AccessControll.checkAccess("showUsers", "showUsers", "0", "0", "0", "1", newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
-
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
 
 				}
@@ -972,18 +960,13 @@ public class MasterController {
 						newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
-
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
 			}
 		} catch (Exception e) {
@@ -1262,7 +1245,7 @@ public class MasterController {
 
 				model.addAttribute("filterList", filterTypeList);
 				model.addAttribute("title", "Filter Type List");
-				// model.addAttribute("imageUrl", Constants.showDocSaveUrl);
+
 				Info add = AccessControll.checkAccess("showFilterTypeList", "showFilterTypeList", "0", "1", "0", "0",
 						newModuleList);
 				Info edit = AccessControll.checkAccess("showFilterTypeList", "showFilterTypeList", "0", "0", "1", "0",
@@ -1271,18 +1254,14 @@ public class MasterController {
 						newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
 
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
 			}
 		} catch (Exception e) {
@@ -1522,7 +1501,6 @@ public class MasterController {
 
 				model.addAttribute("filterList", filterList);
 
-				// model.addAttribute("imageUrl", Constants.showDocSaveUrl);
 				Info add = AccessControll.checkAccess("showFilter/" + filterTypeId, "showFilter/" + filterTypeId, "0",
 						"1", "0", "0", newModuleList);
 				Info edit = AccessControll.checkAccess("showFilter/" + filterTypeId, "showFilter/" + filterTypeId, "0",
@@ -1531,18 +1509,13 @@ public class MasterController {
 						"0", "0", "0", "1", newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
-
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
 			}
 		} catch (Exception e) {
@@ -1809,7 +1782,6 @@ public class MasterController {
 
 				model.addAttribute("title", "Franchise List");
 
-				// model.addAttribute("imageUrl", Constants.showDocSaveUrl);
 				Info add = AccessControll.checkAccess("showFranchises", "showFranchises", "0", "1", "0", "0",
 						newModuleList);
 				Info edit = AccessControll.checkAccess("showFranchises", "showFranchises", "0", "0", "1", "0",
@@ -1818,18 +1790,13 @@ public class MasterController {
 						newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
-
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
 			}
 		} catch (Exception e) {
@@ -1954,7 +1921,6 @@ public class MasterController {
 			} else {
 				System.err.println("In else ");
 				profileImage = request.getParameter("editImg");
-
 			}
 
 			String pass = request.getParameter("pass");
@@ -2309,87 +2275,88 @@ public class MasterController {
 		}
 		return mav;
 	}
-	
+
 	// Created By :- Mahendra Singh
-    // Created On :- 15-09-2020
-    // Modified By :- NA
-    // Modified On :- NA
-    // Description :- Validation for unique franchise mobile No. 
-    @RequestMapping(value = "/validateUnqFrMobNo", method = RequestMethod.GET)
-    @ResponseBody
-    public Info validateUnqFrMobNo(HttpServletRequest request, HttpServletResponse response) {
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Validation for unique franchise mobile No.
+	@RequestMapping(value = "/validateUnqFrMobNo", method = RequestMethod.GET)
+	@ResponseBody
+	public Info validateUnqFrMobNo(HttpServletRequest request, HttpServletResponse response) {
 
-        Info info = new Info();
-        try {
-            int frId = 0;
-            try {
-            	frId = Integer.parseInt(request.getParameter("frId"));
-            } catch (Exception e) {
-            	frId = 0;
-                e.printStackTrace();
-            }
-            String mobNo = request.getParameter("mobNo");
-                        
-            MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-            map.add("mobNo", mobNo);
-            map.add("frId", frId);
+		Info info = new Info();
+		try {
+			int frId = 0;
+			try {
+				frId = Integer.parseInt(request.getParameter("frId"));
+			} catch (Exception e) {
+				frId = 0;
+				e.printStackTrace();
+			}
+			String mobNo = request.getParameter("mobNo");
 
-            Franchise res = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseByMobNo", map, Franchise.class);
-            System.out.println("userRes  ------  " + res);
-            if (res != null) {
-                info.setError(false);
-                info.setMsg("User Found");
-            } else {
-                info.setError(true);
-                info.setMsg("User Not Found");
-            }
-        } catch (Exception e) {
-            System.out.println("Execption in /validateUnqFrMobNo : " + e.getMessage());
-            e.printStackTrace();
-        }
-        return info;
-    }
-	
-    
-    // Created By :- Mahendra Singh
-    // Created On :- 15-09-2020
-    // Modified By :- NA
-    // Modified On :- NA
-    // Description :- Validation for unique user by email.
-    @RequestMapping(value = "/getFrInfoByEmail", method = RequestMethod.GET)
-    @ResponseBody
-    public Info getFrInfoByEmail(HttpServletRequest request, HttpServletResponse response) {
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("mobNo", mobNo);
+			map.add("frId", frId);
 
-        Info info = new Info();
-        try {
-            int frId = 0;
-            try {
-            	frId = Integer.parseInt(request.getParameter("frId"));
-            } catch (Exception e) {
-            	frId = 0;
-                e.printStackTrace();
-            }
-            String email = request.getParameter("email");
-            
-            MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-            map.add("email", email);
-            map.add("frId", frId);
+			Franchise res = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseByMobNo", map,
+					Franchise.class);
+			
+			if (res != null) {
+				info.setError(false);
+				info.setMsg("User Found");
+			} else {
+				info.setError(true);
+				info.setMsg("User Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /validateUnqFrMobNo : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+	}
 
-            Franchise res = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseByEmail", map, Franchise.class);
+	// Created By :- Mahendra Singh
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Validation for unique user by email.
+	@RequestMapping(value = "/getFrInfoByEmail", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getFrInfoByEmail(HttpServletRequest request, HttpServletResponse response) {
 
-            if (res != null) {
-                info.setError(false);
-                info.setMsg("User Found");
-            } else {
-                info.setError(true);
-                info.setMsg("User Not Found");
-            }
-        } catch (Exception e) {
-            System.out.println("Execption in /getFrInfoByEmail : " + e.getMessage());
-            e.printStackTrace();
-        }
-        return info;
-    }
+		Info info = new Info();
+		try {
+			int frId = 0;
+			try {
+				frId = Integer.parseInt(request.getParameter("frId"));
+			} catch (Exception e) {
+				frId = 0;
+				e.printStackTrace();
+			}
+			String email = request.getParameter("email");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("email", email);
+			map.add("frId", frId);
+
+			Franchise res = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseByEmail", map,
+					Franchise.class);
+
+			if (res != null) {
+				info.setError(false);
+				info.setMsg("User Found");
+			} else {
+				info.setError(true);
+				info.setMsg("User Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /getFrInfoByEmail : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+	}
 
 	/*----------------------------------------------------------------------------------*/
 	// Created By :- Mahendra Singh
@@ -2439,18 +2406,13 @@ public class MasterController {
 						newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
-
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
 			}
 		} catch (Exception e) {
@@ -2698,18 +2660,13 @@ public class MasterController {
 				Info delete = AccessControll.checkAccess("showCities", "showCities", "0", "0", "0", "1", newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
-
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
 			}
 		} catch (Exception e) {
@@ -2946,18 +2903,13 @@ public class MasterController {
 				Info delete = AccessControll.checkAccess("showArea", "showArea", "0", "0", "0", "1", newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
-
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
 			}
 		} catch (Exception e) {
@@ -3118,7 +3070,7 @@ public class MasterController {
 			map.add("compId", userObj.getCompanyId());
 
 			Area cityRes = Constants.getRestTemplate().postForObject(Constants.url + "getAreaByCode", map, Area.class);
-			System.out.println("Area  ------  " + cityRes);
+			
 			if (cityRes != null) {
 				info.setError(false);
 				info.setMsg("Area Found");
@@ -3196,8 +3148,7 @@ public class MasterController {
 			map.add("cityId", cityId);
 			city = Constants.getRestTemplate().postForObject(Constants.url + "getCityById", map, City.class);
 
-			city.setCityCode(city.getCityCode() + "-" + no);
-			// System.out.println("City ------ "+city);
+			city.setCityCode(city.getCityCode() + "-" + no);			
 
 		} catch (Exception e) {
 			System.out.println("Execption in /getCityBycityId : " + e.getMessage());
@@ -3328,7 +3279,7 @@ public class MasterController {
 
 			DeliveryInstruction captionRes = Constants.getRestTemplate()
 					.postForObject(Constants.url + "getDeliveryInstructionByCaptn", map, DeliveryInstruction.class);
-			System.out.println("captionRes  ------  " + captionRes);
+			
 			if (captionRes != null) {
 				info.setError(false);
 				info.setMsg("Caption Found");
@@ -3513,18 +3464,13 @@ public class MasterController {
 						"0", "0", "0", "1", newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
-
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
 			}
 
@@ -3632,7 +3578,7 @@ public class MasterController {
 
 			GrievencesTypeInstructn captionRes = Constants.getRestTemplate()
 					.postForObject(Constants.url + "getGrievTypeInstructByCaptn", map, GrievencesTypeInstructn.class);
-			System.out.println("captionRes  ------  " + captionRes);
+			
 			if (captionRes != null) {
 				info.setError(false);
 				info.setMsg("Caption Found");
@@ -3783,18 +3729,13 @@ public class MasterController {
 						newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
-
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
 			}
 		} catch (Exception e) {
@@ -4072,18 +4013,13 @@ public class MasterController {
 						newModuleList);
 
 				if (add.isError() == false) {
-					// System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
-
 				}
 				if (edit.isError() == false) {
-					// System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
 				}
 				if (delete.isError() == false) {
-					// System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
 			}
 		} catch (Exception e) {

@@ -73,6 +73,9 @@
 					<div class="card-body">
 						<p class="desc text-danger fontsize11">Note : * Fields are
 							mandatory.</p>
+							
+							<div class="form-group row"></div>
+					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 						<div class="row">
 							<div class="col-md-12">
@@ -276,15 +279,7 @@
 
 														if (data.categoryList[i].catId == data.productList[j].prodCatId) {
 
-															if (data.productList[j].checked) {
-																tr1
-																		.append($(
-																				'<td style="padding: 7px; line-height:0; border-top: 1px solid #ddd;""></td>')
-																				.html(
-																						'<input type="checkbox" checked name="chk" id="chk" value="'+
-												data.productList[j].productId
-												+'" class="chkcls'+data.categoryList[i].catId+'">'));
-															} else {
+															
 																tr1
 																		.append($(
 																				'<td style="padding: 7px; line-height:0; border-top: 1px solid #ddd;""></td>')
@@ -292,7 +287,7 @@
 																						'<input type="checkbox" name="chk" id="chk" value="'+
 											data.productList[j].productId
 											+'" class="chkcls'+data.categoryList[i].catId+'">'));
-															}
+															
 
 															tr1
 																	.append($(
