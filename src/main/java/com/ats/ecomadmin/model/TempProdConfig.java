@@ -30,6 +30,10 @@ public class TempProdConfig {
 	private float spRateAmt3;
 	private float spRateAmt4;
 	
+	
+	private int makerUserId;
+	private String updtDttime;
+	
 	public int getConfigDetailId() {
 		return configDetailId;
 	}
@@ -173,6 +177,23 @@ public class TempProdConfig {
 	public void setRateSetingType(int rateSetingType) {
 		this.rateSetingType = rateSetingType;
 	}
+	
+	
+	public int getMakerUserId() {
+		return makerUserId;
+	}
+
+	public void setMakerUserId(int makerUserId) {
+		this.makerUserId = makerUserId;
+	}
+
+	public String getUpdtDttime() {
+		return updtDttime;
+	}
+
+	public void setUpdtDttime(String updtDttime) {
+		this.updtDttime = updtDttime;
+	}
 
 	@Override
 	public String toString() {
@@ -181,7 +202,8 @@ public class TempProdConfig {
 				+ vegType + ", catId=" + catId + ", curTimeStamp=" + curTimeStamp + ", rateSetingType=" + rateSetingType
 				+ ", configDetailId=" + configDetailId + ", configHeaderId=" + configHeaderId + ", rateAmt=" + rateAmt
 				+ ", mrpAmt=" + mrpAmt + ", spRateAmt1=" + spRateAmt1 + ", spRateAmt2=" + spRateAmt2 + ", spRateAmt3="
-				+ spRateAmt3 + ", spRateAmt4=" + spRateAmt4 + "]";
+				+ spRateAmt3 + ", spRateAmt4=" + spRateAmt4 + ", makerUserId=" + makerUserId + ", updtDttime="
+				+ updtDttime + "]";
 	}
 	
 }

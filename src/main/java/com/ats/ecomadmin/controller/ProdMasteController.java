@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
@@ -34,8 +35,10 @@ import com.ats.ecomadmin.model.MFilter;
 import com.ats.ecomadmin.model.ProductMaster;
 import com.ats.ecomadmin.model.SubCategory;
 import com.ats.ecomadmin.model.Tax;
+import com.ats.ecomadmin.model.TempConfTraveller;
 import com.ats.ecomadmin.model.TempProdConfig;
 import com.ats.ecomadmin.model.Uom;
+import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
 
 @Controller
@@ -157,6 +160,7 @@ public class ProdMasteController {
 			ProductMaster prod = new ProductMaster();
 
 			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
 
 			int compId = (int) session.getAttribute("companyId");
 
@@ -253,7 +257,7 @@ public class ProdMasteController {
 
 			prod.setIsVeg(Integer.parseInt(is_veg));
 			prod.setLayeringCream(Integer.parseInt(layering_cream_id));
-			prod.setMakerUserId(1);
+			prod.setMakerUserId(userObj.getUserId());
 			prod.setMaxWt(Integer.parseInt(max_wt));
 			prod.setMinQty(Integer.parseInt(min_qty));
 
@@ -442,7 +446,8 @@ public class ProdMasteController {
 
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "0", "1", "0", "0", newModuleList);
+			Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "0", "1",
+					"0", "0", newModuleList);
 
 			if (view.isError() == true) {
 
@@ -792,8 +797,8 @@ public class ProdMasteController {
 
 			int compId = (int) session.getAttribute("companyId");
 			List<ItemConfDetail> confDetailList = new ArrayList<ItemConfDetail>();
-			
-			ItemConfHeader confHeader=new ItemConfHeader();
+
+			ItemConfHeader confHeader = new ItemConfHeader();
 			confHeader.setApplicableFor("NA");
 			confHeader.setCatId(tempProdConfList.get(0).getCatId());
 			confHeader.setCompanyId(compId);
@@ -801,14 +806,14 @@ public class ProdMasteController {
 			confHeader.setConfigHeaderId(0);
 			confHeader.setConfigName(request.getParameter("conf_name"));
 			confHeader.setDelStatus(1);
-			
+
 			confHeader.setExDate1("2020-09-18");
 			confHeader.setExDate2("2020-09-18");
-			
+
 			confHeader.setExFloat1(1);
 			confHeader.setExFloat2(1);
 			confHeader.setExFloat3(1);
-			
+
 			confHeader.setExInt1(0);
 			confHeader.setExInt2(0);
 			confHeader.setExInt3(0);
@@ -822,11 +827,11 @@ public class ProdMasteController {
 			confHeader.setDelStatus(1);
 			confHeader.setInsertDttime(CommonUtility.getCurrentYMDDateTime());
 			confHeader.setIsAllowToCopy(1);
-			
-			confHeader.setMakerUserId(1);
+			User userObj = (User) session.getAttribute("userObj");
+
+			confHeader.setMakerUserId(userObj.getUserId());
 			confHeader.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
-			
-			
+
 			for (int i = 0; i < tempProdConfList.size(); i++) {
 
 				float mrpAmt;
@@ -912,7 +917,8 @@ public class ProdMasteController {
 						confDetail.setInsertDttime(CommonUtility.getCurrentYMDDateTime());
 
 						confDetail.setIsVeg(tempConf.getVegType());
-						confDetail.setMakerUserId(1);
+
+						confDetail.setMakerUserId(userObj.getUserId());
 
 						confDetail.setMrpAmt(mrpAmt);
 						confDetail.setProductId(tempConf.getProductId());
@@ -928,7 +934,7 @@ public class ProdMasteController {
 						confDetail.setSpRateAmt4(spRateAmt4);
 						confDetail.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
 
-					confDetailList.add(confDetail);
+						confDetailList.add(confDetail);
 
 					} // End of Else
 
@@ -937,27 +943,23 @@ public class ProdMasteController {
 				}
 			} // End Of tempProdConfList For Loop I
 			confHeader.setItemConfDetList(confDetailList);
-			
+
 			ItemConfHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveProdConfHD", confHeader,
 					ItemConfHeader.class);
 
-			
-			
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+
 		}
 
 		return "redirect:/showAddProdConfig";
 
 	}
-	
-	
+
 	/*****************************
-	 * //Created Date: 21-09-2020 //UpdateDate:21-09-2020 
-	 * //Description: to Show  Product Config Header Based on CatId
-	 *  //Devloped By(Devloper Name): Sachin 
-	 *  //Updated By(Devloper Name): Sachin
+	 * //Created Date: 21-09-2020 //UpdateDate:21-09-2020 //Description: to Show
+	 * Product Config Header Based on CatId //Devloped By(Devloper Name): Sachin
+	 * //Updated By(Devloper Name): Sachin
 	 ******************************/
 
 	@RequestMapping(value = "/showViewProdConfigHeader", method = RequestMethod.GET)
@@ -969,7 +971,8 @@ public class ProdMasteController {
 
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "1", "0", "0", "0", newModuleList);
+			Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "1", "0",
+					"0", "0", newModuleList);
 
 			if (view.isError() == true) {
 
@@ -1004,10 +1007,9 @@ public class ProdMasteController {
 	}
 
 	/*****************************
-	 * //Created Date: 21-09-2020 //UpdateDate:21-09-2020 
-	 * //Description: to Get Product Config Header Based on CatId
-	 *  //Devloped By(Devloper Name): Sachin 
-	 *  //Updated By(Devloper Name): Sachin
+	 * //Created Date: 21-09-2020 //UpdateDate:21-09-2020 //Description: to Get
+	 * Product Config Header Based on CatId //Devloped By(Devloper Name): Sachin
+	 * //Updated By(Devloper Name): Sachin
 	 ******************************/
 	@RequestMapping(value = "/getViewProdConfigHeader", method = RequestMethod.POST)
 	public ModelAndView getViewProdConfigHeader(HttpServletRequest request, HttpServletResponse response) {
@@ -1018,7 +1020,8 @@ public class ProdMasteController {
 
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "1", "0", "0", "0", newModuleList);
+			Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "1", "0",
+					"0", "0", newModuleList);
 
 			if (view.isError() == true) {
 
@@ -1043,7 +1046,6 @@ public class ProdMasteController {
 
 				model.addObject("catList", catList);
 
-				
 				int catId = 0;
 
 				try {
@@ -1059,12 +1061,12 @@ public class ProdMasteController {
 				map.add("companyId", compId);
 				map.add("catIdList", catId);
 
-				GetItemConfHead[] confHeadArray = Constants.getRestTemplate().postForObject(Constants.url + "getProdConfList", map,
-						GetItemConfHead[].class);
+				GetItemConfHead[] confHeadArray = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getProdConfList", map, GetItemConfHead[].class);
 				List<GetItemConfHead> confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));
 
 				model.addObject("confHeadList", confHeadList);
-				
+
 			}
 
 		} catch (Exception e) {
@@ -1072,26 +1074,33 @@ public class ProdMasteController {
 		}
 		return model;
 	}
-	
-	
+
 	/*****************************
-	 * //Created Date: 22-09-2020 //UpdateDate:22-09-2020 
-	 * //Description: to Get Product Config Detail Based on Conf Header Id
-	 *  //Devloped By(Devloper Name): Sachin 
-	 *  //Updated By(Devloper Name): Sachin
+	 * //Created Date: 22-09-2020 //UpdateDate:22-09-2020 //Description: to Get
+	 * Product Config Detail Based on Conf Header Id //Devloped By(Devloper Name):
+	 * Sachin //Updated By(Devloper Name): Sachin
 	 ******************************/
+
+	// for Update operation these array list used
+	// New Product Conf Detail
+	List<TempProdConfig> tempProdUpdateConfList = new ArrayList<>();
+
+	// Existing Product Conf Detail
+	List<TempProdConfig> tempProdUpdateConfDetail = new ArrayList<>();
+
 	@RequestMapping(value = "/getProdConfDetailByConfHeader", method = RequestMethod.GET)
 	public ModelAndView getProdConfDetailByConfHeader(HttpServletRequest request, HttpServletResponse response) {
 
 		System.err.println("In Method getProdConfDetailByConfHeader");
-		
+
 		ModelAndView model = new ModelAndView("product/editProdConfDetail");
 
 		try {
 
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info edit = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "0", "0", "1", "0", newModuleList);
+			Info edit = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "0", "0",
+					"1", "0", newModuleList);
 
 			if (edit.isError() == true) {
 
@@ -1115,7 +1124,7 @@ public class ProdMasteController {
 				}
 
 				model.addObject("catList", catList);
-				
+
 				int configHeaderId = 0;
 
 				try {
@@ -1131,19 +1140,25 @@ public class ProdMasteController {
 				map.add("companyId", compId);
 				map.add("configHeaderId", configHeaderId);
 
-				Info infoRes = Constants.getRestTemplate().postForObject(Constants.url + "getProdConfDetailByConfHeader", map,
-						Info.class);
-				System.err.println("Info "+infoRes.toString());
-				List<TempProdConfig> tempProdConfList = new ArrayList<TempProdConfig>();
-				tempProdConfList=infoRes.getTempProdConfList();
-				
-				model.addObject("tempProdConfList", tempProdConfList);
-				
-				List<TempProdConfig> prodConfDetList = new ArrayList<TempProdConfig>();
-				prodConfDetList=infoRes.getProdConfDetailList();
-				
-				model.addObject("prodConfDetList", prodConfDetList);
-				
+				TempConfTraveller infoRes = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getProdConfDetailByConfHeader", map, TempConfTraveller.class);
+				System.err.println("Info " + infoRes.toString());
+				// List<TempProdConfig> tempProdConfList = new ArrayList<TempProdConfig>();
+				tempProdUpdateConfList = new ArrayList<TempProdConfig>();
+
+				tempProdUpdateConfList = infoRes.getTempProdConfList();
+
+				model.addObject("tempProdConfList", tempProdUpdateConfList);
+
+				// List<TempProdConfig> prodConfDetList = new ArrayList<TempProdConfig>();
+				tempProdUpdateConfDetail = new ArrayList<TempProdConfig>();
+
+				tempProdUpdateConfDetail = infoRes.getProdConfDetailList();
+
+				model.addObject("prodConfDetList", tempProdUpdateConfDetail);
+
+				GetItemConfHead prodConfHead = infoRes.getConfHead();
+				model.addObject("prodConfHead", prodConfHead);
 			}
 
 		} catch (Exception e) {
@@ -1151,4 +1166,314 @@ public class ProdMasteController {
 		}
 		return model;
 	}
+
+	//
+
+	/*****************************
+	 * //Created Date: 23-09-2020 //UpdateDate:23-09-2020 //Description: To Save
+	 * Prod Conf Header Detail Edit //Developed By(Developer Name): Sachin //Updated
+	 * By(Developer Name): Sachin
+	 ******************************/
+	@RequestMapping(value = "/saveUpdateProdConf", method = RequestMethod.POST)
+	public String saveUpdateProdConf(HttpServletRequest request, HttpServletResponse response) {
+		// List<TempProdConfig> tempProdUpdateConfList = new ArrayList<>();
+		// List<TempProdConfig> tempProdUpdateConfDetail = new ArrayList<>();
+
+		try {
+			ProductMaster prod = new ProductMaster();
+
+			HttpSession session = request.getSession();
+
+			int compId = (int) session.getAttribute("companyId");
+			List<ItemConfDetail> confDetailList = new ArrayList<ItemConfDetail>();
+
+			List<TempProdConfig> confDetailUpdateList = new ArrayList<TempProdConfig>();
+			ItemConfHeader confHeader = new ItemConfHeader();
+			confHeader.setApplicableFor("NA");
+			confHeader.setCatId(tempProdUpdateConfDetail.get(0).getCatId());
+			confHeader.setCompanyId(compId);
+			confHeader.setConfigDesc("na");
+			confHeader.setConfigHeaderId(Integer.parseInt(request.getParameter("conf_id")));
+			confHeader.setConfigName(request.getParameter("conf_name"));
+			confHeader.setDelStatus(1);
+
+			confHeader.setExDate1("2020-09-18");
+			confHeader.setExDate2("2020-09-18");
+
+			confHeader.setExFloat1(1);
+			confHeader.setExFloat2(1);
+			confHeader.setExFloat3(1);
+
+			confHeader.setExInt1(0);
+			confHeader.setExInt2(0);
+			confHeader.setExInt3(0);
+
+			confHeader.setExVar1("na");
+			confHeader.setExVar2("na");
+			confHeader.setExVar3("na");
+			confHeader.setExVar4("na");
+
+			confHeader.setIsActive(1);
+			confHeader.setDelStatus(1);
+			confHeader.setInsertDttime(CommonUtility.getCurrentYMDDateTime());
+			confHeader.setIsAllowToCopy(1);
+			User userObj = (User) session.getAttribute("userObj");
+
+			confHeader.setMakerUserId(userObj.getUserId());
+			confHeader.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
+
+			/*****************************************
+			 for Adding New Product detail 
+			 *****************************************/
+			for (int i = 0; i < tempProdUpdateConfList.size(); i++) {
+
+				float mrpAmt;
+
+				TempProdConfig tempConf = tempProdUpdateConfList.get(i);
+
+				String r1 = "0";
+				try {
+					r1 = request.getParameter("r1" + tempConf.getUuid() + "" + tempConf.getProductId());
+
+					try {
+						mrpAmt = Float.parseFloat(r1);
+					} catch (Exception e) {
+						mrpAmt = 0;
+					}
+
+					if (r1 == "" || r1.equals(null)) {
+						continue;
+					} else if (mrpAmt == 0) {
+						continue;
+					} else {
+						// Create New Object And Save.
+						float rateAmt;
+						float spRateAmt1;
+						float spRateAmt2;
+						float spRateAmt3;
+						float spRateAmt4;
+
+						String r2 = request.getParameter("r2" + tempConf.getUuid() + "" + tempConf.getProductId());
+						String r3 = request.getParameter("r3" + tempConf.getUuid() + "" + tempConf.getProductId());
+						String r4 = request.getParameter("r4" + tempConf.getUuid() + "" + tempConf.getProductId());
+						String r5 = request.getParameter("r5" + tempConf.getUuid() + "" + tempConf.getProductId());
+						String r6 = request.getParameter("r6" + tempConf.getUuid() + "" + tempConf.getProductId());
+
+						try {
+							spRateAmt1 = Float.parseFloat(r3);
+						} catch (Exception e) {
+							spRateAmt1 = 0;
+						}
+						try {
+							spRateAmt2 = Float.parseFloat(r4);
+						} catch (Exception e) {
+							spRateAmt2 = 0;
+						}
+						try {
+							spRateAmt3 = Float.parseFloat(r5);
+						} catch (Exception e) {
+							spRateAmt3 = 0;
+						}
+						try {
+							spRateAmt4 = Float.parseFloat(r6);
+						} catch (Exception e) {
+							spRateAmt4 = 0;
+						}
+						try {
+							rateAmt = Float.parseFloat(r2);
+						} catch (Exception e) {
+							rateAmt = 0;
+						}
+
+						ItemConfDetail confDetail = new ItemConfDetail();
+						
+						confDetail.setConfigHeaderId(confHeader.getConfigHeaderId());
+						
+						confDetail.setExDate1("2020-09-18");
+						confDetail.setExDate2("2020-09-19");
+
+						confDetail.setExFloat1(0);
+						confDetail.setExFloat2(0);
+						confDetail.setExFloat3(0);
+
+						confDetail.setExInt1(0);
+						confDetail.setExInt2(0);
+						confDetail.setExInt3(0);
+
+						confDetail.setExVar1("na");
+						confDetail.setExVar2("na");
+						confDetail.setExVar3("na");
+						confDetail.setExVar4("na");
+
+						confDetail.setIsActive(1);
+						confDetail.setDelStatus(1);
+
+						confDetail.setFlavorId(tempConf.getFlavorId());
+						confDetail.setInsertDttime(CommonUtility.getCurrentYMDDateTime());
+
+						confDetail.setIsVeg(tempConf.getVegType());
+						confDetail.setMakerUserId(userObj.getUserId());
+
+						confDetail.setMrpAmt(mrpAmt);
+						confDetail.setProductId(tempConf.getProductId());
+						confDetail.setQty(tempConf.getWeight());
+
+						confDetail.setRateAmt(rateAmt);
+						confDetail.setRateSettingType(tempConf.getRateSetingType());
+
+						confDetail.setSpRateAmt1(spRateAmt1);
+
+						confDetail.setSpRateAmt2(spRateAmt2);
+						confDetail.setSpRateAmt3(spRateAmt3);
+						confDetail.setSpRateAmt4(spRateAmt4);
+						confDetail.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
+
+						confDetailList.add(confDetail);
+
+					} // End of Else
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} // End Of tempProdConfList For Loop I
+
+			
+			/*****************************************
+			 for Existing Product detail Update
+			 *****************************************/
+			for (int p = 0; p < tempProdUpdateConfDetail.size(); p++) {
+
+				float mrpAmt;
+
+				TempProdConfig tempConf = tempProdUpdateConfDetail.get(p);
+
+				int isChange = 0;
+				try {
+
+					isChange = Integer.parseInt(
+							request.getParameter("is_change" + tempConf.getUuid() + "" + tempConf.getProductId()));
+
+				} catch (Exception e) {
+					isChange = 0;
+				}
+				
+				if (isChange == 0) {
+					System.err.println("is change continue");
+					continue;
+				}
+				
+				System.err.println("is change > 0 don't continue");
+				
+				String r1 = "0";
+				try {
+					r1 = request.getParameter("r1" + tempConf.getUuid() + "" + tempConf.getProductId());
+					try {
+						mrpAmt = Float.parseFloat(r1);
+					} catch (Exception e) {
+						mrpAmt = 0;
+					}
+						// Create New Object And Save.
+						float rateAmt;
+						float spRateAmt1;
+						float spRateAmt2;
+						float spRateAmt3;
+						float spRateAmt4;
+
+						String r2 = request.getParameter("r2" + tempConf.getUuid() + "" + tempConf.getProductId());
+						String r3 = request.getParameter("r3" + tempConf.getUuid() + "" + tempConf.getProductId());
+						String r4 = request.getParameter("r4" + tempConf.getUuid() + "" + tempConf.getProductId());
+						String r5 = request.getParameter("r5" + tempConf.getUuid() + "" + tempConf.getProductId());
+						String r6 = request.getParameter("r6" + tempConf.getUuid() + "" + tempConf.getProductId());
+
+						try {
+							spRateAmt1 = Float.parseFloat(r3);
+						} catch (Exception e) {
+							spRateAmt1 = 0;
+						}
+						try {
+							spRateAmt2 = Float.parseFloat(r4);
+						} catch (Exception e) {
+							spRateAmt2 = 0;
+						}
+						try {
+							spRateAmt3 = Float.parseFloat(r5);
+						} catch (Exception e) {
+							spRateAmt3 = 0;
+						}
+						try {
+							spRateAmt4 = Float.parseFloat(r6);
+						} catch (Exception e) {
+							spRateAmt4 = 0;
+						}
+						try {
+							rateAmt = Float.parseFloat(r2);
+						} catch (Exception e) {
+							rateAmt = 0;
+						}
+
+						ItemConfDetail confDetail = new ItemConfDetail();
+						TempProdConfig confUpdt=new TempProdConfig();
+						
+					/*
+					 * confDetail.setConfigHeaderId(confHeader.getConfigHeaderId());
+					 * confDetail.setConfigDetailId(tempConf.getConfigDetailId());
+					 * confDetail.setMakerUserId(userObj.getUserId());
+					 * 
+					 * confDetail.setMrpAmt(mrpAmt); confDetail.setRateAmt(rateAmt);
+					 * 
+					 * confDetail.setSpRateAmt1(spRateAmt1); confDetail.setSpRateAmt2(spRateAmt2);
+					 * confDetail.setSpRateAmt3(spRateAmt3); confDetail.setSpRateAmt4(spRateAmt4);
+					 * 
+					 * confDetail.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
+					 */
+						
+						
+						confUpdt.setConfigHeaderId(confHeader.getConfigHeaderId());
+						confUpdt.setConfigDetailId(tempConf.getConfigDetailId());
+						confUpdt.setMakerUserId(userObj.getUserId());
+
+						confUpdt.setMrpAmt(mrpAmt);
+						confUpdt.setRateAmt(rateAmt);
+
+						confUpdt.setSpRateAmt1(spRateAmt1);
+						confUpdt.setSpRateAmt2(spRateAmt2);
+						confUpdt.setSpRateAmt3(spRateAmt3);
+						confUpdt.setSpRateAmt4(spRateAmt4);
+						
+						confUpdt.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
+						
+						confDetailUpdateList.add(confUpdt);
+						
+					
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+			}
+			confHeader.setItemConfDetList(confDetailList);
+			TempConfTraveller traveller=new TempConfTraveller();
+			
+			traveller.setProdConfDetailList(confDetailUpdateList);
+			traveller.setConfDetailList(confDetailList);
+			
+			GetItemConfHead head= new GetItemConfHead();
+			
+			head.setConfigHeaderId(confHeader.getConfigHeaderId());
+			head.setConfigName(confHeader.getConfigName());
+			head.setCatId(confHeader.getMakerUserId());
+			head.setCatName(confHeader.getUpdtDttime());
+			
+			traveller.setConfHead(head);
+			
+			ItemConfHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveUpdateProdConfHD", traveller,
+					ItemConfHeader.class);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+
+		return "redirect:/showAddProdConfig";
+
+	}
+
 }

@@ -76,7 +76,7 @@
 
 						<div class="form-group row">
 							<label class="col-form-label col-lg-2" for="cat_id">
-								Select Category <span style="color: red">* </span>:
+								Category <span style="color: red">* </span>:
 							</label>
 							<div class="col-lg-2">
 								<select
@@ -86,30 +86,33 @@
 									>
 									<option selected disabled value="">Select Category</option>
 									<c:forEach items="${catList}" var="catList" varStatus="count">
-										<option value="${catList.catId}">${catList.catName}</option>
+									
+								<c:if test="${prodConfHead.catId==catList.catId}">
+							<option selected value="${catList.catId}">${catList.catName}</option>
+								</c:if>
 									</c:forEach>
 								</select> <span class="validation-invalid-label" id="error_cat_id"
 									style="display: none;">This field is required.</span>
 							</div>
 
-							<div class="col-lg-1">
+							<div class="col-lg-1" style="display: none;">
 								<button type="submit" class="btn btn-primary">Search</button>
 							</div>
 
 						</div>
 
 </form>
-<form action="${pageContext.request.contextPath}/saveInsertProdConf"
+<form action="${pageContext.request.contextPath}/saveUpdateProdConf"
 						id="submitProdForm1" method="post">
-						
+						<input type="hidden" id="conf_id" name="conf_id" value="${prodConfHead.configHeaderId}">
 						<div class="form-group row">
 						<label class="col-form-label col-lg-2" for="conf_name">
 											Configuration Name <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-2">
-											<input type="text" class="form-control" required maxlength="50"
+											<input type="text"  class="form-control" required maxlength="50"
 												placeholder="Configuration Name" id="conf_name" name="conf_name"
-												autocomplete="off" value="xyz"> <span
+												autocomplete="off" value="${prodConfHead.configName}"> <span
 												class="validation-invalid-label" id="error_conf_name"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -125,12 +128,12 @@
 										<th>Flavor</th>
 										<th>Veg Type</th>
 										<th>Qty/Weight</th>
+										<th>MRP</th>
+										<th>Rate</th>
 										<th>Rate 1</th>
 										<th>Rate 2</th>
 										<th>Rate 3</th>
 										<th>Rate 4</th>
-										<th>Rate 5</th>
-										<th>Rate 6</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -154,13 +157,13 @@
 											<td>${count.index+1}) ${prod.productName}</td>
 											<td>${prod.flavorName}</td>
 											<td>${prod.vegType==0 ? 'Veg' :prod.vegType==1 ? 'Non Veg' : 'Veg-Non Veg'}</td>
-											<td>${prod.weight}</td>
-											<td><input type="text" id="r1${prod.uuid}${prod.productId}" name="r1${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r2${prod.uuid}${prod.productId}" name="r2${prod.uuid}${prod.productId}" value="${prod.rateAmt}" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r3${prod.uuid}${prod.productId}" name="r3${prod.uuid}${prod.productId}" value="${prod.spRateAmt1}" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r4${prod.uuid}${prod.productId}" name="r4${prod.uuid}${prod.productId}" value="${prod.spRateAmt2}" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r5${prod.uuid}${prod.productId}" name="r5${prod.uuid}${prod.productId}" value="${prod.spRateAmt3}" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r6${prod.uuid}${prod.productId}" name="r6${prod.uuid}${prod.productId}" value="${prod.spRateAmt4}" maxlength="7" class="form-control floatOnly"/></td>
+											<td>${prod.weight} <input type="text" id="is_change${prod.uuid}${prod.productId}" name="is_change${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r1${prod.uuid}${prod.productId}" name="r1${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" onkeyup="setIsChange('${prod.uuid}',${prod.productId})" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r2${prod.uuid}${prod.productId}" name="r2${prod.uuid}${prod.productId}" value="${prod.rateAmt}" maxlength="7" onkeyup="setIsChange('${prod.uuid}',${prod.productId})" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r3${prod.uuid}${prod.productId}" name="r3${prod.uuid}${prod.productId}" value="${prod.spRateAmt1}" maxlength="7" onkeyup="setIsChange('${prod.uuid}',${prod.productId})" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r4${prod.uuid}${prod.productId}" name="r4${prod.uuid}${prod.productId}" value="${prod.spRateAmt2}" maxlength="7" onkeyup="setIsChange('${prod.uuid}',${prod.productId})" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r5${prod.uuid}${prod.productId}" name="r5${prod.uuid}${prod.productId}" value="${prod.spRateAmt3}" maxlength="7" onkeyup="setIsChange('${prod.uuid}',${prod.productId})" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r6${prod.uuid}${prod.productId}" name="r6${prod.uuid}${prod.productId}" value="${prod.spRateAmt4}" maxlength="7" onkeyup="setIsChange('${prod.uuid}',${prod.productId})" class="form-control floatOnly"/></td>
 										</tr>
 									</c:forEach>
 									
@@ -207,6 +210,16 @@
 				rightColumns : 0
 			}
 		});
+		
+	</script>
+	<script type="text/javascript">
+	
+	function setIsChange(uuid,prodId){
+		//r1
+		alert(uuid);
+		document.getElementById("is_change"+uuid+""+prodId).value=1111;
+	}
+	
 	</script>
 
 	<script type="text/javascript">

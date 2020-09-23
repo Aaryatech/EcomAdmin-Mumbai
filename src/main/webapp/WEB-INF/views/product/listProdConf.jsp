@@ -139,7 +139,16 @@
 											<td>${count.index+1}) ${confHead.configName}</td>
 											<td>${confHead.catName}</td>
 											<td>${confHead.isActive==0 ? 'In Active' :confHead.isActive==1 ? 'Active' : 'Active'}</td>
-											<td><a href="${pageContext.request.contextPath}/getProdConfDetailByConfHeader/?configHeaderId=${confHead.configHeaderId}">Edit Details</a></td>
+											<td><%-- <a href="${pageContext.request.contextPath}/getProdConfDetailByConfHeader/?configHeaderId=${confHead.configHeaderId}">Edit Details</a> --%>
+											<div class="list-icons">
+												<a
+													href="${pageContext.request.contextPath}/getProdConfDetailByConfHeader/?configHeaderId=${confHead.configHeaderId}"
+													class="list-icons-item" title="Edit Details"> <i
+													class="icon-database-edit2"></i>
+												</a>
+											</div>
+											
+											</td>
 										</tr>
 									</c:forEach>
 								</tbody>
