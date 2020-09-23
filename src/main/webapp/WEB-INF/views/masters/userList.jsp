@@ -87,7 +87,7 @@
 									<td>${userList.userName}</td>
 									<td>${userList.userMobileNo}</td>
 									<td>${userList.deptId == 1 ? 'Sales' : userList.deptId == 2 ? 'Production' : userList.deptId == 3 ? 'Marketing' : ''}</td>
-									<td>${userList.userTypeId}</td>
+									<td>${userList.exVar4}</td>
 									<c:set value="" var="status" />
 									<c:if test="${userList.isActive==1}">
 										<c:set value="Active" var="status" />
