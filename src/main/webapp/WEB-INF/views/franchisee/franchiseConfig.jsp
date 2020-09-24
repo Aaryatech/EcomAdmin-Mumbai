@@ -207,7 +207,10 @@
 													<td>${frList.frName}</td>
 													<td>${frList.frCode}</td>
 													<td>${frList.frCity}</td>
-													<td>Route1</td>
+													<td>${frList.route}</td>
+													
+													
+											 
 												</tr>
 											</c:forEach>
 										</tbody>

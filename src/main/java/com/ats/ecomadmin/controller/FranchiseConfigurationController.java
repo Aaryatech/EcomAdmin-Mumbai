@@ -25,6 +25,7 @@ import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.Franchise;
+import com.ats.ecomadmin.model.GetFrForConfig;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.ItemConfHeader;
 import com.ats.ecomadmin.model.User;
@@ -74,7 +75,7 @@ public class FranchiseConfigurationController {
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			List<Category> catList = new ArrayList<>();
-			List<Franchise> frList = new ArrayList<>();
+			List<GetFrForConfig> frList = new ArrayList<>();
 
 			map = new LinkedMultiValueMap<>();
 			map.add("compId", compId);
@@ -88,9 +89,9 @@ public class FranchiseConfigurationController {
 				map = new LinkedMultiValueMap<>();
 				map.add("catId", catId);
 				map.add("companyId", compId);
-				Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseForConfig",
-						map, Franchise[].class);
-				frList = new ArrayList<Franchise>(Arrays.asList(frArr));
+				GetFrForConfig[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseForConfig",
+						map, GetFrForConfig[].class);
+				frList = new ArrayList<GetFrForConfig>(Arrays.asList(frArr));
 
 			}
 
