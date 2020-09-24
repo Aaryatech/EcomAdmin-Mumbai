@@ -66,11 +66,9 @@ public class AccessRightController {
 	public ModelAndView showAccessRight(HttpServletRequest request, HttpServletResponse response) {
 
 		ModelAndView model = new ModelAndView("acc_right/createRole");
-System.err.println("Constants url " +Constants.url);
 		try {
 			accessRightModuleList = Constants.getRestTemplate().getForObject(Constants.url + "getAllModuleAndSubModule",
 					AccessRightModuleList.class);
-			System.out.println("Access List " + accessRightModuleList.toString());
 			model.addObject("moduleList", accessRightModuleList.getAccessRightModuleList());
 			model.addObject("title", "Create Role");
 			isError = 0;
@@ -88,7 +86,6 @@ System.err.println("Constants url " +Constants.url);
 		try {
 
 			int moduleId = Integer.parseInt(request.getParameter("moduleId"));
-			System.out.println(moduleId);
 			for (int i = 0; i < accessRightModuleList.getAccessRightModuleList().size(); i++) {
 
 				if (accessRightModuleList.getAccessRightModuleList().get(i).getModuleId() == moduleId) {
@@ -164,9 +161,6 @@ System.err.println("Constants url " +Constants.url);
 	public String deleteFlavour(HttpServletRequest request, HttpServletResponse response) {
 
 		int roleId = Integer.parseInt(request.getParameter("accRole"));
-		ModelAndView mav = new ModelAndView("accessRight/roleList");
-
-		RestTemplate restTemplate = new RestTemplate();
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 		map.add("roleId", roleId);
 

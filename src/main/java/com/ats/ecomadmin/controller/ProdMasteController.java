@@ -217,10 +217,6 @@ public class ProdMasteController {
 			String[] sameDay_timeSlot = request.getParameterValues("sameDay_timeSlot");
 
 			// getCommaSepStringFromStrArray
-			System.err.println("rate_setting_type " + rate_setting_type);
-
-			System.err.println("is_cover_ph " + is_cover_ph);
-			System.err.println("is_base_ph " + is_base_ph);
 
 			String applicableTags = getCommaSepStringFromStrArray(appl_tags);
 			prod.setApplicableTags(applicableTags);
@@ -379,7 +375,7 @@ public class ProdMasteController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "redirect:/showAddProduct";
+		return "redirect:/showProdList";
 	}
 
 	/*****************************
@@ -952,7 +948,7 @@ public class ProdMasteController {
 
 		}
 
-		return "redirect:/showAddProdConfig";
+		return "redirect:/showViewProdConfigHeader";
 
 	}
 
