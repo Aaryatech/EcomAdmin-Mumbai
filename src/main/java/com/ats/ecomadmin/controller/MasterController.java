@@ -86,8 +86,8 @@ public class MasterController {
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
-				Uom[] tagArr = Constants.getRestTemplate().postForObject(Constants.url + "getUoms", map, Uom[].class);
-				uomList = new ArrayList<Uom>(Arrays.asList(tagArr));
+				Uom[] uomArr = Constants.getRestTemplate().postForObject(Constants.url + "getUoms", map, Uom[].class);
+				uomList = new ArrayList<Uom>(Arrays.asList(uomArr));
 
 				for (int i = 0; i < uomList.size(); i++) {
 
@@ -313,8 +313,8 @@ public class MasterController {
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
-				Tax[] tagArr = Constants.getRestTemplate().postForObject(Constants.url + "getTaxes", map, Tax[].class);
-				taxList = new ArrayList<Tax>(Arrays.asList(tagArr));
+				Tax[] taxArr = Constants.getRestTemplate().postForObject(Constants.url + "getTaxes", map, Tax[].class);
+				taxList = new ArrayList<Tax>(Arrays.asList(taxArr));
 
 				for (int i = 0; i < taxList.size(); i++) {
 

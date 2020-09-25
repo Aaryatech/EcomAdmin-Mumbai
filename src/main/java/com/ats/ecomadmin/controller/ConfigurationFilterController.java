@@ -303,7 +303,7 @@ public class ConfigurationFilterController {
 	@ResponseBody
 	public List<GetTaxCakeShapeList> getFilterConfigList(HttpServletRequest request, HttpServletResponse response) {
 
-		List<GetTaxCakeShapeList> list = new ArrayList<GetTaxCakeShapeList>();
+		List<GetTaxCakeShapeList> taxCakeShplist = new ArrayList<GetTaxCakeShapeList>();
 
 		try {
 			HttpSession session = request.getSession();
@@ -318,8 +318,8 @@ public class ConfigurationFilterController {
 				map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
-				Tax[] tagArr = Constants.getRestTemplate().postForObject(Constants.url + "getTaxes", map, Tax[].class);
-				List<Tax> taxList = new ArrayList<Tax>(Arrays.asList(tagArr));
+				Tax[] taxArr = Constants.getRestTemplate().postForObject(Constants.url + "getTaxes", map, Tax[].class);
+				List<Tax> taxList = new ArrayList<Tax>(Arrays.asList(taxArr));
 
 				for (int i = 0; i < taxList.size(); i++) {
 					GetTaxCakeShapeList taxCake = new GetTaxCakeShapeList();
@@ -327,7 +327,7 @@ public class ConfigurationFilterController {
 					taxCake.setValueId(taxList.get(i).getTaxId());
 					taxCake.setValueName(taxList.get(i).getTaxName());
 
-					list.add(taxCake);
+					taxCakeShplist.add(taxCake);
 				}
 
 			} else if (typeConfigId == 3) {
@@ -345,7 +345,7 @@ public class ConfigurationFilterController {
 					taxCake.setValueId(filterList.get(i).getFilterId());
 					taxCake.setValueName(filterList.get(i).getFilterName());
 
-					list.add(taxCake);
+					taxCakeShplist.add(taxCake);
 				}
 			}
 
@@ -353,7 +353,7 @@ public class ConfigurationFilterController {
 			System.out.println("Execption in /getProductsByFilterIds : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return list;
+		return taxCakeShplist;
 
 	}
 
@@ -580,7 +580,7 @@ public class ConfigurationFilterController {
 			HttpSession session = request.getSession();
 
 			int compId = (int) session.getAttribute("companyId");
-			String filterStatus = request.getParameter("filterStatus");
+			int filterStatus = Integer.parseInt(request.getParameter("filterStatus"));
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map = new LinkedMultiValueMap<>();
@@ -618,22 +618,13 @@ public class ConfigurationFilterController {
 		try {
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
-
-			String productIdsStr = "";
-
+			
 			int filterStatus = Integer.parseInt(request.getParameter("filterStatus"));
 			int sortNo = Integer.parseInt(request.getParameter("statusSortNo"));
 			int isActve = Integer.parseInt(request.getParameter("activeStat"));
 			int homePageSatusId = Integer.parseInt(request.getParameter("homePageStatusId"));
 
-			String[] productIds = request.getParameterValues("chk");
-			if (productIds.length > 0) {
-				StringBuilder sb = new StringBuilder();
-				for (String s : productIds) {
-					sb.append(s).append(",");
-				}
-				productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
-			}
+			String[] productIds = request.getParameterValues("chk");			
 
 			int isEdit = Integer.parseInt(request.getParameter("isEdit"));
 
@@ -735,7 +726,6 @@ public class ConfigurationFilterController {
 			e.printStackTrace();
 		}
 		return "redirect:/showHomePagePrdctConfig";
-
 	}
 
 	@RequestMapping(value = "/editHomePagePrdctConfig", method = RequestMethod.GET)
@@ -751,7 +741,7 @@ public class ConfigurationFilterController {
 			String homePageStatusId = FormValidation.DecodeKey(base64encodedString);
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("id", homePageStatusId);
+			map.add("homePageStatusId", homePageStatusId);
 
 			ProductHomPage configHomePage = Constants.getRestTemplate()
 					.postForObject(Constants.url + "getPrdctHomePageById", map, ProductHomPage.class);
@@ -839,9 +829,9 @@ public class ConfigurationFilterController {
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
-				HomePageTestimonial[] tagArr = Constants.getRestTemplate()
+				HomePageTestimonial[] hmPgTestmonlArr = Constants.getRestTemplate()
 						.postForObject(Constants.url + "getTestimonials", map, HomePageTestimonial[].class);
-				testimonialList = new ArrayList<HomePageTestimonial>(Arrays.asList(tagArr));
+				testimonialList = new ArrayList<HomePageTestimonial>(Arrays.asList(hmPgTestmonlArr));
 
 				for (int i = 0; i < testimonialList.size(); i++) {
 
@@ -907,8 +897,6 @@ public class ConfigurationFilterController {
 				List<Franchise> frList = new ArrayList<Franchise>();
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-
-				map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
 				Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchises", map,
