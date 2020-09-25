@@ -731,6 +731,10 @@
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Weight" id="weight_ids"
 												name="weight_ids" multiple>
+												
+												<c:forEach items="${editProd.availInWeights}" var="wt">
+												<option selected value="${wt}">${wt}</option>
+												</c:forEach>
 											</select> <span class="validation-invalid-label" id="error_weight_ids"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -781,6 +785,7 @@
 												</button></a>
 										</div>
 									</div>
+									<input type="text" value="${editProd.sameDayTimeAllowedSlot}" id="slots">
 								</form>
 							</div>
 						</div>
@@ -896,16 +901,29 @@ if(parseInt(rateType)==2){
 	var q = "Select Applicable Tags";
 	
 	data=${filterJSON};
-	
+	var shapeId=${editProd.shapeId};
+	var ts =$("#slots").val();
+	var x=ts.split(",");
 	var len = data.length;
 	for (var i = 0; i < len; i++) {
 		if(1==parseInt(data[i].filterTypeId)){
-			shape_idhtml += '<option value="' + data[i].filterId + '">'
+			if(parseInt(shapeId)==parseInt(data[i].filterId)){
+			shape_idhtml += '<option selected value="' + data[i].filterId + '">'
 				+ data[i].filterName + '</option>';
+			}
+			else{
+				shape_idhtml += '<option value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+			}
 		}//end of if
 		else if(2==parseInt(data[i].filterTypeId)){
-			sameDay_timeSlothtml += '<option value="' + data[i].filterId + '">'
+			if(x.includes(''+data[i].filterId)){
+			sameDay_timeSlothtml += '<option selected value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
+			}else{
+				sameDay_timeSlothtml += '<option value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+			}
 	}//end of if
 		else if(3==parseInt(data[i].filterTypeId)){
 			prod_type_idhtml += '<option value="' + data[i].filterId + '">'
@@ -991,34 +1009,29 @@ if(parseInt(rateType)==2){
 
 		var temp = 0;
 		var data=${subCatListJSON};
-
+	var editSubCatId=0;
+	
+	try{
+		editSubCatId=${editProd.prodSubCatId};
+	}catch (e) {
+		editSubCatId=${editProd.prodSubCatId};
+	}
 		var len = data.length;
 		for (var i = 0; i < len; i++) {
 			if(parseInt(catId)==parseInt(data[i].catId)){
-			html += '<option value="' + data[i].subCatId + '">'
+				if(parseInt(editSubCatId)==parseInt(data[i].subCatId)){
+				html += '<option selected value="' + data[i].subCatId + '">'
 					+ data[i].subCatName + '</option>';
+				}else{
+					html += '<option value="' + data[i].subCatId + '">'
+					+ data[i].subCatName + '</option>';
+				}
 			}//end of if
 		}//end of for loop
-
 		$('#sub_cat_id').html(html);
 		$("#sub_cat_id").trigger("chosen:updated");
-		document.getElementById("prod_code").value="";
+		//document.getElementById("prod_code").value="";
 	}//end of function  
-	</script>
-	<script>
-		function checkAdd() {
-
-			if (document.getElementById("checkSameAdd").checked == true) {
-
-				document.getElementById("permntAdd").value = document
-						.getElementById("tempAdd").value;
-
-			} else {
-
-				document.getElementById("permntAdd").value = "";
-			}
-
-		}
 	</script>
 
 	<script>
@@ -1058,9 +1071,12 @@ if(parseInt(rateType)==2){
 		function getSubCatPrefixData(){
 			var fd = new FormData();
 			subCatId=document.getElementById("sub_cat_id").value;
+			
 			var editSubCatId=${editProd.prodSubCatId};
-			if(parseInt(editSubCatId)!=parseInt(subCatId))
-			if(parseInt(subCatId)>0){
+			
+			if(parseInt(editSubCatId)!=parseInt(subCatId)){
+			
+				if(parseInt(subCatId)>0){
 				fd.append('subCatId', subCatId);
 				$
 				.ajax({
@@ -1077,6 +1093,7 @@ if(parseInt(rateType)==2){
 				})
 				
 			}//end of if
+			}
 			
 		}//end of function
 		
