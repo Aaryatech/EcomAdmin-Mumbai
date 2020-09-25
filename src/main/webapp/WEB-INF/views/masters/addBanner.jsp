@@ -118,7 +118,7 @@
 										<div class="col-lg-4">
 											<select class="form-control select" multiple="multiple"
 												data-fouc name="frId" id="frId"
-												data-placholder="Select Category">
+												data-placholder="Select">
 
 												<c:forEach items="${frList}" var="list" varStatus="count">
 
