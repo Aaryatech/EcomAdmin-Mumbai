@@ -67,33 +67,60 @@ public class ConfigurationFilterController {
 
 		String mav = new String();
 		try {
-			mav = "product/configPrdctFltr";
-
-			List<FilterTypes> filterTypeList = new ArrayList<FilterTypes>();
 
 			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("configProductAndFilter", "configProductAndFilter", "1", "0", "0",
+					"0", newModuleList);
 
-			int compId = (int) session.getAttribute("companyId");
+			if (view.isError() == true) {
 
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("compId", compId);
+				mav = "accessDenied";
 
-			FilterTypes[] filterTypeArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFilterTypes",
-					map, FilterTypes[].class);
-			filterTypeList = new ArrayList<FilterTypes>(Arrays.asList(filterTypeArr));
+			} else {
+				mav = "product/configPrdctFltr";
 
-			model.addAttribute("filterType", filterTypeList);
+				List<FilterTypes> filterTypeList = new ArrayList<FilterTypes>();
 
-			List<Category> catList = new ArrayList<>();
+				int compId = (int) session.getAttribute("companyId");
 
-			map = new LinkedMultiValueMap<>();
-			map.add("compId", compId);
-			Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
-					Category[].class);
-			catList = new ArrayList<Category>(Arrays.asList(catArr));
-			model.addAttribute("catList", catList);
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
 
-			model.addAttribute("title", "Configure Product");
+				FilterTypes[] filterTypeArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getAllFilterTypes", map, FilterTypes[].class);
+				filterTypeList = new ArrayList<FilterTypes>(Arrays.asList(filterTypeArr));
+
+				model.addAttribute("filterType", filterTypeList);
+
+				List<Category> catList = new ArrayList<>();
+
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+						Category[].class);
+				catList = new ArrayList<Category>(Arrays.asList(catArr));
+				model.addAttribute("catList", catList);
+
+				model.addAttribute("title", "Configure Product");
+
+				Info add = AccessControll.checkAccess("configProductAndFilter", "configProductAndFilter", "0", "1", "0",
+						"0", newModuleList);
+				Info edit = AccessControll.checkAccess("configProductAndFilter", "configProductAndFilter", "0", "0",
+						"1", "0", newModuleList);
+				Info delete = AccessControll.checkAccess("configProductAndFilter", "configProductAndFilter", "0", "0",
+						"0", "1", newModuleList);
+
+				if (add.isError() == false) {
+					model.addAttribute("addAccess", 0);
+				}
+				if (edit.isError() == false) {
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					model.addAttribute("deleteAccess", 0);
+				}
+			}
 
 		} catch (Exception e) {
 			System.out.println("Execption in /configProcuctAndFilter : " + e.getMessage());
@@ -194,49 +221,55 @@ public class ConfigurationFilterController {
 	// Description :- Configure Products And Filter
 	@RequestMapping(value = "/saveProductConfiguration", method = RequestMethod.POST)
 	public String saveProductConfiguration(HttpServletRequest request, HttpServletResponse response) {
+		String mav = new String();
 		try {
 			HttpSession session = request.getSession();
-			User userObj = (User) session.getAttribute("userObj");
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("configProductAndFilter", "configProductAndFilter", "0", "1", "0", "0", newModuleList);
 
-			Date date = new Date();
-			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			if (view.isError() == true) {
 
-			String productIdsStr = "";
+				mav = "accessDenied";
 
-			String filterId = request.getParameter("filterId");
-			int filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
-			int optnValue = Integer.parseInt(request.getParameter("radioConfig"));
-
-			String[] productIds = request.getParameterValues("chk");
-
-			if (productIds.length > 0) {
-				StringBuilder sb = new StringBuilder();
-				for (String s : productIds) {
-					sb.append(s).append(",");
-				}
-				productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
-			}
-
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("filterId", filterId);
-			map.add("filterTypeId", filterTypeId);
-			map.add("prdctIdsStr", productIdsStr);
-			map.add("optnValue", optnValue);
-
-			Info res = Constants.getRestTemplate().postForObject(Constants.url + "configProductWithFilter", map,
-					Info.class);
-
-			if (!res.isError()) {
-				session.setAttribute("successMsg", res.getMsg());
 			} else {
-				session.setAttribute("errorMsg", res.getMsg());
-			}
 
+				String productIdsStr = "";
+
+				String filterId = request.getParameter("filterId");
+				int filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
+				int optnValue = Integer.parseInt(request.getParameter("radioConfig"));
+
+				String[] productIds = request.getParameterValues("chk");
+
+				if (productIds.length > 0) {
+					StringBuilder sb = new StringBuilder();
+					for (String s : productIds) {
+						sb.append(s).append(",");
+					}
+					productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
+				}
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("filterId", filterId);
+				map.add("filterTypeId", filterTypeId);
+				map.add("prdctIdsStr", productIdsStr);
+				map.add("optnValue", optnValue);
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "configProductWithFilter", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+				mav = "redirect:/configProductAndFilter";
+			}
 		} catch (Exception e) {
 			System.out.println("Execption in /saveProductConfiguration : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/configProductAndFilter";
+		return mav;
 
 	}
 
@@ -251,9 +284,6 @@ public class ConfigurationFilterController {
 		String mav = new String();
 		try {
 			mav = "product/configPrdctTaxCakShp";
-			HttpSession session = request.getSession();
-
-			int compId = (int) session.getAttribute("companyId");
 
 			model.addAttribute("title", "Configure Product, Tax And Cake Shape");
 
@@ -383,7 +413,6 @@ public class ConfigurationFilterController {
 	public String saveProductTaxCakeConfig(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			HttpSession session = request.getSession();
-			User userObj = (User) session.getAttribute("userObj");
 
 			String productIdsStr = "";
 			float returnVal = 0;
@@ -497,8 +526,6 @@ public class ConfigurationFilterController {
 		try {
 			mav = "product/configHomePagePrdct";
 
-			List<FilterTypes> filterTypeList = new ArrayList<FilterTypes>();
-
 			HttpSession session = request.getSession();
 
 			int compId = (int) session.getAttribute("companyId");
@@ -592,9 +619,6 @@ public class ConfigurationFilterController {
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
 
-			Date date = new Date();
-			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
 			String productIdsStr = "";
 
 			int filterStatus = Integer.parseInt(request.getParameter("filterStatus"));
@@ -610,7 +634,9 @@ public class ConfigurationFilterController {
 				}
 				productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
 			}
+
 			int isEdit = Integer.parseInt(request.getParameter("isEdit"));
+
 			if (isEdit == 0) {
 				ProductHomPage prdctHomeHead = new ProductHomPage();
 
@@ -922,7 +948,7 @@ public class ConfigurationFilterController {
 
 			Date date = new Date();
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy");
+
 			String profileImage = null;
 
 			int companyId = (int) session.getAttribute("companyId");
@@ -1022,7 +1048,6 @@ public class ConfigurationFilterController {
 	public String editSpday(HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String mav = new String();
-		GrievencesInstruction grievance = new GrievencesInstruction();
 		try {
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");

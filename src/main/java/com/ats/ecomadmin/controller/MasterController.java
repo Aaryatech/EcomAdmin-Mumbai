@@ -216,7 +216,7 @@ public class MasterController {
 		try {
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("newUom", "showUomList", "0", "0", "1", "0", newModuleList);
+			Info view = AccessControll.checkAccess("editUom", "showUomList", "0", "0", "1", "0", newModuleList);
 
 			if (view.isError() == true) {
 
