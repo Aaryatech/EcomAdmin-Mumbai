@@ -419,6 +419,7 @@
 
 							}else if(typeConfigId == 4 || typeConfigId == 5){
 								document.getElementById("filterDiv").style.display = "none";
+								document.getElementById("returnDiv").style.display = "none";
 							} else {
 								document.getElementById("returnDiv").style.display = "none";
 								document.getElementById("filterDiv").style.display = "block";

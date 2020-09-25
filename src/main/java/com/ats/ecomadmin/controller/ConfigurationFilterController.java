@@ -383,7 +383,7 @@ public class ConfigurationFilterController {
 			map.add("compId", companyId);
 			map.add("optionVal", optionVal);
 
-			ProductMaster[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getProductsByTaxId",
+			ProductMaster[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getProductsByType",
 					map, ProductMaster[].class);
 			productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
 

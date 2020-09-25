@@ -78,10 +78,9 @@ public class MasterController {
 				mav = "accessDenied";
 
 			} else {
-				session.setAttribute("compId", 1);
-
-				int compId = (int) session.getAttribute("companyId");
 				mav = "masters/uomList";
+				
+				int compId = (int) session.getAttribute("companyId");	
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
@@ -305,10 +304,10 @@ public class MasterController {
 				mav = "accessDenied";
 
 			} else {
-				session.setAttribute("compId", 1);
-
-				int compId = (int) session.getAttribute("companyId");
+				
 				mav = "masters/taxList";
+				
+				int compId = (int) session.getAttribute("companyId");				
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
