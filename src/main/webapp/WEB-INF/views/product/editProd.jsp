@@ -907,7 +907,7 @@ if(parseInt(rateType)==2){
 	var len = data.length;
 	for (var i = 0; i < len; i++) {
 		if(1==parseInt(data[i].filterTypeId)){
-			if(parseInt(shapeId)==parseInt(data[i].filterId)){
+		 	if(parseInt(shapeId)==parseInt(data[i].filterId)){
 			shape_idhtml += '<option selected value="' + data[i].filterId + '">'
 				+ data[i].filterName + '</option>';
 			}
