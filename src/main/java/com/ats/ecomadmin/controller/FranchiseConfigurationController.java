@@ -276,9 +276,6 @@ public class FranchiseConfigurationController {
 				List<Integer> configIds = Stream.of(itemsCon.split(",")).map(Integer::parseInt)
 						.collect(Collectors.toList());
 				model.addAttribute("configIds", configIds);
-				
-				
-				
 
 				if (itemsCon != "0" && itemsFr != "0" && orderBy != 0) {
 
@@ -293,6 +290,14 @@ public class FranchiseConfigurationController {
 				}
 
 				model.addAttribute("frConfigList", frConfigList);
+
+				Info delete = AccessControll.checkAccess("configFranchiseList", "configFranchiseList", "0", "0", "0",
+						"1", newModuleList);
+
+				if (delete.isError() == false) {
+					model.addAttribute("deleteAccess", 0);
+				}
+
 			} catch (Exception e) {
 				System.out.println("Execption in /frConfigList : " + e.getMessage());
 				e.printStackTrace();
@@ -300,9 +305,7 @@ public class FranchiseConfigurationController {
 		}
 		return mav;
 	}
-	
-	
-	
+
 	@RequestMapping(value = "/deleteFrConfiguration", method = RequestMethod.POST)
 	public String deleteFrConfiguration(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
@@ -312,9 +315,9 @@ public class FranchiseConfigurationController {
 		User userObj = (User) session.getAttribute("userObj");
 
 		try {
- 			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder();
 			String[] frId = request.getParameterValues("frachaseConfigId");
- 		 
+
 			for (int i = 0; i < frId.length; i++) {
 				sb = sb.append(frId[i] + ",");
 			}
@@ -323,9 +326,9 @@ public class FranchiseConfigurationController {
 
 			items = items.substring(0, items.length() - 1);
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
- 
+
 			map.add("configIds", items);
- 			Info info = Constants.getRestTemplate().postForObject(Constants.url + "/deleteFrConfig", map, Info.class);
+			Info info = Constants.getRestTemplate().postForObject(Constants.url + "/deleteFrConfig", map, Info.class);
 			if (!info.isError()) {
 				session.setAttribute("successMsg", info.getMsg());
 			} else {
@@ -340,5 +343,41 @@ public class FranchiseConfigurationController {
 
 	}
 
+	@RequestMapping(value = "/deleteFrConfig", method = RequestMethod.GET)
+	public String deleteOfferHeaderById(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession();
+
+		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+		Info view = AccessControll.checkAccess("deleteFrConfig", "configFranchiseList", "1", "0", "0", "0",
+				newModuleList);
+		String mav = null;
+		if (view.isError() == true) {
+
+			mav = "redirect:/accessDenied";
+
+		} else {
+			try {
+
+				mav = "redirect:/configFranchiseList";
+				int configId = Integer.parseInt(request.getParameter("configId"));
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("configIds", configId);
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteFrConfig", map, Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return mav;
+	}
 
 }

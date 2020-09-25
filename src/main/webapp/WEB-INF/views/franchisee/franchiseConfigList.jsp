@@ -106,15 +106,15 @@
 
 
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="configId">Configuration<span
-											class="text-danger">* </span>:
+											for="configId">Configuration<span class="text-danger">*
+										</span>:
 										</label>
 										<div class="col-lg-4">
 											<select class="form-control select" multiple="multiple"
 												data-fouc name="configId" id="configId"
 												data-placholder="Select ">
 
- 
+
 												<option value="0"
 													${fn:contains(configIds, 0) ? 'selected' : ''}>All</option>
 
@@ -176,6 +176,7 @@
 												<th>City</th>
 												<th>Route</th>
 												<th>Configuration Name</th>
+												<th>Action</th>
 
 											</tr>
 										</thead>
@@ -194,7 +195,16 @@
 													<td>${frConfigList.frCity}</td>
 													<td>${frConfigList.route}</td>
 													<td>${frConfigList.configName}</td>
+													<td class="text-center"><c:if test="${deleteAccess==0}">
+														<div class="list-icons"> 
+															<a href="javascript:void(0)"
+																class="list-icons-item text-danger-600 bootbox_custom"
+																data-uuid="${frConfigList.frachaseConfigId}" data-popup="tooltip"
+																title="" data-original-title="Delete"><i
+																class="icon-trash"></i></a>
 
+														</div>
+													</c:if></td>
 												</tr>
 											</c:forEach>
 										</tbody>
@@ -226,6 +236,40 @@
 
 	</div>
 	<!-- /page content -->
+	
+	
+	
+	<script type="text/javascript">
+		//Custom bootbox dialog
+		$('.bootbox_custom')
+				.on(
+						'click',
+						function() {
+							var uuid = $(this).data("uuid") // will return the number 123
+							bootbox
+									.confirm({
+										title : 'Confirm ',
+										message : 'Are you sure you want to delete selected records ?',
+										buttons : {
+											confirm : {
+												label : 'Yes',
+												className : 'btn-success'
+											},
+											cancel : {
+												label : 'Cancel',
+												className : 'btn-link'
+											}
+										},
+										callback : function(result) {
+											if (result) {
+												location.href = "${pageContext.request.contextPath}/deleteFrConfig?configId="
+														+ uuid;
+
+											}
+										}
+									});
+						});
+	</script>
 
 	<script>
 		$(document).ready(
