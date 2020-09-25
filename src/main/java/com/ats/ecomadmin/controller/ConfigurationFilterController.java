@@ -709,9 +709,11 @@ public class ConfigurationFilterController {
 						}
 						List<ProductHomePageDetail> saveDtl = Constants.getRestTemplate().postForObject(
 								Constants.url + "saveHomePagePrdctConfigDtl", homePageDtlList, List.class);
-
-						if (saveDtl.get(0).getHpStatusDetailId() > 0) {
+					
+						
+						if (saveDtl.get(0).getHpStatusDetailId()>0) { 
 							session.setAttribute("successMsg", "Configuration Update Successfully");
+							
 						} else {
 							session.setAttribute("errorMsg", "Failed to Update Configuration");
 						}
