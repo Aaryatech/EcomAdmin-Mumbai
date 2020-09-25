@@ -102,7 +102,13 @@
 					<td>${prod.isVeg==0 ? 'Veg' :prod.isVeg==1 ? 'Non Veg' : 'Veg-Non Veg'}</td>
 					<td>${prod.prodStatus}</td>
 					<td>${prod.isActive==1 ? 'Yes' :prod.isActive==0 ? 'No' : 'No'}</td>
-					<td>Action</td>			
+					<td><div class="list-icons">
+												<a
+													href="${pageContext.request.contextPath}/showEditProd/${prod.productId}"
+													class="list-icons-item" title="Edit Product"> <i
+													class="icon-database-edit2"></i>
+												</a>
+											</div></td>			
 									<%-- <td class="text-center"><c:if test="${editAccess==0}">
 											<div class="list-icons">
 												<a
