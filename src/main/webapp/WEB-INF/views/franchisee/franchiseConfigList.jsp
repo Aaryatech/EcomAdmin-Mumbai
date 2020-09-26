@@ -214,7 +214,7 @@
 									<div class="text-center">
 										<br>
 										<button type="submit" class="btn btn-primary" id="submtbtn">
-											Submit <i class="icon-paperplane ml-2"></i>
+											Delete <i class="icon-paperplane ml-2"></i>
 										</button>
 									</div>
 								</form>

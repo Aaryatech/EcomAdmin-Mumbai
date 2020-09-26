@@ -86,7 +86,6 @@ public class CompanyAdminController {
 		return mav;
 	}
 
-	
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 14-09-2020
@@ -1667,7 +1666,6 @@ public class CompanyAdminController {
 		return mav;
 	}
 
-	
 	@RequestMapping(value = "/showAddRoute", method = RequestMethod.GET)
 	public String showAddRoute(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String mav = new String();
@@ -1967,6 +1965,474 @@ public class CompanyAdminController {
 			e.printStackTrace();
 		}
 		return "redirect:/showRouteList";
+
+	}
+
+	@RequestMapping(value = "/showRouteTypeList", method = RequestMethod.GET)
+	public String showRouteTypeList(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+
+		try {
+			HttpSession session = request.getSession();
+
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showRouteTypeList", "showRouteTypeList", "1", "0", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				model.addAttribute("title", "Route Type List");
+
+				mav = "masters/routeTypeList";
+				int companyId = (int) session.getAttribute("companyId");
+
+				RouteType[] routeArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllRouteType",
+						RouteType[].class);
+				List<RouteType> routeList = new ArrayList<RouteType>(Arrays.asList(routeArr));
+
+				for (int i = 0; i < routeList.size(); i++) {
+
+					routeList.get(i)
+							.setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouteTypeId())));
+				}
+				model.addAttribute("routeTypeList", routeList);
+				Info add = AccessControll.checkAccess("showRouteTypeList", "showRouteTypeList", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showRouteTypeList", "showRouteTypeList", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showRouteTypeList", "showRouteTypeList", "0", "0", "0", "1",
+						newModuleList);
+
+				if (add.isError() == false) { // System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) { // System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) { //
+					System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
+
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /Customer : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	@RequestMapping(value = "/deleteRouteType", method = RequestMethod.GET)
+	public String deleteRouteType(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession();
+		String mav = new String();
+		try {
+
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteRouteType", "showRouteTypeList", "0", "0", "0", "1",
+					newModuleList);
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "redirect:/showRouteTypeList";
+				String base64encodedString = request.getParameter("routeTypeId");
+				String routeTypeId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("routeId", Integer.parseInt(routeTypeId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteRouteTypeById", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteRouteType : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	@RequestMapping(value = "/showAddRouteType", method = RequestMethod.GET)
+	public String showAddRouteType(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showAddRouteType", "showRouteTypeList", "0", "1", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/addRouteType";
+				RouteType route = new RouteType();
+				model.addAttribute("route", route);
+				model.addAttribute("title", "Add Route Type");
+ 
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /newUom : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	@RequestMapping(value = "/showEditRouteType", method = RequestMethod.GET)
+	public String showEditRouteType(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showEditRouteType", "showRouteTypeList", "0", "0", "1", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/addRouteType";
+
+				model.addAttribute("title", "Edit Route Type");
+
+				String base64encodedString = request.getParameter("routeTypeId");
+				String routeTypeId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("routeId", routeTypeId);
+
+				RouteType route = Constants.getRestTemplate().postForObject(Constants.url + "getRouteTypeById", map,
+						RouteType.class);
+
+				model.addAttribute("route", route);
+
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /showEditRouteType : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	@RequestMapping(value = "/insertNewRouteType", method = RequestMethod.POST)
+	public String insertNewRouteType(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+
+			System.err.println("hii");
+
+			HttpSession session = request.getSession();
+
+			int companyId = (int) session.getAttribute("companyId");
+
+			String routeTypeName = request.getParameter("routeTypeName");
+
+			String routeRangeInKm = request.getParameter("routeRangeInKm");
+			float sortNo = Float.parseFloat(request.getParameter("sortNo"));
+
+			int routeTypeId = Integer.parseInt(request.getParameter("routeTypeId"));
+
+			int isCopy = Integer.parseInt(request.getParameter("isCopy"));
+
+			RouteType route = new RouteType();
+
+			route.setIsCopy(isCopy);
+			route.setSortNo(sortNo);
+			route.setRouteTypeName(routeTypeName);
+			route.setRouteRangeInKm(routeRangeInKm);
+			route.setRouteTypeId(routeTypeId);
+			route.setCompanyId(companyId);
+			route.setIsActive(1);
+			route.setDelStatus(1);
+			route.setExInt1(0);
+			route.setExInt2(0);
+			route.setExInt3(0);
+			route.setExVar1("NA");
+			route.setExVar2("NA");
+			route.setExVar3("NA");
+
+			System.err.println(route.toString());
+			RouteType res = Constants.getRestTemplate().postForObject(Constants.url + "saveRouteType", route,
+					RouteType.class);
+
+			System.err.println(res.toString());
+			if (res.getRouteTypeId() > 0) {
+				if (routeTypeId == 0)
+					session.setAttribute("successMsg", "Route Type Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Route Type  Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Route Type");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /insertUom : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showRouteTypeList";
+
+	}
+	
+	
+	
+	/****************************Route del*********************************/
+	
+	
+	@RequestMapping(value = "/showRouteDelList", method = RequestMethod.GET)
+	public String showRouteDelList(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+
+		try {
+			HttpSession session = request.getSession();
+
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showRouteDelList", "showRouteDelList", "1", "0", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				model.addAttribute("title", "Route Delivery List");
+
+				mav = "masters/RouteDelList";
+				int companyId = (int) session.getAttribute("companyId");
+
+				RouteDelivery[] routeArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllRouteDelivery",
+						RouteDelivery[].class);
+				List<RouteDelivery> routeList = new ArrayList<RouteDelivery>(Arrays.asList(routeArr));
+
+				for (int i = 0; i < routeList.size(); i++) {
+
+					routeList.get(i)
+							.setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouidDelveryId())));
+				}
+				model.addAttribute("routeDelList", routeList);
+				Info add = AccessControll.checkAccess("showRouteDelList", "showRouteDelList", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showRouteDelList", "showRouteDelList", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showRouteDelList", "showRouteDelList", "0", "0", "0", "1",
+						newModuleList);
+
+				if (add.isError() == false) { // System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) { // System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) { //
+					System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
+
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /Customer : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	@RequestMapping(value = "/deleteRouteDel", method = RequestMethod.GET)
+	public String deleteRouteDel(HttpServletRequest request, HttpServletResponse response) {
+
+		HttpSession session = request.getSession();
+		String mav = new String();
+		try {
+
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteRouteDel", "showRouteDelList", "0", "0", "0", "1",
+					newModuleList);
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "redirect:/showRouteDelList";
+				String base64encodedString = request.getParameter("rouidDelveryId");
+				String routeTypeId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("delvId", Integer.parseInt(routeTypeId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteRouteDeliveryById", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteRouteType : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	@RequestMapping(value = "/showAddRouteDel", method = RequestMethod.GET)
+	public String showAddRouteDel(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showAddRouteDel", "showRouteDelList", "0", "1", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/addRouteDelv";
+				RouteDelivery route = new RouteDelivery();
+				model.addAttribute("route", route);
+				model.addAttribute("title", "Add Route Type");
+
+				 
+
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /newUom : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	@RequestMapping(value = "/showEditRouteDel", method = RequestMethod.GET)
+	public String showEditRouteDel(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showEditRouteDel", "showRouteDelList", "0", "0", "1", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "masters/addRouteDelv";
+
+				model.addAttribute("title", "Edit Route Delivery");
+
+				String base64encodedString = request.getParameter("rouidDelveryId");
+				String routeTypeId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("routeId", routeTypeId);
+
+				RouteDelivery route = Constants.getRestTemplate().postForObject(Constants.url + "getRouteDeliveryById", map,
+						RouteDelivery.class);
+
+				model.addAttribute("route", route);
+
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /showEditRouteType : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	@RequestMapping(value = "/insertNewRouteDelv", method = RequestMethod.POST)
+	public String insertNewRouteDelv(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+
+			System.err.println("hii");
+
+			HttpSession session = request.getSession();
+
+			int companyId = (int) session.getAttribute("companyId");
+
+			String deliveryName = request.getParameter("deliveryName");
+
+			String timeSlots = request.getParameter("timeSlots");
+			float sortNo = Float.parseFloat(request.getParameter("sortNo"));
+
+			int rouidDelveryId = Integer.parseInt(request.getParameter("rouidDelveryId"));
+
+			int isCopy = Integer.parseInt(request.getParameter("isCopy"));
+
+			RouteDelivery route = new RouteDelivery();
+
+			route.setIsCopy(isCopy);
+			route.setSortNo(sortNo);
+  			route.setDeliveryName(deliveryName);
+  			route.setTimeSlots(timeSlots);
+  			route.setRouidDelveryId(rouidDelveryId);
+			
+			route.setCompanyId(companyId);
+			route.setIsActive(1);
+			route.setDelStatus(1);
+			route.setExInt1(0);
+			route.setExInt2(0);
+			route.setExInt3(0);
+			route.setExVar1("NA");
+			route.setExVar2("NA");
+			route.setExVar3("NA");
+
+			System.err.println(route.toString());
+			RouteDelivery res = Constants.getRestTemplate().postForObject(Constants.url + "saveRouteDelivery", route,
+					RouteDelivery.class);
+
+			System.err.println(res.toString());
+			if (res.getRouidDelveryId() > 0) {
+				if (rouidDelveryId == 0)
+					session.setAttribute("successMsg", "Route Delivery Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Route Delivery  Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Route Delivery");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /insertUom : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showRouteDelList";
 
 	}
 
