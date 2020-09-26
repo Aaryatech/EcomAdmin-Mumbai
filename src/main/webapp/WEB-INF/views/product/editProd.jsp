@@ -539,7 +539,7 @@
 										<div class="col-lg-4">
 											<input type="text" class="form-control numbersOnly"
 												placeholder="No of Message Characters" id="no_of_msg_char"
-												name="no_of_msg_char" autocomplete="off"> <span
+												name="no_of_msg_char" autocomplete="off" value="${editProd.noOfCharsOnCake}"> <span
 												class="validation-invalid-label" id="error_no_of_msg_char"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -785,7 +785,16 @@
 												</button></a>
 										</div>
 									</div>
-									<input type="text" value="${editProd.sameDayTimeAllowedSlot}" id="slots">
+									<input type="hidden" value="${editProd.sameDayTimeAllowedSlot}" id="slots">
+									
+									<input type="hidden" value="${editProd.flavourIds}" id="flavIds">
+									<input type="hidden" value="${editProd.applicableTags}" id="appTags">
+									
+								<input type="hidden" value="${editProd.eventsIds}" id="eventIdss">
+								<input type="hidden" value="${editProd.productCode}" id="prodCod">
+								<input type="hidden" name="prod_id" value="${productId}" id="prod_id">
+								<input type="hidden" name="idtime" value="${editProd.insertDttime}">
+								
 								</form>
 							</div>
 						</div>
@@ -902,8 +911,28 @@ if(parseInt(rateType)==2){
 	
 	data=${filterJSON};
 	var shapeId=${editProd.shapeId};
+	
 	var ts =$("#slots").val();
-	var x=ts.split(",");
+	var sdts=ts.split(",");
+	
+	var prodType=${editProd.prodTypeId};
+	
+	var flavIdStr =$("#flavIds").val();
+	var flavArr=flavIdStr.split(",");
+	
+	var prodStatus=${editProd.prodStatusId};
+	
+	var eventStr =$("#eventIdss").val();
+	var evenArr=eventStr.split(",");
+	
+	var appTagStr =$("#appTags").val();
+	var tagArr=appTagStr.split(",");
+	
+	var breadTypeId=${editProd.typeOfBread};
+	var  creamTypeId=${editProd.typeOfCream};
+	
+	var layCreamId=${editProd.layeringCream};
+	var toppCreamId=${editProd.toppingCream};
 	var len = data.length;
 	for (var i = 0; i < len; i++) {
 		if(1==parseInt(data[i].filterTypeId)){
@@ -917,7 +946,7 @@ if(parseInt(rateType)==2){
 			}
 		}//end of if
 		else if(2==parseInt(data[i].filterTypeId)){
-			if(x.includes(''+data[i].filterId)){
+			if(sdts.includes(''+data[i].filterId)){
 			sameDay_timeSlothtml += '<option selected value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
 			}else{
@@ -926,41 +955,88 @@ if(parseInt(rateType)==2){
 			}
 	}//end of if
 		else if(3==parseInt(data[i].filterTypeId)){
-			prod_type_idhtml += '<option value="' + data[i].filterId + '">'
+			if(parseInt(prodType)==parseInt(data[i].filterId)){
+			prod_type_idhtml += '<option selected value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
+			}else{
+				prod_type_idhtml += '<option value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+			}
 	}//end of if
 		else if(4==parseInt(data[i].filterTypeId)){
-			flav_idshtml += '<option value="' + data[i].filterId + '">'
+			if(flavArr.includes(''+data[i].filterId)){
+			flav_idshtml += '<option selected value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
+			}else{
+				flav_idshtml += '<option value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+			}
 	}//end of if
 		else if(5==parseInt(data[i].filterTypeId)){
-			prod_statushtml += '<option value="' + data[i].filterId + '">'
+			if(parseInt(prodStatus)==parseInt(data[i].filterId)){
+			prod_statushtml += '<option selected value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
+			}else{
+				prod_statushtml += '<option value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+			}
 	}//end of if
 		else if(6==parseInt(data[i].filterTypeId)){
-			event_idshtml += '<option value="' + data[i].filterId + '">'
+			if(evenArr.includes(''+data[i].filterId)){
+			event_idshtml += '<option selected value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
+			}else{
+				event_idshtml += '<option value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+			}
 	}//end of if
 		else if(7==parseInt(data[i].filterTypeId)){
-			appl_tagshtml += '<option value="' + data[i].filterId + '">'
+			
+			if(tagArr.includes(''+data[i].filterId)){
+			appl_tagshtml += '<option selected value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
+			}else{
+				appl_tagshtml += '<option value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+			}
 	}//end of if
 		else if(8==parseInt(data[i].filterTypeId)){
-			bread_idhtml += '<option value="' + data[i].filterId + '">'
+			if(parseInt(breadTypeId)==parseInt(data[i].filterId)){
+			bread_idhtml += '<option selected value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
+			}else{
+				bread_idhtml += '<option value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+			}
 	}//end of if
 	
 		else if(9==parseInt(data[i].filterTypeId)){
-			cream_idhtml += '<option value="' + data[i].filterId + '">'
+			if(parseInt(creamTypeId)==parseInt(data[i].filterId)){
+			cream_idhtml += '<option selected value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
+			}else{
+				cream_idhtml += '<option value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+			}
 	}//end of if
 		else if(10==parseInt(data[i].filterTypeId)){
-			layering_cream_idhtml += '<option value="' + data[i].filterId + '">'
+			if(parseInt(layCreamId)==parseInt(data[i].filterId)){
+			layering_cream_idhtml += '<option selected value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
+			}else{
+				layering_cream_idhtml += '<option value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+			}
 	}//end of if
 		else if(11==parseInt(data[i].filterTypeId)){
-			topping_cream_idhtml += '<option value="' + data[i].filterId + '">'
+			
+			if(parseInt(toppCreamId)==parseInt(data[i].filterId)){
+			topping_cream_idhtml += '<option selected value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
+			}else{
+				topping_cream_idhtml += '<option value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+			}
 	}//end of if
 	
 	}//end of for loop
@@ -999,7 +1075,8 @@ if(parseInt(rateType)==2){
 	$("#appl_tags").trigger("chosen:updated");
 	function setSubCatList(){
 		var catId=document.getElementById("cat_id").value;
-		
+		prodCod=document.getElementById("prodCod").value;
+		document.getElementById("prod_code").value=prodCod;
 		var html;
 		var p = "";
 		var q = "Select Sub Category";
@@ -1071,7 +1148,8 @@ if(parseInt(rateType)==2){
 		function getSubCatPrefixData(){
 			var fd = new FormData();
 			subCatId=document.getElementById("sub_cat_id").value;
-			
+			prodCod=document.getElementById("prodCod").value;
+			document.getElementById("prod_code").value=prodCod;
 			var editSubCatId=${editProd.prodSubCatId};
 			
 			if(parseInt(editSubCatId)!=parseInt(subCatId)){

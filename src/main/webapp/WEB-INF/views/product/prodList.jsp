@@ -104,7 +104,7 @@
 					<td>${prod.isActive==1 ? 'Yes' :prod.isActive==0 ? 'No' : 'No'}</td>
 					<td><div class="list-icons">
 												<a
-													href="${pageContext.request.contextPath}/showEditProd/${prod.productId}"
+													href="${pageContext.request.contextPath}/showEditProd/${prod.exVar1}"
 													class="list-icons-item" title="Edit Product"> <i
 													class="icon-database-edit2"></i>
 												</a>
@@ -174,6 +174,7 @@
 		scrollX : true,
 		scrollY : '50vh',
 		scrollCollapse : true,
+		order:[],
 		paging : false,
 		fixedColumns : {
 			leftColumns : 1,

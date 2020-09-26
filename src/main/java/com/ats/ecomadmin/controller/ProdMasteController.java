@@ -1,5 +1,6 @@
 package com.ats.ecomadmin.controller;
 
+import java.text.Normalizer.Form;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -249,14 +250,21 @@ public class ProdMasteController {
 			prod.setFlavourIds(flavIds);
 
 			prod.setIngerdiants(Ingredients.trim());
-			prod.setInsertDttime(CommonUtility.getCurrentYMDDateTime());
+			
+			try {
+				prod.setInsertDttime(request.getParameter("idtime"));
+			}catch (Exception e) {
+				prod.setInsertDttime(CommonUtility.getCurrentYMDDateTime());
+			}
+			
 			prod.setIsActive(1);
 
 			prod.setIsVeg(Integer.parseInt(is_veg));
 			prod.setLayeringCream(Integer.parseInt(layering_cream_id));
 			prod.setMakerUserId(userObj.getUserId());
 			prod.setMaxWt(Integer.parseInt(max_wt));
-			prod.setMinQty(Integer.parseInt(min_qty));
+			int minQ=(int) Float.parseFloat(min_qty);
+			prod.setMinQty(minQ);
 
 			prod.setPrepTime(Integer.parseInt(prep_time));
 			prod.setProdCatId(Integer.parseInt(catId));
@@ -306,7 +314,14 @@ public class ProdMasteController {
 			}
 
 			// **
-			prod.setProductId(0);
+			try {
+				String prodIdStr=request.getParameter("prod_id");
+				int prodId=Integer.parseInt(FormValidation.DecodeKey(prodIdStr));
+				prod.setProductId(prodId);
+			}catch (Exception e) {
+				prod.setProductId(0);
+			}
+			
 			prod.setProductImages("na");
 			prod.setProductName(prod_name.trim());
 
@@ -510,7 +525,11 @@ public class ProdMasteController {
 				GetProdList[] prodArr = Constants.getRestTemplate().postForObject(Constants.url + "getProdList", map,
 						GetProdList[].class);
 				prodList = new ArrayList<GetProdList>(Arrays.asList(prodArr));
-				System.err.println("Prod List " + prodList.toString());
+				
+				for (int i = 0; i < prodList.size(); i++) {
+
+					prodList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(prodList.get(i).getProductId())));
+				}
 
 				model.addObject("prodList", prodList);
 
@@ -1474,8 +1493,8 @@ public class ProdMasteController {
 	}
 	
 	
-	@RequestMapping(value = "/showEditProd/{productId}", method = RequestMethod.GET)
-	public ModelAndView showEditProd(@PathVariable int productId,
+	@RequestMapping(value = "/showEditProd/{productIdStr}", method = RequestMethod.GET)
+	public ModelAndView showEditProd(@PathVariable String productIdStr,
 			HttpServletRequest request, HttpServletResponse response) {
 
 		ModelAndView model = new ModelAndView("product/editProd");
@@ -1562,6 +1581,8 @@ public class ProdMasteController {
 
 				
 				map = new LinkedMultiValueMap<>();
+				model.addObject("productId", productIdStr);
+				int productId=Integer.parseInt(FormValidation.DecodeKey(productIdStr));
 				map.add("productId", productId);
 
 				ProductMaster editProd = Constants.getRestTemplate().postForObject(Constants.url + "getProductByProductId", map, ProductMaster.class);

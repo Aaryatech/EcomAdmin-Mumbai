@@ -694,7 +694,7 @@
 									
 									</div>
 									</div>
-									<div class="form-group row">
+									<!-- <div class="form-group row">
 										<label class="col-form-label col-lg-2" for="profilePic">
 											Primary Image: </label>
 										<div class="col-lg-4">
@@ -704,7 +704,7 @@
 													id="temppreviewimageki1" name="image1"
 													class="temppreviewimageki1" alt="l"
 													style="width: 200px; height: auto; display: none"> </span>
-												<!-- image-preview-clear button -->
+												image-preview-clear button
 												<button type="button" title="Clear selected files"
 													class="btn btn-default btn-secondary fileinput-remove fileinput-remove-button legitRipple image-preview-clear image-preview-clear1"
 													id="1" style="display: none;">
@@ -723,7 +723,7 @@
 										</div>
 
 										<div class="col-lg-4"></div>
-									</div>
+									</div> -->
 
 									<div class="form-group row mb-0">
 	<div style="margin: 0 auto;">											<!-- <button type="reset" class="btn btn-light legitRipple">Reset</button> -->
