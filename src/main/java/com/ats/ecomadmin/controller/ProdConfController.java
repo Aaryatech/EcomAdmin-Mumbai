@@ -91,7 +91,6 @@ public class ProdConfController {
 				GetItemConfHead[] confHeadArray = Constants.getRestTemplate()
 						.postForObject(Constants.url + "getProdConfList", map, GetItemConfHead[].class);
 				List<GetItemConfHead> confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));
-				System.err.println("confHeadList " +confHeadList.toString());
 				model.addObject("confHeadList", confHeadList);
 				
 				model.addObject("confHeadJSON", CommonUtility.toJSONString(confHeadList));
@@ -126,7 +125,6 @@ public class ProdConfController {
 		int configId = 0;
 		try {
 			configId = Integer.parseInt(request.getParameter("conf_id"));
-			System.err.println("Conf Id " +configId);
 		} catch (Exception e) {
 			configId = 0;
 		}
@@ -172,7 +170,6 @@ public class ProdConfController {
 		GetItemConfHead[] confHeadArray = Constants.getRestTemplate()
 				.postForObject(Constants.url + "getProdConfList", map, GetItemConfHead[].class);
 		List<GetItemConfHead> confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));
-		System.err.println("confHeadList " +confHeadList.toString());
 		model.addObject("confHeadList", confHeadList);
 		
 		model.addObject("confHeadJSON", CommonUtility.toJSONString(confHeadList));
@@ -349,10 +346,6 @@ public class ProdConfController {
 			}
 			model.addObject("tempProdConfList", tempProdConfList);
 
-			System.err.println("prodList 0 " + prodList.get(0).getTempProdConfList().toString());
-			System.err.println("prodList 1 " + prodList.get(1).getTempProdConfList().toString());
-
-			System.err.println("temp list " + tempProdConfList.toString());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -410,7 +403,6 @@ String mav=new String();
 			int configId = 0;
 			try {
 				configId = Integer.parseInt(request.getParameter("configId"));
-				System.err.println("Conf Id " +configId);
 			} catch (Exception e) {
 				configId = 0;
 			}
@@ -531,6 +523,11 @@ String mav=new String();
 
 			ItemConfDetail[] res = Constants.getRestTemplate().postForObject(Constants.url + "saveNewItemToProdConf", confDetailList,
 					ItemConfDetail[].class);
+			
+			if (res.length> 0) 
+				session.setAttribute("successMsg", "New Products Added in Configuration");
+				else
+				session.setAttribute("errorMsg", "Failed to Add New Products in Configuration");
 		
 			}//end of else
 		

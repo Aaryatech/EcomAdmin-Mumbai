@@ -124,7 +124,6 @@ public class ProdMasteController {
 					filterList.get(i)
 							.setExVar1(FormValidation.Encrypt(String.valueOf(filterList.get(i).getFilterId())));
 				}
-				System.err.println("filterList " + filterList.toString());
 				model.addObject("filterList", filterList);
 
 				model.addObject("filterJSON", CommonUtility.toJSONString(filterList));
@@ -157,11 +156,20 @@ public class ProdMasteController {
 	 ******************************/
 	@RequestMapping(value = "/submitProductSave", method = RequestMethod.POST)
 	public String submitProductSave(HttpServletRequest request, HttpServletResponse response) {
-
+		String returnPage=null;
 		try {
+			
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info add = AccessControll.checkAccess("showProdList", "showProdList", "0", "1", "0", "0", newModuleList);
+
+			if (add.isError() == true) {
+				returnPage="accessDenied";
+			} else {
+				returnPage="redirect:/showProdList";
+			
 			ProductMaster prod = new ProductMaster();
 
-			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
 
 			int compId = (int) session.getAttribute("companyId");
@@ -334,7 +342,6 @@ public class ProdMasteController {
 			}
 
 			if (rate_setting_type.equals("2")) {
-				System.err.println("Rate Setting 2 weight_ids= " + weight_ids);
 				String weightString = getCommaSepStringFromStrArray(weight_ids);
 				prod.setAvailInWeights(weightString);
 				prod.setRateSettingType(2);
@@ -382,16 +389,19 @@ public class ProdMasteController {
 			prod.setUomId(Integer.parseInt(uom_id));
 			prod.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
 
-			System.err.println("prod  Input " + prod.toString());
 			ProductMaster res = Constants.getRestTemplate().postForObject(Constants.url + "saveProduct", prod,
 					ProductMaster.class);
 
-			System.err.println("prod  res " + res.toString());
-
+			if (res.getProductId() > 0) 
+				session.setAttribute("successMsg", "Product Saved Sucessfully");
+				else
+				session.setAttribute("errorMsg", "Failed to Save Product");
+			
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "redirect:/showProdList";
+		return returnPage;
 	}
 
 	/*****************************
@@ -628,15 +638,12 @@ public class ProdMasteController {
 				} else {
 
 				}
-				System.err.println("prod Id " + prodList.get(i).getProductId());
 
 				List<String> prodFlavIdList = Arrays.asList(prodList.get(i).getFlavourIds().split(",", -1));
 
-				System.err.println("prodFlavIdList " + prodFlavIdList.toString());
 
 				List<MFilter> flavList = getFlavList(prodFlavIdList);
 
-				System.err.println("flavList " + flavList.toString());
 
 				if (!flavList.isEmpty()) {
 
@@ -648,7 +655,6 @@ public class ProdMasteController {
 
 							List<String> wtList = Arrays.asList(prodList.get(i).getAvailInWeights().split(",", -1));
 
-							System.err.println("Weight List " + wtList.toString());
 
 							for (int p = 0; p < flavList.size(); p++) {
 
@@ -762,10 +768,6 @@ public class ProdMasteController {
 			}
 			model.addObject("tempProdConfList", tempProdConfList);
 
-			System.err.println("prodList 0 " + prodList.get(0).getTempProdConfList().toString());
-			System.err.println("prodList 1 " + prodList.get(1).getTempProdConfList().toString());
-
-			System.err.println("temp list " + tempProdConfList.toString());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -807,6 +809,7 @@ public class ProdMasteController {
 	public String saveInsertProdConf(HttpServletRequest request, HttpServletResponse response) {
 
 		try {
+			
 			ProductMaster prod = new ProductMaster();
 
 			HttpSession session = request.getSession();
@@ -962,6 +965,12 @@ public class ProdMasteController {
 
 			ItemConfHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveProdConfHD", confHeader,
 					ItemConfHeader.class);
+
+			if (res.getConfigHeaderId()> 0) 
+				session.setAttribute("successMsg", "Product Configuration Saved Sucessfully");
+				else
+				session.setAttribute("errorMsg", "Failed to Save Product Configuration");
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1158,7 +1167,6 @@ public class ProdMasteController {
 
 				TempConfTraveller infoRes = Constants.getRestTemplate()
 						.postForObject(Constants.url + "getProdConfDetailByConfHeader", map, TempConfTraveller.class);
-				System.err.println("Info " + infoRes.toString());
 				// List<TempProdConfig> tempProdConfList = new ArrayList<TempProdConfig>();
 				tempProdUpdateConfList = new ArrayList<TempProdConfig>();
 
@@ -1374,11 +1382,9 @@ public class ProdMasteController {
 				}
 				
 				if (isChange == 0) {
-					System.err.println("is change continue");
 					continue;
 				}
 				
-				System.err.println("is change > 0 don't continue");
 				
 				String r1 = "0";
 				try {
@@ -1427,7 +1433,7 @@ public class ProdMasteController {
 							rateAmt = 0;
 						}
 
-						ItemConfDetail confDetail = new ItemConfDetail();
+						//ItemConfDetail confDetail = new ItemConfDetail();
 						TempProdConfig confUpdt=new TempProdConfig();
 						
 					/*
@@ -1482,6 +1488,12 @@ public class ProdMasteController {
 			
 			ItemConfHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveUpdateProdConfHD", traveller,
 					ItemConfHeader.class);
+			
+			if (res.getConfigHeaderId()> 0) 
+				session.setAttribute("successMsg", "Product Configuration Saved Sucessfully");
+				else
+				session.setAttribute("errorMsg", "Failed to Save Product Configuration");
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1563,7 +1575,6 @@ public class ProdMasteController {
 					filterList.get(i)
 							.setExVar1(FormValidation.Encrypt(String.valueOf(filterList.get(i).getFilterId())));
 				}
-				System.err.println("filterList " + filterList.toString());
 				model.addObject("filterList", filterList);
 
 				model.addObject("filterJSON", CommonUtility.toJSONString(filterList));
@@ -1597,4 +1608,48 @@ public class ProdMasteController {
 
 	}
 
+	
+	@RequestMapping(value = "/manageProdImages/{productIdStr}", method = RequestMethod.GET)
+	public ModelAndView manageProdImages(@PathVariable String productIdStr,
+			HttpServletRequest request, HttpServletResponse response) {
+
+		ModelAndView model =null;
+
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			
+			Info view = AccessControll.checkAccess("showProdList", "showProdList", "0", "0", "1", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				model = new ModelAndView("accessDenied");
+
+			} else {
+				model = new ModelAndView("product/prod_images");
+				model.addObject("isEdit", 1);
+				model.addObject("productIdStr", productIdStr);
+				
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				
+				int productId=Integer.parseInt(FormValidation.DecodeKey(productIdStr));
+				
+				map.add("productId", productId);
+				
+				String[] imageArray = Constants.getRestTemplate().postForObject(Constants.url + "getProdImagesByProductId", map,
+						String[].class);
+				
+				List<String> imageList=new ArrayList<String>(Arrays.asList(imageArray));
+				
+				model.addObject("imageList", imageList);
+				model.addObject("imageJSON", CommonUtility.toJSONString(imageList));
+				
+				model.addObject("imageUrl", Constants.PROD_IMAGE_VIEW_URL);
+			}
+		}catch (Exception e) {
+		 e.printStackTrace();
+		}
+		return model;
+	
+	}
 }

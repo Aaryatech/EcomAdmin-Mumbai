@@ -1098,10 +1098,11 @@
 		 console.log("offerId"+offerId);
 		
 		$('.file-input-ajax1')
+		
 				.fileinput(
 						{
 							browseLabel : 'Browse',
-							uploadUrl : "http://localhost:8080/ecomadmin/ajaxImageUploadOffer/"+offerId, // server upload action
+							uploadUrl : "http://localhost:8989/ecomadmin/ajaxImageUploadOffer/"+offerId, // server upload action
  							uploadAsync : false,
 							maxFileCount : 100,
 							initialPreview : [],

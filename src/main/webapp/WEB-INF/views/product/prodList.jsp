@@ -108,7 +108,16 @@
 													class="list-icons-item" title="Edit Product"> <i
 													class="icon-database-edit2"></i>
 												</a>
-											</div></td>			
+											</div>
+											
+											<div class="list-icons">
+												<a
+													href="${pageContext.request.contextPath}/manageProdImages/${prod.exVar1}"
+													class="list-icons-item" title="Edit Product"> <i
+													class="icon-database-edit2"></i>
+												</a>
+											</div>
+											</td>			
 									<%-- <td class="text-center"><c:if test="${editAccess==0}">
 											<div class="list-icons">
 												<a
