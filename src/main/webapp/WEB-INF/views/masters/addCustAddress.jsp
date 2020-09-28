@@ -69,11 +69,11 @@
 								<!--  -->
 								<span class="font-size-sm text-uppercase font-weight-semibold"><a
 									class="card-title"
-									href="${pageContext.request.contextPath}/showCustomers"
+									href="${pageContext.request.contextPath}/showCustomerAddressList?custId=${custIdVal}"
 									style="color: white;" class="card-title"><i
 										class="icon-list2 ml-2"></i>&nbsp;&nbsp;&nbsp;&nbsp;View List</a></span>
 							</div>
-
+	 
 
 							<div class="card-body">
 

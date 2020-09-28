@@ -115,8 +115,8 @@ public class CompanyAdminController {
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
 
-				CompMaster comp = Constants.getRestTemplate().postForObject(Constants.url + "getCompanyByCompanyId", map,
-						CompMaster.class);
+				CompMaster comp = Constants.getRestTemplate().postForObject(Constants.url + "getCompanyByCompanyId",
+						map, CompMaster.class);
 
 				model.addAttribute("comp", comp);
 				model.addAttribute("title", "Edit Company");
@@ -259,8 +259,8 @@ public class CompanyAdminController {
 					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 					map.add("compId", companyId);
 
-					CompMaster comp1 = Constants.getRestTemplate().postForObject(Constants.url + "getCompanyByCompanyId", map,
-							CompMaster.class);
+					CompMaster comp1 = Constants.getRestTemplate()
+							.postForObject(Constants.url + "getCompanyByCompanyId", map, CompMaster.class);
 
 					comp.setUpdtDttime(curDateTime);
 					comp.setInsertDttime(comp1.getInsertDttime());
@@ -392,7 +392,7 @@ public class CompanyAdminController {
 				String base64encodedString = request.getParameter("companyId");
 				String companyId = FormValidation.DecodeKey(base64encodedString);
 				User userObj = (User) session.getAttribute("userObj");
-				String dateTime=CommonUtility.getCurrentYMDDateTime();
+				String dateTime = CommonUtility.getCurrentYMDDateTime();
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", Integer.parseInt(companyId));
@@ -607,10 +607,7 @@ public class CompanyAdminController {
 				String base64encodedString = request.getParameter("custId");
 				String custId = FormValidation.DecodeKey(base64encodedString);
 				User userObj = (User) session.getAttribute("userObj");
-				String dateTime=CommonUtility.getCurrentYMDDateTime();
-
-			 
-			
+				String dateTime = CommonUtility.getCurrentYMDDateTime();
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("custId", Integer.parseInt(custId));
@@ -674,7 +671,7 @@ public class CompanyAdminController {
 			}
 			Customer cust = new Customer();
 
-			//int companyId = Integer.parseInt(request.getParameter("companyId"));
+			// int companyId = Integer.parseInt(request.getParameter("companyId"));
 
 			String cust_name = request.getParameter("custName");
 
@@ -765,34 +762,35 @@ public class CompanyAdminController {
 		try {
 
 			HttpSession session = request.getSession();
-			/*
-			 * List<ModuleJson> newModuleList = (List<ModuleJson>)
-			 * session.getAttribute("newModuleList"); Info view =
-			 * AccessControll.checkAccess("showAddCustomer", "showCustomers", "0", "1", "0",
-			 * "0", newModuleList);
-			 * 
-			 * if (view.isError() == true) {
-			 * 
-			 * mav = "accessDenied";
-			 * 
-			 * } else {
-			 */
 
-			mav = "masters/addCustAddress";
-			model.addAttribute("title", "Add Customer Address");
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showAddCustomerAddress", "showCustomerAddressList", "0", "1", "0", "0",
+					newModuleList);
 
-			String base64encodedString = request.getParameter("custId");
-			String custId = FormValidation.DecodeKey(base64encodedString);
+			if (view.isError() == true) {
 
-			CustomerAddDetail custDet = new CustomerAddDetail();
-			model.addAttribute("custDet", custDet);
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("custId", custId);
-			Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
-					Customer.class);
-			model.addAttribute("cust", cust);
+				mav = "accessDenied";
 
-			// }
+			} else {
+
+				mav = "masters/addCustAddress";
+				model.addAttribute("title", "Add Customer Address");
+
+				String base64encodedString = request.getParameter("custId");
+				String custId = FormValidation.DecodeKey(base64encodedString);
+
+				CustomerAddDetail custDet = new CustomerAddDetail();
+				model.addAttribute("custDet", custDet);
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("custId", custId);
+				Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
+						Customer.class);
+				model.addAttribute("cust", cust);
+				
+				
+				model.addAttribute("custIdVal", FormValidation.Encrypt(custId));
+
+			}
 		} catch (Exception e) {
 			System.out.println("Execption in /Customer : " + e.getMessage());
 			e.printStackTrace();
@@ -815,44 +813,63 @@ public class CompanyAdminController {
 
 			HttpSession session = request.getSession();
 
-			/*
-			 * List<ModuleJson> newModuleList = (List<ModuleJson>)
-			 * session.getAttribute("newModuleList"); Info view =
-			 * AccessControll.checkAccess("showCustomerAddressList",
-			 * "showCustomerAddressList", "1", "0", "0", "0", newModuleList);
-			 * 
-			 * if (view.isError() == true) {
-			 * 
-			 * mav = "accessDenied";
-			 * 
-			 * } else {
-			 */
-			mav = "masters/custAddressList";
-			model.addAttribute("title", " Customer Address List");
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showCustomerAddressList", "showCustomerAddressList", "1", "0", "0",
+					"0", newModuleList);
 
-			String base64encodedString = request.getParameter("custId");
-			String custId = FormValidation.DecodeKey(base64encodedString);
+			if (view.isError() == true) {
 
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("custId", custId);
-			Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
-					Customer.class);
-			model.addAttribute("cust", cust);
-			map = new LinkedMultiValueMap<>();
-			map.add("custId", custId);
+				mav = "accessDenied";
 
-			CustomerAddDetail[] userArr = Constants.getRestTemplate()
-					.postForObject(Constants.url + "getAllCustomerDetailByCustId", map, CustomerAddDetail[].class);
-			List<CustomerAddDetail> userList = new ArrayList<CustomerAddDetail>(Arrays.asList(userArr));
+			} else {
 
-			for (int i = 0; i < userList.size(); i++) {
+				mav = "masters/custAddressList";
+				model.addAttribute("title", " Customer Address List");
 
-				userList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(userList.get(i).getCustDetailId())));
-				userList.get(i).setExVar2(FormValidation.Encrypt(String.valueOf(userList.get(i).getCustId())));
+				String base64encodedString = request.getParameter("custId");
+				String custId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("custId", custId);
+				Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
+						Customer.class);
+				model.addAttribute("cust", cust);
+				map = new LinkedMultiValueMap<>();
+				map.add("custId", custId);
+
+				CustomerAddDetail[] userArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getAllCustomerDetailByCustId", map, CustomerAddDetail[].class);
+				List<CustomerAddDetail> userList = new ArrayList<CustomerAddDetail>(Arrays.asList(userArr));
+
+				for (int i = 0; i < userList.size(); i++) {
+
+					userList.get(i)
+							.setExVar1(FormValidation.Encrypt(String.valueOf(userList.get(i).getCustDetailId())));
+					userList.get(i).setExVar2(FormValidation.Encrypt(String.valueOf(userList.get(i).getCustId())));
+				}
+				model.addAttribute("custAddList", userList);
+
+				Info add = AccessControll.checkAccess("showCustomerAddressList", "showCustomerAddressList", "0", "1",
+						"0", "0", newModuleList);
+				Info edit = AccessControll.checkAccess("showCustomerAddressList", "showCustomerAddressList", "0", "0",
+						"1", "0", newModuleList);
+				Info delete = AccessControll.checkAccess("showCustomerAddressList", "showCustomerAddressList", "0", "0",
+						"0", "1", newModuleList);
+
+				if (add.isError() == false) { // System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) { // System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) { //
+					System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
+
 			}
-			model.addAttribute("custAddList", userList);
-
-			// }
 		} catch (Exception e) {
 			System.out.println("Execption in /Customer : " + e.getMessage());
 			e.printStackTrace();
@@ -972,45 +989,39 @@ public class CompanyAdminController {
 		String mav = new String();
 		try {
 
-			/*
-			 * List<ModuleJson> newModuleList = (List<ModuleJson>)
-			 * session.getAttribute("newModuleList"); Info view =
-			 * AccessControll.checkAccess("deleteCustomer", "showCustomers", "0", "0", "0",
-			 * "1", newModuleList); if (view.isError() == true) {
-			 * 
-			 * mav = "accessDenied";
-			 * 
-			 * } else {
-			 */
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteCustomer", "showCustomerAddressList", "0", "0", "0", "1",
+					newModuleList);
+			if (view.isError() == true) {
 
-			String base64encodedString = request.getParameter("custDetailId");
-			String custDetailId = FormValidation.DecodeKey(base64encodedString);
+				mav = "accessDenied";
 
-			String base64encodedString1 = request.getParameter("custId");
-			String custId = FormValidation.DecodeKey(base64encodedString1);
-			mav = "redirect:/showCustomerAddressList?custId=" + FormValidation.Encrypt(String.valueOf(custId));
-
-			
-			
-			User userObj = (User) session.getAttribute("userObj");
-			String dateTime=CommonUtility.getCurrentYMDDateTime();
-
-  		
-
-			
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("custDetId", Integer.parseInt(custDetailId));
-			map.add("userId", userObj.getUserId());
-			map.add("dateTime", dateTime);
-
-			Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteCustDetById", map, Info.class);
-
-			if (!res.isError()) {
-				session.setAttribute("successMsg", res.getMsg());
 			} else {
-				session.setAttribute("errorMsg", res.getMsg());
+
+				String base64encodedString = request.getParameter("custDetailId");
+				String custDetailId = FormValidation.DecodeKey(base64encodedString);
+
+				String base64encodedString1 = request.getParameter("custId");
+				String custId = FormValidation.DecodeKey(base64encodedString1);
+				mav = "redirect:/showCustomerAddressList?custId=" + FormValidation.Encrypt(String.valueOf(custId));
+
+				User userObj = (User) session.getAttribute("userObj");
+				String dateTime = CommonUtility.getCurrentYMDDateTime();
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("custDetId", Integer.parseInt(custDetailId));
+				map.add("userId", userObj.getUserId());
+				map.add("dateTime", dateTime);
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteCustDetById", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
 			}
-			// }
 		} catch (Exception e) {
 			System.out.println("Execption in /deleteUser : " + e.getMessage());
 			e.printStackTrace();
@@ -1030,42 +1041,43 @@ public class CompanyAdminController {
 		try {
 
 			HttpSession session = request.getSession();
-			/*
-			 * List<ModuleJson> newModuleList = (List<ModuleJson>)
-			 * session.getAttribute("newModuleList"); Info view =
-			 * AccessControll.checkAccess("showAddCustomer", "showCustomers", "0", "1", "0",
-			 * "0", newModuleList);
-			 * 
-			 * if (view.isError() == true) {
-			 * 
-			 * mav = "accessDenied";
-			 * 
-			 * } else {
-			 */
 
-			mav = "masters/addCustAddress";
-			model.addAttribute("title", "Edit Customer Address");
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showEditCustomerAddress", "showCustomerAddressList", "0", "1", "0",
+					"0", newModuleList);
 
-			String base64encodedString = request.getParameter("custDetailId");
-			String custDetId = FormValidation.DecodeKey(base64encodedString);
+			if (view.isError() == true) {
 
-			String base64encodedString1 = request.getParameter("custId");
-			String custId = FormValidation.DecodeKey(base64encodedString1);
+				mav = "accessDenied";
 
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("custDetId", custDetId);
-			CustomerAddDetail custDet = Constants.getRestTemplate().postForObject(Constants.url + "getCustDetById", map,
-					CustomerAddDetail.class);
-			model.addAttribute("custDet", custDet);
+			} else {
 
-			model.addAttribute("custDet", custDet);
-			map = new LinkedMultiValueMap<>();
-			map.add("custId", custId);
-			Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
-					Customer.class);
-			model.addAttribute("cust", cust);
+				mav = "masters/addCustAddress";
+				model.addAttribute("title", "Edit Customer Address");
 
-			// }
+				String base64encodedString = request.getParameter("custDetailId");
+				String custDetId = FormValidation.DecodeKey(base64encodedString);
+
+				String base64encodedString1 = request.getParameter("custId");
+				String custId = FormValidation.DecodeKey(base64encodedString1);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("custDetId", custDetId);
+				CustomerAddDetail custDet = Constants.getRestTemplate().postForObject(Constants.url + "getCustDetById",
+						map, CustomerAddDetail.class);
+				model.addAttribute("custDet", custDet);
+
+				model.addAttribute("custDet", custDet);
+				map = new LinkedMultiValueMap<>();
+				map.add("custId", custId);
+				Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
+						Customer.class);
+				model.addAttribute("cust", cust);
+				
+				
+				model.addAttribute("custIdVal", FormValidation.Encrypt(custId));
+
+			}
 		} catch (Exception e) {
 			System.out.println("Execption in /Customer : " + e.getMessage());
 			e.printStackTrace();
@@ -1296,7 +1308,7 @@ public class CompanyAdminController {
 			Date date = new Date();
 
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-		 
+
 			String profileImage = new String();
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
@@ -1678,15 +1690,12 @@ public class CompanyAdminController {
 				String base64encodedString = request.getParameter("bannerId");
 				String bannerId = FormValidation.DecodeKey(base64encodedString);
 				User userObj = (User) session.getAttribute("userObj");
-				String dateTime=CommonUtility.getCurrentYMDDateTime();
+				String dateTime = CommonUtility.getCurrentYMDDateTime();
 
-			 
-				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("bannerId", Integer.parseInt(bannerId));
 				map.add("userId", userObj.getUserId());
 				map.add("dateTime", dateTime);
-
 
 				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteBannerById", map,
 						Info.class);
