@@ -59,7 +59,7 @@ public class CompanyAdminController {
 	// Descriprion :- Add Company
 
 	@RequestMapping(value = "/showAddCompany", method = RequestMethod.GET)
-	public String newUom(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String showAddCompany(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String mav = new String();
 		try {
 
@@ -141,130 +141,160 @@ public class CompanyAdminController {
 	public String insertNewCompany(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
 
-		try {
+		System.err.println("hii");
+		Date date = new Date();
 
-			System.err.println("hii");
-			Date date = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		String curDateTime = CommonUtility.getCurrentYMDDateTime();
+		CompMaster comp = new CompMaster();
+		HttpSession session = request.getSession();
+		String profileImage = null;
+		User userObj = (User) session.getAttribute("userObj");
 
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			String curDateTime = dateFormat.format(cal.getTime());
-			CompMaster comp = new CompMaster();
-			HttpSession session = request.getSession();
-			String profileImage = null;
-			User userObj = (User) session.getAttribute("userObj");
+		String mav = null;
 
-			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
+		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+		Info view = AccessControll.checkAccess("showAddCompany", "showCompanys", "0", "1", "0", "0", newModuleList);
 
-				System.err.println("In If ");
+		if (view.isError() == true) {
 
-				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
+			mav = "accessDenied";
 
-				try {
-					new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
-				} catch (Exception e) {
+		} else {
+
+			mav = "redirect:/showCompanys";
+			try {
+
+				if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
+
+					System.err.println("In If ");
+
+					profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
+
+					try {
+						new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					} catch (Exception e) {
+					}
+
+				} else {
+					System.err.println("In else ");
+					profileImage = request.getParameter("editImg");
+
 				}
 
-			} else {
-				System.err.println("In else ");
-				profileImage = request.getParameter("editImg");
+				int companyId = Integer.parseInt(request.getParameter("companyId"));
 
+				String comp_name = request.getParameter("comp_name");
+
+				String contact_no = request.getParameter("contact_no");
+				String email = request.getParameter("email");
+				String openDate = request.getParameter("openDate");
+				String address = request.getParameter("address");
+				int city = Integer.parseInt(request.getParameter("city"));
+				String state = request.getParameter("state");
+				String companyPrefix = request.getParameter("companyPrefix");
+				String website = request.getParameter("website");
+				String gstCode = request.getParameter("gstCode");
+				String gstNo = request.getParameter("gstNo");
+				int compGstType = Integer.parseInt(request.getParameter("compGstType"));
+				int paymentGatewayApplicable = Integer.parseInt(request.getParameter("paymentGatewayApplicable"));
+				String bankName = request.getParameter("bankName");
+				String branchName = request.getParameter("branchName");
+				String ifscCode = request.getParameter("ifscCode");
+				String accNo = request.getParameter("accNo");
+				String cinNo = request.getParameter("cinNo");
+				String fdaNo = request.getParameter("fdaNo");
+				String fdaDelc = request.getParameter("fdaDelc");
+				String panNo = request.getParameter("panNo");
+
+				String paymentGatewayLink = new String();
+
+				if (paymentGatewayApplicable == 1) {
+					paymentGatewayLink = request.getParameter("paymentGatewayLink");
+				}
+
+				// System.err.println("CommonUtility.convertToYMD(openDate)" +
+				// CommonUtility.convertToYMD(openDate));
+				// System.err.println("curDateTime" + curDateTime);
+
+				comp.setCompAddress(address);
+				comp.setCompanyLogo(profileImage);
+				comp.setCompanyName(comp_name);
+				comp.setCompanyPrefix(companyPrefix);
+				comp.setCompBankAccNo(accNo);
+				comp.setCompBankBranchName(branchName);
+				comp.setCompBankIfsc(ifscCode);
+				comp.setCompBankName(bankName);
+				comp.setCompCinNo(cinNo);
+				comp.setCompCity(city);
+				comp.setCompContactNo(contact_no);
+				comp.setCompEmailAddress(email);
+				comp.setCompFdaDeclarText(fdaDelc);
+				comp.setCompFdaNo(fdaNo);
+				comp.setCompGstNo(gstNo);
+				comp.setCompGstType(compGstType);
+				comp.setCompOpeningDate(CommonUtility.convertToYMD(openDate));
+				comp.setCompPanNo(panNo);
+				comp.setCompState(state);
+				comp.setCompStateGstCode(gstCode);
+				comp.setCompWebsite(website);
+				comp.setCompanyId(companyId);
+				comp.setDelStatus(1);
+				comp.setExInt1(0);
+				comp.setExInt2(0);
+				comp.setExInt3(0);
+				comp.setExVar1("NA");
+				comp.setExVar2("NA");
+				comp.setExVar3("NA");
+				comp.setExVar4("NA");
+				comp.setExFloat1(0);
+				comp.setExFloat2(0);
+				comp.setExFloat3(0);
+				comp.setCompanyType(0);
+				comp.setParentCompId(0);
+
+				if (companyId > 0) {
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("compId", companyId);
+
+					CompMaster comp1 = Constants.getRestTemplate().postForObject(Constants.url + "getCompById", map,
+							CompMaster.class);
+
+					comp.setUpdtDttime(curDateTime);
+					comp.setInsertDttime(comp1.getInsertDttime());
+
+				} else {
+					comp.setUpdtDttime(curDateTime);
+					comp.setInsertDttime(curDateTime);
+
+				}
+
+				comp.setPaymentGatewayApplicable(paymentGatewayApplicable);
+				comp.setPaymentGatewayLink(paymentGatewayLink);
+				comp.setMakerUserId(userObj.getUserId());
+
+				// System.err.println(comp.toString());
+				CompMaster res = Constants.getRestTemplate().postForObject(Constants.url + "saveCompany", comp,
+						CompMaster.class);
+
+				// System.err.println(res.toString());
+				if (res.getCompanyId() > 0) {
+					if (companyId == 0)
+						session.setAttribute("successMsg", "Company Saved Sucessfully");
+					else
+						session.setAttribute("successMsg", "Company  Update Sucessfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Save Company");
+				}
+
+			} catch (Exception e) {
+				System.out.println("Execption in /insertUom : " + e.getMessage());
+				e.printStackTrace();
 			}
-
-			int companyId = Integer.parseInt(request.getParameter("companyId"));
-
-			String comp_name = request.getParameter("comp_name");
-
-			String contact_no = request.getParameter("contact_no");
-			String email = request.getParameter("email");
-			String openDate = request.getParameter("openDate");
-			String address = request.getParameter("address");
-			int city = Integer.parseInt(request.getParameter("city"));
-			String state = request.getParameter("state");
-			String companyPrefix = request.getParameter("companyPrefix");
-			String website = request.getParameter("website");
-			String gstCode = request.getParameter("gstCode");
-			String gstNo = request.getParameter("gstNo");
-			int compGstType = Integer.parseInt(request.getParameter("compGstType"));
-			int paymentGatewayApplicable = Integer.parseInt(request.getParameter("paymentGatewayApplicable"));
-			String bankName = request.getParameter("bankName");
-			String branchName = request.getParameter("branchName");
-			String ifscCode = request.getParameter("ifscCode");
-			String accNo = request.getParameter("accNo");
-			String cinNo = request.getParameter("cinNo");
-			String fdaNo = request.getParameter("fdaNo");
-			String fdaDelc = request.getParameter("fdaDelc");
-			String panNo = request.getParameter("panNo");
-
-			String paymentGatewayLink = new String();
-
-			if (paymentGatewayApplicable == 1) {
-				paymentGatewayLink = request.getParameter("paymentGatewayLink");
-			}
-
-			System.err.println("CommonUtility.convertToYMD(openDate)" + CommonUtility.convertToYMD(openDate));
-			System.err.println("curDateTime" + curDateTime);
-
-			comp.setCompAddress(address);
-			comp.setCompanyLogo(profileImage);
-			comp.setCompanyName(comp_name);
-			comp.setCompanyPrefix(companyPrefix);
-			comp.setCompBankAccNo(accNo);
-			comp.setCompBankBranchName(branchName);
-			comp.setCompBankIfsc(ifscCode);
-			comp.setCompBankName(bankName);
-			comp.setCompCinNo(cinNo);
-			comp.setCompCity(city);
-			comp.setCompContactNo(contact_no);
-			comp.setCompEmailAddress(email);
-			comp.setCompFdaDeclarText(fdaDelc);
-			comp.setCompFdaNo(fdaNo);
-			comp.setCompGstNo(gstNo);
-			comp.setCompGstType(compGstType);
-			comp.setCompOpeningDate(CommonUtility.convertToYMD(openDate));
-			comp.setCompPanNo(panNo);
-			comp.setCompState(state);
-			comp.setCompStateGstCode(gstCode);
-			comp.setCompWebsite(website);
-			comp.setCompanyId(companyId);
-			comp.setDelStatus(1);
-			comp.setExInt1(0);
-			comp.setExInt2(0);
-			comp.setExInt3(0);
-			comp.setExVar1("NA");
-			comp.setExVar2("NA");
-			comp.setExVar3("NA");
-			comp.setExVar4("NA");
-			comp.setExFloat1(0);
-			comp.setExFloat2(0);
-			comp.setExFloat3(0);
-			comp.setCompanyType(0);
-			comp.setParentCompId(0);
-			comp.setInsertDttime(curDateTime);
-			comp.setUpdtDttime(curDateTime);
-			comp.setPaymentGatewayApplicable(paymentGatewayApplicable);
-			comp.setPaymentGatewayLink(paymentGatewayLink);
-			comp.setMakerUserId(userObj.getUserId());
-
-			System.err.println(comp.toString());
-			CompMaster res = Constants.getRestTemplate().postForObject(Constants.url + "saveCompany", comp,
-					CompMaster.class);
-
-			System.err.println(res.toString());
-			if (res.getCompanyId() > 0) {
-				if (companyId == 0)
-					session.setAttribute("successMsg", "Company Saved Sucessfully");
-				else
-					session.setAttribute("successMsg", "Company  Update Sucessfully");
-			} else {
-				session.setAttribute("errorMsg", "Failed to Save Company");
-			}
-
-		} catch (Exception e) {
-			System.out.println("Execption in /insertUom : " + e.getMessage());
-			e.printStackTrace();
 		}
-		return "redirect:/showCompanys";
+		return mav;
 
 	}
 
@@ -275,7 +305,7 @@ public class CompanyAdminController {
 	// Modified On :- NA
 	// Descriprion :- CompanyList
 	@RequestMapping(value = "/showCompanys", method = RequestMethod.GET)
-	public String showMnUsers(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String showCompanys(HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String mav = new String();
 
@@ -344,7 +374,7 @@ public class CompanyAdminController {
 	// Descriprion :- Delete Company
 
 	@RequestMapping(value = "/deleteCompany", method = RequestMethod.GET)
-	public String deleteUser(HttpServletRequest request, HttpServletResponse response) {
+	public String deleteCompany(HttpServletRequest request, HttpServletResponse response) {
 
 		HttpSession session = request.getSession();
 		String mav = new String();
@@ -361,9 +391,13 @@ public class CompanyAdminController {
 				mav = "redirect:/showCompanys";
 				String base64encodedString = request.getParameter("companyId");
 				String companyId = FormValidation.DecodeKey(base64encodedString);
+				User userObj = (User) session.getAttribute("userObj");
+				String dateTime=CommonUtility.getCurrentYMDDateTime();
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", Integer.parseInt(companyId));
+				map.add("userId", userObj.getUserId());
+				map.add("dateTime", dateTime);
 
 				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteCompById", map, Info.class);
 
@@ -409,11 +443,13 @@ public class CompanyAdminController {
 
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 
-				CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCompany",
-						CompMaster[].class);
-				List<CompMaster> userList = new ArrayList<CompMaster>(Arrays.asList(userArr));
-
-				model.addAttribute("compList", userList);
+				/*
+				 * CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url
+				 * + "getAllCompany", CompMaster[].class); List<CompMaster> userList = new
+				 * ArrayList<CompMaster>(Arrays.asList(userArr));
+				 * 
+				 * model.addAttribute("compList", userList);
+				 */
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /Customer : " + e.getMessage());
@@ -453,11 +489,13 @@ public class CompanyAdminController {
 
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 
-				CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCompany",
-						CompMaster[].class);
-				List<CompMaster> userList = new ArrayList<CompMaster>(Arrays.asList(userArr));
-
-				model.addAttribute("compList", userList);
+				/*
+				 * CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url
+				 * + "getAllCompany", CompMaster[].class); List<CompMaster> userList = new
+				 * ArrayList<CompMaster>(Arrays.asList(userArr));
+				 * 
+				 * model.addAttribute("compList", userList);
+				 */
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("custId", custId);
@@ -568,9 +606,16 @@ public class CompanyAdminController {
 				mav = "redirect:/showCustomers";
 				String base64encodedString = request.getParameter("custId");
 				String custId = FormValidation.DecodeKey(base64encodedString);
+				User userObj = (User) session.getAttribute("userObj");
+				String dateTime=CommonUtility.getCurrentYMDDateTime();
+
+			 
+			
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("custId", Integer.parseInt(custId));
+				map.add("userId", userObj.getUserId());
+				map.add("dateTime", dateTime);
 
 				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteCustById", map, Info.class);
 
@@ -605,10 +650,11 @@ public class CompanyAdminController {
 
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
-			String curDateTime = dateFormat.format(cal.getTime());
+			String curDateTime = CommonUtility.getCurrentYMDDateTime();
 			HttpSession session = request.getSession();
 			String profileImage = null;
 			User userObj = (User) session.getAttribute("userObj");
+			int companyId = (int) session.getAttribute("companyId");
 
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
@@ -628,7 +674,7 @@ public class CompanyAdminController {
 			}
 			Customer cust = new Customer();
 
-			int companyId = Integer.parseInt(request.getParameter("companyId"));
+			//int companyId = Integer.parseInt(request.getParameter("companyId"));
 
 			String cust_name = request.getParameter("custName");
 
@@ -643,8 +689,9 @@ public class CompanyAdminController {
 
 			int languageId = Integer.parseInt(request.getParameter("languageId"));
 
-			System.err.println("CommonUtility.convertToYMD(openDate)" + CommonUtility.convertToYMD(dateOfBirth));
-			System.err.println("curDateTime" + curDateTime);
+			// System.err.println("CommonUtility.convertToYMD(openDate)" +
+			// CommonUtility.convertToYMD(dateOfBirth));
+			// System.err.println("curDateTime" + curDateTime);
 
 			cust.setAgeRange(ageRange);
 			cust.setCityId(city);
@@ -667,15 +714,28 @@ public class CompanyAdminController {
 			cust.setExVar1("NA");
 			cust.setExVar2("NA");
 			cust.setExVar3("NA");
-			cust.setInsertDttime(curDateTime);
-			cust.setUpdtDttime(curDateTime);
 			cust.setMakerUserId(userObj.getUserId());
+			if (cust_id > 0) {
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("custId", cust_id);
+				Customer cust1 = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
+						Customer.class);
+
+				cust.setUpdtDttime(curDateTime);
+				cust.setInsertDttime(cust1.getInsertDttime());
+
+			} else {
+				cust.setInsertDttime(curDateTime);
+				cust.setUpdtDttime(curDateTime);
+
+			}
 
 			System.err.println(cust.toString());
 			Customer res = Constants.getRestTemplate().postForObject(Constants.url + "saveCustomer", cust,
 					Customer.class);
 
-			System.err.println(res.toString());
+			// System.err.println(res.toString());
 			if (res.getCustId() > 0) {
 				if (cust_id == 0)
 					session.setAttribute("successMsg", "Customer Saved Sucessfully");
@@ -817,7 +877,7 @@ public class CompanyAdminController {
 
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
-			String curDateTime = dateFormat.format(cal.getTime());
+			String curDateTime = CommonUtility.getCurrentYMDDateTime();
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
 
@@ -860,9 +920,23 @@ public class CompanyAdminController {
 			custDet.setExVar1("NA");
 			custDet.setExVar2("NA");
 			custDet.setExVar3("NA");
-			custDet.setInsertDttime(curDateTime);
-			custDet.setUpdtDttime(curDateTime);
+
 			custDet.setMakerUserId(userObj.getUserId());
+
+			if (custDetailId > 0) {
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("custDetId", custDetailId);
+				CustomerAddDetail custDet1 = Constants.getRestTemplate().postForObject(Constants.url + "getCustDetById",
+						map, CustomerAddDetail.class);
+
+				custDet.setInsertDttime(custDet1.getInsertDttime());
+				custDet.setUpdtDttime(curDateTime);
+
+			} else {
+				custDet.setInsertDttime(curDateTime);
+				custDet.setUpdtDttime(curDateTime);
+			}
 
 			CustomerAddDetail res = Constants.getRestTemplate().postForObject(Constants.url + "saveCustomerDet",
 					custDet, CustomerAddDetail.class);
@@ -916,8 +990,18 @@ public class CompanyAdminController {
 			String custId = FormValidation.DecodeKey(base64encodedString1);
 			mav = "redirect:/showCustomerAddressList?custId=" + FormValidation.Encrypt(String.valueOf(custId));
 
+			
+			
+			User userObj = (User) session.getAttribute("userObj");
+			String dateTime=CommonUtility.getCurrentYMDDateTime();
+
+  		
+
+			
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("custDetId", Integer.parseInt(custDetailId));
+			map.add("userId", userObj.getUserId());
+			map.add("dateTime", dateTime);
 
 			Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteCustDetById", map, Info.class);
 
@@ -1064,9 +1148,9 @@ public class CompanyAdminController {
 				model.addAttribute("title", "Add Sub Category");
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 
-				CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCompany",
+				CompMaster[] compArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCompany",
 						CompMaster[].class);
-				List<CompMaster> userList = new ArrayList<CompMaster>(Arrays.asList(userArr));
+				List<CompMaster> compList = new ArrayList<CompMaster>(Arrays.asList(compArr));
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
@@ -1074,7 +1158,7 @@ public class CompanyAdminController {
 				catList = new ArrayList<Category>(Arrays.asList(catArr));
 
 				model.addAttribute("catList", catList);
-				model.addAttribute("compList", userList);
+				model.addAttribute("compList", compList);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /newUom : " + e.getMessage());
@@ -1117,9 +1201,9 @@ public class CompanyAdminController {
 				model.addAttribute("title", "Edit Sub Category");
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 
-				CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCompany",
+				CompMaster[] compArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCompany",
 						CompMaster[].class);
-				List<CompMaster> userList = new ArrayList<CompMaster>(Arrays.asList(userArr));
+				List<CompMaster> compList = new ArrayList<CompMaster>(Arrays.asList(compArr));
 				map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
@@ -1127,7 +1211,7 @@ public class CompanyAdminController {
 				catList = new ArrayList<Category>(Arrays.asList(catArr));
 
 				model.addAttribute("catList", catList);
-				model.addAttribute("compList", userList);
+				model.addAttribute("compList", compList);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /newUom : " + e.getMessage());
@@ -1207,15 +1291,12 @@ public class CompanyAdminController {
 			@RequestParam("doc") MultipartFile doc) {
 		int cust_id = 0;
 		try {
-
+			HttpSession session = request.getSession();
 			System.err.println("hii");
 			Date date = new Date();
 
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			String curDateTime = dateFormat.format(cal.getTime());
-			HttpSession session = request.getSession();
-			User userObj = (User) session.getAttribute("userObj");
+		 
 			String profileImage = new String();
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
@@ -1399,7 +1480,7 @@ public class CompanyAdminController {
 			int companyId = (int) session.getAttribute("companyId");
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
-			String curDateTime = dateFormat.format(cal.getTime());
+			String curDateTime = CommonUtility.getCurrentYMDDateTime();
 			User userObj = (User) session.getAttribute("userObj");
 			String profileImage = new String();
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
@@ -1467,10 +1548,27 @@ public class CompanyAdminController {
 			banner.setExVar1("NA");
 			banner.setExVar2("NA");
 			banner.setExVar3("NA");
-			banner.setInsertDateTime(curDateTime);
-			banner.setUpdateDateTime(curDateTime);
-			banner.setInsertUserId(userObj.getUserId());
-			banner.setUpdateUserId(0);
+
+			if (bannerId > 0) {
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("bannerId", bannerId);
+
+				BannerPage banner1 = Constants.getRestTemplate().postForObject(Constants.url + "getBannerById", map,
+						BannerPage.class);
+
+				banner.setInsertDateTime(banner1.getInsertDateTime());
+				banner.setUpdateDateTime(curDateTime);
+				banner.setInsertUserId(banner1.getInsertUserId());
+				banner.setUpdateUserId(userObj.getUserId());
+
+			} else {
+				banner.setInsertDateTime(curDateTime);
+				banner.setUpdateDateTime(curDateTime);
+				banner.setInsertUserId(userObj.getUserId());
+				banner.setUpdateUserId(0);
+
+			}
 			BannerPage res = Constants.getRestTemplate().postForObject(Constants.url + "saveBanner", banner,
 					BannerPage.class);
 
@@ -1579,9 +1677,16 @@ public class CompanyAdminController {
 				mav = "redirect:/showBannerList";
 				String base64encodedString = request.getParameter("bannerId");
 				String bannerId = FormValidation.DecodeKey(base64encodedString);
+				User userObj = (User) session.getAttribute("userObj");
+				String dateTime=CommonUtility.getCurrentYMDDateTime();
 
+			 
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("bannerId", Integer.parseInt(bannerId));
+				map.add("userId", userObj.getUserId());
+				map.add("dateTime", dateTime);
+
 
 				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteBannerById", map,
 						Info.class);
@@ -1890,14 +1995,8 @@ public class CompanyAdminController {
 		try {
 
 			System.err.println("hii");
-			Date date = new Date();
 
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			String curDateTime = dateFormat.format(cal.getTime());
 			HttpSession session = request.getSession();
-			String profileImage = null;
-			User userObj = (User) session.getAttribute("userObj");
 
 			int companyId = (int) session.getAttribute("companyId");
 
@@ -2090,7 +2189,7 @@ public class CompanyAdminController {
 				RouteType route = new RouteType();
 				model.addAttribute("route", route);
 				model.addAttribute("title", "Add Route Type");
- 
+
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /newUom : " + e.getMessage());
@@ -2107,7 +2206,8 @@ public class CompanyAdminController {
 			HttpSession session = request.getSession();
 
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showEditRouteType", "showRouteTypeList", "0", "0", "1", "0", newModuleList);
+			Info view = AccessControll.checkAccess("showEditRouteType", "showRouteTypeList", "0", "0", "1", "0",
+					newModuleList);
 
 			if (view.isError() == true) {
 
@@ -2197,12 +2297,9 @@ public class CompanyAdminController {
 		return "redirect:/showRouteTypeList";
 
 	}
-	
-	
-	
-	/****************************Route del*********************************/
-	
-	
+
+	/**************************** Route del *********************************/
+
 	@RequestMapping(value = "/showRouteDelList", method = RequestMethod.GET)
 	public String showRouteDelList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -2226,8 +2323,8 @@ public class CompanyAdminController {
 				mav = "masters/RouteDelList";
 				int companyId = (int) session.getAttribute("companyId");
 
-				RouteDelivery[] routeArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllRouteDelivery",
-						RouteDelivery[].class);
+				RouteDelivery[] routeArr = Constants.getRestTemplate()
+						.getForObject(Constants.url + "getAllRouteDelivery", RouteDelivery[].class);
 				List<RouteDelivery> routeList = new ArrayList<RouteDelivery>(Arrays.asList(routeArr));
 
 				for (int i = 0; i < routeList.size(); i++) {
@@ -2326,8 +2423,6 @@ public class CompanyAdminController {
 				model.addAttribute("route", route);
 				model.addAttribute("title", "Add Route Type");
 
-				 
-
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /newUom : " + e.getMessage());
@@ -2344,7 +2439,8 @@ public class CompanyAdminController {
 			HttpSession session = request.getSession();
 
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showEditRouteDel", "showRouteDelList", "0", "0", "1", "0", newModuleList);
+			Info view = AccessControll.checkAccess("showEditRouteDel", "showRouteDelList", "0", "0", "1", "0",
+					newModuleList);
 
 			if (view.isError() == true) {
 
@@ -2362,8 +2458,8 @@ public class CompanyAdminController {
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("routeId", routeTypeId);
 
-				RouteDelivery route = Constants.getRestTemplate().postForObject(Constants.url + "getRouteDeliveryById", map,
-						RouteDelivery.class);
+				RouteDelivery route = Constants.getRestTemplate().postForObject(Constants.url + "getRouteDeliveryById",
+						map, RouteDelivery.class);
 
 				model.addAttribute("route", route);
 
@@ -2400,10 +2496,10 @@ public class CompanyAdminController {
 
 			route.setIsCopy(isCopy);
 			route.setSortNo(sortNo);
-  			route.setDeliveryName(deliveryName);
-  			route.setTimeSlots(timeSlots);
-  			route.setRouidDelveryId(rouidDelveryId);
-			
+			route.setDeliveryName(deliveryName);
+			route.setTimeSlots(timeSlots);
+			route.setRouidDelveryId(rouidDelveryId);
+
 			route.setCompanyId(companyId);
 			route.setIsActive(1);
 			route.setDelStatus(1);

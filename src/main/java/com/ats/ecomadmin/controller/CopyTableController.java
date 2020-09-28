@@ -20,6 +20,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.annotation.SessionScope;
 
 import com.ats.ecomadmin.commons.AccessControll;
+import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.CompMaster;
@@ -122,9 +123,8 @@ public class CopyTableController {
 	@RequestMapping(value = "/submitCopyTable", method = RequestMethod.POST)
 	public String submitCopyTable(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-		Calendar cal = Calendar.getInstance();
-		String curDateTime = dateFormat.format(cal.getTime());
+	 
+		String curDateTime = CommonUtility.getCurrentYMDDateTime();
 		User userObj = (User) session.getAttribute("userObj");
 		String tblName=null;
 		try {

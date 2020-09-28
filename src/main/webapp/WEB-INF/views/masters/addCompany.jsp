@@ -709,12 +709,12 @@
 													$("#error_accNo").hide()
 												}
 
-												if (!$("#cinNo").val()) {
+												/* if (!$("#cinNo").val()) {
 													isError = true;
 													$("#error_cinNo").show()
 												} else {
 													$("#error_cinNo").hide()
-												}
+												} */
 
 												if (!$("#fdaNo").val()) {
 													isError = true;

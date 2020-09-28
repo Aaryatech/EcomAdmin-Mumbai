@@ -258,7 +258,7 @@
 									</div>
 
 								<div class="form-group row">
-										<label class="col-form-label font-weight-bold col-lg-2"
+									<%-- 	<label class="col-form-label font-weight-bold col-lg-2"
 											for="companyId">Company<span class="text-danger">* </span>:
 										</label>
 										<div class="col-lg-4">
@@ -278,7 +278,7 @@
 											</select> <span class="validation-invalid-label text-danger"
 												id="error_companyId" style="display: none;">This field is
 												required.</span>
-										</div>
+										</div> --%>
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="languageId">Language<span class="text-danger"> </span>:
 										</label>
@@ -393,14 +393,14 @@
 													$("#error_city").hide()
 												}
  
-
+/* 
 												if (!$("#companyId").val()) {
 													isError = true;
 													$("#error_companyId").show()
 												} else {
 													$("#error_companyId").hide()
 												}
- 
+  */
  
 												if ( $("#email").val().length != 0) {
 
