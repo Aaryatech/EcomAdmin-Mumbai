@@ -133,7 +133,7 @@ public class HomeController {
 					  map = new LinkedMultiValueMap<>();
 					map.add("compId",  userObj.getCompanyId());
 
-					CompMaster comp = Constants.getRestTemplate().postForObject(Constants.url + "getCompById", map,
+					CompMaster comp = Constants.getRestTemplate().postForObject(Constants.url + "getCompanyByCompanyId", map,
 							CompMaster.class);
 
 					session.setAttribute("userId", userObj.getUserId());

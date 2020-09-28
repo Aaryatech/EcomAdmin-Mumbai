@@ -115,7 +115,7 @@ public class CompanyAdminController {
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
 
-				CompMaster comp = Constants.getRestTemplate().postForObject(Constants.url + "getCompById", map,
+				CompMaster comp = Constants.getRestTemplate().postForObject(Constants.url + "getCompanyByCompanyId", map,
 						CompMaster.class);
 
 				model.addAttribute("comp", comp);
@@ -259,7 +259,7 @@ public class CompanyAdminController {
 					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 					map.add("compId", companyId);
 
-					CompMaster comp1 = Constants.getRestTemplate().postForObject(Constants.url + "getCompById", map,
+					CompMaster comp1 = Constants.getRestTemplate().postForObject(Constants.url + "getCompanyByCompanyId", map,
 							CompMaster.class);
 
 					comp.setUpdtDttime(curDateTime);

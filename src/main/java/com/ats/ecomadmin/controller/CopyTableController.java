@@ -151,7 +151,7 @@ public class CopyTableController {
 			map.add("curDateTime", curDateTime);
 			map.add("userId", userObj.getUserId());
 
-			Info info = Constants.getRestTemplate().postForObject(Constants.url + "/insertRec", map, Info.class);
+			Info info = Constants.getRestTemplate().postForObject(Constants.url + "/insertCopyTableRec", map, Info.class);
 			if (!info.isError()) {
 				session.setAttribute("successMsg", info.getMsg());
 			} else {
