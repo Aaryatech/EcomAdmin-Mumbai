@@ -28,11 +28,9 @@ public class ImageUploadController {
 		byte[] bytes = file.getBytes();
 
 		if (imageType == 1) {
-			System.out.println("Inside Image Type =1");
 
 			path = Paths.get(Constants.UPLOAD_URL + imageName);
 
-			System.out.println("Path= " + path.toString());
 
 		}
 
@@ -59,7 +57,48 @@ public class ImageUploadController {
 
 			File newFilePNG = null;
 
-			System.out.println("File " + imageName);
+			img = ImageIO.read(new File(Constants.UPLOAD_URL + imageName));
+			tempPNG = resizeImage(img, width, hieght);
+
+			newFilePNG = new File(Constants.UPLOAD_URL + imageName);
+
+			ImageIO.write(tempPNG, extension, newFilePNG);
+
+			info.setError(false);
+			info.setMsg("Upload Successfully ");
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("Error While Uploading Image");
+		}
+		return info;
+
+	}
+	
+	//Sachin 
+	//28-09-2020 
+	// to Upload Product Image
+	public Info saveProdImgeWithResize(MultipartFile file, String imageName, int width, int hieght)
+			throws IOException {
+
+		Info info = new Info();
+
+		try {
+			String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+
+			Path path = Paths.get(Constants.PROD_IMG_UPLOAD_URL + imageName);
+
+			byte[] bytes = file.getBytes();
+
+
+			Files.write(path, bytes);
+			Image img = null;
+			BufferedImage tempPNG = null;
+
+			File newFilePNG = null;
+
 			img = ImageIO.read(new File(Constants.UPLOAD_URL + imageName));
 			tempPNG = resizeImage(img, width, hieght);
 

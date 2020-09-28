@@ -1,9 +1,13 @@
 package com.ats.ecomadmin.controller;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.text.Normalizer.Form;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ats.ecomadmin.commons.AccessControll;
@@ -42,6 +47,8 @@ import com.ats.ecomadmin.model.TempProdConfig;
 import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
+import com.ats.ecomadmin.model.offer.Images;
+import com.ats.ecomadmin.model.offer.OfferHeader;
 
 @Controller
 @Scope("session")
@@ -276,7 +283,7 @@ public class ProdMasteController {
 
 			prod.setPrepTime(Integer.parseInt(prep_time));
 			prod.setProdCatId(Integer.parseInt(catId));
-			prod.setProdImagePrimary("na");
+			prod.setProdImagePrimary("");
 			prod.setProdStatusId(Integer.parseInt(prod_status));
 			prod.setProdSubCatId(Integer.parseInt(sub_cat_id));
 			prod.setProdTypeId(Integer.parseInt(prod_type_id));
@@ -330,7 +337,7 @@ public class ProdMasteController {
 				prod.setProductId(0);
 			}
 			
-			prod.setProductImages("na");
+			prod.setProductImages("");
 			prod.setProductName(prod_name.trim());
 
 			if (is_return_allow.equals("1")) {
@@ -1504,7 +1511,11 @@ public class ProdMasteController {
 
 	}
 	
-	
+	/*****************************
+	 * //Created Date: 26-09-2020 //UpdateDate:26-09-2020 //Description: 
+	 * To Show Product Edit page  //Developed By(Developer Name): Sachin //Updated
+	 * By(Developer Name): Sachin
+	 ******************************/
 	@RequestMapping(value = "/showEditProd/{productIdStr}", method = RequestMethod.GET)
 	public ModelAndView showEditProd(@PathVariable String productIdStr,
 			HttpServletRequest request, HttpServletResponse response) {
@@ -1608,7 +1619,11 @@ public class ProdMasteController {
 
 	}
 
-	
+	/*****************************
+	 * //Created Date: 26-09-2020 //UpdateDate:26-09-2020 //Description: 
+	 * To Show manage Product Image List  //Developed By(Developer Name): Sachin //Updated
+	 * By(Developer Name): Sachin
+	 ******************************/
 	@RequestMapping(value = "/manageProdImages/{productIdStr}", method = RequestMethod.GET)
 	public ModelAndView manageProdImages(@PathVariable String productIdStr,
 			HttpServletRequest request, HttpServletResponse response) {
@@ -1619,9 +1634,9 @@ public class ProdMasteController {
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 			
-			Info view = AccessControll.checkAccess("showProdList", "showProdList", "0", "0", "1", "0", newModuleList);
+			Info edit = AccessControll.checkAccess("showProdList", "showProdList", "0", "0", "1", "0", newModuleList);
 
-			if (view.isError() == true) {
+			if (edit.isError() == true) {
 
 				model = new ModelAndView("accessDenied");
 
@@ -1644,7 +1659,7 @@ public class ProdMasteController {
 				model.addObject("imageList", imageList);
 				model.addObject("imageJSON", CommonUtility.toJSONString(imageList));
 				
-				model.addObject("imageUrl", Constants.PROD_IMAGE_VIEW_URL);
+				model.addObject("imageUrl", Constants.PROD_IMG_VIEW_URL);
 			}
 		}catch (Exception e) {
 		 e.printStackTrace();
@@ -1652,4 +1667,148 @@ public class ProdMasteController {
 		return model;
 	
 	}
+	
+	/*****************************
+	 * //Created Date: 28-09-2020 //UpdateDate:28-09-2020 //Description: 
+	 * To add/update Product Image List  //Developed By(Developer Name): Sachin //Updated
+	 * By(Developer Name): Sachin
+	 ******************************/
+	
+	@ResponseBody
+	@RequestMapping(value = "/ajaxImageUploadProduct/{productIdStr}", method = RequestMethod.POST)
+	public String ajaxImageUploadOffer(@PathVariable String productIdStr, HttpServletRequest request,
+			HttpServletResponse response, @RequestParam("files") List<MultipartFile> files) {
+
+		System.err.println("ajaxImageUploadOffer--- " + files.size());
+int productId=Integer.parseInt(FormValidation.DecodeKey(productIdStr));
+		try {
+
+			Info info = new Info();
+
+			String filesList = new String();
+
+			System.err.println("files" + files.toString());
+			if (productId > 0) {
+				
+				
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("productId", productId);
+
+ProductMaster prodMaster = Constants.getRestTemplate().postForObject(Constants.url + "getProductByProductId", map, ProductMaster.class);
+
+				if (files.size() > 0) {
+
+					for (int i = 0; i < files.size(); i++) {
+						Random random = new Random();
+						int randomInt = random.nextInt(100);
+
+						String ext = files.get(i).getOriginalFilename().split("\\.")[1];
+						 String fileName = CommonUtility.getCurrentTimeStamp()+ "_" + randomInt + "." + ext;
+						// new ImageUploadController().saveUploadedFiles(files.get(i), 1, fileName);
+
+						info = new ImageUploadController().saveProdImgeWithResize(files.get(i), fileName, 450, 250);
+
+						if (filesList.isEmpty()) {
+
+							filesList = fileName;
+						} else {
+
+							filesList = filesList.concat("," + fileName);
+
+						}
+
+					}
+					
+					
+					if(prodMaster.getProductImages().length()>0) {
+						
+
+						filesList=prodMaster.getProductImages().concat(","+filesList);
+						
+					}
+					
+				
+					if (info != null) {
+						if (!info.isError()) {
+						 map = new LinkedMultiValueMap<>();
+							map.add("filesList", filesList);
+							map.add("productId", productId);
+							Constants.getRestTemplate().postForObject(Constants.url + "updateProdImg", map,
+									Info.class);
+						}
+					}
+				}
+			} else {
+				return "false";
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+
+			return "false";
+
+		}
+		return "true";
+
+	}
+	
+	/*****************************
+	 * //Created Date: 28-09-2020 //UpdateDate:28-09-2020 //Description: 
+	 * To delete Product Image from image List  //Developed By(Developer Name): Sachin //Updated
+	 * By(Developer Name): Sachin
+	 ******************************/
+	@RequestMapping(value = "/deleteProductImageAjax", method = RequestMethod.GET)
+	public @ResponseBody Info deleteOfferImageAjax(HttpServletRequest request, HttpServletResponse response) {
+
+		Info info = new Info();
+String pIdStr=request.getParameter("productId");
+		int productId = Integer.parseInt(FormValidation.DecodeKey(pIdStr));
+
+		String imageName = request.getParameter("imageName");
+
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+		map.add("productId", productId);
+		map.add("imageName", imageName);
+
+		info = Constants.getRestTemplate().postForObject(Constants.url + "/removeImageFromProduct", map, Info.class);
+
+		try {
+
+			if (!info.isError()) {
+				File f = new File(Constants.UPLOAD_URL + imageName);
+				f.delete();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return info;
+	}
+	
+	
+	@RequestMapping(value = "/getItemImagesByProductId", method = RequestMethod.GET)
+	public @ResponseBody List<String> getItemImagesByDocIdAndDocType(HttpServletRequest request,
+			HttpServletResponse response) {
+List<String> imgList=new ArrayList<String>();
+try {
+		//int productId = Integer.parseInt(request.getParameter("productId"));
+
+		
+		String pIdStr=request.getParameter("productId");
+				int productId = Integer.parseInt(FormValidation.DecodeKey(pIdStr));
+
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+		map.add("productId", productId);
+
+		String[] imgArr = Constants.getRestTemplate().postForObject(Constants.url + "getProdImagesByProductId", map,
+				String[].class);
+		imgList = new ArrayList<String>(Arrays.asList(imgArr));
+}catch (Exception e) {
+	e.printStackTrace();
+}
+		return imgList;
+	}
+	
 }
