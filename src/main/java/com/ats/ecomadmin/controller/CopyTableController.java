@@ -35,6 +35,16 @@ import com.ats.ecomadmin.model.acrights.ModuleJson;
 @SessionScope
 public class CopyTableController {
 
+	
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 23-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- copy table
 	@RequestMapping(value = "/showCopyTable", method = RequestMethod.GET)
 	public String showCopyTable(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -114,6 +124,14 @@ public class CopyTableController {
 		}
 		return mav;
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 23-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :-submit copy table
 
 	@RequestMapping(value = "/submitCopyTable", method = RequestMethod.POST)
 	public String submitCopyTable(HttpServletRequest request, HttpServletResponse response) {

@@ -42,6 +42,15 @@ import com.ats.ecomadmin.model.acrights.SubModuleJson;
 @Controller
 @SessionScope
 public class ProductConfigurationController {
+	
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- showAddRelProConfg
 
 	List<CategoryProduct> catProList = new ArrayList<>();
 
@@ -110,6 +119,15 @@ public class ProductConfigurationController {
 		return mav;
 	}
 
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- getProductListByCat
+
 	@RequestMapping(value = "/getProductListByCat", method = RequestMethod.GET)
 	public @ResponseBody List<Integer> getSubmoduleList(HttpServletRequest request, HttpServletResponse response) {
 
@@ -136,6 +154,15 @@ public class ProductConfigurationController {
 		return list;
 
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- getProductConfig
+
 
 	@RequestMapping(value = "/getProductConfig", method = RequestMethod.GET)
 	public @ResponseBody List<GetRequreProduct> getProductConfig(HttpServletRequest request,
@@ -158,6 +185,14 @@ public class ProductConfigurationController {
 		return productList;
 
 	}
+
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- submitReletedProductCofig
 
 	@RequestMapping(value = "/submitReletedProductCofig", method = RequestMethod.POST)
 	public String submitReletedProductCofig(HttpServletRequest request, HttpServletResponse response) {
@@ -250,6 +285,15 @@ public class ProductConfigurationController {
 		}
 		return mav;
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- showRelProConfgList
+
 
 	@RequestMapping(value = "/showRelProConfgList", method = RequestMethod.GET)
 	public String showRelProConfgList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -316,6 +360,15 @@ public class ProductConfigurationController {
 
 		return mav;
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- deleteProductConfig
+
 
 	@RequestMapping(value = "/deleteProductConfig", method = RequestMethod.GET)
 	public String deleteProductConfig(HttpServletRequest request, HttpServletResponse response) {

@@ -50,6 +50,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 @SessionScope
 public class OfferController {
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 18-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- addNewOffers
 
 	@RequestMapping(value = "/addNewOffers/{offerId}", method = RequestMethod.GET)
 	public ModelAndView newOffers(@PathVariable int offerId, HttpServletRequest request, HttpServletResponse response) {
@@ -174,6 +182,15 @@ public class OfferController {
 		return model;
 	}
 
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 18-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- saveOfferHeader
+
 	@RequestMapping(value = "/saveOfferHeader", method = RequestMethod.POST)
 	public String saveOfferHeader(HttpServletRequest request, HttpServletResponse response) {
 
@@ -254,6 +271,15 @@ public class OfferController {
 	}
 
 	// -----------------------SAVE OFFER DETAIL----------------------------
+	
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 18-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- saveOfferDetail
 	@RequestMapping(value = "/saveOfferDetail", method = RequestMethod.POST)
 	public String saveOfferDetail(HttpServletRequest request, HttpServletResponse response) {
 
@@ -470,6 +496,15 @@ public class OfferController {
 //	}
 
 	// -----------------AJAX-SAVE OFFER DETAIL-------------------
+	
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 18-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- saveOfferDetailAjax
 	@RequestMapping(value = "/saveOfferDetailAjax", method = RequestMethod.GET)
 	public @ResponseBody Info saveOfferDetailAjax(HttpServletRequest request, HttpServletResponse response) {
 
@@ -504,6 +539,14 @@ public class OfferController {
 	}
 
 	// IMAGE UPLOAD-------------------
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- showOfferList
 
 	@RequestMapping(value = "/showOfferList", method = RequestMethod.GET)
 	public ModelAndView showOfferList(HttpServletRequest request, HttpServletResponse response) {
@@ -526,6 +569,14 @@ public class OfferController {
 	}
 
 	// ------DELETE OFFER HEADER------------
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- deleteOfferHeaderById
 	@RequestMapping(value = "/deleteOfferHeaderById", method = RequestMethod.GET)
 	public String deleteOfferHeaderById(HttpServletRequest request, HttpServletResponse response) {
 
@@ -553,6 +604,14 @@ public class OfferController {
 		return "redirect:/showOfferList";
 	}
 
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- showOfferConfiguration
 	/****************************** Offer Config *********************************/
 	@RequestMapping(value = "/showOfferConfiguration", method = RequestMethod.GET)
 	public ModelAndView showOfferConfiguration(HttpServletRequest request, HttpServletResponse response) {
@@ -583,7 +642,17 @@ public class OfferController {
 		return model;
 	}
 
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- getConfigFrList
 	List<GetConfigureOfferList> frList = new ArrayList<GetConfigureOfferList>();
+	
+	
 
 	@RequestMapping(value = "/getConfigFrList", method = RequestMethod.GET)
 	@ResponseBody
@@ -609,6 +678,14 @@ public class OfferController {
 
 	}
 
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- saveOfferConfiguration
 	@RequestMapping(value = "/saveOfferConfiguration", method = RequestMethod.POST)
 	public String saveOfferConfiguration(HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -696,6 +773,14 @@ public class OfferController {
 		return "redirect:/showOfferConfigurationList";
 	}
 
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- showOfferConfiguration
 	@RequestMapping(value = "/showOfferConfigurationList", method = RequestMethod.GET)
 	public ModelAndView showOfferConfigurationList(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView model = null;
@@ -723,6 +808,14 @@ public class OfferController {
 		}
 		return model;
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- editFrOfferConfig
 
 	@RequestMapping(value = "/editFrOfferConfig", method = RequestMethod.GET)
 	public ModelAndView editFrOfferConfig(HttpServletRequest request, HttpServletResponse response) {
@@ -755,6 +848,13 @@ public class OfferController {
 		return model;
 	}
 
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- deleteFrOfferConfig
 	@RequestMapping(value = "/deleteFrOfferConfig", method = RequestMethod.GET)
 	public String deleteFrOfferConfig(HttpServletRequest request, HttpServletResponse response) {
 
@@ -807,6 +907,14 @@ public class OfferController {
 	 */
 
 	/************************* Image save ******************************/
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :-21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- getItemImagesByDocIdAndDocType
 
 	List<String> list = new ArrayList<>();
 
@@ -826,42 +934,12 @@ public class OfferController {
 		return list;
 	}
 
-	/*
-	 * @RequestMapping(value = "/updateItemImageSequenceOrderAjax", method =
-	 * RequestMethod.GET) public @ResponseBody Info
-	 * updateItemImageSequenceOrderAjax(HttpServletRequest request,
-	 * HttpServletResponse response) {
-	 * 
-	 * Info info = new Info();
-	 * 
-	 * try {
-	 * 
-	 * String jsonStr = request.getParameter("json");
-	 * 
-	 * System.err.println("jsonStr" + jsonStr);
-	 * 
-	 * ObjectMapper mapper = new ObjectMapper(); List<String> imgSeqList =
-	 * mapper.readValue(jsonStr, new TypeReference<List<String>>() { });
-	 * 
-	 * if (imgSeqList != null) {
-	 * 
-	 * List<String> imgList = new ArrayList<>();
-	 * 
-	 * for (int i = 0; i < imgSeqList.size(); i++) { for (int j = 0; i <
-	 * list.size(); j++) {
-	 * 
-	 * if (imgSeqList.get(i) == list.get(j)) {
-	 * 
-	 * String img = list.get(j); // img.setSeqNo(imgSeqList.get(i).getSeq());
-	 * imgList.add(img); break; } } } info =
-	 * Constants.getRestTemplate().postForObject(Constants.url +
-	 * "saveMultipleImage", imgList, Info.class); }
-	 * 
-	 * } catch (Exception e) { e.printStackTrace(); }
-	 * 
-	 * return info; }
-	 */
-
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- deleteOfferImageAjax
 	@RequestMapping(value = "/deleteOfferImageAjax", method = RequestMethod.GET)
 	public @ResponseBody Info deleteOfferImageAjax(HttpServletRequest request, HttpServletResponse response) {
 
@@ -889,6 +967,14 @@ public class OfferController {
 
 		return info;
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- ajaxImageUploadOffer
 
 	@ResponseBody
 	@RequestMapping(value = "/ajaxImageUploadOffer/{offerId}", method = RequestMethod.POST)
@@ -976,42 +1062,5 @@ public class OfferController {
 
 	}
 
-	/*
-	 * @RequestMapping(value = "/addNewItemImage", method = RequestMethod.POST)
-	 * public String addNewItemImage(HttpServletRequest request, HttpServletResponse
-	 * response,
-	 * 
-	 * @RequestParam("files") List<MultipartFile> files) {
-	 * 
-	 * int itemDId = 0; try { System.err.println("addNewItemImage--- ");
-	 * 
-	 * itemDId = Integer.parseInt(request.getParameter("imgItemDId")); int itemId =
-	 * Integer.parseInt(request.getParameter("imgItemId"));
-	 * 
-	 * List<Images> imageList = new ArrayList<>();
-	 * 
-	 * if (files.size() > 0) {
-	 * 
-	 * Random random = new Random();
-	 * 
-	 * for (int i = 0; i < files.size(); i++) {
-	 * 
-	 * int randomInt = random.nextInt(100);
-	 * 
-	 * String ext = files.get(i).getOriginalFilename().split("\\.")[1]; String
-	 * fileName = Commons.getCurrentTimeStamp() + "_" + randomInt + "." + ext; new
-	 * ImageUploadController().saveUploadedFiles(files.get(i), 1, fileName);
-	 * 
-	 * Images images = new Images(0, 3, itemId, fileName, (i + 1), 0, 0, 0, 0, 0,
-	 * "", "", "", "", 0, 0, 0); imageList.add(images); }
-	 * 
-	 * Info info = Constant.getRestTemplate().postForObject(Constant.url +
-	 * "saveMultipleImage", imageList, Info.class);
-	 * 
-	 * }
-	 * 
-	 * } catch (Exception e) { e.printStackTrace(); }
-	 * 
-	 * return "redirect:/showEditItemDetail/" + itemDId; }
-	 */
+	 
 }

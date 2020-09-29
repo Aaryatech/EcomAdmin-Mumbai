@@ -1122,7 +1122,7 @@ public class CompanyAdminController {
 	// Created On :- 15-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :- Check unique Cust mobile
+	// Descriprion :- Add sub Cat
 
 	@RequestMapping(value = "/showAddSubCat", method = RequestMethod.GET)
 	public String showAddSubCat(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -1170,6 +1170,13 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Edit sub Cat
 	@RequestMapping(value = "/showEditSubCat", method = RequestMethod.GET)
 	public String showEditSubCat(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String mav = new String();
@@ -1222,6 +1229,14 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- sub Cat List
 
 	@RequestMapping(value = "/showSubCatList", method = RequestMethod.GET)
 	public String showSubCatList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -1288,6 +1303,14 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- insert sub Cat
 	@RequestMapping(value = "/insertNewSubCat", method = RequestMethod.POST)
 	public String insertNewSubCat(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
@@ -1368,6 +1391,14 @@ public class CompanyAdminController {
 		return "redirect:/showSubCatList";
 
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 15-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Delete sub Cat
 
 	@RequestMapping(value = "/deleteSubCat", method = RequestMethod.GET)
 	public String deleteSubCat(HttpServletRequest request, HttpServletResponse response) {
@@ -1408,6 +1439,14 @@ public class CompanyAdminController {
 	}
 
 	// *************************Banner****
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Add Banner
 
 	@RequestMapping(value = "/showAddBanner", method = RequestMethod.GET)
 	public String showAddBanner(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -1464,6 +1503,16 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- insert Banner
+
 
 	@RequestMapping(value = "/insertNewBanner", method = RequestMethod.POST)
 	public String insertNewBanner(HttpServletRequest request, HttpServletResponse response,
@@ -1582,6 +1631,16 @@ public class CompanyAdminController {
 		return "redirect:/showBannerList";
 
 	}
+	
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Edit Banner
+
 
 	@RequestMapping(value = "/showEditBanner", method = RequestMethod.GET)
 	public String showEditBanner(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -1651,6 +1710,16 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Delete Banner
+
 
 	@RequestMapping(value = "/deleteBanner", method = RequestMethod.GET)
 	public String deleteBanner(HttpServletRequest request, HttpServletResponse response) {
@@ -1693,6 +1762,16 @@ public class CompanyAdminController {
 		}
 		return mav;
 	}
+	
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 21-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :-   Banner List
+
 
 	@RequestMapping(value = "/showBannerList", method = RequestMethod.GET)
 	public String showBannerList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -1760,6 +1839,16 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 25-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Add Route
+
 
 	@RequestMapping(value = "/showAddRoute", method = RequestMethod.GET)
 	public String showAddRoute(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -1811,6 +1900,15 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 25-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Edit Route
+
 
 	@RequestMapping(value = "/showEditRoute", method = RequestMethod.GET)
 	public String showEditRoute(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -1877,6 +1975,14 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 25-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :-   Route List
+
 	@RequestMapping(value = "/showRouteList", method = RequestMethod.GET)
 	public String showRouteList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -1940,6 +2046,14 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 25-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Delete Route
+
 
 	@RequestMapping(value = "/deleteRoute", method = RequestMethod.GET)
 	public String deleteRoute(HttpServletRequest request, HttpServletResponse response) {
@@ -1978,6 +2092,15 @@ public class CompanyAdminController {
 		}
 		return mav;
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 25-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Insert Route
+
 
 	@RequestMapping(value = "/insertNewRoute", method = RequestMethod.POST)
 	public String insertNewRoute(HttpServletRequest request, HttpServletResponse response) {
@@ -2053,6 +2176,15 @@ public class CompanyAdminController {
 		return "redirect:/showRouteList";
 
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 26-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- showRouteTypeList
+
 
 	@RequestMapping(value = "/showRouteTypeList", method = RequestMethod.GET)
 	public String showRouteTypeList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -2116,6 +2248,15 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 26-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Delete Type
+
 
 	@RequestMapping(value = "/deleteRouteType", method = RequestMethod.GET)
 	public String deleteRouteType(HttpServletRequest request, HttpServletResponse response) {
@@ -2155,6 +2296,15 @@ public class CompanyAdminController {
 		}
 		return mav;
 	}
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 26-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Add route Type
 
 	@RequestMapping(value = "/showAddRouteType", method = RequestMethod.GET)
 	public String showAddRouteType(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -2185,6 +2335,15 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 26-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Edit route Type
 
 	@RequestMapping(value = "/showEditRouteType", method = RequestMethod.GET)
 	public String showEditRouteType(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -2225,6 +2384,15 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 26-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- insert route Type
 
 	@RequestMapping(value = "/insertNewRouteType", method = RequestMethod.POST)
 	public String insertNewRouteType(HttpServletRequest request, HttpServletResponse response) {
@@ -2283,6 +2451,16 @@ public class CompanyAdminController {
 	}
 
 	/**************************** Route del *********************************/
+	
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 26-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :-   route Delivery list
 
 	@RequestMapping(value = "/showRouteDelList", method = RequestMethod.GET)
 	public String showRouteDelList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -2347,6 +2525,15 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 26-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Delete route Delivery
 	@RequestMapping(value = "/deleteRouteDel", method = RequestMethod.GET)
 	public String deleteRouteDel(HttpServletRequest request, HttpServletResponse response) {
 
@@ -2386,6 +2573,15 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 26-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Add route Delivery
 	@RequestMapping(value = "/showAddRouteDel", method = RequestMethod.GET)
 	public String showAddRouteDel(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String mav = new String();
@@ -2416,6 +2612,14 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 26-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Edit route Delivery
 	@RequestMapping(value = "/showEditRouteDel", method = RequestMethod.GET)
 	public String showEditRouteDel(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String mav = new String();
@@ -2455,6 +2659,15 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 26-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- insert route Delivery
 
 	@RequestMapping(value = "/insertNewRouteDelv", method = RequestMethod.POST)
 	public String insertNewRouteDelv(HttpServletRequest request, HttpServletResponse response) {

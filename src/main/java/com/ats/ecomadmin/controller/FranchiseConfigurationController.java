@@ -41,6 +41,17 @@ import com.ats.ecomadmin.model.offer.OfferDetail;
 @SessionScope
 public class FranchiseConfigurationController {
 
+	
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 24-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- get all fr configs
+
 	@RequestMapping(value = "/configFranchise", method = RequestMethod.GET)
 	public String configFranchise(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -108,6 +119,15 @@ public class FranchiseConfigurationController {
 		}
 		return mav;
 	}
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 24-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- getConfigByCatId
 
 	@RequestMapping(value = "/getConfigByCatId", method = RequestMethod.GET)
 	public @ResponseBody List<ItemConfHeader> getConfigByCatId(HttpServletRequest request,
@@ -134,6 +154,15 @@ public class FranchiseConfigurationController {
 		return list;
 	}
 
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 24-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- saveFrConfiguration
 	@RequestMapping(value = "/saveFrConfiguration", method = RequestMethod.POST)
 	public String submitCopyTable(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
@@ -180,6 +209,15 @@ public class FranchiseConfigurationController {
 		return "redirect:/configFranchise";
 
 	}
+	
+	
+
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 24-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- configFranchiseList
 
 	@RequestMapping(value = "/configFranchiseList", method = RequestMethod.GET)
 	public String configFranchiseList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -305,6 +343,14 @@ public class FranchiseConfigurationController {
 		}
 		return mav;
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 25-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- deleteFrConfiguration multiple
 
 	@RequestMapping(value = "/deleteFrConfiguration", method = RequestMethod.POST)
 	public String deleteFrConfiguration(HttpServletRequest request, HttpServletResponse response) {
@@ -342,6 +388,14 @@ public class FranchiseConfigurationController {
 		return "redirect:/configFranchiseList";
 
 	}
+	
+	
+	/*--------------------------------------------------------------------------------*/
+	// Created By :- Harsha Patil
+	// Created On :- 25-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- deleteFrConfiguration single
 
 	@RequestMapping(value = "/deleteFrConfig", method = RequestMethod.GET)
 	public String deleteOfferHeaderById(HttpServletRequest request, HttpServletResponse response) {
