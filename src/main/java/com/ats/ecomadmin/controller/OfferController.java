@@ -76,7 +76,6 @@ public class OfferController {
 				OfferHeader res = Constants.getRestTemplate().postForObject(Constants.url + "getOfferHeaderById", map,
 						OfferHeader.class);
 
-				System.err.println("RES = " + res);
 
 				if (res != null && res.getOfferId() > 0) {
 					model.addObject("offer", res);
@@ -124,7 +123,6 @@ public class OfferController {
 									Constants.url + "getOfferDetailListByOfferId", map1, OfferDetail[].class);
 							List<OfferDetail> offerDetailList = new ArrayList<OfferDetail>(Arrays.asList(detailList));
 							model.addObject("offerDetailList", offerDetailList);
-							System.err.println("OFFER DETAIL LIST  = " + offerDetailList);
 
 							if (offerDetailList != null) {
 								itemSubTypeOffer = offerDetailList.get(0).getOfferSubType();
@@ -149,7 +147,6 @@ public class OfferController {
 
 			HttpSession session = request.getSession();
 			int compId = (int) session.getAttribute("companyId");
-			System.err.println("COMP ID = " + compId);
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("compId", compId);
@@ -184,7 +181,6 @@ public class OfferController {
 
 		try {
 			HttpSession session = request.getSession();
-			System.err.println("saveOfferHeader--- ");
 
 			offerId = Integer.parseInt(request.getParameter("offerId"));
 			String title = request.getParameter("offerTitle");
@@ -199,7 +195,6 @@ public class OfferController {
 
 			int userId = (int) session.getAttribute("userId");
 			int compId = (int) session.getAttribute("companyId");
-			System.err.println(time + "***" );
 			String daysIdsArray[] = request.getParameterValues("selectDay");
 
 			String daysList = "";
@@ -237,20 +232,15 @@ public class OfferController {
 				daysList = "";
 			}
 
-			System.err.println("DATE = " + offerDate);
-			System.err.println("DAYS = " + daysList);
-			System.err.println("APPLICABLE = " + applicableList);
 
 			OfferHeader offer = new OfferHeader(offerId, title, desc, type, applicableList, 0, freqType, daysList,
 					fromDate, toDate, fromTime, toTime, userId, CommonUtility.getCurrentYMDDateTime(),
 					CommonUtility.getCurrentYMDDateTime(), compId, 1, 1, 0, 0, 0, 0, "", "", "", "", 0, 0, 0, 0);
 
-			System.err.println("OFFER = " + offer);
 
 			OfferHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveOfferHeader", offer,
 					OfferHeader.class);
 
-			System.err.println("OFFER SAVED = " + res);
 
 			if (res != null) {
 				offerId = res.getOfferId();
@@ -271,7 +261,6 @@ public class OfferController {
 
 		try {
 			HttpSession session = request.getSession();
-			System.err.println("saveOfferDetail--- ");
 
 			offerId = Integer.parseInt(request.getParameter("tab2OfferId"));
 
@@ -413,7 +402,6 @@ public class OfferController {
 
 			Info info = Constants.getRestTemplate().postForObject(Constants.url + "saveOfferDetailList", detailList,
 					Info.class);
-			System.err.println("RESULT = " + info);
 
 			if (info != null) {
 				if (!info.isError()) {
@@ -424,7 +412,6 @@ public class OfferController {
 
 					Info info1 = Constants.getRestTemplate().postForObject(Constants.url + "updateOfferType", map,
 							Info.class);
-					System.err.println("UPDATE TYPE RESULT = " + info1);
 				}
 			}
 
@@ -436,8 +423,6 @@ public class OfferController {
 
 				Info infoUpdate = Constants.getRestTemplate().postForObject(Constants.url + "removeOfferDetailIds", map,
 						Info.class);
-				System.err.println("DELETE RES = " + infoUpdate);
-				System.err.println("DELETE IDS =" + deleteUncheckItemDiscIds);
 			}
 
 			if (!deleteBuyGetFreeIds.isEmpty()) {
@@ -448,8 +433,6 @@ public class OfferController {
 
 				Info infoUpdate = Constants.getRestTemplate().postForObject(Constants.url + "removeOfferDetailIds", map,
 						Info.class);
-				System.err.println("DELETE RES = " + infoUpdate);
-				System.err.println("DELETE IDS =" + deleteBuyGetFreeIds);
 			}
 
 		} catch (Exception e) {
@@ -504,7 +487,6 @@ public class OfferController {
 		detailList.add(detail);
 
 		info = Constants.getRestTemplate().postForObject(Constants.url + "saveOfferDetailList", detailList, Info.class);
-		System.err.println("RESULT = " + info);
 
 		if (info != null) {
 			if (!info.isError()) {
@@ -515,7 +497,6 @@ public class OfferController {
 
 				Info info1 = Constants.getRestTemplate().postForObject(Constants.url + "updateOfferType", map,
 						Info.class);
-				System.err.println("UPDATE TYPE RESULT = " + info1);
 			}
 		}
 
@@ -531,7 +512,6 @@ public class OfferController {
 
 		HttpSession session = request.getSession();
 		int compId = (int) session.getAttribute("companyId");
-		System.err.println("COMP ID = " + compId);
 
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("compId", compId);
@@ -539,7 +519,6 @@ public class OfferController {
 		OfferHeader[] arr = Constants.getRestTemplate().postForObject(Constants.url + "getAllOfferHeaderListByCompId",
 				map, OfferHeader[].class);
 		List<OfferHeader> offerList = new ArrayList<OfferHeader>(Arrays.asList(arr));
-		System.err.println("offerList = " + offerList);
 
 		model.addObject("offerList", offerList);
 
@@ -583,7 +562,6 @@ public class OfferController {
 			OfferConfig offer = new OfferConfig();
 			model.addObject("offer", offer);
 
-			System.err.println("hii");
 			HttpSession session = request.getSession();
 			int compId = (int) session.getAttribute("companyId");
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -593,7 +571,6 @@ public class OfferController {
 					OfferHeader[].class);
 			List<OfferHeader> offerList = new ArrayList<OfferHeader>(Arrays.asList(offerArr));
 
-			System.err.println("hii" + offerList.toString());
 
 			model.addObject("offerList", offerList);
 
@@ -620,9 +597,9 @@ public class OfferController {
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("offerId", offerId);
 
-			GetConfigureOfferList[] areaArr = Constants.getRestTemplate()
+			GetConfigureOfferList[] configArr = Constants.getRestTemplate()
 					.postForObject(Constants.url + "getConfigureOfferList", map, GetConfigureOfferList[].class);
-			frList = new ArrayList<GetConfigureOfferList>(Arrays.asList(areaArr));
+			frList = new ArrayList<GetConfigureOfferList>(Arrays.asList(configArr));
 
 		} catch (Exception e) {
 			System.out.println("Execption in /getConfigFrList : " + e.getMessage());
@@ -635,7 +612,6 @@ public class OfferController {
 	@RequestMapping(value = "/saveOfferConfiguration", method = RequestMethod.POST)
 	public String saveOfferConfiguration(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			System.err.println("saveFrConfiguration--- ");
 
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
@@ -780,7 +756,7 @@ public class OfferController {
 	}
 
 	@RequestMapping(value = "/deleteFrOfferConfig", method = RequestMethod.GET)
-	public String deleteIngrediantCategory(HttpServletRequest request, HttpServletResponse response) {
+	public String deleteFrOfferConfig(HttpServletRequest request, HttpServletResponse response) {
 
 		HttpSession session = request.getSession();
 		try {
@@ -839,7 +815,6 @@ public class OfferController {
 			HttpServletResponse response) {
 
 		int selectId = Integer.parseInt(request.getParameter("selectId"));
-		System.err.println("selectId - " + selectId);
 
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("selectId", selectId);
@@ -920,18 +895,14 @@ public class OfferController {
 	public String ajaxImageUploadOffer(@PathVariable int offerId, HttpServletRequest request,
 			HttpServletResponse response, @RequestParam("files") List<MultipartFile> files) {
 
-		System.err.println("ajaxImageUploadOffer--- " + files.size());
 
 		try {
-			Date date = new Date();
-			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy ");
+		 
 
 			Info info = new Info();
 
 			String filesList = new String();
 
-			System.err.println("files" + files.toString());
 			if (offerId > 0) {
 				List<Images> imageList = new ArrayList<>();
 				
@@ -962,28 +933,23 @@ public class OfferController {
 
 						if (filesList.isEmpty()) {
 
-							System.err.println("empty");
 							filesList = fileName;
 						} else {
-							System.err.println("not empty" + filesList);
 
 							filesList = filesList.concat("," + fileName);
 
 						}
 
 					}
-					System.err.println("img list" + filesList);
 					
 					
 					if(res.getOfferImages().length()>0) {
 						
-						System.err.println("***********");
 
 						filesList=res.getOfferImages().concat(","+filesList);
 						
 					}
 					
-					System.err.println("img list" + filesList);
 				
 					if (info != null) {
 						if (!info.isError()) {

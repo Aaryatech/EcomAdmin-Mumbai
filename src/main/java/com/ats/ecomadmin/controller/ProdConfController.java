@@ -212,15 +212,12 @@ public class ProdConfController {
 				} else {
 
 				}
-				System.err.println("prod Id " + prodList.get(i).getProductId());
 
 				List<String> prodFlavIdList = Arrays.asList(prodList.get(i).getFlavourIds().split(",", -1));
 
-				System.err.println("prodFlavIdList " + prodFlavIdList.toString());
 
 				List<MFilter> flavList = getFlavList(prodFlavIdList);
 
-				System.err.println("flavList " + flavList.toString());
 
 				if (!flavList.isEmpty()) {
 
@@ -232,7 +229,6 @@ public class ProdConfController {
 
 							List<String> wtList = Arrays.asList(prodList.get(i).getAvailInWeights().split(",", -1));
 
-							System.err.println("Weight List " + wtList.toString());
 
 							for (int p = 0; p < flavList.size(); p++) {
 

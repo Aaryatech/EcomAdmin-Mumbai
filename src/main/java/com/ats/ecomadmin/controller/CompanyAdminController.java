@@ -141,7 +141,6 @@ public class CompanyAdminController {
 	public String insertNewCompany(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
 
-		System.err.println("hii");
 		Date date = new Date();
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -168,7 +167,6 @@ public class CompanyAdminController {
 
 				if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
-					System.err.println("In If ");
 
 					profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
 
@@ -178,7 +176,6 @@ public class CompanyAdminController {
 					}
 
 				} else {
-					System.err.println("In else ");
 					profileImage = request.getParameter("editImg");
 
 				}
@@ -642,7 +639,6 @@ public class CompanyAdminController {
 
 		try {
 
-			System.err.println("hii");
 			Date date = new Date();
 
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -655,7 +651,6 @@ public class CompanyAdminController {
 
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
-				System.err.println("In If ");
 
 				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
 
@@ -665,7 +660,6 @@ public class CompanyAdminController {
 				}
 
 			} else {
-				System.err.println("In else ");
 				profileImage = request.getParameter("editImg");
 
 			}
@@ -762,9 +756,8 @@ public class CompanyAdminController {
 		try {
 
 			HttpSession session = request.getSession();
-
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showAddCustomerAddress", "showCustomerAddressList", "0", "1", "0", "0",
+			Info view = AccessControll.checkAccess("showAddCustomer", "showCustomers", "0", "1", "0", "0",
 					newModuleList);
 
 			if (view.isError() == true) {
@@ -772,7 +765,6 @@ public class CompanyAdminController {
 				mav = "accessDenied";
 
 			} else {
-
 				mav = "masters/addCustAddress";
 				model.addAttribute("title", "Add Customer Address");
 
@@ -814,8 +806,7 @@ public class CompanyAdminController {
 			HttpSession session = request.getSession();
 
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showCustomerAddressList", "showCustomerAddressList", "1", "0", "0",
-					"0", newModuleList);
+			Info view = AccessControll.checkAccess("showCustomers", "showCustomers", "1", "0", "0", "0", newModuleList);
 
 			if (view.isError() == true) {
 
@@ -849,11 +840,11 @@ public class CompanyAdminController {
 				}
 				model.addAttribute("custAddList", userList);
 
-				Info add = AccessControll.checkAccess("showCustomerAddressList", "showCustomerAddressList", "0", "1",
+				Info add = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "1",
 						"0", "0", newModuleList);
-				Info edit = AccessControll.checkAccess("showCustomerAddressList", "showCustomerAddressList", "0", "0",
+				Info edit = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0",
 						"1", "0", newModuleList);
-				Info delete = AccessControll.checkAccess("showCustomerAddressList", "showCustomerAddressList", "0", "0",
+				Info delete = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0",
 						"0", "1", newModuleList);
 
 				if (add.isError() == false) { // System.out.println(" add Accessable ");
@@ -889,7 +880,6 @@ public class CompanyAdminController {
 		int cust_id = 0;
 		try {
 
-			System.err.println("hii");
 			Date date = new Date();
 
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -958,7 +948,6 @@ public class CompanyAdminController {
 			CustomerAddDetail res = Constants.getRestTemplate().postForObject(Constants.url + "saveCustomerDet",
 					custDet, CustomerAddDetail.class);
 
-			System.err.println(res.toString());
 			if (res.getCustDetailId() > 0) {
 				if (custDetailId == 0)
 					session.setAttribute("successMsg", "Customer Address Saved Sucessfully");
@@ -990,13 +979,14 @@ public class CompanyAdminController {
 		try {
 
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("deleteCustomer", "showCustomerAddressList", "0", "0", "0", "1",
+			Info view = AccessControll.checkAccess("deleteCustomer", "showCustomers", "0", "0", "0", "1",
 					newModuleList);
 			if (view.isError() == true) {
 
 				mav = "accessDenied";
 
 			} else {
+
 
 				String base64encodedString = request.getParameter("custDetailId");
 				String custDetailId = FormValidation.DecodeKey(base64encodedString);
@@ -1043,8 +1033,8 @@ public class CompanyAdminController {
 			HttpSession session = request.getSession();
 
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showEditCustomerAddress", "showCustomerAddressList", "0", "1", "0",
-					"0", newModuleList);
+			Info view = AccessControll.checkAccess("showEditCustomer", "showCustomers", "0", "0", "1", "0",
+					newModuleList);
 
 			if (view.isError() == true) {
 
@@ -1304,7 +1294,6 @@ public class CompanyAdminController {
 		int cust_id = 0;
 		try {
 			HttpSession session = request.getSession();
-			System.err.println("hii");
 			Date date = new Date();
 
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -1312,7 +1301,6 @@ public class CompanyAdminController {
 			String profileImage = new String();
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
-				System.err.println("In If ");
 
 				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
 
@@ -1322,7 +1310,6 @@ public class CompanyAdminController {
 				}
 
 			} else {
-				System.err.println("In else ");
 				profileImage = request.getParameter("editImg");
 
 			}
@@ -1365,7 +1352,6 @@ public class CompanyAdminController {
 			SubCategory res = Constants.getRestTemplate().postForObject(Constants.url + "saveSubCat", subcat,
 					SubCategory.class);
 
-			System.err.println(res.toString());
 			if (res.getSubCatId() > 0) {
 				if (subCatId == 0)
 					session.setAttribute("successMsg", "SubCategory Address Saved Sucessfully");
@@ -1470,7 +1456,6 @@ public class CompanyAdminController {
 				filterList = new ArrayList<MFilter>(Arrays.asList(filterArr));
 				model.addAttribute("filterList", filterList);
 
-				System.err.println("filterList" + filterList.toString());
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /newUom : " + e.getMessage());
@@ -1485,7 +1470,6 @@ public class CompanyAdminController {
 			@RequestParam("doc") MultipartFile doc) {
 		try {
 
-			System.err.println("hii");
 			Date date = new Date();
 			HttpSession session = request.getSession();
 
@@ -1497,7 +1481,6 @@ public class CompanyAdminController {
 			String profileImage = new String();
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
-				System.err.println("In If ");
 
 				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
 
@@ -1507,7 +1490,6 @@ public class CompanyAdminController {
 				}
 
 			} else {
-				System.err.println("In else ");
 				profileImage = request.getParameter("editImg");
 
 			}
@@ -1584,7 +1566,6 @@ public class CompanyAdminController {
 			BannerPage res = Constants.getRestTemplate().postForObject(Constants.url + "saveBanner", banner,
 					BannerPage.class);
 
-			System.err.println(res.toString());
 			if (res.getBannerId() > 0) {
 				if (bannerId == 0)
 					session.setAttribute("successMsg", "BannerPage   Saved Sucessfully");
@@ -2003,7 +1984,6 @@ public class CompanyAdminController {
 
 		try {
 
-			System.err.println("hii");
 
 			HttpSession session = request.getSession();
 
@@ -2055,10 +2035,8 @@ public class CompanyAdminController {
 			route.setExVar2("NA");
 			route.setExVar3("NA");
 
-			System.err.println(route.toString());
 			Route res = Constants.getRestTemplate().postForObject(Constants.url + "saveRoute", route, Route.class);
 
-			System.err.println(res.toString());
 			if (res.getRouteId() > 0) {
 				if (routeId == 0)
 					session.setAttribute("successMsg", "Route Saved Sucessfully");
@@ -2253,7 +2231,6 @@ public class CompanyAdminController {
 
 		try {
 
-			System.err.println("hii");
 
 			HttpSession session = request.getSession();
 
@@ -2285,11 +2262,9 @@ public class CompanyAdminController {
 			route.setExVar2("NA");
 			route.setExVar3("NA");
 
-			System.err.println(route.toString());
 			RouteType res = Constants.getRestTemplate().postForObject(Constants.url + "saveRouteType", route,
 					RouteType.class);
 
-			System.err.println(res.toString());
 			if (res.getRouteTypeId() > 0) {
 				if (routeTypeId == 0)
 					session.setAttribute("successMsg", "Route Type Saved Sucessfully");
@@ -2486,7 +2461,6 @@ public class CompanyAdminController {
 
 		try {
 
-			System.err.println("hii");
 
 			HttpSession session = request.getSession();
 
@@ -2519,11 +2493,9 @@ public class CompanyAdminController {
 			route.setExVar2("NA");
 			route.setExVar3("NA");
 
-			System.err.println(route.toString());
 			RouteDelivery res = Constants.getRestTemplate().postForObject(Constants.url + "saveRouteDelivery", route,
 					RouteDelivery.class);
 
-			System.err.println(res.toString());
 			if (res.getRouidDelveryId() > 0) {
 				if (rouidDelveryId == 0)
 					session.setAttribute("successMsg", "Route Delivery Saved Sucessfully");

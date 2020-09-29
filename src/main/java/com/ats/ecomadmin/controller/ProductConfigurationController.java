@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.annotation.SessionScope;
 
 import com.ats.ecomadmin.commons.AccessControll;
+import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.CategoryProduct;
@@ -62,7 +63,6 @@ public class ProductConfigurationController {
 
 				mav = "product/addRelProConfig";
 				int compId = (int) session.getAttribute("companyId");
-				System.err.println("compId**********" + compId);
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 				CategoryProduct[] userArr = Constants.getRestTemplate()
@@ -70,7 +70,6 @@ public class ProductConfigurationController {
 				catProList = new ArrayList<CategoryProduct>(Arrays.asList(userArr));
 				model.addAttribute("catProList", catProList);
 
-				System.err.println("**********" + catProList.toString());
 
 				map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
@@ -122,9 +121,9 @@ public class ProductConfigurationController {
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("catId", catId);
-			ProductMaster[] userArr1 = Constants.getRestTemplate().postForObject(Constants.url + "getAllProductByCatId",
+			ProductMaster[] prodArr1 = Constants.getRestTemplate().postForObject(Constants.url + "getAllProductByCatId",
 					map, ProductMaster[].class);
-			productList = new ArrayList<ProductMaster>(Arrays.asList(userArr1));
+			productList = new ArrayList<ProductMaster>(Arrays.asList(prodArr1));
 
 			for (int i = 0; i < productList.size(); i++) {
 				list.add(productList.get(i).getProductId());
@@ -164,80 +163,92 @@ public class ProductConfigurationController {
 	public String submitReletedProductCofig(HttpServletRequest request, HttpServletResponse response) {
 
 		HttpSession session = request.getSession();
-		try {
-			Date date = new Date();
 
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			String curDateTime = dateFormat.format(cal.getTime());
-			String profileImage = null;
-			User userObj = (User) session.getAttribute("userObj");
+		Date date = new Date();
+		String mav = null;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		String curDateTime = dateFormat.format(cal.getTime());
+		String profileImage = null;
+		User userObj = (User) session.getAttribute("userObj");
+		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+		Info view1 = AccessControll.checkAccess("showAddRelProConfg", "showRelProConfgList", "0", "1", "0", "0",
+				newModuleList);
 
-			int relItem = Integer.parseInt(request.getParameter("product_id"));
-			int configId = Integer.parseInt(request.getParameter("configId"));
-			RelatedProductConfig config = new RelatedProductConfig();
+		if (view1.isError() == true) {
 
-			String productIds = new String();
+			mav = "accessDenied";
 
-			for (int i = 0; i < catProList.size(); i++) {
+		} else {
+			
+			
+			mav = "redirect:/showRelProConfgList";
+			try {
+				int relItem = Integer.parseInt(request.getParameter("product_id"));
+				int configId = Integer.parseInt(request.getParameter("configId"));
+				RelatedProductConfig config = new RelatedProductConfig();
 
-				int isPresent = 0;
+				String productIds = new String();
 
-				List<ProductMaster> productList = catProList.get(i).getProductList();
+				for (int i = 0; i < catProList.size(); i++) {
 
-				for (int j = 0; j < productList.size(); j++) {
+					int isPresent = 0;
 
-					String view = request.getParameter(
-							productList.get(j).getProductId() + "view" + productList.get(j).getProdCatId());
+					List<ProductMaster> productList = catProList.get(i).getProductList();
 
-					System.out.println("view " + view);
-					try {
-						if (view.equals("1")) {
-							isPresent = 1;
+					for (int j = 0; j < productList.size(); j++) {
 
-							if (productIds.length() == 0) {
-								productIds = String.valueOf(productList.get(j).getProductId());
+						String view = request.getParameter(
+								productList.get(j).getProductId() + "view" + productList.get(j).getProdCatId());
 
-							} else {
-								productIds = productIds + "," + productList.get(j).getProductId();
+						System.out.println("view " + view);
+						try {
+							if (view.equals("1")) {
+								isPresent = 1;
 
+								if (productIds.length() == 0) {
+									productIds = String.valueOf(productList.get(j).getProductId());
+
+								} else {
+									productIds = productIds + "," + productList.get(j).getProductId();
+
+								}
 							}
+						} catch (Exception e) {
+
 						}
-					} catch (Exception e) {
 
 					}
-
 				}
+				config.setRelatedProductId(configId);
+				config.setPrimaryItemId(relItem);
+				config.setSecondaryItemId(productIds);
+				config.setIsActive(1);
+				config.setDelStatus(1);
+				config.setExInt1(0);
+				config.setExInt2(0);
+				config.setExInt3(0);
+				config.setExVar1("NA");
+				config.setExVar2("NA");
+				config.setExVar3("NA");
+				config.setInsertDttime(curDateTime);
+				config.setUpdtDttime(curDateTime);
+				config.setMakerUserId(userObj.getUserId());
+
+				RelatedProductConfig info = Constants.getRestTemplate()
+						.postForObject(Constants.url + "saveRelatedProductConfig", config, RelatedProductConfig.class);
+
+				if (info.getRelatedProductId() > 0) {
+					session.setAttribute("successMsg", "Saved Successfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Save");
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			config.setRelatedProductId(configId);
-			config.setPrimaryItemId(relItem);
-			config.setSecondaryItemId(productIds);
-			config.setIsActive(1);
-			config.setDelStatus(1);
-			config.setExInt1(0);
-			config.setExInt2(0);
-			config.setExInt3(0);
-			config.setExVar1("NA");
-			config.setExVar2("NA");
-			config.setExVar3("NA");
-			config.setInsertDttime(curDateTime);
-			config.setUpdtDttime(curDateTime);
-			config.setMakerUserId(userObj.getUserId());
-
-			RelatedProductConfig info = Constants.getRestTemplate()
-					.postForObject(Constants.url + "saveRelatedProductConfig", config, RelatedProductConfig.class);
-
-			if (info.getRelatedProductId() > 0) {
-				session.setAttribute("successMsg", "Saved Successfully");
-			} else {
-				session.setAttribute("errorMsg", "Failed to Save");
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-
-		return "redirect:/showRelProConfgList";
+		return mav;
 	}
 
 	@RequestMapping(value = "/showRelProConfgList", method = RequestMethod.GET)
@@ -275,7 +286,6 @@ public class ProductConfigurationController {
 				}
 				model.addAttribute("configList", catProList);
 
-				System.err.println("catProList" + catProList.toString());
 
 				Info add = AccessControll.checkAccess("showRelProConfgList", "showRelProConfgList", "0", "1", "0", "0",
 						newModuleList);
@@ -315,7 +325,8 @@ public class ProductConfigurationController {
 		try {
 
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("deleteProductConfig", "showRelProConfgList", "0", "0", "0", "1", newModuleList);
+			Info view = AccessControll.checkAccess("deleteProductConfig", "showRelProConfgList", "0", "0", "0", "1",
+					newModuleList);
 			if (view.isError() == true) {
 
 				mav = "accessDenied";
@@ -325,9 +336,13 @@ public class ProductConfigurationController {
 				mav = "redirect:/showRelProConfgList";
 				String base64encodedString = request.getParameter("configId");
 				String configId = FormValidation.DecodeKey(base64encodedString);
+				User userObj = (User) session.getAttribute("userObj");
+				String dateTime = CommonUtility.getCurrentYMDDateTime();
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("relatedProductId", Integer.parseInt(configId));
+				map.add("userId", userObj.getUserId());
+				map.add("dateTime", dateTime);
 
 				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteProdConfig", map,
 						Info.class);

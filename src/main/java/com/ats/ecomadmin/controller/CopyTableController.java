@@ -55,12 +55,10 @@ public class CopyTableController {
 		CompMaster userObj = (CompMaster) session.getAttribute("company");
 		String tblName = null;
 
-		System.err.println("****" + userObj.getParentCompId());
 
 		if (userObj.getParentCompId() > 0) {
 			try {
 
-				System.err.println("****" + userObj.getParentCompId());
 				List<GetTableFields> tblList1 = new ArrayList<>();
 				List<String> fieldList = new ArrayList<>();
 
@@ -86,11 +84,10 @@ public class CopyTableController {
 
 					map.add("tbl_name", tblName);
 
-					GetTableFields[] tblArr = Constants.getRestTemplate().postForObject(Constants.url + "getTableData",
+					GetTableFields[] tblFieldrr = Constants.getRestTemplate().postForObject(Constants.url + "getTableData",
 							map, GetTableFields[].class);
-					tblList1 = new ArrayList<GetTableFields>(Arrays.asList(tblArr));
+					tblList1 = new ArrayList<GetTableFields>(Arrays.asList(tblFieldrr));
 
-					System.err.println("tblName" + tblName);
 
 					map = new LinkedMultiValueMap<>();
 					map.add("tbl_name", tblName);
@@ -100,7 +97,6 @@ public class CopyTableController {
 					fieldList = new ArrayList<String>(Arrays.asList(fieldArr));
 					fieldList.remove(0);
 
-					System.err.println("datalist" + tblList1.toString());
 
 				}
 				model.addAttribute("datalist", tblList1);
@@ -113,7 +109,6 @@ public class CopyTableController {
 				e.printStackTrace();
 			}
 		} else {
-			System.err.println("else****");
 			session.setAttribute("errMsg", "Copy Table Functionality Not Applicable For Parent Company");
 		}
 		}
@@ -127,13 +122,25 @@ public class CopyTableController {
 		String curDateTime = CommonUtility.getCurrentYMDDateTime();
 		User userObj = (User) session.getAttribute("userObj");
 		String tblName=null;
+		String mav = new String();
+		
+		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+		Info view = AccessControll.checkAccess("showCopyTable", "showCopyTable", "1", "0", "0", "0", newModuleList);
+
+		if (view.isError() == true) {
+
+			mav = "accessDenied";
+
+		} else {
 		try {
 			  tblName = request.getParameter("tblName");
+			  
+			  
+			  mav="redirect:/showCopyTable?tableId="+tblName;
 			StringBuilder sb = new StringBuilder();
 			int compId = (int) session.getAttribute("companyId");
 			String[] primId = request.getParameterValues("primId");
 
-			System.err.println("22" + request.getParameterValues("primId"));
 
 			for (int i = 0; i < primId.length; i++) {
 				sb = sb.append(primId[i] + ",");
@@ -142,7 +149,6 @@ public class CopyTableController {
 			String items = sb.toString();
 
 			items = items.substring(0, items.length() - 1);
-			System.err.println("hii" + items);
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 
 			map.add("tbl_name", tblName);
@@ -161,8 +167,8 @@ public class CopyTableController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return "redirect:/showCopyTable?tableId="+tblName;
+		}
+		return mav;
 
 	}
 
