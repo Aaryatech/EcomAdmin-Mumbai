@@ -64,6 +64,12 @@
 					class="nav-link active" onclick="selectSubMod(0,0)"> <i
 						class="icon-home4"></i> <span> Dashboard </span>
 				</a></li>
+				
+				<li class="nav-item"><a
+					href="${pageContext.request.contextPath}/orderDashboard"
+					class="nav-link active" onclick="selectSubMod(0,0)"> <i
+						class="icon-home4"></i> <span> Order Dashboard </span>
+				</a></li>
 
 				<%-- <li class="nav-item nav-item-submenu"><a href="#"
 					class="nav-link"><i class="icon-list-unordered"></i><span>Master</span></a>
