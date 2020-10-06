@@ -324,7 +324,7 @@
 						<thead>
 							<tr>
 								<th>Items Name</th>
-								<th>Special Note</th>
+								<th>Product Image</th>
 								<th>Rate</th>
 								<th>Quantity</th>
 								<th>Total</th>
@@ -614,7 +614,8 @@
 
 		function getOrderDetail(orderId) {
 			$('#order_dtl_table td').remove();
-
+			
+			var imgPath = $("#imgPath").val();
 			if (orderId > 0) {
 
 				$
@@ -708,25 +709,25 @@
 											$
 													.each(
 															data[i].orderDetailList,
-															function(key, itm) {
-
-																var itemName = '<a href="javascript:void(0)" class="list-icons-item text-primary-600" data-popup="tooltip" title="" data-original-title="Order Detail" onclick="getItemImages(\''
-																		+ itm.itemId
-																		+ '\')">'
-																		+ itm.itemName
-																		+ '</a>'
+															function(key, itm) {			
+																
+																var itemPic = '<a href="javascript:void(0)" class="list-icons-item text-primary-600" data-popup="tooltip" title="" data-original-title="Show Images" onclick="getItemImages(\''
+																	+ itm.itemId
+																	+ '\')"><img src="'+imgPath+itm.itemPic+'"  width="50" height="50" alt="Product Image">'
+																	+ '</a>';
+																		
+																		
 																var tr = $('<tr style="background:##03a9f4;"></tr>');
 
 																tr
 																		.append($(
 																				'<td  style="padding: 12px; line-height:0; border-top: 1px solid #ddd;"></td>')
 																				.html(
-																						itemName));
+																						itm.itemName));
 																tr
 																		.append($(
 																				'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
-																				.html(
-																						""));
+																				.html(itemPic));
 
 																tr
 																		.append($(
@@ -829,6 +830,7 @@
 				}, function(data) {
 					if (!data.error) {
 					//	alert("Images---" + JSON.stringify(data.msg));
+					//'+imgPath+itemImage+'
 						$('#modal_large2').modal('toggle');
 						var imgTag = "";
 						
