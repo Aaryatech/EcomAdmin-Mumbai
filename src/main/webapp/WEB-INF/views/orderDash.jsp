@@ -36,6 +36,7 @@
 <body class="sidebar-xs">
 	
 	<c:url value="/getOrderListByStatus" var="getOrderListByStatus"/>
+	<c:url value="/getOrderDashDetailByBillId" var="getOrderDashDetailByBillId"/>
 	
 	<script type="text/javascript"
 		src="https://www.gstatic.com/charts/loader.js"></script>
@@ -179,10 +180,6 @@
 					</c:if>
 					</c:forEach>
 					</div>
-					
-					<input type="hidden" value="${fromDate}" name="fromDate" id="fromDate">
-					<input type="hidden" value="${toDate}" name="toDate" id="toDate">
-				
 					<div id="orderTab_div" style="display: none;">
 						<div class="row">
 							<div class="col-lg-12">
@@ -199,6 +196,7 @@
 												<th>Order Status</th>
 												<th>Payment Mode</th>
 												<th>Total</th>
+												<th>Action</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -211,8 +209,9 @@
 		
 				
 				<div class="row align_cen">
-					<input type="hidden" id="frm_date">
-					<input type="hidden" id="to_date">
+					<input type="hidden" value="${imagePath}" id="imgPath">
+					<input type="hidden" value="${fromDate}" name="fromDate" id="fromDate">
+					<input type="hidden" value="${toDate}" name="toDate" id="toDate">
 				</div>
 
 				<!-- 4 button row -->
@@ -241,7 +240,228 @@
 		<!-- /main content -->
 	</div>
 	<!-- -------------------------------------------------------------------------------------------------------------------- -->
+<!-- Large modal -->
+	<div id="modal_large" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Order Details</h5>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
 
+				<div class="modal-body">
+
+					<!-- <div class="form-group row">
+						<label class="col-form-label font-weight-bold col-lg-10"
+							for="cust_name"><h4>Tag Name:&nbsp; &nbsp; <span id="tag_name"></span></h4> </label>
+						<div class="col-lg-4">
+											<h3>Tag1</h3>
+										</div>
+					</div> -->
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group row">
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Order No<span class="text-danger">
+								</span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="orderNo">
+								</div>
+
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Customer Name <span class="text-danger"></span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="custName">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Shop Name<span class="text-danger">
+								</span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="frName">
+								</div>
+
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Order Status<span class="text-danger"></span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="orderStatus">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Date & Time<span class="text-danger">
+								</span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="dateTime">
+								</div>
+
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Payment Status<span class="text-danger"></span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="pamentStat">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Order Type<span class="text-danger">
+								</span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="orderType">
+								</div>
+
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Payment Method<span class="text-danger"></span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="payMode">
+								</div>
+							</div>
+							<div class="form-group row">
+								<div style="display: none;">
+									<label class="col-form-label font-weight-bold col-lg-2"
+										for="cust_name">Order Type<span class="text-danger">
+									</span>:
+									</label>
+									<div class="col-lg-4">
+										<input type="text" class="form-control" readonly="readonly"
+											id="frName">
+									</div>
+								</div>
+
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Total<span class="text-danger"></span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="ttlAmt">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<table class="table" id="order_dtl_table">
+						<thead>
+							<tr>
+								<th>Items Name</th>
+								<th>Product Image</th>
+								<th>Rate</th>
+								<th>Quantity</th>
+								<th>Total</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+
+					<div class="row">
+						<div class="col-md-12">
+
+							<div class="form-group row">
+								<div class="col-lg-6"></div>
+
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Item Total <span class="text-danger"></span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="taxableAmt" style="text-align: right;">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<div class="col-lg-6"></div>
+
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Tax <span class="text-danger"></span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="taxAmt" style="text-align: right;">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<div class="col-lg-6"></div>
+
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Offer Discount <span
+									class="text-danger"></span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="discAmt" style="text-align: right;">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<div class="col-lg-6"></div>
+
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Delivery Charges <span
+									class="text-danger"></span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="deliveryCharges"
+										style="text-align: right; border-bottom: solid;">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<div class="col-lg-6"></div>
+
+								<label class="col-form-label font-weight-bold col-lg-2"
+									for="cust_name">Total <span class="text-danger"></span>:
+								</label>
+								<div class="col-lg-4">
+									<input type="text" class="form-control" readonly="readonly"
+										id="totalOrderAmt"
+										style="text-align: right; border-bottom: none;">
+								</div>
+							</div>
+						</div>
+					</div>
+					<table class="table" id="order_trail_table">
+						<thead>
+							<tr>
+								<th>Status</th>
+								<th>Action By</th>
+								<th>Date Time</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+					<!-- <button type="button" class="btn bg-primary">Save changes</button> -->
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /large modal -->
 
 
 	<script>	
@@ -276,9 +496,9 @@
 													var orderStatus = null;
 													var paymentMode = null;
 
-												/* 	var str = '<a href="javascript:void(0)" class="list-icons-item text-primary-600" data-popup="tooltip" title="" data-original-title="Order Detail" onclick="getOrderDetal('
-															+ order.orderId
-															+ ')"><i class="fa fa-list"></i></a>' */
+													var acStr = '<a href="javascript:void(0)" class="list-icons-item text-primary-600" data-popup="tooltip" title="" data-original-title="Order Detail" onclick="getOrderDetail('
+														+ order.orderId
+														+ ')"><i class="fa fa-list"></i></a>'
 
 													if (order.paymentMethod == 1) {
 														paymentMode = "Cash";
@@ -360,6 +580,12 @@
 																	'<td style=""></td>')
 																	.html(
 																			order.totalAmt));
+													
+													tr
+													.append($(
+															'<td style=""></td>')
+															.html(acStr));
+													
 
 													$('#order_table tbody')
 															.append(tr);
@@ -390,159 +616,157 @@
 				document.getElementById("dateDiv").style.display = "none";
 			}
 		} 
-	</script>
+</script>
 
-	<script type="text/javascript">
-		function getOrderDetal(orderId, para1) {
-			var fromDate = delDate;
-			var toDate = delDate;
-			var statusList = status;
+<script>
 
-			document.getElementById("orderNoShow").innerHTML = null;
-			document.getElementById("custName").innerHTML = null;
-			document.getElementById("frName").innerHTML = null;
-			document.getElementById("orderStatus").innerHTML = null;
-			document.getElementById("pamentStat").innerHTML = null;
-			document.getElementById("delDateTime").innerHTML = null;
-			document.getElementById("orderTypeShow").innerHTML = null;
-			document.getElementById("payMode").innerHTML = null;
-			document.getElementById("ttlAmt").innerHTML = null;
+function getOrderDetail(orderId) {
+	$('#order_dtl_table td').remove();	
+	
+	var imgPath = $("#imgPath").val();
+	if (orderId > 0) {
 
-			document.getElementById("taxableAmt").innerHTML = null;
-			document.getElementById("taxAmt").innerHTML = null;
-			document.getElementById("discAmt").innerHTML = null;
-			document.getElementById("deliveryCharges").innerHTML = null;
-			document.getElementById("totalOrderAmt").innerHTML = null;
+		$
+				.getJSON(
+						'${getOrderDashDetailByBillId}',
+						{
 
-			$('#order_dtl_table td').remove();
-			$('#order_trail_table td').remove();
+							ajax : 'true'
 
-			if (orderId > 0) {
+						},
+						function(data) {
 
-				$('#billPopup').popup('show')
-				$
-						.getJSON(
-								'${getOrderDataByOrderId}',
-								{
-									orderId : orderId,
-									ajax : 'true'
+							$('#modal_large').modal('toggle');
+							for (var i = 0; i < data.length; i++) {
 
-								},
-								function(data) {
-
-									var orderStats = null;
-									var payMode = null;
+								if (data[i].orderId == orderId) {
+									var status = null;
+									var paymentMode = null;
 									var pamentStatus = null;
 									var orderType = null;
 									var trailStatus = null;
 
-									if (data[0].orderStatus == 0) {
-										orderStats = "Park Orde";
-									} else if (data[0].orderStatus == 1) {
-										orderStats = "Shop Confirmation Pending";
-									} else if (data[0].orderStatus == 2) {
-										orderStats = "Accept";
-									} else if (data[0].orderStatus == 3) {
-										orderStats = "Processing";
-									} else if (data[0].orderStatus == 4) {
-										orderStats = "Delivery Pending";
-									} else if (data[0].orderStatus == 5) {
-										orderStats = "Delivered";
-									} else if (data[0].orderStatus == 6) {
-										orderStats = "Rejected by Shop";
-									} else if (data[0].orderStatus == 7) {
-										orderStats = "Return Order";
-									} else if (data[0].orderStatus == 8) {
-										orderStats = "Cancelled Order";
+									if (data[i].orderStatus == 0) {
+										status = "Park Order";
+									} else if (data[i].orderStatus == 1) {
+										status = "Shop Confirmation Pending";
+									} else if (data[i].orderStatus == 2) {
+										status = "Accept";
+									} else if (data[i].orderStatus == 3) {
+										status = "Processing";
+									} else if (data[i].orderStatus == 4) {
+										status = "Delivery Pending";
+									} else if (data[i].orderStatus == 5) {
+										status = "Delivered";
+									} else if (data[i].orderStatus == 6) {
+										status = "Rejected by Shop";
+									} else if (data[i].orderStatus == 7) {
+										status = "Return Order";
+									} else if (data[i].orderStatus == 8) {
+										status = "Cancelled Order";
 									}
 
-									if (data[0].paymentMethod == 1) {
-										payMode = "Cash";
-									} else if (data[0].paymentMethod == 2) {
-										payMode = "Card";
+									if (data[i].paymentMethod == 1) {
+										paymentMode = "Cash";
+									} else if (data[i].paymentMethod == 2) {
+										paymentMode = "Card";
+									} else if (data[i].paymentMethod == 3) {
+										paymentMode = "E-Pay";
 									} else {
-										payMode = "E-Pay";
+										paymentMode = "";
 									}
 
-									if (data[0].orderPlatform == 1) {
+									if (data[i].orderPlatform == 1) {
 										orderType = "Executive";
-									} else if (data[0].orderPlatform == 2) {
+									} else if (data[i].orderPlatform == 2) {
 										orderType = "Mobile App";
 									} else {
 										orderType = "Web Site";
 									}
 
-									if (data[0].paidStatus == 0) {
+									if (data[i].paidStatus == 0) {
 										pamentStatus = "Pending";
 									} else {
 										pamentStatus = "Paid";
 									}
 
-									document.getElementById("orderNoShow").innerHTML = data[0].orderNo;
-									document.getElementById("custName").innerHTML = data[0].custName;
-									document.getElementById("frName").innerHTML = data[0].frName;
-									document.getElementById("orderStatus").innerHTML = orderStats;
-									document.getElementById("pamentStat").innerHTML = pamentStatus;
-									document.getElementById("delDateTime").innerHTML = data[0].deliveryDateDisplay
-											+ " " + data[0].deliveryTimeDisplay;
-									document.getElementById("orderTypeShow").innerHTML = orderType;
-									document.getElementById("payMode").innerHTML = payMode;
-									document.getElementById("ttlAmt").innerHTML = data[0].totalAmt;
+									document.getElementById("orderNo").value = data[i].orderNo;
+									document.getElementById("custName").value = data[i].custName+"-"+data[i].custMobile;
+									document.getElementById("frName").value = data[i].frName;
+									document
+											.getElementById("orderStatus").value = status;
+									document
+											.getElementById("pamentStat").value = pamentStatus;
+									document.getElementById("dateTime").value = data[i].deliveryDateDisplay
+											+ " "
+											+ data[i].deliveryTimeDisplay;
+									document
+											.getElementById("orderType").value = orderType;
+									document.getElementById("payMode").value = paymentMode;
+									document.getElementById("ttlAmt").value = data[i].totalAmt;
+
+									document
+											.getElementById("taxableAmt").value = data[i].taxableAmt;
+									document.getElementById("taxAmt").value = data[i].igstAmt;
+									document.getElementById("discAmt").value = data[i].discAmt;
+									document
+											.getElementById("deliveryCharges").value = data[i].deliveryCharges;
+									document
+											.getElementById("totalOrderAmt").value = data[i].totalAmt;
 
 									$
 											.each(
-													data[0].orderDetailList,
-													function(key, itm) {
-
+													data[i].orderDetailList,
+													function(key, itm) {			
+														
+														var itemPic = '<img src="'+imgPath+itm.itemPic+'"  width="50" height="50" alt="Product Image">';
+																
+																
 														var tr = $('<tr style="background:##03a9f4;"></tr>');
 
 														tr
 																.append($(
-																		'<td  style="padding: 12px; line-height:0; border-top: 1px solid #ddd; text-align: left;"></td>')
+																		'<td  style="padding: 12px; line-height:0; border-top: 1px solid #ddd;"></td>')
 																		.html(
 																				itm.itemName));
 														tr
 																.append($(
-																		'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd; text-align: left;"></td>')
-																		.html(
-																				""));
+																		'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
+																		.html(itemPic));
 
 														tr
 																.append($(
-																		'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd; text-align: right;"></td>')
+																		'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
 																		.html(
 																				itm.mrp));
 
 														tr
 																.append($(
-																		'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd; text-align: right;"></td>')
+																		'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
 																		.html(
 																				itm.qty));
 
 														tr
 																.append($(
-																		'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd; text-align: right;"></td>')
+																		'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
 																		.html(
 																				itm.mrp
 																						* itm.qty));
 
 														$(
 																'#order_dtl_table tbody')
-																.append(tr);
+																.append(
+																		tr);
 
 													});
 
 									//***************************************Trail Table*****************************************//
-									document.getElementById("taxableAmt").innerHTML = data[0].taxableAmt;
-									document.getElementById("taxAmt").innerHTML = data[0].igstAmt;
-									document.getElementById("discAmt").innerHTML = data[0].discAmt;
-									document.getElementById("deliveryCharges").innerHTML = data[0].deliveryCharges;
-									document.getElementById("totalOrderAmt").innerHTML = data[0].totalAmt;
+
 									$('#order_trail_table td').remove();
 
 									$
 											.each(
-													data[0].orderTrailList,
+													data[i].orderTrailList,
 													function(key, trail) {
 
 														if (trail.status == 0) {
@@ -555,7 +779,7 @@
 															trailStatus = "Processing";
 														} else if (trail.status == 4) {
 															trailStatus = "Delivery Pending";
-														} else if (data.orderStatus == 5) {
+														} else if (trail.status == 5) {
 															trailStatus = "Delivered";
 														} else if (trail.status == 6) {
 															trailStatus = "Rejected by Shop";
@@ -569,288 +793,39 @@
 
 														tr
 																.append($(
-																		'<td  style="padding: 12px; line-height:0; border-top: 1px solid #ddd; text-align: left;"></td>')
+																		'<td  style="padding: 12px; line-height:0; border-top: 1px solid #ddd;"></td>')
 																		.html(
 																				trailStatus));
 														tr
 																.append($(
-																		'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd; text-align: left;"></td>')
+																		'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
 																		.html(
 																				trail.userName));
 
 														tr
 																.append($(
-																		'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd; text-align: center;"></td>')
+																		'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
 																		.html(
 																				trail.trailDate));
 
 														$(
 																'#order_trail_table tbody')
-																.append(tr);
+																.append(
+																		tr);
 
 													});
 
-								});
-			}
+									break;
+
+								}
+							}
+
+						});
+	}
 }
-		
-function getFrOrderDetail(frId, statusVal, fromDate, toDate){
-			
-		$('#fr_dtl_table td').remove();	
-			
-			if (frId > 0) {
+</script>
 
-				
-				$
-						.getJSON(
-								'${getOrderDataByFrId}',
-								{
-									frId : frId,
-									statusVal : statusVal,
-									fromDate: fromDate, 
-									toDate : toDate,
-									ajax : 'true'
-
-								},
-								function(data) {
-									var orderStat = null;
-									var payMode = null;
-									var pamentStatus = null;
-									var orderType = null;
-									var ttlAmt = 0;
-									
-						
-								document.getElementById("frdtl").innerHTML = data[0].frName;
-								document.getElementById("frTab_div").style.display = "block";
-
-									$
-											.each(
-													data,
-													function(key, itm) {
-														
-														if (itm.orderStatus == 0) {
-															orderStat = "Park Orde";
-														} else if (itm.orderStatus == 1) {
-															orderStat = "Shop Confirmation Pending";
-														} else if (itm.orderStatus == 2) {
-															orderStat = "Accept";
-														} else if (itm.orderStatus == 3) {
-															orderStat = "Processing";
-														} else if (itm.orderStatus == 4) {
-															orderStat = "Delivery Pending";
-														} else if (itm.orderStatus == 5) {
-															orderStat = "Delivered";
-														} else if (itm.orderStatus == 6) {
-															orderStat = "Rejected by Shop";
-														} else if (itm.orderStatus == 7) {
-															orderStat = "Return Order";
-														} else if (itm.orderStatus == 8) {
-															orderStat = "Cancelled Order";
-														}
-
-														if (itm.paymentMethod == 1) {
-															payMode = "Cash";
-														} else if (itm.paymentMethod == 2) {
-															payMode = "Card";
-														} else {
-															payMode = "E-Pay";
-														}
-
-														if (itm.orderPlatform == 1) {
-															orderType = "Executive";
-														} else if (itm.orderPlatform == 2) {
-															orderType = "Mobile App";
-														} else {
-															orderType = "Web Site";
-														}
-
-														if (itm.paidStatus == 0) {
-															pamentStatus = "Pending";
-														} else {
-															pamentStatus = "Paid";
-														}
-
-														var tr = $('<tr style="background:##03a9f4;"></tr>');
-
-														tr
-																.append($(
-																		'<td></td>')
-																		.html(
-																				key+1));
-														tr
-																.append($(
-																		'<td></td>')
-																		.html(
-																				itm.orderNo));
-														tr
-																.append($(
-																		'<td></td>')
-																		.html(
-																		itm.deliveryDateDisplay+" "+itm.deliveryTimeDisplay));
-														
-
-														tr
-																.append($(
-																		'<td></td>')
-																		.html(
-																				itm.custName));
-
-														tr
-																.append($(
-																		'<td></td>')
-																		.html(orderStat));
-														
-														 tr
-																.append($(
-																		'<td></td>')
-																		.html(orderType));
-														
-														tr
-																.append($(
-																		'<td></td>')
-																		.html(payMode));
-														
-															ttlAmt = ttlAmt+itm.totalAmt;
-														tr
-																.append($(
-																		'<td></td>')
-																		.html(
-																		itm.totalAmt)); 
-														
-														$( '#fr_dtl_table tbody')
-																.append(tr);
-
-													});
-									
-									
-										var tr = "<tr>";
-	                                    var td1 = "<td colspan='7'>&nbsp;&nbsp;&nbsp;<b> Total</b></td>";
-	                                    var td2 = "<td><b><b>"
-	                                            + addCommas((ttlAmt).toFixed(2));
-	                                    +"</b></td>";   
-	                                    var trclosed = "</tr>";
-	                                    
-	                                    $('#fr_dtl_table tbody').append(tr);
-										$('#fr_dtl_table tbody').append(td1);
-										$('#fr_dtl_table tbody').append(td2);
-										$('#fr_dtl_table tbody').append(trclosed);  
-								});
-				}
-	}
-		
-function getGrievanceDetail(grivStatus){
-	
-	var fromDate = $("#frm_date").val();
-	var toDate = $("#to_date").val();
-	var radioValue = $("input[name='calRadio']:checked").val();	
-	
-	if(grivStatus>0){
-		$('#griev_table td').remove();	
-		$
-		.getJSON(
-				'${getGrievanceData}',
-				{
-				
-					grivStatus : grivStatus,
-					fromDate: fromDate, 
-					toDate : toDate,
-					radioValue : radioValue,
-					ajax : 'true'
-
-				},
-				function(data) {
-					
-					var ttlAmt = 0;
-					var curStatus = null;
-					var isSet = null;
-					
-				document.getElementById("grievTab_div").style.display = "block";
-				
-					$
-							.each(
-									data,
-									function(key, itm) {
-										
-										if(itm.currentStatus==0){
-											curStatus = 'Pending';
-										}else if(itm.currentStatus==1){
-											curStatus = 'Resolved';
-										}else{
-											curStatus = 'Damaged';
-										}
-										
-										if(itm.isSet==1){
-											isSet='Yes';
-										}else{
-											isSet='No';											
-										}
-
-										var tr = $('<tr style="background:##03a9f4;"></tr>');
-
-										tr
-												.append($(
-														'<td></td>')
-														.html(key+1));
-										tr
-												.append($(
-														'<td></td>')
-														.html(itm.grievencceNo));
-										tr
-												.append($(
-														'<td></td>')
-														.html(itm.date));
-										
-
-										tr
-												.append($(
-														'<td></td>')
-														.html(itm.custName));
-
-										tr
-												.append($(
-														'<td></td>')
-														.html(itm.orderNo));										
-										 
-										
-										tr
-												.append($(
-														'<td></td>')
-														.html(isSet));
-										
-											
-										tr
-												.append($(
-														'<td></td>')
-														.html(curStatus)); 
-										
-									 ttlAmt = ttlAmt+itm.orderAmt; 
-											
-										tr
-										.append($(
-												'<td></td>')
-												.html(itm.orderAmt));
-										
-										$( '#griev_table tbody')
-												.append(tr);
-
-									});
-					
-					
-						 var tr = "<tr>";
-                        var td1 = "<td colspan='7'>&nbsp;&nbsp;&nbsp;<b> Total</b></td>";
-                        var td2 = "<td><b><b>"
-                                + addCommas((ttlAmt).toFixed(2));
-                        +"</b></td>";   
-                        var trclosed = "</tr>";
-                        
-                        $('#griev_table tbody').append(tr);
-						$('#griev_table tbody').append(td1);
-						$('#griev_table tbody').append(td2);
-						$('#griev_table tbody').append(trclosed);   
-				});
-	}
-}		
-		
+<script type="text/javascript">
 function addCommas(x) {
 
 	x = String(x).toString();
@@ -868,291 +843,7 @@ function addCommas(x) {
 }
 	</script>
 	
-<script>
-function getGrievBarDate(){
-	var  grievTypeId= $("#grivancId").val();
-	var radioValue = $("input[name='calRadio']:checked").val();	
-	var fromDate = $("#frm_date").val();
-	var toDate = $("#to_date").val();
-	
-	$
-	.getJSON(
-			'${getGrievanceAjaxData}',
-			{				
-				grievTypeId : JSON.stringify(grievTypeId),
-				fromDate : fromDate,
-				toDate : toDate,
-				radioValue : radioValue,
-				ajax : 'true',
-			},
-			function(data) {
-				if(data==null){
-					alert("!No Data Found");
-				}
-				
-				//Bar Chart
-				
-				var chartDiv = document.getElementById('griev_chart');
-				var dataTable = new google.visualization.DataTable();
-				
-				dataTable.addColumn('string', 'Franchise'); // Implicit data column.
-				dataTable.addColumn('number', 'Grievance'); // Implicit domain column.
-				//dataTable.addColumn({type: 'string', role: 'tooltip'});
-				
-				var dataSale = [];
-				var Header =  ['Franchise', 'Grievance', { role: 'annotation' }];
-				dataSale.push(Header);
 
-				google.charts.load('current', {
-					'packages' : [ 'corechart', 'bar' ]
-				});
-				google.charts.setOnLoadCallback(drawStuff);
-
-				function drawStuff() {
-					
-					document.getElementById("grievBar_div").style.display = "block";
-					
-					$.each(data, function(key, chartsBardata) {
-						
-						var temp = [];
-						temp.push(chartsBardata.frName,
-								parseInt(chartsBardata.grievCnt), chartsBardata.caption);
-						dataSale.push(temp);
-
-					});
-				
-					var data1 =google.visualization.arrayToDataTable(dataSale);
-
-					var materialOptions = {
-						width : 1000,
-						height : 450,
-						chart : {
-							title : 'Franchise Grievance Count',
-							subtitle : ' '
-						},
-						series : {
-							0 : {
-								axis : 'distance'
-							}, // Bind series 0 to an axis named 'distance'.
-							1 : {
-								axis : 'brightness'
-							}
-						// Bind series 1 to an axis named 'brightness'.
-						},
-						axes : {
-							y : {
-								distance : {
-									 label : 'Grievance Count' 
-								}, // Left y-axis.
-								brightness : {
-									side : 'right',
-									 label : 'Amount'
-								}
-							// Right y-axis.
-							},
-							x : {
-								distance : {
-									label : 'Franchise'
-								}, // Left y-axis.
-								brightness : {
-									side : 'right',
-									label : ''
-								}
-							// Right y-axis.
-							}
-						}
-					};
-					
-					var materialChart = new google.charts.Bar(
-							chartDiv);
-					
-
-					function drawMaterialChart() {		
-						google.visualization.events.addListener(materialChart, 'select', selectQtyHandler);   
-						materialChart
-								.draw(
-										data1,
-										google.charts.Bar
-												.convertOptions(materialOptions));
-
-					}
-					
-					
-					function selectQtyHandler(e) {
-						var selectedItem = materialChart.getSelection()[0];
-					
-						if (selectedItem) {										
-							i = selectedItem.row, 0;
-							//alert("Hi---------->"+data.frStatusCnt[i].exInt1)
-							getFrGrievDetail(data[i].grevTypeId, data[i].frId);
-						} 
-					}
-					
-					drawMaterialChart();
-				}
-				
-			});
-}
-
-
-function getFrGrievDetail(grievId, frId){
-	var fromDate = $("#frm_date").val();
-	var toDate = $("#to_date").val();
-
-	var radioValue = $("input[name='calRadio']:checked").val();	
-	
-	if(grievId>0){
-		$('#griev_fr_table td').remove();	
-		$
-		.getJSON(
-				'${getGrievanceFrData}',
-				{
-				
-					grievId : grievId,
-					fromDate: fromDate, 
-					toDate : toDate,
-					frId : frId,
-					radioValue : radioValue,
-					ajax : 'true'
-				},
-				function(data) {
-					
-					var ttlAmt = 0;
-					var curStatus = null;
-					var isSet = null;
-					
-				document.getElementById("grievFR_div").style.display = "block";
-				
-					$
-							.each(
-									data,
-									function(key, itm) {
-										
-										if(itm.currentStatus==0){
-											curStatus = 'Pending';
-										}else if(itm.currentStatus==1){
-											curStatus = 'Resolved';
-										}else{
-											curStatus = 'Damaged';
-										}
-										
-										if(itm.isSet==1){
-											isSet='Yes';
-										}else{
-											isSet='No';											
-										}
-
-										var tr = $('<tr style="background:##03a9f4;"></tr>');
-
-										tr
-												.append($(
-														'<td></td>')
-														.html(key+1));
-										tr
-										.append($(
-												'<td></td>')
-												.html(itm.caption));
-										
-										tr
-										.append($(
-												'<td></td>')
-												.html(itm.grievencceNo));
-										
-										
-										tr
-												.append($(
-														'<td></td>')
-														.html(itm.date));
-										
-
-										tr
-												.append($(
-														'<td></td>')
-														.html(itm.custName));
-
-										tr
-												.append($(
-														'<td></td>')
-														.html(itm.orderNo));										
-										 
-										
-										tr
-												.append($(
-														'<td></td>')
-														.html(isSet));
-										
-											
-										tr
-												.append($(
-														'<td></td>')
-														.html(curStatus)); 
-										
-									 ttlAmt = ttlAmt+itm.orderAmt; 
-											
-										tr
-										.append($(
-												'<td></td>')
-												.html(itm.orderAmt));
-										
-										$( '#griev_fr_table tbody')
-												.append(tr);
-
-									});
-					
-					
-						 var tr = "<tr>";
-                        var td1 = "<td colspan='8'>&nbsp;&nbsp;&nbsp;<b> Total</b></td>";
-                        var td2 = "<td><b><b>"
-                                + addCommas((ttlAmt).toFixed(2));
-                        +"</b></td>";   
-                        var trclosed = "</tr>";
-                        
-                        $('#griev_fr_table tbody').append(tr);
-						$('#griev_fr_table tbody').append(td1);
-						$('#griev_fr_table tbody').append(td2);
-						$('#griev_fr_table tbody').append(trclosed);   
-				});
-	}
-}
-
-
-
-function selectGrievance(grivancId){
-	if(grivancId==-1){
-		$
-						.getJSON(
-								'${getGrievanceAjaxList}',
-								{
-									
-									ajax : 'true',
-								},
-								function(data) {
-								//	alert(JSON.stringify(data));
-									$('#grivancId').find(
-											'option').remove()
-											.end()
-									$("#grivancId")
-										/* 	.append(
-													$("<option value=''>Select</option>")); */
-
-									for (var i = 0; i < data.length; i++) {										
-											$("#grivancId")
-													.append(
-															$(
-																	"<option selected style='text-align: left;'></option>")
-																	.attr(
-																			"value",
-																			data[i].grevTypeId)
-																	.text(
-																			data[i].caption));										 
-									}
-									$("#grivancId").trigger(
-											"chosen:updated");
-								});
-		
-	}
-}
-</script>
 <script>
 		$('.daterange-basic_new').daterangepicker({
 			applyClass : 'bg-slate-600',

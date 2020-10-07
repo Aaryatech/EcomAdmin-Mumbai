@@ -67,8 +67,6 @@ public class DashboardController {
 				dashDataList.get(i).setToDate(toDate);
 			}
 			
-			System.out.println("DashBoard Data----------->" + dashDataList);
-
 			model.addAttribute("statusCnt", dashDataList);
 		} catch (Exception e) {
 			System.out.println("Exc in /orderDashboard : " + e.getMessage());
@@ -165,10 +163,10 @@ public class DashboardController {
 			
 			model.addAttribute("fromDate", fromDate);
 			model.addAttribute("toDate", toDate);
-
-			System.out.println("------------>"+dashDataList);
+			
 			model.addAttribute("statusCnt", dashDataList);
 			model.addAttribute("radVal", radVal);
+			model.addAttribute("imagePath", Constants.showDocSaveUrl);
 			
 		} catch (Exception e) {
 			System.out.println("Exc in /getDashCountData : " + e.getMessage());
@@ -176,11 +174,11 @@ public class DashboardController {
 		return "orderDash";
 	}
 	
+	List<GetOrderHeaderDisplay> orderList = new ArrayList<>();	
 	@RequestMapping(value = "/getOrderListByStatus", method = RequestMethod.GET)
 	public @ResponseBody List<GetOrderHeaderDisplay> getOrderListByStatus(HttpServletRequest request,
-			HttpServletResponse response) {
-		
-		List<GetOrderHeaderDisplay> orderList = new ArrayList<>();			
+			HttpServletResponse response) {		
+				
 		try {			
 			System.err.println("In Here");
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -193,7 +191,7 @@ public class DashboardController {
 			String fromDate = request.getParameter("fromDate");
 			String toDate = request.getParameter("toDate");
 			
-			System.err.println("Customise------------>" + fromDate+" "+toDate);
+			//System.err.println("Customise------------>" + fromDate+" "+toDate);
 			
 			map.add("fromDate", CommonUtility.convertToYMD(fromDate));
 			map.add("toDate", CommonUtility.convertToYMD(toDate));
@@ -211,6 +209,14 @@ public class DashboardController {
 		}
 				return orderList;
 		
+	}
+	
+	@RequestMapping(value = "/getOrderDashDetailByBillId", method = RequestMethod.GET)
+	@ResponseBody
+	public List<GetOrderHeaderDisplay> getOrderDetailByBillId(HttpServletRequest request,
+			HttpServletResponse response) {
+		return orderList;
+
 	}
 
 	private static Calendar getCalendarForNow() {
