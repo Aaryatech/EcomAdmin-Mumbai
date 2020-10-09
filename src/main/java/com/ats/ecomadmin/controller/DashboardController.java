@@ -199,7 +199,7 @@ public class DashboardController {
 			map.add("compId", compId);
 
 			GetOrderHeaderDisplay[] orderRepArr = Constants.getRestTemplate()
-					.postForObject(Constants.url + "/getOrderHeaderListBy", map, GetOrderHeaderDisplay[].class);
+					.postForObject(Constants.url + "/getOrderHeaderListByCompId", map, GetOrderHeaderDisplay[].class);
 
 			orderList = new ArrayList<GetOrderHeaderDisplay>(Arrays.asList(orderRepArr));			
 			System.out.println("Order List--->"+orderList);
