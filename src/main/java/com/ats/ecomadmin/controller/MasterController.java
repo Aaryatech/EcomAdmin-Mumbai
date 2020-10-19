@@ -672,17 +672,23 @@ public class MasterController {
 
 			int userId = Integer.parseInt(request.getParameter("user_id"));
 
-			if (userId > 0) {
+			if (userId > 0) {			
+				
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("userId", userId);
+				User edtUser = Constants.getRestTemplate().postForObject(Constants.url + "getUserById", map, User.class);
+				
+				user.setPassword(edtUser.getPassword());
 				user.setUpdtDttime(sf.format(date));
-
 			} else {
 				user.setInsertDttime(sf.format(date));
+				
+				user.setPassword(hashtext);
 			}
 			user.setUserId(userId);
 			user.setCompanyId(companyId);
 			user.setIsActive(Integer.parseInt(request.getParameter("user")));
 
-			user.setPassword(hashtext);
 			user.setProfilePic(profileImage);
 			user.setRegDate(request.getParameter("reg_date"));
 			user.setUserAddress(request.getParameter("address"));
@@ -775,6 +781,8 @@ public class MasterController {
 				User user = Constants.getRestTemplate().postForObject(Constants.url + "getUserById", map, User.class);
 
 				model.addAttribute("user", user);
+				
+				model.addAttribute("isEdit", 1);
 
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 				model.addAttribute("title", "Edit User");

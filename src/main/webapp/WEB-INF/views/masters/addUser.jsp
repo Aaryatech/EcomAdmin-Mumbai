@@ -271,18 +271,21 @@
 												id="error_user_type" style="display: none;">This
 												field is required.</span>
 										</div>
-										<label class="col-form-label font-weight-bold col-lg-2"
-											for="password">Password <span class="text-danger">*
-										</span>:
-										</label>
-										<div class="col-lg-4">
-											<input type="password"
-												class="form-control maxlength-badge-position" maxlength="20"
-												autocomplete="off" onchange="trim(this)"
-												 name="pass" id="pass"> <span
-												class="validation-invalid-label text-danger" id="error_pass"
-												style="display: none;">This field is required.</span>
-										</div>
+										
+										<c:if test="${isEdit!=1}">
+											<label class="col-form-label font-weight-bold col-lg-2"
+												for="password">Password <span class="text-danger">*
+											</span>:
+											</label>
+											<div class="col-lg-4">
+												<input type="password"
+													class="form-control maxlength-badge-position" maxlength="20"
+													autocomplete="off" onchange="trim(this)"
+													 name="pass" id="pass" value="${user.password}"> <span
+													class="validation-invalid-label text-danger" id="error_pass"
+													style="display: none;">This field is required.</span>
+											</div>
+										</c:if>
 									</div>
 
 									<div class="form-group row">
@@ -310,6 +313,7 @@
 										</button>
 									</div>
 								</form>
+								<input type="text" value="${isEdit}" id="isEdit">
 							</div>
 
 
@@ -387,13 +391,14 @@
 													$("#error_address").hide()
 												}
 
-												if (!$("#pass").val()) {
-													isError = true;
-													$("#error_pass").show()
-												} else {
-													$("#error_pass").hide()
+												if($("#isEdit").val()!=1){
+													if (!$("#pass").val()) {
+														isError = true;
+														$("#error_pass").show()
+													} else {
+														$("#error_pass").hide()
+													}
 												}
-
 												if (!$("#department").val()) {
 													isError = true;
 													$("#error_department")

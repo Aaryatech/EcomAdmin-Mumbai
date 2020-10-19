@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.Info;
+import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,7 +87,8 @@ public class HomeController {
 				BigInteger number = new BigInteger(1, messageDigest);	
 
 				String hashtext = number.toString(16);
-
+				System.out.println("Password---------->"+hashtext);
+				
 				map.add("userName", name);
 				map.add("pass", hashtext);
 				//map.add("pass", password);
@@ -103,7 +105,10 @@ public class HomeController {
 
 					if (userObj.getIsEnrolled() == 0) {
 						// new User First time login, send to change for password.
-						mav = "redirect:/changePassPage";
+						//mav = "redirect:/changePassPage";
+						model.addAttribute("userId", userObj.getUserId());
+						model.addAttribute("userName", userObj.getUserName());
+						mav = "changePass";
 					} else {
 						// existing user login send to welcome page/dash board.
 					
@@ -200,6 +205,68 @@ public class HomeController {
 		session.invalidate();
 		return "redirect:/";
 	}
+	
+	@RequestMapping(value = "/changePassword", method = RequestMethod.GET)
+	public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model) {
+		
+		try {
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			
+			map.add("userId", userObj.getUserId());
+			User user = Constants.getRestTemplate().postForObject(Constants.url + "getUserById", map, User.class);
 
+			model.addAttribute("userId", user.getUserId());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+				
+		return "acc_right/updatePassword";
+	}
+	
+	
+	@RequestMapping(value = "/renewPassword", method = RequestMethod.POST)
+	public String renewPassword(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			
+			HttpSession session = request.getSession();
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			int isEnroll = 0;
+			try {
+				isEnroll = Integer.parseInt(request.getParameter("isEnroll"));
+			}catch (Exception e) {
+				isEnroll = 0;
+			}
+			
+			int userId = Integer.parseInt(request.getParameter("userId"));
+			
+			String password = request.getParameter("new_password");			
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			byte[] messageDigest = md.digest(password.getBytes());
+			BigInteger number = new BigInteger(1, messageDigest);
+			String hashtext = number.toString(16);
+			
+			map.add("userId", userId);
+			map.add("isEnroll", isEnroll);
+			map.add("newPassword", hashtext);
+			
+			Info info = Constants.getRestTemplate().postForObject(Constants.url + "updateUserPassword", map, Info.class);
+			if (!info.isError()) {
+				session.setAttribute("successMsg", info.getMsg());
+			} else {
+				session.setAttribute("errorMsg", info.getMsg());
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /renewPassword : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/logout";
+
+	}
 	
 }

@@ -51,6 +51,11 @@
 			<li class="nav-item"><a href="#" class="navbar-nav-link"> <i
 					class="icon-user-lock" style="color: #ffffff;"></i>&nbsp;&nbsp; <span>${sessionScope.loginUser}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			</a></li>
+			
+			<li class="nav-item"><a href="${pageContext.request.contextPath}/changePassword" class="navbar-nav-link"
+				title="Logout"> <i class="icon-switch2" style="color: #32b0de;"></i>
+					<span class="d-md-none ml-2">Change Password</span>
+			</a></li>
 
 			<li class="nav-item"><a href="${pageContext.request.contextPath}/logout" class="navbar-nav-link"
 				title="Logout"> <i class="icon-switch2" style="color: #32b0de;"></i>

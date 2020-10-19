@@ -73,11 +73,11 @@
 						<div class="card">
 							<div class="card-header header-elements-inline">
 								<h6 class="card-title">Edit Access Role</h6>
-								<!-- <div class="header-elements">
+								<div class="header-elements">
 									<div class="list-icons">
-										<a class="list-icons-item" data-action="collapse"></a>
+										<a href="${pageContext.request.contextPath}/showRoleList" class="list-icons-item" >Role List</a>
 									</div>
-								</div> -->
+								</div> 
 							</div>
 
 							<div class="card-body">

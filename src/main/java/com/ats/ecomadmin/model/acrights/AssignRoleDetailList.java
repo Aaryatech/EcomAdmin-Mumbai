@@ -9,6 +9,8 @@ public class AssignRoleDetailList {
 	
 	private int roleId;
 	
+	private int userCount;
+	
 	
 	String roleJson;
 	//List<AccessRightModule> accessRightModuleList;
@@ -48,13 +50,18 @@ public class AssignRoleDetailList {
 		this.roleJson = roleJson;
 	}
 
+	public int getUserCount() {
+		return userCount;
+	}
+
+	public void setUserCount(int userCount) {
+		this.userCount = userCount;
+	}
+
 	@Override
 	public String toString() {
-		return "AssignRoleDetailList [roleName=" + roleName + ", roleId=" + roleId + ", roleJson=" + roleJson
-				+ ", delStatus=" + delStatus + "]";
+		return "AssignRoleDetailList [roleName=" + roleName + ", roleId=" + roleId + ", userCount=" + userCount
+				+ ", roleJson=" + roleJson + ", delStatus=" + delStatus + "]";
 	}
- 
-	 
-	
 	
 }

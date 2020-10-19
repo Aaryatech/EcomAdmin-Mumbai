@@ -97,7 +97,7 @@ body1 {
 		</div>
 
 		<!-- login-form -->
-		<form id="form-login"  method="post">
+		<form id="form-login" action="${pageContext.request.contextPath}/renewPassword" method="post">
 			<%
 											UUID uuid = UUID.randomUUID();
 											MessageDigest md = MessageDigest.getInstance("MD5");
@@ -141,7 +141,9 @@ body1 {
 					</c:if>
 					<div
 						class="form-group form-group-feedback form-group-feedback-left">
-						<input type="text" id="newPass" name="newPass" onkeyup="return passwordChanged();"
+						<input type="text" id="isEnroll" name="isEnroll" value="${1}">
+						<input type="text" id="userId" name="userId" value="${userId}">
+						<input type="password" id="newPass" name="new_password" onkeyup="return passwordChanged();"
 							class="form-control form_lgn" required  placeholder="Enter new Password "
 							style="border-radius: 5px;">
 						<div class="form-control-feedback" style="padding-left: 10px;">
@@ -152,7 +154,7 @@ body1 {
 					style="display: none;">This field is required.</span>
 					<div
 						class="form-group form-group-feedback form-group-feedback-left">
-						<input type="text" id="newConfPass" name="newConfPass" required
+						<input type="password" id="newConfPass" name="confirm_pass" required
 							class="form-control form_lgn" placeholder="Confirm password"
 							style="border-radius: 5px;">
 						<div class="form-control-feedback" style="padding-left: 10px;">
@@ -165,8 +167,8 @@ body1 {
 													<br>
 
 					<div class="form-group" style="margin: 0;">
-						<button type="button" onclick="subPassForForm()"
-							class="buttonlogin">Submit</button>
+						<button type="submit" 
+							class="buttonlogin">Change Password</button>
 						<div class="forgot_pass" style="text-align: left;">
 							<a href="${pageContext.request.contextPath}/">Back</a>
 						</div>
@@ -203,7 +205,7 @@ function showForgotWindow(){
 
 			var pwd = document.getElementById("newPass").value;
 
-			if (pwd.length == 0) {
+			if (pwd.length > 0) {
 				document.getElementById("strength").innerHTML = "Type Password";
 				document.getElementById("allowPass").value = 0;
 			} else if (false == enoughRegex.test(pwd)) {
