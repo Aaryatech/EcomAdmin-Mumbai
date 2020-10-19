@@ -124,8 +124,8 @@
 										<label class="col-form-label col-lg-2" for="empTypeName">Role Name <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-6">
-											<input type="text" class="form-control"
-												placeholder="Role Name" id="empTypeName" maxlength="15"
+											<input type="text" class="form-control maxlength-badge-position" autofocus="autofocus"
+												placeholder="Role Name" id="empTypeName" maxlength="70"
 												name="roleName" autocomplete="off" onchange="trim(this)">
 											<span class="validation-invalid-label"  id="error_empTypeName"
 												style="display: none;">This field is required.</span>
@@ -182,72 +182,83 @@
 										</div>
 									</div> -->
 <div class="col-lg-12" align="center">
-									<table
-										class="table datatable-scroller table-bordered table-hover datatable-highlight1 datatable-button-html5-basic  datatable-button-print-columns1"
-										id="printtable1">
-										<thead>
-											<tr class="bg-blue">
-												<th>Sr. No.</th>
-												<th>Module Name</th>
-												<th>View</th>
-												<th>Add</th>
-												<th>Edit</th>
-												<th>Delete</th>
-											</tr>
-										</thead>
-										<tbody>
-
-<c:forEach begin="1" end="40" step="1">
-											<c:forEach items="${moduleList}" var="moduleList"
-												varStatus="count">
-												<tr>
-
-													<td>${count.index+1}&nbsp;&nbsp;<input type="checkbox"
-														id="header${moduleList.moduleId}"
-														name="header${moduleList.moduleId}" class="select_all"
-														onclick="checkSubmodule(${moduleList.moduleId})" value="0"></td>
-													<td colspan="5">${moduleList.iconDiv}&nbsp; <b>${moduleList.moduleName}</b></td>
-
+										<table
+											class="table datatable-scroller table-bordered table-hover datatable-highlight1 datatable-button-html5-basic  datatable-button-print-columns1"
+											id="printtable1">
+											<thead>
+												<tr class="bg-blue">
+													<th>Sr. No.</th>
+													<th>Module Name</th>
+													<th>View</th>
+													<th>Add</th>
+													<th>Edit</th>
+													<th>Delete</th>
 												</tr>
+											</thead>
+											<tbody>
+												<c:forEach items="${moduleList}" var="moduleList"
+													varStatus="count">
 
-												<c:forEach items="${moduleList.accessRightSubModuleList}"
-													var="subModuleList">
-													<tr>
 
-														<td></td>
-														<td><input type="checkbox"  onclick="row_level(1,${subModuleList.subModuleId},${subModuleList.moduleId})"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${subModuleList.subModulName}</td>
-														<td style="text-align: center;"><input
-															type="checkbox"
-															id="${subModuleList.subModuleId}view${subModuleList.moduleId}"
-															class="check${subModuleList.moduleId}"
-															name="${subModuleList.subModuleId}view${subModuleList.moduleId}"
-															value="0" onclick="changeValue(1,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
-														<td style="text-align: center;"><input
-															type="checkbox"
-															id="${subModuleList.subModuleId}add${subModuleList.moduleId}"
-															class="check${allModuleList.moduleId}"
-															name="${subModuleList.subModuleId}add${subModuleList.moduleId}"
-															value="0" onclick="changeValue(2,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
-														<td><input
-															type="checkbox" class="check${allModuleList.moduleId}"
-															id="${subModuleList.subModuleId}edit${subModuleList.moduleId}"
-															name="${subModuleList.subModuleId}edit${subModuleList.moduleId}"
-															value="0"
-															onclick="changeValue(3,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
-														<td><input
-															type="checkbox" class="check${allModuleList.moduleId}"
-															id="${subModuleList.subModuleId}delete${subModuleList.moduleId}"
-															name="${subModuleList.subModuleId}delete${subModuleList.moduleId}"
-															value="0"
-															onclick="changeValue(4,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
-													</tr>
+													<c:choose>
+														<c:when
+															test="${empty moduleList.accessRightSubModuleList}"></c:when>
+														<c:otherwise>
+															<tr>
 
+																<td>${count.index+1}&nbsp;&nbsp;<input
+																	type="checkbox" id="header${moduleList.moduleId}"
+																	name="header${moduleList.moduleId}" class="select_all"
+																	onclick="checkSubmodule(${moduleList.moduleId})"
+																	value="0"></td>
+																<td colspan="5">${moduleList.iconDiv}&nbsp;<b>${moduleList.moduleName}</b></td>
+
+
+															</tr>
+
+															<c:forEach items="${moduleList.accessRightSubModuleList}"
+																var="subModuleList">
+																<tr>
+
+																	<td></td>
+																	<td><input type="checkbox"
+																		onclick="row_level(1,${subModuleList.subModuleId},${subModuleList.moduleId})">
+																		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${subModuleList.subModulName}</td>
+																	<td style="text-align: center;"><input
+																		type="checkbox"
+																		id="${subModuleList.subModuleId}view${subModuleList.moduleId}"
+																		class="check${subModuleList.moduleId}"
+																		name="${subModuleList.subModuleId}view${subModuleList.moduleId}"
+																		value="0"
+																		onclick="changeValue(1,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
+																	<td style="text-align: center;"><input
+																		type="checkbox"
+																		id="${subModuleList.subModuleId}add${subModuleList.moduleId}"
+																		class="check${allModuleList.moduleId}"
+																		name="${subModuleList.subModuleId}add${subModuleList.moduleId}"
+																		value="0"
+																		onclick="changeValue(2,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
+																	<td><input type="checkbox"
+																		class="check${allModuleList.moduleId}"
+																		id="${subModuleList.subModuleId}edit${subModuleList.moduleId}"
+																		name="${subModuleList.subModuleId}edit${subModuleList.moduleId}"
+																		value="0"
+																		onclick="changeValue(3,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
+																	<td><input type="checkbox"
+																		class="check${allModuleList.moduleId}"
+																		id="${subModuleList.subModuleId}delete${subModuleList.moduleId}"
+																		name="${subModuleList.subModuleId}delete${subModuleList.moduleId}"
+																		value="0"
+																		onclick="changeValue(4,${subModuleList.subModuleId},${subModuleList.moduleId})"></td>
+																</tr>
+
+															</c:forEach>
+														</c:otherwise>
+													</c:choose>
 												</c:forEach>
-											</c:forEach>
-											</c:forEach>
 
-										</tbody>
-									</table>
+											</tbody>
+										</table>
 									</div>
 									<span class="form-text text-muted">* If Want To Access
 										Add, Edit,Delete Then View Access is Compulsory</span>
@@ -261,9 +272,13 @@
 
 									<div class="col-md-12" style="text-align: center;">
 
+										<!-- <input type="submit" class="btn bg-blue ml-1 legitRipple"
+											id="submtbtnsave" name="saveBtn" value="Save"/> -->
+											
+									
 										<button type="submit" class="btn bg-blue ml-3 legitRipple"
-											id="submtbtn">
-											Submit <i class="icon-paperplane ml-2"></i>
+											id="submtbtn" name="saveNext" value="savenxt">
+											Save <i class="icon-paperplane ml-2"></i>
 										</button>
 										<a href="${pageContext.request.contextPath}/showRoleList"><button
 												type="button" class="btn btn-primary">Cancel</button></a>
@@ -479,13 +494,37 @@
 				
 
 				if (!isError) {
+		
+					
+					bootbox.confirm({
+		                title: 'Create Role',
+		                message: 'Are you sure you want to submit this form!.',
+		                buttons: {
+		                    confirm: {
+		                        label: 'Yes',
+		                        className: 'btn-primary'
+		                    },
+		                    cancel: {
+		                        label: 'Cancel',
+		                        className: 'btn-link'
+		                    }
+		                },
+		                callback: function (result) {
+		                   if(result){		                	   
+		                	  // document.getElementById("submtbtn").disabled = true;
+		                	  // document.getElementById("submtbtnsave").disabled = true;
+		                	   document.getElementById("submitInsertEmpType").submit();
+		                   }
+		                }
+		            });
+					e.preventDefault();
 
-					var x = true;
+					/* var x = true;
 					if (x == true) {
 
 						document.getElementById("submtbtn").disabled = true;
 						return true;
-					}
+					} */
 					//end ajax send this to php page
 				}
 				return false;
@@ -493,6 +532,24 @@
 		});
 		//
 	</script>
+	<script>
+
+$('.maxlength-options').maxlength({
+    alwaysShow: true,
+    threshold: 10,
+    warningClass: 'text-success form-text',
+    limitReachedClass: 'text-danger form-text',
+    separator: ' of ',
+    preText: 'You have ',
+    postText: ' chars remaining.',
+    validate: true
+});
+
+$('.maxlength-badge-position').maxlength({
+    alwaysShow: true,
+    placement: 'top'
+});
+</script>
 <!-- <script type="text/javascript">
 
 function checkSame(){
