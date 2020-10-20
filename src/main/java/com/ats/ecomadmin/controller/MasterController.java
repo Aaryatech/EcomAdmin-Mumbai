@@ -1583,8 +1583,8 @@ public class MasterController {
 
 	// Created By :- Mahendra Singh
 	// Created On :- 14-09-2020
-	// Modified By :- NA
-	// Modified On :- NA
+	// Modified By :- NA-Sachin
+	// Modified On :- NA 20-10-2020
 	// Description :- Insert Filter database
 	@RequestMapping(value = "/insertFilter", method = RequestMethod.POST)
 	public String insertFilter(HttpServletRequest request, HttpServletResponse response) {
@@ -1619,6 +1619,32 @@ public class MasterController {
 			filter.setExVar1("NA");
 			filter.setExVar2("NA");
 			filter.setExVar3("NA");
+			
+			if(filter.getCostAffect()==1) {
+				try {
+				filter.setAddOnType(Integer.parseInt(request.getParameter("costEffectType")));
+				filter.setAddOnRs(Float.parseFloat(request.getParameter("add_on_rs")));
+				
+				filter.setIsTagAdd(Integer.parseInt(request.getParameter("addToTag")));
+				filter.setTagId(0);
+				String type="One Time";
+				if(filter.getAddOnType()==1) {
+					type="One Time";
+				}else {
+					type="Per UOM";
+				}
+				String adminName=filter.getFilterName()+"_" + type+" " +filter.getAddOnRs();
+				filter.setAdminName(adminName);
+				}catch (Exception e) {
+					
+				}
+			}else {
+				filter.setAddOnType(0);
+				filter.setAddOnRs(0);
+				filter.setIsTagAdd(0);
+				filter.setTagId(0);
+				filter.setAdminName(filter.getFilterName());
+			}
 
 			MFilter res = Constants.getRestTemplate().postForObject(Constants.url + "saveFilter", filter,
 					MFilter.class);
@@ -1627,7 +1653,7 @@ public class MasterController {
 				if (filterId == 0)
 					session.setAttribute("successMsg", "Filter Saved Sucessfully");
 				else
-					session.setAttribute("successMsg", "Filter Update Sucessfully");
+					session.setAttribute("successMsg", "Filter Updated Sucessfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Filter Type");
 			}

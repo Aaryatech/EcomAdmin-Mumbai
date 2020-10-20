@@ -762,7 +762,7 @@
 	<script type="text/javascript">
 	function showWeightDiv(){
 		var rateType=document.getElementById("rate_setting_type").value;
-if(parseInt(rateType)==2){
+if(parseInt(rateType)==2||parseInt(rateType)==1){
 		document.getElementById("weight_div").style="display:block";
 }else{
 	document.getElementById("weight_div").style.display="none";
@@ -1300,7 +1300,7 @@ if(parseInt(rateType)==2){
 														$("#error_rate_setting_type").hide()
 													}
 
-												if (parseInt($("#rate_setting_type").val())==2)
+												if (parseInt($("#rate_setting_type").val())==2||parseInt($("#rate_setting_type").val())==1)
 												{
 												if (!$("#max_wt").val()) {		
 
@@ -1315,7 +1315,7 @@ if(parseInt(rateType)==2){
 												//$("#error_max_wt").val()=0;
 												}
 
-												if (parseInt($("#rate_setting_type").val())==2)
+												if (parseInt($("#rate_setting_type").val())==2||parseInt($("#rate_setting_type").val())==1)
 												{
 												var wtIds = $('#weight_ids > option:selected');
 										         if(wtIds.length == 0){

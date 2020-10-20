@@ -287,7 +287,7 @@
 				.fileinput(
 						{
 							browseLabel : 'Browse',
-							uploadUrl : "http://localhost:8989/ecomadmin/ajaxImageUploadProduct/"+prodId, // server upload action
+							uploadUrl : "http://97.74.228.55:8080/ecomAdmin/ajaxImageUploadProduct/"+prodId, // server upload action
  							uploadAsync : false,
 							maxFileCount : 100,
 							initialPreview : [],

@@ -27,7 +27,7 @@
 
 </head>
 
-<body class="sidebar-xs">
+<body onload="changeCostEffect()" class="sidebar-xs">
 	<c:url var="chkUniqPrefix" value="chkUniqPrefix" />
 	<c:url value="/getUserInfo" var="getUserInfo"></c:url>
 	<c:url value="/getUserInfoByEmail" var="getUserInfoByEmail" />
@@ -173,7 +173,7 @@
 											<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
 													class="form-check-input" checked value="1"
-													name="isCostAffect" id="costAffect_y"
+													name="isCostAffect" id="costAffect_y" onclick="changeCostEffect()"
 													${filter.costAffect==1 ? 'checked' : ''}> Yes
 												</label>
 											</div>
@@ -181,7 +181,7 @@
 											<div class="form-check form-check-inline">
 												<label class="form-check-label "> <input
 													type="radio" class="form-check-input" value="0"
-													name="isCostAffect" id="costAffect_n"
+													name="isCostAffect" id="costAffect_n" onclick="changeCostEffect()"
 													${filter.costAffect==0 ? 'checked' : ''}> No
 												</label>
 											</div>
@@ -264,9 +264,74 @@
 												id="error_description" style="display: none;">This
 												field is required.</span>
 										</div>
+					
 									</div>
+									<div id="cost_div" style="display: none;">
+									
+<div class="form-group row">
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="costEffectType">Cost Effect Type: <span
+											class="text-danger">* </span>:
+										</label>
+										<div class="col-lg-4">
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1"
+													name="costEffectType" id="costAffect_type_ot"
+													${filter.addOnType==1 ? 'checked' : ''}> One Time
+												</label>
+											</div>
 
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="2"
+													name="costEffectType" id="costAffect_type_pu"
+													${filter.addOnType==2 ? 'checked' : ''}> Per UOM
+												</label>
+											</div>
+										</div>
+										
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="add_on_rs">Add On Rs<span
+											class="text-danger"></span>:
+										</label>
+										<div class="col-lg-4">
+											<input type="text"
+												class="form-control maxlength-badge-position" maxlength="5"
+												autocomplete="off" onchange="trim(this)"
+												value="${filter.addOnRs}" name="add_on_rs"
+												id="add_on_rs"> <span
+												class="validation-invalid-label" id="error_add_on_rs"
+												style="display: none;">This field is required.</span>
+										</div>
+										
+										
+										</div>
 
+<div class="form-group row">
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="adtotag_y">Add to Tag: <span
+											class="text-danger">* </span>:
+										</label>
+										<div class="col-lg-4">
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1"
+													name="addToTag" id="adtotag_y"
+													${filter.isTagAdd==1 ? 'checked' : ''}> Yes
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0"
+													name="addToTag" id="adtotag_n"
+													${filter.isTagAdd==0 ? 'checked' : ''}> No
+												</label>
+											</div>
+										</div>
+										</div>
+										</div>
 
 									<br>
 									<div class="text-center">
@@ -295,6 +360,30 @@
 	</div>
 	<!-- /page content -->
 	<script type="text/javascript">
+	function changeCostEffect(){
+		var isCostEff=0;
+		try{
+			//isCostEff=${filter.costAffect}
+		 isCostEff=$('input[name="isCostAffect"]:checked').val();
+		}
+		catch (e) {
+			
+		}
+		
+		if(parseInt(isCostEff)==0){
+			document.getElementById("cost_div").style.display = "none";
+		}else{
+			document.getElementById("cost_div").style.display = "block";
+		}
+		
+	}
+	</script>
+	<script type="text/javascript">
+	
+
+	
+
+	
 		$(document).ready(function($) {
 
 			$("#submitInsert").submit(function(e) {
@@ -323,6 +412,19 @@
 				} else {
 					$("#error_description").hide()
 				}
+				
+				 var isCostEffect=$('input[name="isCostAffect"]:checked').val();
+
+				 if(parseInt(isCostEffect)==1){
+					 if (!$("#add_on_rs").val()||parseFloat($("#add_on_rs").val())<1) {
+							isError = true;
+							$("#error_add_on_rs").show();
+						} else {
+							$("#error_add_on_rs").hide();
+						}
+				 }else{
+					 $("#error_add_on_rs").hide();
+				 }
 
 				if (!isError) {
 					var x = true;

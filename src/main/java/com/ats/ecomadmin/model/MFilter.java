@@ -1,8 +1,13 @@
 package com.ats.ecomadmin.model;
 
+
+//Modified By-Sachin
+//Modification Date-20-10-2020
+//Desc-Added new fields
+
 public class MFilter {
 	private int filterId;
-	private String filterName;
+	private String filterName; //name to be displayed to front end/customers
 	private String filterDesc;
 	private int filterTypeId;
 	private int usedForFilter;
@@ -20,6 +25,20 @@ public class MFilter {
 	private String exVar1;
 	private String exVar2;
 	private String exVar3;
+	
+	
+	//Sachin 20-10-2020 new fields total 5
+		private int addOnType; //values [default 0] [one time 1] [per uom 2]
+		
+		private float addOnRs;
+		
+		private int isTagAdd;
+		
+		private int tagId;
+		
+		private String adminName;//Name to be displayed to Admin end transactions
+		//Sachin 20-10-2020 new fields total 5
+		
 
 	public int getFilterId() {
 		return filterId;
@@ -173,6 +192,48 @@ public class MFilter {
 		this.exVar3 = exVar3;
 	}
 
+	
+	
+	public int getAddOnType() {
+		return addOnType;
+	}
+
+	public void setAddOnType(int addOnType) {
+		this.addOnType = addOnType;
+	}
+
+	public float getAddOnRs() {
+		return addOnRs;
+	}
+
+	public void setAddOnRs(float addOnRs) {
+		this.addOnRs = addOnRs;
+	}
+
+	public int getIsTagAdd() {
+		return isTagAdd;
+	}
+
+	public void setIsTagAdd(int isTagAdd) {
+		this.isTagAdd = isTagAdd;
+	}
+
+	public int getTagId() {
+		return tagId;
+	}
+
+	public void setTagId(int tagId) {
+		this.tagId = tagId;
+	}
+
+	public String getAdminName() {
+		return adminName;
+	}
+
+	public void setAdminName(String adminName) {
+		this.adminName = adminName;
+	}
+
 	@Override
 	public String toString() {
 		return "MFilter [filterId=" + filterId + ", filterName=" + filterName + ", filterDesc=" + filterDesc
@@ -180,7 +241,10 @@ public class MFilter {
 				+ ", usedForDescription=" + usedForDescription + ", companyId=" + companyId + ", isParent=" + isParent
 				+ ", allowToCopy=" + allowToCopy + ", sortNo=" + sortNo + ", isActive=" + isActive + ", delStatus="
 				+ delStatus + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exInt3=" + exInt3 + ", exVar1=" + exVar1
-				+ ", exVar2=" + exVar2 + ", exVar3=" + exVar3 + "]";
+				+ ", exVar2=" + exVar2 + ", exVar3=" + exVar3 + ", addOnType=" + addOnType + ", addOnRs=" + addOnRs
+				+ ", isTagAdd=" + isTagAdd + ", tagId=" + tagId + ", adminName=" + adminName + "]";
 	}
+
+	
 
 }

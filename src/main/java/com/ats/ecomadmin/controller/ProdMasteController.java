@@ -163,247 +163,260 @@ public class ProdMasteController {
 	 ******************************/
 	@RequestMapping(value = "/submitProductSave", method = RequestMethod.POST)
 	public String submitProductSave(HttpServletRequest request, HttpServletResponse response) {
-		String returnPage=null;
+		String returnPage = null;
 		try {
-			
+
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 			Info add = AccessControll.checkAccess("showProdList", "showProdList", "0", "1", "0", "0", newModuleList);
 
 			if (add.isError() == true) {
-				returnPage="accessDenied";
+				returnPage = "accessDenied";
 			} else {
-				returnPage="redirect:/showProdList";
-			
-			ProductMaster prod = new ProductMaster();
+				returnPage = "redirect:/showProdList";
 
-			User userObj = (User) session.getAttribute("userObj");
+				ProductMaster prod = new ProductMaster();
 
-			int compId = (int) session.getAttribute("companyId");
+				User userObj = (User) session.getAttribute("userObj");
 
-			String catId = request.getParameter("cat_id");
-			String sub_cat_id = request.getParameter("sub_cat_id");
-			String prod_code = request.getParameter("prod_code");
-			String prod_name = request.getParameter("prod_name");
-			String short_name = request.getParameter("short_name");
-			String tax_id = request.getParameter("tax_id");
-			String sort_no = request.getParameter("sort_no");
-			String min_qty = request.getParameter("min_qty");
-			String shelf_life = request.getParameter("shelf_life");
-			String is_return_allow = request.getParameter("is_return_allow");
-			String return_per = request.getParameter("return_per");
-			String uom_id = request.getParameter("uom_id");
-			String shape_id = request.getParameter("shape_id");
+				int compId = (int) session.getAttribute("companyId");
 
-			String is_sameDay_del = request.getParameter("is_sameDay_del");
-			String prod_type_id = request.getParameter("prod_type_id");
+				String catId = request.getParameter("cat_id");
+				String sub_cat_id = request.getParameter("sub_cat_id");
+				String prod_code = request.getParameter("prod_code");
+				String prod_name = request.getParameter("prod_name");
+				String short_name = request.getParameter("short_name");
+				String tax_id = request.getParameter("tax_id");
+				String sort_no = request.getParameter("sort_no");
+				String min_qty = request.getParameter("min_qty");
+				String shelf_life = request.getParameter("shelf_life");
+				String is_return_allow = request.getParameter("is_return_allow");
+				String return_per = request.getParameter("return_per");
+				String uom_id = request.getParameter("uom_id");
+				String shape_id = request.getParameter("shape_id");
 
-			String prod_status = request.getParameter("prod_status");
-			String book_b4 = request.getParameter("book_b4");
-			String char_limit_yn = request.getParameter("char_limit_yn");// For Alphabetic Cakes
-			String no_of_alpha = request.getParameter("no_of_alpha");
-			String is_cover_ph = request.getParameter("is_cover_ph");
-			String is_base_ph = request.getParameter("is_base_ph");
-			String is_sp_inst = request.getParameter("is_sp_inst");
-			String is_msg_on_cake = request.getParameter("is_msg_on_cake");
-			String is_slot_used = request.getParameter("is_slot_used");
-			String is_used = request.getParameter("is_used");
-			String no_of_msg_char = request.getParameter("no_of_msg_char"); // If is_msg_on_cake==1 then only
-			String bread_id = request.getParameter("bread_id");
-			String cream_id = request.getParameter("cream_id");
+				String is_sameDay_del = request.getParameter("is_sameDay_del");
+				String prod_type_id = request.getParameter("prod_type_id");
 
-			String layering_cream_id = request.getParameter("layering_cream_id");
-			String topping_cream_id = request.getParameter("topping_cream_id");
+				String prod_status = request.getParameter("prod_status");
+				String book_b4 = request.getParameter("book_b4");
+				String char_limit_yn = request.getParameter("char_limit_yn");// For Alphabetic Cakes
+				String no_of_alpha = request.getParameter("no_of_alpha");
+				String is_cover_ph = request.getParameter("is_cover_ph");
+				String is_base_ph = request.getParameter("is_base_ph");
+				String is_sp_inst = request.getParameter("is_sp_inst");
+				String is_msg_on_cake = request.getParameter("is_msg_on_cake");
+				String is_slot_used = request.getParameter("is_slot_used");
+				String is_used = request.getParameter("is_used");
+				String no_of_msg_char = request.getParameter("no_of_msg_char"); // If is_msg_on_cake==1 then only
+				String bread_id = request.getParameter("bread_id");
+				String cream_id = request.getParameter("cream_id");
 
-			String prod_desc = request.getParameter("prod_desc");
+				String layering_cream_id = request.getParameter("layering_cream_id");
+				String topping_cream_id = request.getParameter("topping_cream_id");
 
-			String Ingredients = request.getParameter("Ingredients");
+				String prod_desc = request.getParameter("prod_desc");
 
-			String prep_time = request.getParameter("prep_time"); // time in Integer minutes
+				String Ingredients = request.getParameter("Ingredients");
 
-			String is_veg = request.getParameter("is_veg"); // 0 veg 1 non veg 2 both
+				String prep_time = request.getParameter("prep_time"); // time in Integer minutes
 
-			String rate_setting_type = request.getParameter("rate_setting_type");
+				String is_veg = request.getParameter("is_veg"); // 0 veg 1 non veg 2 both
 
-			String max_wt = request.getParameter("max_wt");
+				String rate_setting_type = request.getParameter("rate_setting_type");
 
-			String[] weight_ids = request.getParameterValues("weight_ids");
-			String[] appl_tags = request.getParameterValues("appl_tags");
-			String[] event_ids = request.getParameterValues("event_ids");
-			String[] flav_ids = request.getParameterValues("flav_ids");
-			String[] sameDay_timeSlot = request.getParameterValues("sameDay_timeSlot");
+				String max_wt = request.getParameter("max_wt");
 
-			// getCommaSepStringFromStrArray
+				String[] weight_ids = request.getParameterValues("weight_ids");
+				String[] appl_tags = request.getParameterValues("appl_tags");
+				String[] event_ids = request.getParameterValues("event_ids");
+				String[] flav_ids = request.getParameterValues("flav_ids");
+				String[] sameDay_timeSlot = request.getParameterValues("sameDay_timeSlot");
 
-			String applicableTags = getCommaSepStringFromStrArray(appl_tags);
-			prod.setApplicableTags(applicableTags);
+				// getCommaSepStringFromStrArray
 
-			prod.setBookBefore(Integer.parseInt(book_b4));
+				String applicableTags = getCommaSepStringFromStrArray(appl_tags);
+				prod.setApplicableTags(applicableTags);
 
-			prod.setCompanyId(compId);
+				prod.setBookBefore(Integer.parseInt(book_b4));
 
-			String eventIds = getCommaSepStringFromStrArray(event_ids);
-			prod.setEventsIds(eventIds);
+				prod.setCompanyId(compId);
 
-			prod.setCopyItemId(0);
-			prod.setDelStatus(1);
-			prod.setExDate1("2020-09-16");
-			prod.setExDate2("2020-09-17");
-			prod.setExFloat1(1);
-			prod.setExFloat2(1);
-			prod.setExFloat3(1);
-			prod.setExInt1(1);
-			prod.setExInt2(1);
-			prod.setExInt3(1);
+				String eventIds = getCommaSepStringFromStrArray(event_ids);
+				prod.setEventsIds(eventIds);
 
-			prod.setExVar1("v1");
-			prod.setExVar2("v2");
-			prod.setExVar3("v3");
-			prod.setExVar4("v4");
+				prod.setCopyItemId(0);
+				prod.setDelStatus(1);
+				prod.setExDate1("2020-09-16");
+				prod.setExDate2("2020-09-17");
+				prod.setExFloat1(1);
+				prod.setExFloat2(1);
+				prod.setExFloat3(1);
+				prod.setExInt1(1);
+				prod.setExInt2(1);
+				prod.setExInt3(1);
 
-			String flavIds = getCommaSepStringFromStrArray(flav_ids);
-			prod.setFlavourIds(flavIds);
+				prod.setExVar1("v1");
+				prod.setExVar2("v2");
+				prod.setExVar3("v3");
+				prod.setExVar4("v4");
 
-			prod.setIngerdiants(Ingredients.trim());
-			
-			try {
-				prod.setInsertDttime(request.getParameter("idtime"));
-			}catch (Exception e) {
-				prod.setInsertDttime(CommonUtility.getCurrentYMDDateTime());
-			}
-			
-			prod.setIsActive(1);
+				String flavIds = getCommaSepStringFromStrArray(flav_ids);
+				prod.setFlavourIds(flavIds);
 
-			prod.setIsVeg(Integer.parseInt(is_veg));
-			prod.setLayeringCream(Integer.parseInt(layering_cream_id));
-			prod.setMakerUserId(userObj.getUserId());
-			prod.setMaxWt(Integer.parseInt(max_wt));
-			int minQ=(int) Float.parseFloat(min_qty);
-			prod.setMinQty(minQ);
+				prod.setIngerdiants(Ingredients.trim());
 
-			prod.setPrepTime(Integer.parseInt(prep_time));
-			prod.setProdCatId(Integer.parseInt(catId));
-			prod.setProdImagePrimary("");
-			prod.setProdStatusId(Integer.parseInt(prod_status));
-			prod.setProdSubCatId(Integer.parseInt(sub_cat_id));
-			prod.setProdTypeId(Integer.parseInt(prod_type_id));
-			prod.setProductCode(prod_code.trim());
-
-			prod.setProductDesc(prod_desc.trim());
-
-			if (char_limit_yn.equals("1")) {
-				prod.setIsCharLimit(Integer.parseInt(char_limit_yn));
-				prod.setNoOfCharsForAlphaCake(Integer.parseInt(no_of_alpha));
-			} else {
-				prod.setIsCharLimit(0);
-				prod.setNoOfCharsForAlphaCake(0);
-			}
-			try {
-				if (is_msg_on_cake.equalsIgnoreCase("on")) {
-					prod.setAllowMsgOnCake(1);
-					prod.setNoOfCharsOnCake(Integer.parseInt(no_of_msg_char));
+				try {
+					if (request.getParameter("idtime") == null) {
+						prod.setInsertDttime(CommonUtility.getCurrentYMDDateTime());
+					} else {
+						prod.setInsertDttime(request.getParameter("idtime"));
+					}
+				} catch (Exception e) {
+					prod.setInsertDttime(CommonUtility.getCurrentYMDDateTime());
 				}
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			try {
-				if (is_sp_inst.equalsIgnoreCase("on")) {
-					prod.setAllowSpecialInstruction(1);
+
+				prod.setIsActive(1);
+
+				prod.setIsVeg(Integer.parseInt(is_veg));
+				prod.setLayeringCream(Integer.parseInt(layering_cream_id));
+				prod.setMakerUserId(userObj.getUserId());
+				try {
+					prod.setMaxWt(Integer.parseInt(max_wt));
+				} catch (Exception e) {
+					prod.setMaxWt(0);
 				}
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			try {
-				if (is_slot_used.equalsIgnoreCase("on")) {
-					prod.setIsSlotUsed(1);
-				}
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			try {
-				if (is_used.equalsIgnoreCase("on")) {
-					prod.setIsUsed(1);
-				}
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
+				int minQ = (int) Float.parseFloat(min_qty);
+				prod.setMinQty(minQ);
 
-			// **
-			try {
-				String prodIdStr=request.getParameter("prod_id");
-				int prodId=Integer.parseInt(FormValidation.DecodeKey(prodIdStr));
-				prod.setProductId(prodId);
-			}catch (Exception e) {
-				prod.setProductId(0);
-			}
-			
-			prod.setProductImages("");
-			prod.setProductName(prod_name.trim());
+				prod.setPrepTime(Integer.parseInt(prep_time));
+				prod.setProdCatId(Integer.parseInt(catId));
+				prod.setProdImagePrimary("");
+				prod.setProdStatusId(Integer.parseInt(prod_status));
+				prod.setProdSubCatId(Integer.parseInt(sub_cat_id));
+				prod.setProdTypeId(Integer.parseInt(prod_type_id));
+				prod.setProductCode(prod_code.trim());
 
-			if (is_return_allow.equals("1")) {
-				prod.setIsReturnAllow(1);
-				prod.setRetPer(Float.parseFloat(return_per));
-			} else {
-				prod.setIsReturnAllow(0);
-				prod.setRetPer(0);
-			}
+				prod.setProductDesc(prod_desc.trim());
 
-			if (rate_setting_type.equals("2")) {
-				String weightString = getCommaSepStringFromStrArray(weight_ids);
-				prod.setAvailInWeights(weightString);
-				prod.setRateSettingType(2);
-			} else {
-				prod.setAvailInWeights("0");
-				prod.setRateSettingType(Integer.parseInt(rate_setting_type));
-			}
-
-			if (is_sameDay_del.equals("1")) {
-				prod.setAllowSameDayDelivery(1);
-				String sameDayTimeSlot = getCommaSepStringFromStrArray(sameDay_timeSlot);
-				prod.setSameDayTimeAllowedSlot(sameDayTimeSlot);
-			}
-			try {
-				if (is_cover_ph.equalsIgnoreCase("on")) {
-					// set 1
-					prod.setAllowCoverPhotoUpload(1);
-
+				if (char_limit_yn.equals("1")) {
+					prod.setIsCharLimit(Integer.parseInt(char_limit_yn));
+					prod.setNoOfCharsForAlphaCake(Integer.parseInt(no_of_alpha));
 				} else {
-					// set 0
+					prod.setIsCharLimit(0);
+					prod.setNoOfCharsForAlphaCake(0);
 				}
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			try {
-				if (is_base_ph.equalsIgnoreCase("on")) {
-					// set 1
-					prod.setAllowBasePhotoUpload(1);
+				try {
+					if (is_msg_on_cake.equalsIgnoreCase("on")) {
+						prod.setAllowMsgOnCake(1);
+						prod.setNoOfCharsOnCake(Integer.parseInt(no_of_msg_char));
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				try {
+					if (is_sp_inst.equalsIgnoreCase("on")) {
+						prod.setAllowSpecialInstruction(1);
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				try {
+					if (is_slot_used.equalsIgnoreCase("on")) {
+						prod.setIsSlotUsed(1);
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				try {
+					if (is_used.equalsIgnoreCase("on")) {
+						prod.setIsUsed(1);
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+
+				// **
+				try {
+					int prodId = 0;
+					String prodIdStr = request.getParameter("prod_id");
+					try {
+						prodId = Integer.parseInt(FormValidation.DecodeKey(prodIdStr));
+					} catch (Exception e) {
+						prodId = 0;
+					}
+					prod.setProductId(prodId);
+				} catch (Exception e) {
+					prod.setProductId(0);
+				}
+
+				prod.setProductImages("");
+				prod.setProductName(prod_name.trim());
+
+				if (is_return_allow.equals("1")) {
+					prod.setIsReturnAllow(1);
+					prod.setRetPer(Float.parseFloat(return_per));
 				} else {
-					// set 0
+					prod.setIsReturnAllow(0);
+					prod.setRetPer(0);
 				}
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
 
-			prod.setShapeId(Integer.parseInt(shape_id));
-			prod.setShelfLife(Integer.parseInt(shelf_life));
-			prod.setShortName(short_name.trim());
-			prod.setSortId(Integer.parseInt(sort_no));
-			prod.setTaxId(Integer.parseInt(tax_id));
-			prod.setToppingCream(Integer.parseInt(topping_cream_id));
-			prod.setTypeOfBread(Integer.parseInt(bread_id));
+				if (rate_setting_type.equals("2")) {
+					String weightString = getCommaSepStringFromStrArray(weight_ids);
+					prod.setAvailInWeights(weightString);
+					prod.setRateSettingType(2);
+				} else {
+					prod.setAvailInWeights("0");
+					prod.setRateSettingType(Integer.parseInt(rate_setting_type));
+				}
 
-			prod.setTypeOfCream(Integer.parseInt(cream_id));
-			prod.setUomId(Integer.parseInt(uom_id));
-			prod.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
+				if (is_sameDay_del.equals("1")) {
+					prod.setAllowSameDayDelivery(1);
+					String sameDayTimeSlot = getCommaSepStringFromStrArray(sameDay_timeSlot);
+					prod.setSameDayTimeAllowedSlot(sameDayTimeSlot);
+				}
+				try {
+					if (is_cover_ph.equalsIgnoreCase("on")) {
+						// set 1
+						prod.setAllowCoverPhotoUpload(1);
 
-			ProductMaster res = Constants.getRestTemplate().postForObject(Constants.url + "saveProduct", prod,
-					ProductMaster.class);
+					} else {
+						// set 0
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				try {
+					if (is_base_ph.equalsIgnoreCase("on")) {
+						// set 1
+						prod.setAllowBasePhotoUpload(1);
+					} else {
+						// set 0
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
 
-			if (res.getProductId() > 0) 
-				session.setAttribute("successMsg", "Product Saved Sucessfully");
+				prod.setShapeId(Integer.parseInt(shape_id));
+				prod.setShelfLife(Integer.parseInt(shelf_life));
+				prod.setShortName(short_name.trim());
+				prod.setSortId(Integer.parseInt(sort_no));
+				prod.setTaxId(Integer.parseInt(tax_id));
+				prod.setToppingCream(Integer.parseInt(topping_cream_id));
+				prod.setTypeOfBread(Integer.parseInt(bread_id));
+
+				prod.setTypeOfCream(Integer.parseInt(cream_id));
+				prod.setUomId(Integer.parseInt(uom_id));
+				prod.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
+
+				ProductMaster res = Constants.getRestTemplate().postForObject(Constants.url + "saveProduct", prod,
+						ProductMaster.class);
+
+				if (res.getProductId() > 0)
+					session.setAttribute("successMsg", "Product Saved Sucessfully");
 				else
-				session.setAttribute("errorMsg", "Failed to Save Product");
-			
+					session.setAttribute("errorMsg", "Failed to Save Product");
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -542,7 +555,7 @@ public class ProdMasteController {
 				GetProdList[] prodArr = Constants.getRestTemplate().postForObject(Constants.url + "getProdList", map,
 						GetProdList[].class);
 				prodList = new ArrayList<GetProdList>(Arrays.asList(prodArr));
-				
+
 				for (int i = 0; i < prodList.size(); i++) {
 
 					prodList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(prodList.get(i).getProductId())));
@@ -648,9 +661,7 @@ public class ProdMasteController {
 
 				List<String> prodFlavIdList = Arrays.asList(prodList.get(i).getFlavourIds().split(",", -1));
 
-
 				List<MFilter> flavList = getFlavList(prodFlavIdList);
-
 
 				if (!flavList.isEmpty()) {
 
@@ -661,7 +672,6 @@ public class ProdMasteController {
 							// By weight ids;
 
 							List<String> wtList = Arrays.asList(prodList.get(i).getAvailInWeights().split(",", -1));
-
 
 							for (int p = 0; p < flavList.size(); p++) {
 
@@ -775,7 +785,6 @@ public class ProdMasteController {
 			}
 			model.addObject("tempProdConfList", tempProdConfList);
 
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -816,7 +825,7 @@ public class ProdMasteController {
 	public String saveInsertProdConf(HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-			
+
 			ProductMaster prod = new ProductMaster();
 
 			HttpSession session = request.getSession();
@@ -873,96 +882,100 @@ public class ProdMasteController {
 					} catch (Exception e) {
 						mrpAmt = 0;
 					}
+					try {
+						if (r1 == "" || r1.equals(null)) {
+							continue;
+						} else if (mrpAmt == 0) {
+							continue;
+						} else {
+							// Create New Object And Save.
+							float rateAmt;
+							float spRateAmt1;
+							float spRateAmt2;
+							float spRateAmt3;
+							float spRateAmt4;
 
-					if (r1 == "" || r1.equals(null)) {
-						continue;
-					} else if (mrpAmt == 0) {
-						continue;
-					} else {
-						// Create New Object And Save.
-						float rateAmt;
-						float spRateAmt1;
-						float spRateAmt2;
-						float spRateAmt3;
-						float spRateAmt4;
+							String r2 = request.getParameter("r2" + tempConf.getUuid() + "" + tempConf.getProductId());
+							String r3 = request.getParameter("r3" + tempConf.getUuid() + "" + tempConf.getProductId());
+							String r4 = request.getParameter("r4" + tempConf.getUuid() + "" + tempConf.getProductId());
+							String r5 = request.getParameter("r5" + tempConf.getUuid() + "" + tempConf.getProductId());
+							String r6 = request.getParameter("r6" + tempConf.getUuid() + "" + tempConf.getProductId());
 
-						String r2 = request.getParameter("r2" + tempConf.getUuid() + "" + tempConf.getProductId());
-						String r3 = request.getParameter("r3" + tempConf.getUuid() + "" + tempConf.getProductId());
-						String r4 = request.getParameter("r4" + tempConf.getUuid() + "" + tempConf.getProductId());
-						String r5 = request.getParameter("r5" + tempConf.getUuid() + "" + tempConf.getProductId());
-						String r6 = request.getParameter("r6" + tempConf.getUuid() + "" + tempConf.getProductId());
+							try {
+								spRateAmt1 = Float.parseFloat(r3);
+							} catch (Exception e) {
+								spRateAmt1 = 0;
+							}
+							try {
+								spRateAmt2 = Float.parseFloat(r4);
+							} catch (Exception e) {
+								spRateAmt2 = 0;
+							}
+							try {
+								spRateAmt3 = Float.parseFloat(r5);
+							} catch (Exception e) {
+								spRateAmt3 = 0;
+							}
+							try {
+								spRateAmt4 = Float.parseFloat(r6);
+							} catch (Exception e) {
+								spRateAmt4 = 0;
+							}
+							try {
+								rateAmt = Float.parseFloat(r2);
+							} catch (Exception e) {
+								rateAmt = 0;
+							}
 
-						try {
-							spRateAmt1 = Float.parseFloat(r3);
-						} catch (Exception e) {
-							spRateAmt1 = 0;
-						}
-						try {
-							spRateAmt2 = Float.parseFloat(r4);
-						} catch (Exception e) {
-							spRateAmt2 = 0;
-						}
-						try {
-							spRateAmt3 = Float.parseFloat(r5);
-						} catch (Exception e) {
-							spRateAmt3 = 0;
-						}
-						try {
-							spRateAmt4 = Float.parseFloat(r6);
-						} catch (Exception e) {
-							spRateAmt4 = 0;
-						}
-						try {
-							rateAmt = Float.parseFloat(r2);
-						} catch (Exception e) {
-							rateAmt = 0;
-						}
+							ItemConfDetail confDetail = new ItemConfDetail();
 
-						ItemConfDetail confDetail = new ItemConfDetail();
+							confDetail.setExDate1("2020-09-18");
+							confDetail.setExDate2("2020-09-19");
 
-						confDetail.setExDate1("2020-09-18");
-						confDetail.setExDate2("2020-09-19");
+							confDetail.setExFloat1(0);
+							confDetail.setExFloat2(0);
+							confDetail.setExFloat3(0);
 
-						confDetail.setExFloat1(0);
-						confDetail.setExFloat2(0);
-						confDetail.setExFloat3(0);
+							confDetail.setExInt1(0);
+							confDetail.setExInt2(0);
+							confDetail.setExInt3(0);
 
-						confDetail.setExInt1(0);
-						confDetail.setExInt2(0);
-						confDetail.setExInt3(0);
+							confDetail.setExVar1("na");
+							confDetail.setExVar2("na");
+							confDetail.setExVar3("na");
+							confDetail.setExVar4("na");
 
-						confDetail.setExVar1("na");
-						confDetail.setExVar2("na");
-						confDetail.setExVar3("na");
-						confDetail.setExVar4("na");
+							confDetail.setIsActive(1);
+							confDetail.setDelStatus(1);
 
-						confDetail.setIsActive(1);
-						confDetail.setDelStatus(1);
+							confDetail.setFlavorId(tempConf.getFlavorId());
+							confDetail.setInsertDttime(CommonUtility.getCurrentYMDDateTime());
 
-						confDetail.setFlavorId(tempConf.getFlavorId());
-						confDetail.setInsertDttime(CommonUtility.getCurrentYMDDateTime());
+							confDetail.setIsVeg(tempConf.getVegType());
 
-						confDetail.setIsVeg(tempConf.getVegType());
+							confDetail.setMakerUserId(userObj.getUserId());
 
-						confDetail.setMakerUserId(userObj.getUserId());
+							confDetail.setMrpAmt(mrpAmt);
+							confDetail.setProductId(tempConf.getProductId());
+							confDetail.setQty(tempConf.getWeight());
 
-						confDetail.setMrpAmt(mrpAmt);
-						confDetail.setProductId(tempConf.getProductId());
-						confDetail.setQty(tempConf.getWeight());
+							confDetail.setRateAmt(rateAmt);
+							confDetail.setRateSettingType(tempConf.getRateSetingType());
 
-						confDetail.setRateAmt(rateAmt);
-						confDetail.setRateSettingType(tempConf.getRateSetingType());
+							confDetail.setSpRateAmt1(spRateAmt1);
 
-						confDetail.setSpRateAmt1(spRateAmt1);
+							confDetail.setSpRateAmt2(spRateAmt2);
+							confDetail.setSpRateAmt3(spRateAmt3);
+							confDetail.setSpRateAmt4(spRateAmt4);
+							confDetail.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
 
-						confDetail.setSpRateAmt2(spRateAmt2);
-						confDetail.setSpRateAmt3(spRateAmt3);
-						confDetail.setSpRateAmt4(spRateAmt4);
-						confDetail.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
+							confDetailList.add(confDetail);
 
-						confDetailList.add(confDetail);
+						} // End of Else
 
-					} // End of Else
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -973,11 +986,10 @@ public class ProdMasteController {
 			ItemConfHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveProdConfHD", confHeader,
 					ItemConfHeader.class);
 
-			if (res.getConfigHeaderId()> 0) 
+			if (res.getConfigHeaderId() > 0)
 				session.setAttribute("successMsg", "Product Configuration Saved Sucessfully");
-				else
+			else
 				session.setAttribute("errorMsg", "Failed to Save Product Configuration");
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1254,7 +1266,7 @@ public class ProdMasteController {
 			confHeader.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
 
 			/*****************************************
-			 for Adding New Product detail 
+			 * for Adding New Product detail
 			 *****************************************/
 			for (int i = 0; i < tempProdUpdateConfList.size(); i++) {
 
@@ -1317,9 +1329,9 @@ public class ProdMasteController {
 						}
 
 						ItemConfDetail confDetail = new ItemConfDetail();
-						
+
 						confDetail.setConfigHeaderId(confHeader.getConfigHeaderId());
-						
+
 						confDetail.setExDate1("2020-09-18");
 						confDetail.setExDate2("2020-09-19");
 
@@ -1368,9 +1380,8 @@ public class ProdMasteController {
 				}
 			} // End Of tempProdConfList For Loop I
 
-			
 			/*****************************************
-			 for Existing Product detail Update
+			 * for Existing Product detail Update
 			 *****************************************/
 			for (int p = 0; p < tempProdUpdateConfDetail.size(); p++) {
 
@@ -1387,12 +1398,11 @@ public class ProdMasteController {
 				} catch (Exception e) {
 					isChange = 0;
 				}
-				
+
 				if (isChange == 0) {
 					continue;
 				}
-				
-				
+
 				String r1 = "0";
 				try {
 					r1 = request.getParameter("r1" + tempConf.getUuid() + "" + tempConf.getProductId());
@@ -1401,48 +1411,48 @@ public class ProdMasteController {
 					} catch (Exception e) {
 						mrpAmt = 0;
 					}
-						// Create New Object And Save.
-						float rateAmt;
-						float spRateAmt1;
-						float spRateAmt2;
-						float spRateAmt3;
-						float spRateAmt4;
+					// Create New Object And Save.
+					float rateAmt;
+					float spRateAmt1;
+					float spRateAmt2;
+					float spRateAmt3;
+					float spRateAmt4;
 
-						String r2 = request.getParameter("r2" + tempConf.getUuid() + "" + tempConf.getProductId());
-						String r3 = request.getParameter("r3" + tempConf.getUuid() + "" + tempConf.getProductId());
-						String r4 = request.getParameter("r4" + tempConf.getUuid() + "" + tempConf.getProductId());
-						String r5 = request.getParameter("r5" + tempConf.getUuid() + "" + tempConf.getProductId());
-						String r6 = request.getParameter("r6" + tempConf.getUuid() + "" + tempConf.getProductId());
+					String r2 = request.getParameter("r2" + tempConf.getUuid() + "" + tempConf.getProductId());
+					String r3 = request.getParameter("r3" + tempConf.getUuid() + "" + tempConf.getProductId());
+					String r4 = request.getParameter("r4" + tempConf.getUuid() + "" + tempConf.getProductId());
+					String r5 = request.getParameter("r5" + tempConf.getUuid() + "" + tempConf.getProductId());
+					String r6 = request.getParameter("r6" + tempConf.getUuid() + "" + tempConf.getProductId());
 
-						try {
-							spRateAmt1 = Float.parseFloat(r3);
-						} catch (Exception e) {
-							spRateAmt1 = 0;
-						}
-						try {
-							spRateAmt2 = Float.parseFloat(r4);
-						} catch (Exception e) {
-							spRateAmt2 = 0;
-						}
-						try {
-							spRateAmt3 = Float.parseFloat(r5);
-						} catch (Exception e) {
-							spRateAmt3 = 0;
-						}
-						try {
-							spRateAmt4 = Float.parseFloat(r6);
-						} catch (Exception e) {
-							spRateAmt4 = 0;
-						}
-						try {
-							rateAmt = Float.parseFloat(r2);
-						} catch (Exception e) {
-							rateAmt = 0;
-						}
+					try {
+						spRateAmt1 = Float.parseFloat(r3);
+					} catch (Exception e) {
+						spRateAmt1 = 0;
+					}
+					try {
+						spRateAmt2 = Float.parseFloat(r4);
+					} catch (Exception e) {
+						spRateAmt2 = 0;
+					}
+					try {
+						spRateAmt3 = Float.parseFloat(r5);
+					} catch (Exception e) {
+						spRateAmt3 = 0;
+					}
+					try {
+						spRateAmt4 = Float.parseFloat(r6);
+					} catch (Exception e) {
+						spRateAmt4 = 0;
+					}
+					try {
+						rateAmt = Float.parseFloat(r2);
+					} catch (Exception e) {
+						rateAmt = 0;
+					}
 
-						//ItemConfDetail confDetail = new ItemConfDetail();
-						TempProdConfig confUpdt=new TempProdConfig();
-						
+					// ItemConfDetail confDetail = new ItemConfDetail();
+					TempProdConfig confUpdt = new TempProdConfig();
+
 					/*
 					 * confDetail.setConfigHeaderId(confHeader.getConfigHeaderId());
 					 * confDetail.setConfigDetailId(tempConf.getConfigDetailId());
@@ -1455,52 +1465,49 @@ public class ProdMasteController {
 					 * 
 					 * confDetail.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
 					 */
-						
-						
-						confUpdt.setConfigHeaderId(confHeader.getConfigHeaderId());
-						confUpdt.setConfigDetailId(tempConf.getConfigDetailId());
-						confUpdt.setMakerUserId(userObj.getUserId());
 
-						confUpdt.setMrpAmt(mrpAmt);
-						confUpdt.setRateAmt(rateAmt);
+					confUpdt.setConfigHeaderId(confHeader.getConfigHeaderId());
+					confUpdt.setConfigDetailId(tempConf.getConfigDetailId());
+					confUpdt.setMakerUserId(userObj.getUserId());
 
-						confUpdt.setSpRateAmt1(spRateAmt1);
-						confUpdt.setSpRateAmt2(spRateAmt2);
-						confUpdt.setSpRateAmt3(spRateAmt3);
-						confUpdt.setSpRateAmt4(spRateAmt4);
-						
-						confUpdt.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
-						
-						confDetailUpdateList.add(confUpdt);
-						
-					
+					confUpdt.setMrpAmt(mrpAmt);
+					confUpdt.setRateAmt(rateAmt);
+
+					confUpdt.setSpRateAmt1(spRateAmt1);
+					confUpdt.setSpRateAmt2(spRateAmt2);
+					confUpdt.setSpRateAmt3(spRateAmt3);
+					confUpdt.setSpRateAmt4(spRateAmt4);
+
+					confUpdt.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
+
+					confDetailUpdateList.add(confUpdt);
+
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
 			}
 			confHeader.setItemConfDetList(confDetailList);
-			TempConfTraveller traveller=new TempConfTraveller();
-			
+			TempConfTraveller traveller = new TempConfTraveller();
+
 			traveller.setProdConfDetailList(confDetailUpdateList);
 			traveller.setConfDetailList(confDetailList);
-			
-			GetItemConfHead head= new GetItemConfHead();
-			
+
+			GetItemConfHead head = new GetItemConfHead();
+
 			head.setConfigHeaderId(confHeader.getConfigHeaderId());
 			head.setConfigName(confHeader.getConfigName());
 			head.setCatId(confHeader.getMakerUserId());
 			head.setCatName(confHeader.getUpdtDttime());
-			
+
 			traveller.setConfHead(head);
-			
-			ItemConfHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveUpdateProdConfHD", traveller,
-					ItemConfHeader.class);
-			
-			if (res.getConfigHeaderId()> 0) 
+
+			ItemConfHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveUpdateProdConfHD",
+					traveller, ItemConfHeader.class);
+
+			if (res.getConfigHeaderId() > 0)
 				session.setAttribute("successMsg", "Product Configuration Saved Sucessfully");
-				else
+			else
 				session.setAttribute("errorMsg", "Failed to Save Product Configuration");
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1510,15 +1517,15 @@ public class ProdMasteController {
 		return "redirect:/showAddProdConfig";
 
 	}
-	
+
 	/*****************************
-	 * //Created Date: 26-09-2020 //UpdateDate:26-09-2020 //Description: 
-	 * To Show Product Edit page  //Developed By(Developer Name): Sachin //Updated
+	 * //Created Date: 26-09-2020 //UpdateDate:26-09-2020 //Description: To Show
+	 * Product Edit page //Developed By(Developer Name): Sachin //Updated
 	 * By(Developer Name): Sachin
 	 ******************************/
 	@RequestMapping(value = "/showEditProd/{productIdStr}", method = RequestMethod.GET)
-	public ModelAndView showEditProd(@PathVariable String productIdStr,
-			HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView showEditProd(@PathVariable String productIdStr, HttpServletRequest request,
+			HttpServletResponse response) {
 
 		ModelAndView model = new ModelAndView("product/editProd");
 
@@ -1534,8 +1541,6 @@ public class ProdMasteController {
 
 			} else {
 
-				
-				
 				List<Uom> uomList = new ArrayList<Uom>();
 				List<Tax> taxList = new ArrayList<Tax>();
 				List<Category> catList = new ArrayList<>();
@@ -1601,15 +1606,15 @@ public class ProdMasteController {
 				model.addObject("subCatList", subCatList);
 				model.addObject("subCatListJSON", CommonUtility.toJSONString(subCatList));
 
-				
 				map = new LinkedMultiValueMap<>();
 				model.addObject("productId", productIdStr);
-				int productId=Integer.parseInt(FormValidation.DecodeKey(productIdStr));
+				int productId = Integer.parseInt(FormValidation.DecodeKey(productIdStr));
 				map.add("productId", productId);
 
-				ProductMaster editProd = Constants.getRestTemplate().postForObject(Constants.url + "getProductByProductId", map, ProductMaster.class);
+				ProductMaster editProd = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getProductByProductId", map, ProductMaster.class);
 				model.addObject("editProd", editProd);
-				
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1620,20 +1625,20 @@ public class ProdMasteController {
 	}
 
 	/*****************************
-	 * //Created Date: 26-09-2020 //UpdateDate:26-09-2020 //Description: 
-	 * To Show manage Product Image List  //Developed By(Developer Name): Sachin //Updated
+	 * //Created Date: 26-09-2020 //UpdateDate:26-09-2020 //Description: To Show
+	 * manage Product Image List //Developed By(Developer Name): Sachin //Updated
 	 * By(Developer Name): Sachin
 	 ******************************/
 	@RequestMapping(value = "/manageProdImages/{productIdStr}", method = RequestMethod.GET)
-	public ModelAndView manageProdImages(@PathVariable String productIdStr,
-			HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView manageProdImages(@PathVariable String productIdStr, HttpServletRequest request,
+			HttpServletResponse response) {
 
-		ModelAndView model =null;
+		ModelAndView model = null;
 
 		try {
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			
+
 			Info edit = AccessControll.checkAccess("showProdList", "showProdList", "0", "0", "1", "0", newModuleList);
 
 			if (edit.isError() == true) {
@@ -1644,43 +1649,43 @@ public class ProdMasteController {
 				model = new ModelAndView("product/prod_images");
 				model.addObject("isEdit", 1);
 				model.addObject("productIdStr", productIdStr);
-				
+
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				
-				int productId=Integer.parseInt(FormValidation.DecodeKey(productIdStr));
-				
+
+				int productId = Integer.parseInt(FormValidation.DecodeKey(productIdStr));
+
 				map.add("productId", productId);
-				
-				String[] imageArray = Constants.getRestTemplate().postForObject(Constants.url + "getProdImagesByProductId", map,
-						String[].class);
-				
-				List<String> imageList=new ArrayList<String>(Arrays.asList(imageArray));
-				
+
+				String[] imageArray = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getProdImagesByProductId", map, String[].class);
+
+				List<String> imageList = new ArrayList<String>(Arrays.asList(imageArray));
+
 				model.addObject("imageList", imageList);
 				model.addObject("imageJSON", CommonUtility.toJSONString(imageList));
-				
+
 				model.addObject("imageUrl", Constants.PROD_IMG_VIEW_URL);
 			}
-		}catch (Exception e) {
-		 e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return model;
-	
+
 	}
-	
+
 	/*****************************
-	 * //Created Date: 28-09-2020 //UpdateDate:28-09-2020 //Description: 
-	 * To add/update Product Image List  //Developed By(Developer Name): Sachin //Updated
-	 * By(Developer Name): Sachin
+	 * //Created Date: 28-09-2020 //UpdateDate:28-09-2020 //Description: To
+	 * add/update Product Image List //Developed By(Developer Name): Sachin
+	 * //Updated By(Developer Name): Sachin
 	 ******************************/
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/ajaxImageUploadProduct/{productIdStr}", method = RequestMethod.POST)
 	public String ajaxImageUploadOffer(@PathVariable String productIdStr, HttpServletRequest request,
 			HttpServletResponse response, @RequestParam("files") List<MultipartFile> files) {
 
 		System.err.println("ajaxImageUploadOffer--- " + files.size());
-int productId=Integer.parseInt(FormValidation.DecodeKey(productIdStr));
+		int productId = Integer.parseInt(FormValidation.DecodeKey(productIdStr));
 		try {
 
 			Info info = new Info();
@@ -1689,12 +1694,12 @@ int productId=Integer.parseInt(FormValidation.DecodeKey(productIdStr));
 
 			System.err.println("files" + files.toString());
 			if (productId > 0) {
-				
-				
+
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("productId", productId);
 
-ProductMaster prodMaster = Constants.getRestTemplate().postForObject(Constants.url + "getProductByProductId", map, ProductMaster.class);
+				ProductMaster prodMaster = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getProductByProductId", map, ProductMaster.class);
 
 				if (files.size() > 0) {
 
@@ -1703,7 +1708,7 @@ ProductMaster prodMaster = Constants.getRestTemplate().postForObject(Constants.u
 						int randomInt = random.nextInt(100);
 
 						String ext = files.get(i).getOriginalFilename().split("\\.")[1];
-						 String fileName = CommonUtility.getCurrentTimeStamp()+ "_" + randomInt + "." + ext;
+						String fileName = CommonUtility.getCurrentTimeStamp() + "_" + randomInt + "." + ext;
 						// new ImageUploadController().saveUploadedFiles(files.get(i), 1, fileName);
 
 						info = new ImageUploadController().saveProdImgeWithResize(files.get(i), fileName, 450, 250);
@@ -1718,23 +1723,19 @@ ProductMaster prodMaster = Constants.getRestTemplate().postForObject(Constants.u
 						}
 
 					}
-					
-					
-					if(prodMaster.getProductImages().length()>0) {
-						
 
-						filesList=prodMaster.getProductImages().concat(","+filesList);
-						
+					if (prodMaster.getProductImages().length() > 0) {
+
+						filesList = prodMaster.getProductImages().concat("," + filesList);
+
 					}
-					
-				
+
 					if (info != null) {
 						if (!info.isError()) {
-						 map = new LinkedMultiValueMap<>();
+							map = new LinkedMultiValueMap<>();
 							map.add("filesList", filesList);
 							map.add("productId", productId);
-							Constants.getRestTemplate().postForObject(Constants.url + "updateProdImg", map,
-									Info.class);
+							Constants.getRestTemplate().postForObject(Constants.url + "updateProdImg", map, Info.class);
 						}
 					}
 				}
@@ -1752,17 +1753,17 @@ ProductMaster prodMaster = Constants.getRestTemplate().postForObject(Constants.u
 		return "true";
 
 	}
-	
+
 	/*****************************
-	 * //Created Date: 28-09-2020 //UpdateDate:28-09-2020 //Description: 
-	 * To delete Product Image from image List  //Developed By(Developer Name): Sachin //Updated
-	 * By(Developer Name): Sachin
+	 * //Created Date: 28-09-2020 //UpdateDate:28-09-2020 //Description: To delete
+	 * Product Image from image List //Developed By(Developer Name): Sachin
+	 * //Updated By(Developer Name): Sachin
 	 ******************************/
 	@RequestMapping(value = "/deleteProductImageAjax", method = RequestMethod.GET)
 	public @ResponseBody Info deleteOfferImageAjax(HttpServletRequest request, HttpServletResponse response) {
 
 		Info info = new Info();
-String pIdStr=request.getParameter("productId");
+		String pIdStr = request.getParameter("productId");
 		int productId = Integer.parseInt(FormValidation.DecodeKey(pIdStr));
 
 		String imageName = request.getParameter("imageName");
@@ -1786,29 +1787,27 @@ String pIdStr=request.getParameter("productId");
 
 		return info;
 	}
-	
-	
+
 	@RequestMapping(value = "/getItemImagesByProductId", method = RequestMethod.GET)
 	public @ResponseBody List<String> getItemImagesByDocIdAndDocType(HttpServletRequest request,
 			HttpServletResponse response) {
-List<String> imgList=new ArrayList<String>();
-try {
-		//int productId = Integer.parseInt(request.getParameter("productId"));
+		List<String> imgList = new ArrayList<String>();
+		try {
+			// int productId = Integer.parseInt(request.getParameter("productId"));
 
-		
-		String pIdStr=request.getParameter("productId");
-				int productId = Integer.parseInt(FormValidation.DecodeKey(pIdStr));
+			String pIdStr = request.getParameter("productId");
+			int productId = Integer.parseInt(FormValidation.DecodeKey(pIdStr));
 
-		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-		map.add("productId", productId);
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("productId", productId);
 
-		String[] imgArr = Constants.getRestTemplate().postForObject(Constants.url + "getProdImagesByProductId", map,
-				String[].class);
-		imgList = new ArrayList<String>(Arrays.asList(imgArr));
-}catch (Exception e) {
-	e.printStackTrace();
-}
+			String[] imgArr = Constants.getRestTemplate().postForObject(Constants.url + "getProdImagesByProductId", map,
+					String[].class);
+			imgList = new ArrayList<String>(Arrays.asList(imgArr));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return imgList;
 	}
-	
+
 }
