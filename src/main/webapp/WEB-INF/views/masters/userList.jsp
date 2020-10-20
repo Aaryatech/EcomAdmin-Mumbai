@@ -72,6 +72,8 @@
 								<th width="5%">SR. No.</th>
 								<th>Name</th>
 								<th>Mobile No.</th>
+								<th>Email</th>
+								<th>DOB</th>
 								<th>Department</th>
 								<th>User Type</th>
 								<th>Status</th>
@@ -86,7 +88,10 @@
 									<td>${count.index+1}</td>
 									<td>${userList.userName}</td>
 									<td>${userList.userMobileNo}</td>
-									<td>${userList.deptId == 1 ? 'Sales' : userList.deptId == 2 ? 'Production' : userList.deptId == 3 ? 'Marketing' : ''}</td>
+									<td>${userList.userEmail}</td>
+									<td>${userList.birthDate}</td>
+									<td>${userList.deptId == 1 ? 'Sales' : userList.deptId == 2 ? 'Production' : userList.deptId == 3 ? 'Marketing' : 
+										userList.deptId == 4 ? 'HR' : userList.deptId == 5 ? 'Finance' : userList.deptId == 6 ? 'Other' : ''}</td>
 									<td>${userList.exVar4}</td>
 									<c:set value="" var="status" />
 									<c:if test="${userList.isActive==1}">
@@ -105,18 +110,32 @@
 												class="list-icons-item" title="Edit"> <i
 												class="icon-database-edit2"></i>
 											</a>
-										</div></c:if> <c:if test="${deleteAccess==0}">
-										<div class="list-icons">
-											<a href="javascript:void(0)"
-												class="list-icons-item text-danger-600 bootbox_custom"
-												data-uuid="${userList.exVar1}" data-popup="tooltip" title=""
-												data-original-title="Delete"><i class="icon-trash"></i></a>
-										</div></c:if>
+										</div></c:if> 
+										<c:if test="${deleteAccess==0}">
+											<c:if test="${currUserId!=userList.userId}">
+											<div class="list-icons">
+												<a href="javascript:void(0)"
+													class="list-icons-item text-danger-600 bootbox_custom"
+													data-uuid="${userList.exVar1}" data-popup="tooltip" title=""
+													data-original-title="Delete"><i class="icon-trash"></i></a>
+											</div>
+											</c:if>
+										</c:if>
 									</td>
 								</tr>
 							</c:forEach>
 						</tbody>
 					</table>
+					<br>
+					
+					<div class="text-center">
+								<!-- <button class="btn btn-primary" value="PDF" id="PDFButton"
+									onclick="genPdf()">PDF</button> -->
+
+								<input type="button" id="expExcel" class="btn btn-primary"
+									value="EXPORT TO Excel" onclick="exportToExcel();">
+							</div>
+							<br>
 				</div>
 				<!-- /colReorder integration -->
 
@@ -165,6 +184,16 @@
 										}
 									});
 						});
+	</script>
+	<script type="text/javascript">
+		function exportToExcel() {
+
+			window.open("${pageContext.request.contextPath}/exportToExcelNew");
+			document.getElementById("expExcel").disabled = true;
+		}
+		function genPdf() {
+			window.open("pdfReport?url=pdf/getUserListPdf");
+		}
 	</script>
 </body>
 </html>

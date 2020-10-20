@@ -537,8 +537,7 @@ function checkSame(){
 		                    }
 		                },
 		                callback: function (result) {
-		                   if(result){
-		                	   
+		                   if(result){		                	   
 		                	   document.getElementById("submtbtn").disabled = true;
 		                	   document.getElementById("submitInsertEmpType").submit();
 		                   }

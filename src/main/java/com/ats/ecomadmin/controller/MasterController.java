@@ -1,5 +1,6 @@
 package com.ats.ecomadmin.controller;
 
+import java.io.FileNotFoundException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
@@ -39,6 +40,7 @@ import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.DeliveryInstruction;
+import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.GrievencesInstruction;
@@ -543,6 +545,9 @@ public class MasterController {
 				int compId = (int) session.getAttribute("companyId");
 
 				mav = "masters/userList";
+				
+				User userObj = (User) session.getAttribute("userObj");
+				model.addAttribute("currUserId", userObj.getUserId());
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
@@ -557,6 +562,62 @@ public class MasterController {
 				}
 				model.addAttribute("userList", userList);
 				model.addAttribute("title", "Users List");
+				
+				
+				// export To Excel
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+				rowData.add("Sr No");
+				rowData.add("Name");
+				rowData.add("Mobile No.");
+				rowData.add("Email");
+				rowData.add("DOB");
+				rowData.add("Department");
+				rowData.add("User Type");
+				rowData.add("Status");
+				
+				String userStatus = "";
+				String userDept = "";
+
+				expoExcel.setRowData(rowData);
+				int srno = 1;
+				exportToExcelList.add(expoExcel);
+				for (int i = 0; i < userList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+
+					rowData.add(" " + srno);
+					rowData.add(" " + userList.get(i).getUserName());
+					rowData.add(" " + userList.get(i).getUserMobileNo());
+					rowData.add(" " + userList.get(i).getUserEmail());
+					rowData.add(" " + userList.get(i).getBirthDate());
+					
+					userDept = userList.get(i).getDeptId()== 1 ? "Sales" : userList.get(i).getDeptId() == 2 ? "Production" : userList.get(i).getDeptId() == 3 ? "Marketing" : 
+					userList.get(i).getDeptId() == 4 ? "HR" : userList.get(i).getDeptId() == 5 ? "Finance" : userList.get(i).getDeptId() == 6 ? "Other" : "";
+					
+					userStatus = userList.get(i).getIsActive() == 1 ? "Active" : "In-Active";
+					
+					rowData.add(" " + userDept);
+					rowData.add(" " + userList.get(i).getExVar4());
+					rowData.add(" " + userStatus);
+
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "Users");
+				session.setAttribute("reportNameNew", "User List");
+				//session.setAttribute("searchByNew", "From Date: " + fromDate + "  To Date: " + toDate + " ");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Users Excel");
 
 				Info add = AccessControll.checkAccess("showUsers", "showUsers", "0", "1", "0", "0", newModuleList);
 				Info edit = AccessControll.checkAccess("showUsers", "showUsers", "0", "0", "1", "0", newModuleList);
@@ -617,6 +678,7 @@ public class MasterController {
 
 				model.addAttribute("user", user);
 				model.addAttribute("title", "Add User");
+				model.addAttribute("isEdit", 0);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /addNewUser : " + e.getMessage());
@@ -633,6 +695,7 @@ public class MasterController {
 	@RequestMapping(value = "/insertNewUser", method = RequestMethod.POST)
 	public String insertNewUser(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
+		String btnVal = new String();
 		try {
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
@@ -661,28 +724,35 @@ public class MasterController {
 
 			}
 
-			String pass = request.getParameter("pass");
-			String password = pass;
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			byte[] messageDigest = md.digest(password.getBytes());
-			BigInteger number = new BigInteger(1, messageDigest);
-			String hashtext = number.toString(16);
-
 			User user = new User();
 
 			int userId = Integer.parseInt(request.getParameter("user_id"));
 
-			if (userId > 0) {			
-				
+			btnVal = request.getParameter("btnVal");
+
+			System.err.println("Btn---------->" + btnVal);
+
+			if (userId > 0) {
+
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("userId", userId);
-				User edtUser = Constants.getRestTemplate().postForObject(Constants.url + "getUserById", map, User.class);
-				
+				map.add("compId", companyId);
+
+				User edtUser = Constants.getRestTemplate().postForObject(Constants.url + "getUserById", map,
+						User.class);
+
 				user.setPassword(edtUser.getPassword());
 				user.setUpdtDttime(sf.format(date));
 			} else {
 				user.setInsertDttime(sf.format(date));
-				
+
+				String pass = request.getParameter("pass");
+				String password = pass;
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				byte[] messageDigest = md.digest(password.getBytes());
+				BigInteger number = new BigInteger(1, messageDigest);
+				String hashtext = number.toString(16);
+
 				user.setPassword(hashtext);
 			}
 			user.setUserId(userId);
@@ -738,8 +808,10 @@ public class MasterController {
 			e.printStackTrace();
 		}
 
-		return "redirect:/showUsers";
-
+		if (btnVal.equals("Save"))
+			return "redirect:/addNewUser";
+		else
+			return "redirect:/showUsers";
 	}
 
 	// Created By :- Mahendra Singh
@@ -860,7 +932,7 @@ public class MasterController {
 			map.add("userId", userId);
 
 			User res = Constants.getRestTemplate().postForObject(Constants.url + "getUserByMobNo", map, User.class);
-			System.out.println("userRes  ------  " + res);
+		//	System.out.println("userRes  ------  " + res);
 			if (res != null) {
 				info.setError(false);
 				info.setMsg("User Found");
@@ -913,6 +985,37 @@ public class MasterController {
 			e.printStackTrace();
 		}
 		return info;
+	}
+	
+	@RequestMapping(value = "pdf/getUserListPdf", method = RequestMethod.GET)
+	public ModelAndView getOrdrListPdf(HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
+		ModelAndView model = null;
+		try {
+			model = new ModelAndView("masters/userListPdf");
+			
+			HttpSession session = request.getSession();
+			
+			int companyId = (int) session.getAttribute("companyId");
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", companyId);
+
+			User[] userArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllUsers", map,
+					User[].class);
+			List<User> userList = new ArrayList<User>(Arrays.asList(userArr));
+		
+			model.addObject("userList",  userList);
+			
+			CompMaster compDtl = (CompMaster) session.getAttribute("company");
+			model.addObject("company",  compDtl.getCompanyName());
+			
+			}catch (Exception e) {
+				System.out.println("Excep in /pdf/getUserListPdf "+e.getMessage());
+				e.printStackTrace();
+			}
+		
+		return model;
+
 	}
 
 	/*-------------------------------------------------------------------------------*/
