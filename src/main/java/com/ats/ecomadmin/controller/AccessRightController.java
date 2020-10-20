@@ -39,15 +39,12 @@ import com.ats.ecomadmin.model.acrights.CreatedRoleList;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
 import com.ats.ecomadmin.model.acrights.SubModuleJson;
 
-
 @Controller
 @Scope("session")
 public class AccessRightController {
 
-
 	public AccessRightModuleList accessRightModuleList;
 	int isError = 0;
-
 
 	@RequestMapping(value = "/accessDenied", method = RequestMethod.GET)
 	public ModelAndView accessDenied(HttpServletRequest request, HttpServletResponse response) {
@@ -60,7 +57,6 @@ public class AccessRightController {
 		}
 		return model;
 	}
-
 
 	@RequestMapping(value = "/showCreateRole", method = RequestMethod.GET)
 	public ModelAndView showAccessRight(HttpServletRequest request, HttpServletResponse response) {
@@ -163,21 +159,30 @@ public class AccessRightController {
 		int roleId = Integer.parseInt(request.getParameter("accRole"));
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 		map.add("roleId", roleId);
-
-		Info errorResponse = Constants.getRestTemplate().postForObject(Constants.url + "deleteRole", map, Info.class);
-		System.out.println(errorResponse.toString());
-
 		HttpSession session = request.getSession();
-		if (errorResponse.isError()) {
-			session.setAttribute("errorMsg", "Failed to Delete");
-			return "redirect:/showRoleList";
+		int usrCnt = Constants.getRestTemplate().postForObject(Constants.url + "getUserCntByRoleId", map,
+				Integer.class);
 
-		} else {
-			session.setAttribute("successMsg", "Deleted Successfully");
+		if (usrCnt > 0) {
+			session.setAttribute("errorMsg",
+					"You cannot delete this role," + usrCnt + " Users assigned for this role.");
 			return "redirect:/showRoleList";
+		} else {
+			map.add("roleId", roleId);
+			Info errorResponse = Constants.getRestTemplate().postForObject(Constants.url + "deleteRole", map,
+					Info.class);
+			System.out.println(errorResponse.toString());
+
+			if (errorResponse.isError()) {
+				session.setAttribute("errorMsg", "Failed to Delete");
+				return "redirect:/showRoleList";
+
+			} else {
+				session.setAttribute("successMsg", "Deleted Successfully");
+				return "redirect:/showRoleList";
+			}
 		}
 	}
-
 
 	@RequestMapping(value = "/submitCreateRole", method = RequestMethod.POST)
 	public String submitAssignRole(HttpServletRequest request, HttpServletResponse response) {
@@ -332,11 +337,12 @@ public class AccessRightController {
 			// model.addObject("allModuleList",
 			// accessRightModuleList.getAccessRightModuleList());
 			model.addObject("editRole", editRole);
-			
-			ObjectMapper om=new ObjectMapper();
+
+			ObjectMapper om = new ObjectMapper();
 			ModuleJson[] moduleJson = om.readValue(editRole.getRoleJson(), ModuleJson[].class);
 
-			//ModuleJson[] moduleJson = new Gson().fromJson(editRole.getRoleJson(), ModuleJson[].class);
+			// ModuleJson[] moduleJson = new Gson().fromJson(editRole.getRoleJson(),
+			// ModuleJson[].class);
 			List<ModuleJson> moduleJsonList = new ArrayList<ModuleJson>(Arrays.asList(moduleJson));
 
 			// System.out.println("List" +
@@ -417,9 +423,8 @@ public class AccessRightController {
 			accessRightModuleList = Constants.getRestTemplate().getForObject(Constants.url + "getAllModuleAndSubModule",
 					AccessRightModuleList.class);
 
-
-			GetUser[] empArray = Constants.getRestTemplate()
-					.getForObject(Constants.url + "/getUserListForAssignRole", GetUser[].class);
+			GetUser[] empArray = Constants.getRestTemplate().getForObject(Constants.url + "/getUserListForAssignRole",
+					GetUser[].class);
 			List<GetUser> empList = new ArrayList<>(Arrays.asList(empArray));
 
 			CreatedRoleList createdRoleList = Constants.getRestTemplate()
@@ -536,6 +541,5 @@ public class AccessRightController {
 
 		return model;
 	}
-
 
 }

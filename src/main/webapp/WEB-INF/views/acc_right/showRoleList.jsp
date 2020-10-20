@@ -265,7 +265,7 @@ bootbox.confirm({
 											},
 											cancel : {
 												label : 'Cancel',
-												className : 'btn-link'
+												className : 'btn-danger'
 											}
 										},
 										callback : function(result) {

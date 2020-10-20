@@ -128,10 +128,10 @@
 										<label class="col-form-label col-lg-2" for="roleId">Select
 											Access Role <span style="color: red">* </span>:
 										</label>
-										<div class="col-lg-2">
+										<div class="col-lg-4">
 											<select name="roleId" data-placeholder="Select Role"
-												id="roleId" class="form-control form-control-sm select"
-												aria-hidden="true" data-container-css-class="select-sm"
+												id="roleId" class="form-control select-search"
+												aria-hidden="true"
 												data-fouc>
 												<option value="">Select Role</option>
 												<c:forEach items="${createdRoleList}" var="createdRoleList">
@@ -139,20 +139,8 @@
 												</c:forEach>
 
 											</select> <span class="validation-invalid-label" id="error_roleId"
-												style="display: none;">select access role.</span>
-										</div>
-										
-										<div class="col-lg-4" style="text-align: center;">
-										<input type="hidden" id="roleId" name="roleId" value="0">
-										<button type="submit" class="btn bg-blue ml-3 legitRipple"
-											id="submtbtn">
-											Submit <i class="icon-paperplane ml-2"></i>
-										</button>
-										<a href="${pageContext.request.contextPath}/showCreateRole"><button
-												type="button" class="btn btn-primary">Cancel</button></a>
-
-									</div>
-
+												style="display: none;">Select access role.</span>
+										</div>										
 									</div>
 
 									<!-- <div class="form-group row">
@@ -172,15 +160,20 @@
 
 									
 	<div class="col-lg-12" align="center">
+	<!-- class="table datatable-scroller table-bordered table-hover datatable-highlight1 datatable-button-html5-basic  datatable-button-print-columns1"
+										id="printtable1" -->
 									<table
-										class="table datatable-scroller table-bordered table-hover datatable-highlight1 datatable-button-html5-basic  datatable-button-print-columns1"
-										id="printtable1">
+										class="table datatable-scroller table-border" id="printtable1">
 										<thead>
 											<tr class="bg-blue">
-												<th width="7%">Sr. No.</th>
-												<th>User Name</th>
-												<th>User Type</th>
-												<th width="10%">Current Role</th>
+												<th width="5%"><input type="checkbox" id="chkAll"
+													name="chkAll" class="select_all"></th>
+												<th width="10%">Sr. No.</th>
+												<th width="25%">
+													
+												User Name</th>
+												<th width="30%">User Type</th>
+												<th width="30%">Current Role</th>
 
 											</tr>
 										</thead>
@@ -189,10 +182,13 @@
 
 											<c:forEach items="${empList}" var="empList" varStatus="count">
 												<tr>
+													<td>
+														<input type="checkbox"
+														name="empIds" id="empIds${empList.userId}" class="chk" value="${empList.userId}">
+													</td>
 													<td style="text-align: center;"><c:out
 															value="${count.index+1}" /></td>
-													<td><input type="checkbox"
-														name="empIds" id="empIds${empList.userId}" class="chk" value="${empList.userId}"> &nbsp;<c:out value="${empList.userName}" />&nbsp;</td>
+													<td><c:out value="${empList.userName}" /></td>
 																					<td></td> 
 													
 													<td><c:out value="${empList.roleName}" /></td>
@@ -205,8 +201,21 @@
 										</tbody>
 									</table>
 									</div>
+									
+									
 									<span class="validation-invalid-label" id="error_table1"
 										style="display: none;">Please select one record.</span>
+										
+										<div class="col-md-12" style="text-align: center;">
+										<input type="hidden" id="roleId" name="roleId" value="0">
+										<button type="submit" class="btn bg-blue ml-3 legitRipple"
+											id="submtbtn">
+											Submit <i class="icon-paperplane ml-2"></i>
+										</button>
+										<a href="${pageContext.request.contextPath}/showCreateRole"><button
+												type="button" class="btn btn-primary">Cancel</button></a>
+
+									</div>
 								</form>
 								<%-- <span class="form-text text-muted">* If Want To Access
 										Add, Edit,Delete Then View Access is Compulsory</span>
@@ -252,6 +261,12 @@
 
 
 	<script>
+	$(document).ready(function () {
+        $("#chkAll").click(function () {
+            $(".chk").attr('checked', this.checked);
+        });
+    });
+	
 		$(document).ready(function($) {
 
 			$("#assignTask").submit(function(e) {

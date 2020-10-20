@@ -53,7 +53,7 @@
 			</a></li>
 			
 			<li class="nav-item"><a href="${pageContext.request.contextPath}/changePassword" class="navbar-nav-link"
-				title="Logout"> <i class="icon-switch2" style="color: #32b0de;"></i>
+				title="Change Password"> <i class="icon-unlocked" style="color: #32b0de;"></i>
 					<span class="d-md-none ml-2">Change Password</span>
 			</a></li>
 
