@@ -106,14 +106,14 @@
 												style="display: none;">This field is required.</span>
 										</div>
 
-										<label class="col-form-label font-weight-bold col-lg-2"
+										<label class="col-form-label font-weight-bold col-lg-1"
 											for="prefix">Prefix<span class="text-danger">*
 										</span>:
 										</label>
-										<div class="col-lg-4">
+										<div class="col-lg-5">
 											<input type="text"
 												class="form-control maxlength-badge-position" maxlength="5"
-												autocomplete="off" onchange="trim(this)"
+												autocomplete="off" onchange="trim(this)" style="text-transform:uppercase;" 
 												value="${cat.catPrefix}" name="prefix" id="prefix">
 											<span class="validation-invalid-label text-danger" id="error_prefix"
 												style="display: none;">This field is required.</span> <span
@@ -128,7 +128,7 @@
 
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="address">Description <span class="text-danger">*
+											for="address">Description <span class="text-danger">
 										</span>:
 										</label>
 										<div class="col-lg-10">
@@ -149,21 +149,40 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1" name="allowCopy"
-													id="copy_y" ${cat.allowToCopy==1 ? 'checked' : ''}>
-													Yes
-												</label>
-											</div>
+											<c:choose>
+												<c:when test="${cat.catId>0}">
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="allowCopy" id="copy_y"
+															${cat.allowToCopy==1 ? 'checked' : ''}> Yes
+														</label>
+													</div>
 
-											<div class="form-check form-check-inline">
-												<label class="form-check-label "> <input
-													type="radio" class="form-check-input" value="0" name="allowCopy"
-													id="copy_n" ${cat.allowToCopy==0 ? 'checked' : ''}>
-													No
-												</label>
-											</div>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="allowCopy" id="copy_n"
+															${cat.allowToCopy==0 ? 'checked' : ''}> No
+														</label>
+													</div>
+												</c:when>
+												<c:otherwise>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="allowCopy" id="copy_y"> Yes
+														</label>
+													</div>
+
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="allowCopy" id="copy_n"> No
+														</label>
+													</div>
+												</c:otherwise>
+											</c:choose>
 										</div>
 
 
@@ -172,21 +191,40 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1" name="catActive"
-													id="cat_y" ${cat.isActive==1 ? 'checked' : ''}>
-													Active
-												</label>
-											</div>
+											<c:choose>
+												<c:when test="${cat.catId>0}">
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="catActive" id="cat_y"
+															${cat.isActive==1 ? 'checked' : ''}> Active
+														</label>
+													</div>
 
-											<div class="form-check form-check-inline">
-												<label class="form-check-label "> <input
-													type="radio" class="form-check-input" value="0" name="catActive"
-													id="cat_n" ${cat.isActive==0 ? 'checked' : ''}>
-													In-Active
-												</label>
-											</div>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="catActive" id="cat_n"
+															${cat.isActive==0 ? 'checked' : ''}> In-Active
+														</label>
+													</div>
+												</c:when>
+												<c:otherwise>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="catActive" id="cat_y"> Active
+														</label>
+													</div>
+
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="catActive" id="cat_n"> In-Active
+														</label>
+													</div>
+												</c:otherwise>
+											</c:choose>
 										</div>
 									</div>
 									
@@ -196,7 +234,7 @@
 											class="text-danger"></span>:
 										</label>
 										<div class="col-lg-4">
-											<label class="form-check-label"> <img id="output"
+											<label class="form-check-label"> <img id="output" height="180"
 												width="150" src="${imgPath}${cat.imageName}" /> <input
 												type="file" class="form-control-uniform" data-fouc
 												onchange="loadFile(event)" name="doc" id="doc"> <input
@@ -246,13 +284,24 @@
 				console.log(err);
 			}
 		};
+		
+		$('#prefix').on('input', function() {
+			if (this.value.match(/[^a-zA-Z]/g)) {
+                this.value = this.value.replace(/[^a-zA-Z]/g, '');
+            }
+		});
+		
+		/* $('#prefix').keyup(function() {
+            if (this.value.match(/[^a-zA-Z]/g)) {
+                this.value = this.value.replace(/[^a-zA-Z]/g, '');
+            }
+        });	 */	
 	</script>
 
 	<script type="text/javascript">
 		$(document)
 				.ready(
 						function($) {
-
 							$("#submitInsert")
 									.submit(
 											function(e) {
@@ -275,34 +324,12 @@
 													$("#error_prefix").hide()
 												}
  
-												/* if (!$("#mob_no").val()
-														|| !validateMobile($(
-																"#mob_no")
-																.val())) {
-													isError = true;
-													$("#error_mob_no").show()
-												} else {
-													$("#error_mob_no").hide()
-												} */
-
-
-												if (!$("#description").val()) {
+												/* if (!$("#description").val()) {
 													isError = true;
 													$("#error_description").show()
 												} else {
 													$("#error_description").hide()
-												}
-
-												
-
-												/* if (!$("#email").val()
-														|| !validateEmail($(
-																"#email").val())) {
-													isError = true;
-													$("#error_email").show()
-												} else {
-													$("#error_email").hide()
-												} */
+												} */												
 
 												if (!isError) {
 													var x = true;

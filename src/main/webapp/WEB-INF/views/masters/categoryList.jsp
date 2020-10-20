@@ -74,8 +74,8 @@
 								<th width="5%">SR. No.</th>
 								<th>Category</th>
 								<th>Prefix</th>
-								<th>Status</th>
-								<th style="display: none;"></th>
+								<th>Image</th>
+								<th>Status</th>								
 								<th class="text-center">Actions</th>
 							</tr>
 						</thead>
@@ -85,6 +85,7 @@
 									<td>${count.index+1}</td>
 									<td>${catList.catName}</td>
 									<td>${catList.catPrefix}</td>
+									<td><img src="${imgPath}${catList.imageName}" alt="${catList.imageName}" height="42" width="60"></td>
 									<td>${catList.isActive==1 ? 'Active' : 'In-Active'}</td>
 									<td style="display: none;"></td>
 									<td class="text-center"><c:if test="${editAccess==0}">

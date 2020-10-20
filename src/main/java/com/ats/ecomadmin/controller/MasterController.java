@@ -1060,6 +1060,7 @@ public class MasterController {
 				}
 
 				model.addAttribute("catList", catList);
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 				model.addAttribute("title", "Category List");
 				// model.addAttribute("imageUrl", Constants.showDocSaveUrl);
 				Info add = AccessControll.checkAccess("showCategoryList", "showCategoryList", "0", "1", "0", "0",
@@ -1163,7 +1164,7 @@ public class MasterController {
 			cat.setAllowToCopy(Integer.parseInt(request.getParameter("allowCopy")));
 			cat.setCatDesc(request.getParameter("description"));
 			cat.setCatName(request.getParameter("catName"));
-			cat.setCatPrefix(request.getParameter("prefix"));
+			cat.setCatPrefix(request.getParameter("prefix").toUpperCase());
 			cat.setIsParent(Integer.parseInt(request.getParameter("isParent")));
 			cat.setCompanyId(companyId);
 			cat.setImageName(profileImage);
@@ -1268,17 +1269,30 @@ public class MasterController {
 				mav = "redirect:/showCategoryList";
 				String base64encodedString = request.getParameter("catId");
 				String catId = FormValidation.DecodeKey(base64encodedString);
-
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				
 				map.add("catId", Integer.parseInt(catId));
+				int catIdCnt = Constants.getRestTemplate().postForObject(Constants.url + "getCatIdCount", map,
+						Integer.class);	
+				
+				int prodIdCnt = Constants.getRestTemplate().postForObject(Constants.url + "getProdIdCntByCatId", map,
+						Integer.class);	
+				
 
-				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteCategoryById", map,
-						Info.class);
-
-				if (!res.isError()) {
-					session.setAttribute("successMsg", res.getMsg());
-				} else {
-					session.setAttribute("errorMsg", res.getMsg());
+				if(catIdCnt>0 && prodIdCnt>0) {
+					session.setAttribute("errorMsg", "This Category cannot be delete, Subcategory or Product are assigned.");
+				}else{
+					map.add("catId", Integer.parseInt(catId));
+					
+					Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteCategoryById", map,
+							Info.class);
+	
+					if (!res.isError()) {
+						session.setAttribute("successMsg", res.getMsg());
+					} else {
+						session.setAttribute("errorMsg", res.getMsg());
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -1295,12 +1309,17 @@ public class MasterController {
 		Info res = new Info();
 
 		try {
+			HttpSession session = request.getSession();
+			
+			int companyId = (int) session.getAttribute("companyId");
+			
 			String prefix = request.getParameter("prefix");
 			int catId = Integer.parseInt(request.getParameter("catId"));
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("prefix", prefix);
 			map.add("catId", catId);
+			map.add("compId", companyId);
 
 			res = Constants.getRestTemplate().postForObject(Constants.url + "getCatByPrefix", map, Info.class);
 
