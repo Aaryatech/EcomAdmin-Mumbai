@@ -511,9 +511,10 @@
 		                },
 		                callback: function (result) {
 		                   if(result){		                	   
-		                	  // document.getElementById("submtbtn").disabled = true;
+		                	
 		                	  // document.getElementById("submtbtnsave").disabled = true;
 		                	   document.getElementById("submitInsertEmpType").submit();
+		                	   document.getElementById("submtbtn").disabled = true;
 		                   }
 		                }
 		            });

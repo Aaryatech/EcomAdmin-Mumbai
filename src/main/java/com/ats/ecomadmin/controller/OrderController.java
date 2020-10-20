@@ -368,30 +368,28 @@ public class OrderController {
 
 	private int userSpaceWidth = 750;
 	private static int BUFFER_SIZE = 1024;
-
+	
 	@RequestMapping(value = "/pdfReport", method = RequestMethod.GET)
-	public void pdfReport(HttpServletRequest request, HttpServletResponse response) {
+	public void showPDF(HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("Inside PDf For Report URL ");
 		String url = request.getParameter("url");
 		System.out.println("URL " + url);
-		
+
 		File f = new File(Constants.REPORT_PATH);
-		
 
 		try {
-			runConverter1(Constants.ReportURL + url, f, request, response);
+			runConverter(Constants.ReportURL + url, f, request, response);
+			// runConverter("www.google.com", f,request,response);
 
 		} catch (IOException e) {
-
 			System.out.println("Pdf conversion exception " + e.getMessage());
+			e.printStackTrace();
 		}
 
 		// get absolute path of the application
 		ServletContext context = request.getSession().getServletContext();
 		String appPath = context.getRealPath("");
 		String filePath = Constants.REPORT_PATH;
-
-		// String filePath = "/home/ats-12/Report.pdf";
 
 		// construct the complete absolute path of the file
 		String fullPath = appPath + filePath;
@@ -436,31 +434,24 @@ public class OrderController {
 		}
 	}
 
-	private void runConverter1(String urlstring, File output, HttpServletRequest request, HttpServletResponse response)
+	private void runConverter(String urlstring, File output, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 
 		if (urlstring.length() > 0) {
 			if (!urlstring.startsWith("http://") && !urlstring.startsWith("file:")) {
 				urlstring = "http://" + urlstring;
 			}
-			
 			System.out.println("PDF URL " + urlstring);
 			java.io.FileOutputStream fos = new java.io.FileOutputStream(output);
 
 			PD4ML pd4ml = new PD4ML();
-			pd4ml.enableSmartTableBreaks(true);
+
 			try {
 
-				try {
-					pd4ml.setPageSize(landscapeValue ? pd4ml.changePageOrientation(format) : format);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				Dimension landscapeA4 = pd4ml.changePageOrientation(PD4Constants.A4);
+				pd4ml.setPageSize(landscapeA4);
+				pd4ml.enableSmartTableBreaks(true);
 
-				/*
-				 * Dimension landscapeA4 = pd4ml.changePageOrientation(PD4Constants.A4);
-				 * pd4ml.setPageSize(landscapeA4);
-				 */
 				PD4PageMark footer = new PD4PageMark();
 
 				footer.setPageNumberTemplate("Page $[page] of $[total]");
@@ -481,12 +472,9 @@ public class OrderController {
 			}
 
 			pd4ml.setHtmlWidth(userSpaceWidth);
-			try {
-				pd4ml.render(urlstring, fos);
-			}catch (Exception e) {
-				System.out.println("Ecxep pd4ml.render : "+e.getMessage());
-				e.printStackTrace();
-			}
+
+			pd4ml.render(urlstring, fos);
 		}
 	}
+
 }

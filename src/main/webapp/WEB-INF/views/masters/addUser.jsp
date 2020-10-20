@@ -74,11 +74,14 @@
 										class="icon-list2 ml-2"></i>&nbsp;&nbsp;&nbsp;&nbsp;View List</a></span>
 							</div>
 
-
+							
 							<div class="card-body">
-
+						
+							<div class="form-group row"></div>
+							<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
+					
 								<form action="${pageContext.request.contextPath}/insertNewUser"
-									id="submitInsert" method="post" enctype="multipart/form-data">
+									id="submitInsert" method="post" enctype="multipart/form-data" autocomplete="off">
 
 
 									<p class="desc text-danger fontsize11">Note : * Fields are
@@ -102,7 +105,7 @@
 										<div class="col-lg-4">
 											<input type="text"
 												class="form-control maxlength-badge-position" maxlength="70"
-												autocomplete="off" onchange="trim(this)"
+												autocomplete="off" onchange="trim(this)" autofocus="autofocus"
 												value="${user.userName}" name="user_name" id="user_name">
 											<span class="validation-invalid-label" id="error_user_name"
 												style="display: none;">This field is required.</span>
@@ -131,14 +134,14 @@
 
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="address">Address <span class="text-danger">*
+											for="address">Address <span class="text-danger">
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="100"
+											<textarea
+												class="form-control maxlength-badge-position" maxlength="200"
 												autocomplete="off" onchange="trim(this)"
-												value="${user.userAddress}" name="address" id="address">
+												name="address" id="address">${user.userAddress}</textarea>
 											<span class="validation-invalid-label text-danger"
 												id="error_address" style="display: none;">This field
 												is required.</span>
@@ -150,7 +153,7 @@
 										</label>
 										<div class="col-lg-4">
 											<input type="email"
-												class="form-control maxlength-badge-position" maxlength="70"
+												class="form-control maxlength-badge-position" maxlength="125"
 												autocomplete="off" onchange="trim(this)"
 												value="${user.userEmail}" name="email" id="email"> <span
 												class="validation-invalid-label text-danger"
@@ -200,11 +203,13 @@
 										</label>
 										<div class="col-lg-4">
 											<select class="form-control select-search" data-fouc
-												name="department" id="department" data-placholder="Select Department">
-												<option value=""></option>
+												name="department" id="department" data-placholder="Select Department">												
 												<option value="1" ${user.deptId==1 ? 'selected' : '' }>Sales</option>
 												<option value="2" ${user.deptId==2 ? 'selected' : '' }>Production</option>
 												<option value="3" ${user.deptId==3 ? 'selected' : '' }>Marketing</option>
+												<option value="4" ${user.deptId==4 ? 'selected' : '' }>HR</option>
+												<option value="5" ${user.deptId==5 ? 'selected' : '' }>Finance</option>
+												<option value="6" ${user.deptId==6 ? 'selected' : '' }>Other</option>
 												<%-- <c:forEach items="${desigList}" var="list" varStatus="count">
 													<c:choose>
 														<c:when test="${list.designationId==user.designationId}">
@@ -226,21 +231,42 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1" name="user"
-													id="user_y" ${user.isActive==1 ? 'checked' : ''}>
-													Active
-												</label>
-											</div>
+											<c:choose>
+												<c:when test="${user.userId>0}">
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" autofocus="autofocus"
+															class="form-check-input" checked value="1" name="user"
+															id="user_y" ${user.isActive==1 ? 'checked' : ''}>
+															Active
+														</label>
+													</div>
 
-											<div class="form-check form-check-inline">
-												<label class="form-check-label "> <input
-													type="radio" class="form-check-input" value="0" name="user"
-													id="user_n" ${user.isActive==0 ? 'checked' : ''}>
-													In-Active
-												</label>
-											</div>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="user" id="user_n"
+															${user.isActive==0 ? 'checked' : ''}> In-Active
+														</label>
+													</div>
+												</c:when>
+												<c:otherwise>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" autofocus="autofocus"
+															class="form-check-input" checked value="1" name="user"
+															id="user_y"> Active
+														</label>
+													</div>
+
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="user" id="user_n"> In-Active
+														</label>
+													</div>
+												</c:otherwise>
+											</c:choose>
 										</div>
 									</div>
 
@@ -284,6 +310,11 @@
 													 name="pass" id="pass" value="${user.password}"> <span
 													class="validation-invalid-label text-danger" id="error_pass"
 													style="display: none;">This field is required.</span>
+													
+													<span
+													class="validation-invalid-label text-danger" id="validate_pass"
+													style="display: none;">Password must contain 8 to 12 characters.<br>
+													Atleast 1 special character and 1 capital letter required</span>
 											</div>
 										</c:if>
 									</div>
@@ -308,12 +339,11 @@
 
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary">
-											Save <i class="icon-paperplane ml-2"></i>
-										</button>
+										<input type="submit" class="btn btn-primary" value="Save" name="btnVal">	
+										<input type="submit" class="btn btn-primary" value="Save & Next" name="btnVal">										
 									</div>
 								</form>
-								<input type="text" value="${isEdit}" id="isEdit">
+								<input type="hidden" value="${isEdit}" id="isEdit">
 							</div>
 
 
@@ -345,6 +375,17 @@
 				console.log(err);
 			}
 		};
+		
+		/* $("#pass").on('change', function(){    
+			//alert("HHH "+ $("#pass").val())
+			var strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$/;				
+			var inputVal = $("#pass").val();
+			if(strongRegex.test(inputVal)){
+				$("#validate_pass").hide()
+			}else{
+				$("#validate_pass").show()
+			} 
+		}); */
 	</script>
 
 	<script type="text/javascript">
@@ -357,6 +398,7 @@
 											function(e) {
 												var isError = false;
 												var errMsg = "";
+												var strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$/;
 
 												if (!$("#user_name").val()) {
 													isError = true;
@@ -384,21 +426,30 @@
 													$("#error_mob_no").hide()
 												}
 
-												if (!$("#address").val()) {
+												/* if (!$("#address").val()) {
 													isError = true;
 													$("#error_address").show()
 												} else {
 													$("#error_address").hide()
-												}
+												} */
 
 												if($("#isEdit").val()!=1){
+													
 													if (!$("#pass").val()) {
 														isError = true;
 														$("#error_pass").show()
 													} else {
 														$("#error_pass").hide()
 													}
+													
+													if(strongRegex.test($("#pass").val())){
+														$("#validate_pass").hide()
+													}else{
+														isError = true;
+														$("#validate_pass").show()
+													} 
 												}
+												
 												if (!$("#department").val()) {
 													isError = true;
 													$("#error_department")
