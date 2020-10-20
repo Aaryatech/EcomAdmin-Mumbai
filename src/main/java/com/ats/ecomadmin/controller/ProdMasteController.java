@@ -162,10 +162,11 @@ public class ProdMasteController {
 	 * Name): Sachin
 	 ******************************/
 	@RequestMapping(value = "/submitProductSave", method = RequestMethod.POST)
-	public String submitProductSave(HttpServletRequest request, HttpServletResponse response) {
+	public String submitProductSave(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam("primary_img") MultipartFile prodImgFile) {
 		String returnPage = null;
 		try {
-
+			System.err.println("prodImgFile " + prodImgFile.getOriginalFilename());
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 			Info add = AccessControll.checkAccess("showProdList", "showProdList", "0", "1", "0", "0", newModuleList);
@@ -291,7 +292,6 @@ public class ProdMasteController {
 
 				prod.setPrepTime(Integer.parseInt(prep_time));
 				prod.setProdCatId(Integer.parseInt(catId));
-				prod.setProdImagePrimary("");
 				prod.setProdStatusId(Integer.parseInt(prod_status));
 				prod.setProdSubCatId(Integer.parseInt(sub_cat_id));
 				prod.setProdTypeId(Integer.parseInt(prod_type_id));
@@ -340,8 +340,15 @@ public class ProdMasteController {
 				try {
 					int prodId = 0;
 					String prodIdStr = request.getParameter("prod_id");
+					System.err.println("prodIdStr is " + prodIdStr);
 					try {
-						prodId = Integer.parseInt(FormValidation.DecodeKey(prodIdStr));
+
+						if (prodIdStr != null) {
+							prodId = Integer.parseInt(FormValidation.DecodeKey(prodIdStr));
+						} else {
+							System.err.println("prodIdStr null");
+						}
+
 					} catch (Exception e) {
 						prodId = 0;
 					}
@@ -408,6 +415,16 @@ public class ProdMasteController {
 				prod.setTypeOfCream(Integer.parseInt(cream_id));
 				prod.setUomId(Integer.parseInt(uom_id));
 				prod.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
+
+				Random random = new Random();
+				int randomInt = random.nextInt(100);
+
+				String ext = prodImgFile.getOriginalFilename().split("\\.")[1];
+				String fileName = CommonUtility.getCurrentTimeStamp() + "_" + randomInt + "." + ext;
+// new ImageUploadController().saveUploadedFiles(files.get(i), 1, fileName);
+				prod.setProdImagePrimary(fileName);
+
+				Info info = new ImageUploadController().saveProdImgeWithResize(prodImgFile, fileName, 450, 250);
 
 				ProductMaster res = Constants.getRestTemplate().postForObject(Constants.url + "saveProduct", prod,
 						ProductMaster.class);
@@ -1614,6 +1631,7 @@ public class ProdMasteController {
 				ProductMaster editProd = Constants.getRestTemplate()
 						.postForObject(Constants.url + "getProductByProductId", map, ProductMaster.class);
 				model.addObject("editProd", editProd);
+				model.addObject("prodImgUrl", Constants.PROD_IMG_VIEW_URL);
 
 			}
 		} catch (Exception e) {
@@ -1684,7 +1702,6 @@ public class ProdMasteController {
 	public String ajaxImageUploadOffer(@PathVariable String productIdStr, HttpServletRequest request,
 			HttpServletResponse response, @RequestParam("files") List<MultipartFile> files) {
 
-		System.err.println("ajaxImageUploadOffer--- " + files.size());
 		int productId = Integer.parseInt(FormValidation.DecodeKey(productIdStr));
 		try {
 
@@ -1692,7 +1709,6 @@ public class ProdMasteController {
 
 			String filesList = new String();
 
-			System.err.println("files" + files.toString());
 			if (productId > 0) {
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();

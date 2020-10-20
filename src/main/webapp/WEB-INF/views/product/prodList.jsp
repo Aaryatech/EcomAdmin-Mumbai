@@ -51,6 +51,7 @@
 			<div class="content">
 				<!-- ColReorder integration -->
 				<div class="card">
+<div class="card-body">
 
 					<div
 						class="card-header bg-blue text-white d-flex justify-content-between">
@@ -70,19 +71,18 @@
 
 					<div class="form-group row"></div>
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
-
 					<div class="table-responsive">
-						<table class="table datatable-fixed-left_custom table-bordered table-hover table-striped"
+						<table class="table datatable-scroll-y  table-bordered table-hover table-striped"
 										width="100%" id="printtable2">
 										
 						<thead>
 							<tr>
 								<th>Product Code</th>
-								<th>Product Name</th>
+								<th>Name</th>
 								<th>Category</th>
 								<th>Sub Category</th>
 								<th>UOM</th>
-								<th>Same Day Delivery</th>
+								<!-- <th>Same Day Delivery</th> -->
 								<th>Book Before</th>
 								<th>Is Veg</th><th>Status</th>
 								<th>Active</th>
@@ -97,8 +97,8 @@
 					<td>${prod.catName}</td>
 					<td>${prod.subCatName}</td>
 					<td>${prod.uomShowName}</td>
-					<td>${prod.allowSameDayDelivery==1 ? 'Yes' :prod.allowSameDayDelivery==0 ? 'No' : 'No'}</td>
-					<td>${prod.bookBefore}</td>
+<%-- 					<td>${prod.allowSameDayDelivery==1 ? 'Yes' :prod.allowSameDayDelivery==0 ? 'No' : 'No'}</td>
+ --%>					<td>${prod.bookBefore}</td>
 					<td>${prod.isVeg==0 ? 'Veg' :prod.isVeg==1 ? 'Non Veg' : 'Veg-Non Veg'}</td>
 					<td>${prod.prodStatus}</td>
 					<td>${prod.isActive==1 ? 'Yes' :prod.isActive==0 ? 'No' : 'No'}</td>
@@ -157,6 +157,7 @@
 						</tbody>
 					</table>
 				</div>
+				</div>
 				<!-- /colReorder integration -->
 
 			</div>
@@ -173,7 +174,7 @@
 	</div>
 	<!-- /page content -->
 <script>
-	$('.datatable-fixed-left_custom').DataTable({
+	$('.datatable-fixed-left_custom1').DataTable({
 
 		columnDefs : [ {
 			orderable : false,

@@ -117,7 +117,7 @@
 
 								<form
 									action="${pageContext.request.contextPath}/submitProductSave"
-									id="submitProdForm" method="post"
+									id="submitProdForm" enctype="multipart/form-data" method="post"
 									>
 									<div class="form-group row">
 										<label class="col-form-label col-lg-2" for="cat_id">
@@ -168,8 +168,8 @@
 											Product Name <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control  "
-												placeholder="Product Name" id="prod_name" name="prod_name"
+											<input  type="text" class="form-control maxlength-badge-position"
+												placeholder="Product Name" maxlength="60" id="prod_name" name="prod_name"
 												autocomplete="off"> <span
 												class="validation-invalid-label" id="error_prod_name"
 												style="display: none;">This field is required.</span>
@@ -180,7 +180,7 @@
 											Short Name <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control  "
+											<input type="text" maxlength="30" class="form-control maxlength-badge-position"
 												placeholder="Product Short Name" id="short_name"
 												name="short_name" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_short_name"
@@ -211,7 +211,7 @@
 											Sort No <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="4" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Product Sort No" id="sort_no" name="sort_no"
 												autocomplete="off"> <span
 												class="validation-invalid-label" id="error_sort_no"
@@ -224,7 +224,7 @@
 											Min Quantity <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="5" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Minimum Order Quantity" id="min_qty"
 												name="min_qty" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_min_qty"
@@ -235,7 +235,7 @@
 											Shelf Life <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="3" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Product Shelf Life" id="shelf_life"
 												name="shelf_life" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_shelf_life"
@@ -263,7 +263,7 @@
 											Return % <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="3" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Product Return %" id="return_per"
 												name="return_per" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_return_per"
@@ -391,7 +391,7 @@
 											Book before Days <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="2" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Book before days" id="book_b4" name="book_b4"
 												autocomplete="off"> <span
 												class="validation-invalid-label" id="error_book_b4"
@@ -433,7 +433,7 @@
 											No of Alphabets <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="2" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="No of Alphabets" id="no_of_alpha"
 												name="no_of_alpha" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_no_of_alpha"
@@ -484,7 +484,7 @@
 										</label> <label class="col-form-label col-lg-2" for="is_msg_on_cake">
 											Message On Cake <span style="color: red">* </span>:
 										</label> <label class="col-form-label col-lg-2" for="is_slot_used">
-											Is Slot Used <span style="color: red">* </span>:
+											    Is Slot Used <span style="color: red">* </span>:
 										</label> <label class="col-form-label col-lg-2" for="is_used">
 											Is Used <span style="color: red">* </span>:
 										</label>
@@ -495,7 +495,7 @@
 											No of Msg Characters <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="4" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="No of Message Characters" id="no_of_msg_char"
 												name="no_of_msg_char" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_no_of_msg_char"
@@ -589,7 +589,7 @@
 											Product Desc <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control"
+											<input type="text" maxlength="90" class="form-control maxlength-badge-position"
 												placeholder="Product Description" id="prod_desc"
 												name="prod_desc" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_prod_desc"
@@ -605,7 +605,7 @@
 											Ingredients<span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control"
+											<input type="text" maxlength="100" class="form-control maxlength-badge-position"
 												placeholder="Ingredients" id="Ingredients"
 												name="Ingredients" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_Ingredients"
@@ -616,7 +616,7 @@
 											Preparation Time <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text"  class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Preparation Time in Minutes" maxlength="3" id="prep_time" name="prep_time"
 												autocomplete="off"> <span
 												class="validation-invalid-label" id="error_prep_time"
@@ -667,7 +667,7 @@
 											Max Weights <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-2">
-										<input type="text" class="form-control numbersOnly"
+										<input type="text" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Maximum Weight Range" maxlength="3" id="max_wt" name="max_wt"
 												autocomplete="off"> <span
 												class="validation-invalid-label" id="error_max_wt"
@@ -694,36 +694,23 @@
 									
 									</div>
 									</div>
-									<!-- <div class="form-group row">
-										<label class="col-form-label col-lg-2" for="profilePic">
+									<div class="form-group row">
+										<label class="col-form-label col-lg-2" for="primary_img">
 											Primary Image: </label>
 										<div class="col-lg-4">
 											<div class="input-group-btn  ">
-
-												<span class="filename" style="user-select: none1;"><img
-													id="temppreviewimageki1" name="image1"
-													class="temppreviewimageki1" alt="l"
-													style="width: 200px; height: auto; display: none"> </span>
-												image-preview-clear button
-												<button type="button" title="Clear selected files"
-													class="btn btn-default btn-secondary fileinput-remove fileinput-remove-button legitRipple image-preview-clear image-preview-clear1"
-													id="1" style="display: none;">
-													<i class="icon-cross2 font-size-base mr-2"></i> Clear
-												</button>
-
-												<div class="btn btn-primary btn-file legitRipple">
-													<i class="icon-file-plus"></i> <span class="hidden-xs">Browse</span><input
-														type="file" class="file-input browseimage browseimage1"
-														data-fouc="" id="1" name="profilePic"
-														accept=".jpg,.png,.gif">
-												</div>
+												<img id="output" width="150" src="${prodImgUrl}"/>
+												<input type="file" class="btn btn-primary" accept="image/*" name="primary_img" id="primary_img" value="${asset.assetPurImage}" 
+												accept=".jpg,.png,.gif,.jpeg,.bmp" onchange="loadFile(event)"><span
+													class="form-text text-muted">Only
+													.jpg,.png,.gif,.jpeg,.bmp</span>
 											</div>
 
 
 										</div>
 
 										<div class="col-lg-4"></div>
-									</div> -->
+									</div>
 
 									<div class="form-group row mb-0">
 	<div style="margin: 0 auto;">											<!-- <button type="reset" class="btn btn-light legitRipple">Reset</button> -->
@@ -760,6 +747,22 @@
 	</div>
 	<!-- /page content -->
 	<script type="text/javascript">
+	$('.maxlength-badge-position').maxlength({
+		alwaysShow : true,
+		placement : 'top'
+	});
+	
+	 var loadFile = function(event) {
+		 document.getElementById('output').style.display="none";
+		 try {
+			var image = document.getElementById('output');
+			image.src = URL.createObjectURL(event.target.files[0]);
+			document.getElementById('output').style="display:block"
+		 } catch(err) {
+			 console.log(err);
+			}
+		};
+	
 	function showWeightDiv(){
 		var rateType=document.getElementById("rate_setting_type").value;
 if(parseInt(rateType)==2||parseInt(rateType)==1){

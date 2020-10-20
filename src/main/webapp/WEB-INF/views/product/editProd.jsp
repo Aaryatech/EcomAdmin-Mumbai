@@ -117,7 +117,7 @@
 
 								<form
 									action="${pageContext.request.contextPath}/submitProductSave"
-									id="submitProdForm" method="post"
+									id="submitProdForm"  enctype="multipart/form-data" method="post"
 									>
 									<div class="form-group row">
 										<label class="col-form-label col-lg-2" for="cat_id">
@@ -741,6 +741,24 @@
 									
 									</div>
 									</div>
+									<div class="form-group row">
+										<label class="col-form-label col-lg-2" for="primary_img">
+											Primary Image:</label>
+										<div class="col-lg-4">
+											<div class="input-group-btn  ">
+												<img id="output" width="150" src="${prodImgUrl}${editProd.prodImagePrimary}"/>
+												<input type="file" class="btn btn-primary" accept="image/*" name="primary_img" id="primary_img" value="${editProd.prodImagePrimary}" 
+												accept=".jpg,.png,.gif,.jpeg,.bmp" onchange="loadFile(event)"><span
+													class="form-text text-muted">Only
+													.jpg,.png,.gif,.jpeg,.bmp</span>
+											</div>
+
+
+										</div>
+
+										<div class="col-lg-4"></div>
+									</div>
+									
 									<!-- <div class="form-group row">
 										<label class="col-form-label col-lg-2" for="profilePic">
 											Primary Image: </label>
@@ -817,6 +835,24 @@
 	</div>
 	<!-- /page content -->
 	<script type="text/javascript">
+	//document.getElementById('output').style="display:block"
+	$('.maxlength-badge-position').maxlength({
+		alwaysShow : true,
+		placement : 'top'
+	});
+	
+	 var loadFile = function(event) {
+		
+		// document.getElementById('output').style.display="none";
+		 try {
+			var image = document.getElementById('output');
+			image.src = URL.createObjectURL(event.target.files[0]);
+			document.getElementById('output').style="display:block"
+		 } catch(err) {
+			 console.log(err);
+			}
+		 
+		};
 	function showWeightDiv(){
 		var rateType=document.getElementById("rate_setting_type").value;
 if(parseInt(rateType)==2 || parseInt(rateType)==1){

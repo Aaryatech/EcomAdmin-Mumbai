@@ -99,10 +99,10 @@ public class ImageUploadController {
 
 			File newFilePNG = null;
 
-			img = ImageIO.read(new File(Constants.UPLOAD_URL + imageName));
+			img = ImageIO.read(new File(Constants.PROD_IMG_UPLOAD_URL + imageName));
 			tempPNG = resizeImage(img, width, hieght);
 
-			newFilePNG = new File(Constants.UPLOAD_URL + imageName);
+			newFilePNG = new File(Constants.PROD_IMG_UPLOAD_URL + imageName);
 
 			ImageIO.write(tempPNG, extension, newFilePNG);
 
