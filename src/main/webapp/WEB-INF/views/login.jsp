@@ -11,9 +11,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>E-Commerce Login</title>
+<title>Monginis</title>
 <link rel="shortcut icon"
-	href="${pageContext.request.contextPath}/resources/global_assets/images/companylogo.png"
+	href="${pageContext.request.contextPath}/resources/global_assets/images/feviconicon.png"
 	type="image/x-icon" />
 <!-- Global stylesheets -->
 <link
@@ -69,7 +69,7 @@
 <style>
 .login_bg {
 	background-image:
-		url("${pageContext.request.contextPath}/resources/global_assets/images/login_bg1.jpg");
+		url("${pageContext.request.contextPath}/resources/global_assets/images/lgn_bg.jpg");
 	background-repeat: no-repeat;
 	background-size: cover;
 	position: relative;
@@ -110,20 +110,21 @@ body1 {
 					<a href=""><%-- <img
 						src="${pageContext.request.contextPath}/resources/global_assets/images/monginis1.png"
 						alt=""> --%><img width="30%" height="30%"
-						src="${pageContext.request.contextPath}/resources/global_assets/images/powerdBy.png"
+						src="${pageContext.request.contextPath}/resources/global_assets/images/mongi.png"
 						alt=""></a>
 
 					
 										<p><strong>Welcome to the World of Technology.
 </strong> We are a digital company having expertise in innovating,<strong>designing and producing digital experiences</strong> that clients and employees love to use.</p>
-										<p>We encourage our clients to<strong> discover, design and implement opportunities</strong> to use digital technologies to enhance their business.</p>
+										<!-- <p>We encourage our clients to<strong> discover, design and implement opportunities</strong> to use digital technologies to enhance their business.</p>
+									 -->
 									</div>
 
 				<div class="login_r">
 
-					<img width="30%" height="30%"
-						src="${pageContext.request.contextPath}/resources/global_assets/images/powerdBy.png"
-						alt="">
+					<%-- <img width="30%" height="30%"
+						src="${pageContext.request.contextPath}/resources/global_assets/images/mongi.png"
+						alt=""> --%>
 					<h2 class="login_head_one">Sign into your account</h2>
 					<div class="clr"></div>
 					<c:if test="${msg!=null}">
@@ -185,7 +186,7 @@ body1 {
 					<div class="form-group" style="margin: 0;">
 						<button type="submit" class="buttonlogin">Login</button>
 						<div class="forgot_pass">
-							<a href="${pageContext.request.contextPath}/showForPassPage">Forgot Password?</a>
+							<%-- <a href="${pageContext.request.contextPath}/showForPassPage">Forgot Password?</a> --%>
 						</div>
 					</div>
 					<div class="d-lg-none">
