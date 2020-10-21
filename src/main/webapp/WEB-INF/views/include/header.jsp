@@ -68,6 +68,10 @@
 
 
 <script>
+$(document).ready(function() {
+	$("body").removeClass("sidebar-xs");
+});
+
 	function imgError(image) {
 		image.onerror = "";
 		image.src = "${pageContext.request.contextPath}/resources/global_assets/images/default-user.jpg";
