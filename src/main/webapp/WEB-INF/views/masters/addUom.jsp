@@ -106,11 +106,11 @@
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="language_name">UOM Description<span
-											class="text-danger">* </span>:
+											class="text-danger"></span>:
 										</label>
 										<div class="col-lg-10">
 											<input type="text" class="form-control maxlength-badge-position" name="description"
-												id="description" maxlength="110" autocomplete="off" onchange="trim(this)" value="${uom.uomDesc}"> 
+												id="description" maxlength="200" autocomplete="off" onchange="trim(this)" value="${uom.uomDesc}"> 
 										<span
 												class="validation-invalid-label text-danger" id="error_description"
 												style="display: none;">This field is required.</span>		
@@ -118,51 +118,88 @@
 									</div>
 									
 									
-									<div class="form-group row">
-									
+									<div class="form-group row">									
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="cust_name">Status <span class="text-danger">*
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1"
-													name="active_uom" id="uom_y"
-													${uom.isActive==1 ? 'checked' : ''}> Active
-												</label>
-											</div>
+											<c:choose>
+												<c:when test="${uom.uomId>0}">
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="active_uom" id="uom_y"
+															${uom.isActive==1 ? 'checked' : ''}> Active
+														</label>
+													</div>
 
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" value="0" name="active_uom"
-													id="uom_n"
-													${uom.isActive==0 ? 'checked' : ''}> In-Active
-												</label>
-											</div>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" value="0"
+															name="active_uom" id="uom_n"
+															${uom.isActive==0 ? 'checked' : ''}> In-Active
+														</label>
+													</div>
+												</c:when>
+												<c:otherwise>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="active_uom" id="uom_y"> Active
+														</label>
+													</div>
+
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" value="0"
+															name="active_uom" id="uom_n"> In-Active
+														</label>
+													</div>
+												</c:otherwise>
+											</c:choose>
+
 										</div>
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="email">Allow Copy <span class="text-danger">*
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1" name="allowCopy"
-													id="copy_y" ${uom.allowToCopy==1 ? 'checked' : ''}>
-													Yes
-												</label>
-											</div>
+											<c:choose>
+												<c:when test="${uom.uomId>0}">
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="allowCopy" id="copy_y"
+															${uom.allowToCopy==1 ? 'checked' : ''}> Yes
+														</label>
+													</div>
 
-											<div class="form-check form-check-inline">
-												<label class="form-check-label "> <input
-													type="radio" class="form-check-input" value="0" name="allowCopy"
-													id="copy_n" ${uom.allowToCopy==0 ? 'checked' : ''}>
-													No
-												</label>
-											</div>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="allowCopy" id="copy_n"
+															${uom.allowToCopy==0 ? 'checked' : ''}> No
+														</label>
+													</div>
+												</c:when>
+												<c:otherwise>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="allowCopy" id="copy_y"> Yes
+														</label>
+													</div>
+
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="allowCopy" id="copy_n"> No
+														</label>
+													</div>
+												</c:otherwise>
+											</c:choose>
 										</div>
-										
 									</div>
 									
 									<br>
@@ -205,24 +242,24 @@
 	</script>
 
 	<script type="text/javascript">
-		/* $(document).ready(function($) {
+	$(document).ready(function($) {
 
 			$("#submitInsert").submit(function(e) {
 				var isError = false;
 				var errMsg = "";
 
-				if (!$("#language_name").val()) {
+				if (!$("#show_name").val()) {
 					isError = true;
-					$("#error_language_name").show()
+					$("#error_show_name").show()
 				} else {
-					$("#error_language_name").hide()
+					$("#error_show_name").hide()
 				}
 
-				if (!$("#language_code").val()) {
+				if (!$("#uom_name").val()) {
 					isError = true;
-					$("#error_language_code").show()
+					$("#error_uom_name").show()
 				} else {
-					$("#error_language_code").hide()
+					$("#error_uom_name").hide()
 				}				
 				
 				
@@ -238,7 +275,7 @@
 				return false;
 
 			});
-		}); */
+		}); 
 		
 		/* $("#language_code").change(function(){   // 1st
 			var code = $("#language_code").val();								

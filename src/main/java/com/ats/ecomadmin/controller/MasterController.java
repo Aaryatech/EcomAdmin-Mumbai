@@ -183,7 +183,7 @@ public class MasterController {
 			uom.setSortNo(0);
 			uom.setUomDesc(request.getParameter("description"));
 			uom.setUomId(uomId);
-			uom.setUomName(request.getParameter("uom_name"));
+			uom.setUomName(request.getParameter("uom_name").toUpperCase());
 			uom.setUomShowName(request.getParameter("show_name"));
 
 			Uom res = Constants.getRestTemplate().postForObject(Constants.url + "saveUom", uom, Uom.class);
@@ -267,16 +267,27 @@ public class MasterController {
 				String uomId = FormValidation.DecodeKey(base64encodedString);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
 				map.add("uomId", Integer.parseInt(uomId));
+				int res = Constants.getRestTemplate().postForObject(Constants.url + "getProdIdCntByUomId", map,
+						Integer.class);
 
-				Info info = Constants.getRestTemplate().postForObject(Constants.url + "deleteUomById", map, Info.class);
-
-				if (!info.isError()) {
-					session.setAttribute("successMsg", info.getMsg());
+				if (res > 0) {
+					session.setAttribute("errorMsg", "Failed to Delete UOM, Products are assign to this UOM");
+					mav = "redirect:/showUomList";
 				} else {
-					session.setAttribute("errorMsg", info.getMsg());
+					mav = "redirect:/showUomList";
+					map.add("uomId", Integer.parseInt(uomId));
+					Info info = Constants.getRestTemplate().postForObject(Constants.url + "deleteUomById", map,
+							Info.class);
+
+					if (!info.isError()) {
+						session.setAttribute("successMsg", info.getMsg());
+					} else {
+						session.setAttribute("errorMsg", info.getMsg());
+					}
+
 				}
-				mav = "redirect:/showUomList";
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /deleteUom : " + e.getMessage());
