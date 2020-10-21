@@ -73,8 +73,9 @@
 								<th width="5%">SR. No.</th>
 								<th>Sub Category Name</th>
 								<th>Category Name</th>
- 								<th>Code</th>
+ 								<th>Code</th> 								
 								<th>Prefix</th>
+								<th>Image</th>
  								<th class="text-center">Actions</th>
 							</tr>
 						</thead>
@@ -86,7 +87,8 @@
  									<td>${subCatList.exVar4}</td>
  									<td>${subCatList.subCatCode}</td>
  									<td>${subCatList.subCatPrefix}</td>
- 									 
+ 									<td><img id="output" height="50"
+												width="60" src="${imgPath}${subCat.imageName}" /></td>
  									<td class="text-center"><c:if test="${editAccess==0}">
 											<div class="list-icons">
 												<a

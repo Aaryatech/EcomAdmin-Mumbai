@@ -1123,7 +1123,6 @@ public class CompanyAdminController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- Add sub Cat
-
 	@RequestMapping(value = "/showAddSubCat", method = RequestMethod.GET)
 	public String showAddSubCat(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String mav = new String();
@@ -1148,11 +1147,8 @@ public class CompanyAdminController {
 
 				model.addAttribute("subCat", subCat);
 				model.addAttribute("title", "Add Sub Category");
-				model.addAttribute("imgPath", Constants.showDocSaveUrl);
-
-				CompMaster[] compArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCompany",
-						CompMaster[].class);
-				List<CompMaster> compList = new ArrayList<CompMaster>(Arrays.asList(compArr));
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);				
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
@@ -1160,7 +1156,6 @@ public class CompanyAdminController {
 				catList = new ArrayList<Category>(Arrays.asList(catArr));
 
 				model.addAttribute("catList", catList);
-				model.addAttribute("compList", compList);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /newUom : " + e.getMessage());
@@ -1170,6 +1165,70 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+	@RequestMapping(value = "/getSubCatCodeByCatId", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getSubCatCodeByCatId(HttpServletRequest request, HttpServletResponse response) {
+
+			Info info = new Info();
+
+		try {
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			HttpSession session = request.getSession();
+			
+			int companyId = (int) session.getAttribute("companyId");
+			int cateId = Integer.parseInt(request.getParameter("catId"));
+
+			map = new LinkedMultiValueMap<>();
+			map.add("cateId", cateId);
+			
+			String catePrefix = Constants.getRestTemplate().postForObject(Constants.url + "getCatePrefixByCateId", map, String.class);
+			
+			map = new LinkedMultiValueMap<>();
+			map.add("cateId", cateId);
+			map.add("compId", companyId);
+			
+			int subCatCount = Constants.getRestTemplate().postForObject(Constants.url + "getSubCateIdCnt", map,
+					Integer.class);
+			
+			String subCatCode = catePrefix+"0"+(subCatCount+1);
+			
+			info.setMsg(subCatCode);
+			
+		} catch (Exception e) {
+			System.out.println("Execption in /getSubCatCodeByCatId : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+	}
+	
+	@RequestMapping(value = "/chkUnqSubCatPrfx", method = RequestMethod.GET)
+	@ResponseBody
+	public Info chkUnqSubCatPrfx(HttpServletRequest request, HttpServletResponse response) {
+
+			Info info = new Info();
+
+		try {
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			HttpSession session = request.getSession();
+			
+			int companyId = (int) session.getAttribute("companyId");
+			String prefix = request.getParameter("prefix");
+			int subCateId = Integer.parseInt(request.getParameter("subCatId"));
+		
+			map = new LinkedMultiValueMap<>();
+			map.add("prefix", prefix);
+			map.add("compId", companyId);
+			map.add("subCateId", subCateId);
+			
+			info = Constants.getRestTemplate().postForObject(Constants.url + "unqSubCatePrefix", map,
+					Info.class);
+					
+		} catch (Exception e) {
+			System.out.println("Execption in /chkUnqSubCatPrfx : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+	}
 	
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -1272,7 +1331,7 @@ public class CompanyAdminController {
 				}
 				model.addAttribute("subCatList", subCatList);
 				model.addAttribute("title", "Sub Category List");
-
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 				Info add = AccessControll.checkAccess("showSubCatList", "showSubCatList", "0", "1", "0", "0",
 						newModuleList);
 				Info edit = AccessControll.checkAccess("showSubCatList", "showSubCatList", "0", "0", "1", "0",
@@ -1314,11 +1373,13 @@ public class CompanyAdminController {
 	@RequestMapping(value = "/insertNewSubCat", method = RequestMethod.POST)
 	public String insertNewSubCat(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
-		int cust_id = 0;
+		
+		String submBtn = request.getParameter("submbtn");
 		try {
 			HttpSession session = request.getSession();
 			Date date = new Date();
-
+			int companyId = (int) session.getAttribute("companyId");
+			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 
 			String profileImage = new String();
@@ -1345,7 +1406,6 @@ public class CompanyAdminController {
 			int catId = Integer.parseInt(request.getParameter("catId"));
 			int allowToCopy = Integer.parseInt(request.getParameter("allowToCopy"));
 			int subCatId = Integer.parseInt(request.getParameter("subCatId"));
-			int companyId = Integer.parseInt(request.getParameter("companyId"));
 			int sortNo = Integer.parseInt(request.getParameter("sortNo"));
 
 			SubCategory subcat = new SubCategory();
@@ -1355,7 +1415,7 @@ public class CompanyAdminController {
 			subcat.setCompanyId(companyId);
 			subcat.setImageName(profileImage);
 			subcat.setIsParent(0);
-			subcat.setSubCatPrefix(subCatPrefix);
+			subcat.setSubCatPrefix(subCatPrefix.toUpperCase());
 			subcat.setSubCatName(subCatName);
 			subcat.setSubCatDesc(subCatDesc);
 			subcat.setSubCatCode(subCatCode);
@@ -1388,7 +1448,12 @@ public class CompanyAdminController {
 			System.out.println("Execption in /insertUom : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showSubCatList";
+		
+		
+		if(submBtn.equals("Save"))
+			return "redirect:/showAddSubCat";
+		else
+			return "redirect:/showSubCatList";
 
 	}
 	
@@ -1415,20 +1480,30 @@ public class CompanyAdminController {
 
 			} else {
 
-				mav = "redirect:/showSubCatList";
+				
 				String base64encodedString = request.getParameter("subCatId");
 				String subCatId = FormValidation.DecodeKey(base64encodedString);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("subCatId", Integer.parseInt(subCatId));
 
-				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteSubCatById", map,
-						Info.class);
-
-				if (!res.isError()) {
-					session.setAttribute("successMsg", res.getMsg());
-				} else {
-					session.setAttribute("errorMsg", res.getMsg());
+				int result = Constants.getRestTemplate().postForObject(Constants.url + "getProdIdCntBySubCatId", map,
+						Integer.class);
+				if(result>0){
+					session.setAttribute("errorMsg", "Failed to Delete SubCategory, Products are assigned to this SubCategory");
+					mav = "redirect:/showSubCatList";
+				}else {
+					mav = "redirect:/showSubCatList";
+					
+					map.add("subCatId", Integer.parseInt(subCatId));
+					Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteSubCatById", map,
+							Info.class);
+	
+					if (!res.isError()) {
+						session.setAttribute("successMsg", res.getMsg());
+					} else {
+						session.setAttribute("errorMsg", res.getMsg());
+					}
 				}
 			}
 		} catch (Exception e) {

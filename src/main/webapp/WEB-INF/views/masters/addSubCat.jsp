@@ -29,6 +29,8 @@
 
 <body class="sidebar-xs">
 	<c:url value="/getCustInfo" var="getCustInfo"></c:url>
+	<c:url value="/getSubCatCodeByCatId" var="getSubCatCodeByCatId"></c:url>
+	<c:url value="/chkUnqSubCatPrfx" var="chkUnqSubCatPrfx"></c:url>
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -86,26 +88,6 @@
 									<input type="hidden" class="form-control"
 										value="${subCat.subCatId}" name="subCatId" id="subCatId">
 
-
-									<div class="form-group row">
-
-
-										<label class="col-form-label font-weight-bold col-lg-2"
-											for="custName">Sub Category Name <span
-											class="text-danger">* </span>:
-										</label>
-										<div class="col-lg-4">
-											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="70"
-												autocomplete="off" onchange="trim(this)"
-												value="${subCat.subCatName}" name="subCatName"
-												id="subCatName"> <span
-												class="validation-invalid-label" id="error_subCatName"
-												style="display: none;">This field is required.</span>
-										</div>
- 
-									</div>
-
 									<div class="form-group row">
 
 										<label class="col-form-label font-weight-bold col-lg-2"
@@ -113,7 +95,7 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<select class="form-control select-search" data-fouc
+											<select class="form-control select-search" data-fouc onchange="getSubCatCode(this.value)"
 												name="catId" id="catId" data-placholder="Select Category">
 
 												<c:forEach items="${catList}" var="list" varStatus="count">
@@ -130,36 +112,55 @@
 												id="error_catId" style="display: none;">This field is
 												required.</span>
 										</div>
-
+										
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="companyId">Company<span class="text-danger">*
+											for="subCatCode">Sub Category Code<span class="text-danger">*
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<select class="form-control select-search" data-fouc
-												name="companyId" id="companyId"
-												data-placholder="Select Company">
-
-												<c:forEach items="${compList}" var="list" varStatus="count">
-													<c:choose>
-														<c:when test="${list.companyId==subCat.companyId}">
-															<option selected value="${list.companyId}">${list.companyName}</option>
-														</c:when>
-														<c:otherwise>
-															<option value="${list.companyId}">${list.companyName}</option>
-														</c:otherwise>
-													</c:choose>
-												</c:forEach>
-											</select> <span class="validation-invalid-label text-danger"
-												id="error_companyId" style="display: none;">This
-												field is required.</span>
+											<input type="text"
+												class="form-control maxlength-badge-position"
+												autocomplete="off" onchange="trim(this)" readonly="readonly"
+												value="${subCat.subCatCode}" name="subCatCode" id="subCatCode">
+											<span class="validation-invalid-label text-danger"
+												id="error_subCatCode" style="display: none;">This field
+												is required.</span>
 										</div>
-
-
-
-
 									</div>
-
+									
+									<div class="form-group row">
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="custName">Sub Category Name <span
+											class="text-danger">* </span>:
+										</label>
+										<div class="col-lg-4">
+											<input type="text"
+												class="form-control maxlength-badge-position" maxlength="70"
+												autocomplete="off" onchange="trim(this)"
+												value="${subCat.subCatName}" name="subCatName"
+												id="subCatName"> <span
+												class="validation-invalid-label" id="error_subCatName"
+												style="display: none;">This field is required.</span>
+										</div>
+ 
+ 										<label class="col-form-label font-weight-bold col-lg-2"
+											for="subCatPrefix">Sub Category Prefix <span
+											class="text-danger">*</span>:
+										</label>
+										<div class="col-lg-4">
+											<input type="text"
+												class="form-control maxlength-badge-position" maxlength="10"
+												autocomplete="off" onchange="trim(this)" style="text-transform: uppercase;"
+												value="${subCat.subCatPrefix}" name="subCatPrefix"
+												id="subCatPrefix"> <span
+												class="validation-invalid-label text-danger"
+												id="error_subCatPrefix" style="display: none;">This
+												field is required.</span>
+												 <span
+												class="validation-invalid-label text-danger"
+												id="error_unqPrefix" style="display: none;">Prefix already exist.</span>
+										</div>
+									</div>
 
 									<div class="form-group row">
 
@@ -176,41 +177,7 @@
 												id="error_sortNo" style="display: none;">This field
 												is required.</span>
 										</div>
-
-										<label class="col-form-label font-weight-bold col-lg-2"
-											for="subCatCode">Sub Category Code<span class="text-danger">*
-										</span>:
-										</label>
-										<div class="col-lg-4">
-											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="10"
-												autocomplete="off" onchange="trim(this)"
-												value="${subCat.subCatCode}" name="subCatCode" id="subCatCode">
-											<span class="validation-invalid-label text-danger"
-												id="error_subCatCode" style="display: none;">This field
-												is required.</span>
-										</div>
-									</div>
-
-									<div class="form-group row">
-
-
-										<label class="col-form-label font-weight-bold col-lg-2"
-											for="subCatPrefix">Sub Category Prefix <span
-											class="text-danger"> </span>:
-										</label>
-										<div class="col-lg-4">
-											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="70"
-												autocomplete="off" onchange="trim(this)"
-												value="${subCat.subCatPrefix}" name="subCatPrefix"
-												id="subCatPrefix"> <span
-												class="validation-invalid-label text-danger"
-												id="error_subCatPrefix" style="display: none;">This
-												field is required.</span>
-										</div>
-
-
+									
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="allowToCopy">Allow to Copy Applicable <span
 											class="text-danger">* </span>:
@@ -232,17 +199,26 @@
 												</label>
 											</div>
 										</div>
-
 									</div>
-
-
-
-
 
 									<div class="form-group row">
 
 
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="subCatDesc">Description <span
+											class="text-danger"></span>:
+										</label>
+										<div class="col-lg-10">
+											<textarea class="form-control maxlength-badge-position"
+												maxlength="200" autocomplete="off" onchange="trim(this)"
+												name="subCatDesc" id="subCatDesc">${subCat.subCatDesc}</textarea>
+											<span class="validation-invalid-label" id="error_subCatDesc"
+												style="display: none;">This field is required.</span>
+										</div>
+									</div>
 
+
+									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="doc">Profile Image <span class="text-danger">*</span>:
 										</label>
@@ -257,31 +233,16 @@
 												style="display: none;">This field is required.</span>
 											</label>
 										</div>
-
-										<label class="col-form-label font-weight-bold col-lg-2"
-											for="subCatDesc">Description <span
-											class="text-danger">* </span>:
-										</label>
-										<div class="col-lg-4">
-											<textarea class="form-control maxlength-badge-position"
-												maxlength="500" autocomplete="off" onchange="trim(this)"
-												name="subCatDesc" id="subCatDesc">${subCat.subCatDesc}</textarea>
-											<span class="validation-invalid-label" id="error_subCatDesc"
-												style="display: none;">This field is required.</span>
-										</div>
-
-
-
-
 									</div>
 
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary">
-											Save <i class="icon-paperplane ml-2"></i>
-										</button>
+										<input type="submit" class="btn btn-primary" value="Save" name="submbtn" id="btn1">
+										<input type="submit" class="btn btn-primary" value="Save & Next" name="submbtn" id="btn2">
 									</div>
 								</form>
+								<input type="hidden" value="${subCat.catId}" id="cat_id">
+								<input type="hidden" value="${subCat.subCatCode}" id="cate_code">
 							</div>
 
 
@@ -313,6 +274,52 @@
 				console.log(err);
 			}
 		};
+		
+		$('#sortNo').on('input', function() {
+			 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+			});
+	</script>
+	<script type="text/javascript">
+
+	function getSubCatCode(val){
+		var prevId =$("#cat_id").val();	
+		var catId = $("#catId").val();
+		
+		if(val!=prevId){
+		 $.getJSON('${getSubCatCodeByCatId}', {
+			 catId : catId,
+			 ajax : 'true',
+			}, function(data) {							
+				$("#subCatCode").val(data.msg);
+			});
+		}else{			
+			var code = $("#cate_code").val();
+			$("#subCatCode").val(code);
+		}
+			
+	}
+	
+	$('#subCatPrefix').on('change', function() {
+		var prefix = $("#subCatPrefix").val();
+		var subCatId = $("#subCatId").val();
+		
+		 $.getJSON('${chkUnqSubCatPrfx}', {
+			 prefix : prefix,
+			 subCatId : subCatId,
+			 ajax : 'true',
+			}, function(data) {							
+				if(data.error){
+					$("#error_unqPrefix").show()
+					document.getElementById("btn1").disabled = true;
+					document.getElementById("btn2").disabled = true;
+				}else{
+					$("#error_unqPrefix").hide()
+					document.getElementById("btn1").disabled = false;
+					document.getElementById("btn2").disabled = false;
+				}
+			});
+	});
+	
 	</script>
 
 	<script type="text/javascript">
@@ -335,14 +342,7 @@
 				} else {
 					$("#error_subCatName").hide()
 				}
-
-				if (!$("#companyId").val()) {
-					isError = true;
-					$("#error_companyId").show()
-				} else {
-					$("#error_companyId").hide()
-				}
-
+				
 				if (!$("#sortNo").val() || $("#sortNo").val()==0) {
 					isError = true;
 					$("#error_sortNo").show()
@@ -363,23 +363,13 @@
 					$("#error_doc").hide()
 				}  */
 
-				if (!$("#subCatCode").val()) {
+				/* if (!$("#subCatCode").val()) {
 					isError = true;
 					$("#error_subCatCode").show()
 				} else {
 					$("#error_subCatCode").hide()
-				}
-				
-				
-
-				if (!$("#subCatDesc").val()) {
-					isError = true;
-					$("#error_subCatDesc").show()
-				} else {
-					$("#error_subCatDesc").hide()
-				}
-				
-				
+				} */
+					
  
 				if (!isError) {
 					var x = true;
