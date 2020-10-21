@@ -500,17 +500,24 @@ public class MasterController {
 				String taxId = FormValidation.DecodeKey(base64encodedString);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("taxId", Integer.parseInt(taxId));
-
-				Info info = Constants.getRestTemplate().postForObject(Constants.url + "deleteTaxById", map, Info.class);
-
-				if (!info.isError()) {
-					session.setAttribute("successMsg", info.getMsg());
-				} else {
-					session.setAttribute("errorMsg", info.getMsg());
+				map.add("taxId", Integer.parseInt(taxId));		
+				
+				int res = Constants.getRestTemplate().postForObject(Constants.url + "getProdIdCntByTax", map, Integer.class);
+				
+				if(res>0) {
+					session.setAttribute("errorMsg", "Failed to Delete Tax, Products are assign to this tax");
+					mav = "redirect:/showTaxList";
+				}else {
+					mav = "redirect:/showTaxList";
+					Info info = Constants.getRestTemplate().postForObject(Constants.url + "deleteTaxById", map, Info.class);
+	
+					if (!info.isError()) {
+						session.setAttribute("successMsg", info.getMsg());
+					} else {
+						session.setAttribute("errorMsg", info.getMsg());
+					}
 				}
-
-				mav = "redirect:/showTaxList";
+				
 			}
 
 		} catch (Exception e) {

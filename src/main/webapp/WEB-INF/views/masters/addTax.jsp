@@ -95,13 +95,48 @@
 										<div class="col-lg-4">
 											<input type="text"
 												class="form-control maxlength-badge-position" name="hsnCode"
-												id="hsnCode" maxlength="6" autocomplete="off"
+												id="hsnCode" maxlength="10" autocomplete="off"
 												onchange="trim(this)" value="${tax.hsnCode}"> <span
 												class="validation-invalid-label text-danger"
 												id="error_hsnCode" style="display: none;">This
 												field is required.</span>
+												
+												<span
+												class="validation-invalid-label text-danger"
+												id="error_hsnTax" style="display: none;">Invalide HSN Code.</span>
+												
 										</div>
 									</div>
+									
+									<div class="form-group row">
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="totalTaxPer">Total Tax%<span class="text-danger">*
+										</span>:
+										</label>
+										<div class="col-lg-4">
+											<input type="text" oninput="calTaxes(this.value)"
+												class="form-control maxlength-badge-position float-num" name="totalTaxPer"
+												id="totalTaxPer" maxlength="5" autocomplete="off"
+												onchange="trim(this)" value="${tax.totalTaxPer}"> <span
+												class="validation-invalid-label text-danger"
+												id="error_totalTaxPer" style="display: none;">This field
+												is required.</span>
+										</div>
+										
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="cessPer">CESS%<span class="text-danger">*
+										</span>:
+										</label>
+										<div class="col-lg-4">
+											<input type="text"
+												class="form-control maxlength-badge-position float-num" name="cessPer"
+												id="cessPer" maxlength="5" autocomplete="off"
+												onchange="trim(this)" value="${tax.cessPer}"> <span
+												class="validation-invalid-label text-danger"
+												id="error_cessPer" style="display: none;">This
+												field is required.</span>
+										</div>
+									</div>		
 									
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
@@ -111,7 +146,7 @@
 										<div class="col-lg-4">
 											<input type="text"
 												class="form-control maxlength-badge-position float-num" name="sgstPer"
-												id="sgstPer" maxlength="5" autocomplete="off"
+												id="sgstPer" autocomplete="off" readonly="readonly"
 												onchange="trim(this)" value="${tax.sgstPer}"> <span
 												class="validation-invalid-label text-danger"
 												id="error_sgstPer" style="display: none;">This field
@@ -125,7 +160,7 @@
 										<div class="col-lg-4">
 											<input type="text"
 												class="form-control maxlength-badge-position float-num" name="cgstPer"
-												id="cgstPer" maxlength="5" autocomplete="off"
+												id="cgstPer" autocomplete="off"  readonly="readonly"
 												onchange="trim(this)" value="${tax.cgstPer}"> <span
 												class="validation-invalid-label text-danger"
 												id="error_cgstPer" style="display: none;">This
@@ -141,49 +176,21 @@
 										<div class="col-lg-4">
 											<input type="text"
 												class="form-control maxlength-badge-position float-num" name="igstPer"
-												id="igstPer" maxlength="5" autocomplete="off"
+												id="igstPer" autocomplete="off"  readonly="readonly"
 												onchange="trim(this)" value="${tax.igstPer}"> <span
 												class="validation-invalid-label text-danger"
 												id="error_igstPer" style="display: none;">This field
 												is required.</span> 
 										</div>
-
-										<label class="col-form-label font-weight-bold col-lg-2"
-											for="cessPer">CESS%<span class="text-danger">*
-										</span>:
-										</label>
-										<div class="col-lg-4">
-											<input type="text"
-												class="form-control maxlength-badge-position float-num" name="cessPer"
-												id="cessPer" maxlength="5" autocomplete="off"
-												onchange="trim(this)" value="${tax.cessPer}"> <span
-												class="validation-invalid-label text-danger"
-												id="error_cessPer" style="display: none;">This
-												field is required.</span>
-										</div>
-									</div>
-									
-									<div class="form-group row">
-										<label class="col-form-label font-weight-bold col-lg-2"
-											for="totalTaxPer">Total Tax%<span class="text-danger">*
-										</span>:
-										</label>
-										<div class="col-lg-4">
-											<input type="text"
-												class="form-control maxlength-badge-position float-num" name="totalTaxPer"
-												id="totalTaxPer" maxlength="5" autocomplete="off"
-												onchange="trim(this)" value="${tax.totalTaxPer}"> <span
-												class="validation-invalid-label text-danger"
-												id="error_totalTaxPer" style="display: none;">This field
-												is required.</span>
-										</div>
-
+										
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="cust_name">Status <span class="text-danger">*
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
+										<c:choose>
+											<c:when test="${tax.taxId>0}">
+												<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
 													class="form-check-input" checked value="1"
 													name="active_tax" id="tax_y"
@@ -198,9 +205,28 @@
 													In-Active
 												</label>
 											</div>
-										</div>
-									</div>									
+											</c:when>
+											<c:otherwise>
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1"
+													name="active_tax" id="tax_y"> Active
+												</label>
+											</div>
 
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" value="0" name="active_tax"
+													id="tax_n">
+													In-Active
+												</label>
+											</div>											
+											</c:otherwise>
+										</c:choose>
+											
+										</div>
+									</div>
+									
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="language_name">Description<span
@@ -209,7 +235,7 @@
 										<div class="col-lg-10">
 											<input type="text"
 												class="form-control maxlength-badge-position"
-												name="description" id="description" maxlength="110"
+												name="description" id="description" maxlength="200"
 												autocomplete="off" onchange="trim(this)"
 												value="${tax.taxDesc}"> <span
 												class="validation-invalid-label text-danger"
@@ -224,7 +250,9 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
+										<c:choose>
+											<c:when test="${tax.taxId>0}">
+												<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
 													class="form-check-input" checked value="1" name="allowCopy"
 													id="copy_y" ${tax.allowToCopy==1 ? 'checked' : ''}>
@@ -239,6 +267,26 @@
 													No
 												</label>
 											</div>
+											</c:when>
+											<c:otherwise>
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1" name="allowCopy"
+													id="copy_y">
+													Yes
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0" name="allowCopy"
+													id="copy_n">
+													No
+												</label>
+											</div>											
+											</c:otherwise>
+										</c:choose>
+											
 										</div>
 									</div>
 									
@@ -279,6 +327,19 @@
 				console.log(err);
 			}
 		};
+		
+		function calTaxes(ttlTax){
+			if(ttlTax > 0){
+				$("#cgstPer").val(ttlTax/2);
+				$("#sgstPer").val(ttlTax/2);
+				$("#igstPer").val(ttlTax);
+			}
+		}
+		
+		$('#hsnCode').on('input', function() {
+			 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+		});		
+		
 	</script>
 
 	<script type="text/javascript">
@@ -337,15 +398,14 @@
 					$("#error_totalTaxPer").hide()
 				}	
 				
-				if (!$("#description").val()) {
+				
+				if ($("#hsnCode").val()==$("#totalTaxPer").val()) {
 					isError = true;
-					$("#error_taxDesc").show()
+					$("#error_hsnTax").show()
 				} else {
-					$("#error_taxDesc").hide()
+					$("#error_hsnTax").hide()
 				}	
 				
-				
-
 				if (!isError) {
 					var x = true;
 					if (x == true) {
