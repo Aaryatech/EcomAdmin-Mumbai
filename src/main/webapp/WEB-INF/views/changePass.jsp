@@ -11,9 +11,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>HR Management</title>
+<title>Monginis</title>
 <link rel="shortcut icon"
-	href="${pageContext.request.contextPath}/resources/global_assets/images/companylogo.png"
+	href="${pageContext.request.contextPath}/resources/global_assets/images/feviconicon.png"
 	type="image/x-icon" />
 <!-- Global stylesheets -->
 <link
@@ -63,7 +63,7 @@
 <style>
 .login_bg {
 	background-image:
-		url("${pageContext.request.contextPath}/resources/global_assets/images/login_bg1.jpg");
+		url("${pageContext.request.contextPath}/resources/global_assets/images/lgn_bg.jpg");
 	background-repeat: no-repeat;
 	background-size: cover;
 	position: relative;
@@ -140,9 +140,8 @@ body1 {
 						%>
 					</c:if>
 					<div
-						class="form-group form-group-feedback form-group-feedback-left">
-						<input type="text" id="isEnroll" name="isEnroll" value="${1}">
-						<input type="text" id="userId" name="userId" value="${userId}">
+						class="form-group form-group-feedback form-group-feedback-left">						
+						<input type="hidden" id="userId" name="userId" value="${userId}">
 						<input type="password" id="newPass" name="new_password" onkeyup="return passwordChanged();"
 							class="form-control form_lgn" required  placeholder="Enter new Password "
 							style="border-radius: 5px;">

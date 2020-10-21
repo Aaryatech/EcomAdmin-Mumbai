@@ -13,7 +13,7 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>HR Management</title>
 <link rel="shortcut icon"
-	href="${pageContext.request.contextPath}/resources/global_assets/images/companylogo.png"
+	href="${pageContext.request.contextPath}/resources/global_assets/images/feviconicon.png"
 	type="image/x-icon" />
 <!-- Global stylesheets -->
 <link
@@ -63,7 +63,7 @@
 <style>
 .login_bg {
 	background-image:
-		url("${pageContext.request.contextPath}/resources/global_assets/images/login_bg1.jpg");
+		url("${pageContext.request.contextPath}/resources/global_assets/images/lgn_bg.jpg");
 	background-repeat: no-repeat;
 	background-size: cover;
 	position: relative;
@@ -97,7 +97,7 @@ body1 {
 		</div>
 		
 		<!-- login-form -->
-		<form id="form-login" action="${pageContext.request.contextPath}/validateOTP" method="post">
+		<form id="form-login" action="${pageContext.request.contextPath}/otpVerification" method="post">
 		<%
 											UUID uuid = UUID.randomUUID();
 											MessageDigest md = MessageDigest.getInstance("MD5");
@@ -125,9 +125,9 @@ body1 {
 
 				<div class="login_r forgot" id="pass_form">
 
-					<img
+					<%-- <img
 						src="${pageContext.request.contextPath}/resources/global_assets/images/logo_white.png"
-						alt="">
+						alt=""> --%>
 					<h2 class="login_head_one">OTP Validation</h2>
 					
 					<div class="clr"></div>
@@ -141,7 +141,7 @@ body1 {
 						%>
 					</c:if>
 					
-																<span id="countdown" style="color: red; font-size: 16px;"></span>	
+						<span id="countdown" style="color: #fff; font-size: 16px;"></span>	
 					
 						<div
 							class="form-group form-group-feedback form-group-feedback-left">

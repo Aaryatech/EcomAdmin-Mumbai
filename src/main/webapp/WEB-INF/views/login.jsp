@@ -186,7 +186,7 @@ body1 {
 					<div class="form-group" style="margin: 0;">
 						<button type="submit" class="buttonlogin">Login</button>
 						<div class="forgot_pass">
-							<%-- <a href="${pageContext.request.contextPath}/showForPassPage">Forgot Password?</a> --%>
+							<a href="${pageContext.request.contextPath}/showForgetPass">Forgot Password?</a>
 						</div>
 					</div>
 					<div class="d-lg-none">

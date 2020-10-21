@@ -11,9 +11,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>HR Management</title>
+<title>Monginis</title>
 <link rel="shortcut icon"
-	href="${pageContext.request.contextPath}/resources/global_assets/images/companylogo.png"
+	href="${pageContext.request.contextPath}/resources/global_assets/images/feviconicon.png"
 	type="image/x-icon" />
 <!-- Global stylesheets -->
 <link
@@ -63,7 +63,7 @@
 <style>
 .login_bg {
 	background-image:
-		url("${pageContext.request.contextPath}/resources/global_assets/images/login_bg1.jpg");
+		url("${pageContext.request.contextPath}/resources/global_assets/images/lgn_bg.jpg");
 	background-repeat: no-repeat;
 	background-size: cover;
 	position: relative;
@@ -97,8 +97,7 @@ body1 {
 		</div>
 
 		<!-- login-form -->
-		<form id="form-login" action="${pageContext.request.contextPath}/checkUserAndSendOtpEmail" method="post">
-
+		<form action="${pageContext.request.contextPath}/getUserInfoByMobNo" method="post" id="mob_form">
 <%
 						UUID uuid = UUID.randomUUID();
 						MessageDigest md = MessageDigest.getInstance("MD5");
@@ -126,9 +125,9 @@ body1 {
 				</div>
 
 				<div class="login_r forgot">
-					<img
+					<%-- <img
 						src="${pageContext.request.contextPath}/resources/global_assets/images/logo_white.png"
-						alt="">
+						alt=""> --%>
 					<h2 class="login_head_one">Forgot Password</h2>
 					<div class="clr"></div>
 
@@ -145,8 +144,8 @@ body1 {
 					</c:if>
 					<div
 						class="form-group form-group-feedback form-group-feedback-left">
-						<input type="text" required id="usernameFp"  name="usernameFp"
-							class="form-control form_lgn" placeholder="Email Address"
+						<input type="text" required id="usernameFp"  name="mobEmail"
+							class="form-control form_lgn" placeholder="Email Address Or Mobile No."
 							style="border-radius: 5px;">
 						<div class="form-control-feedback" style="padding-left: 10px;">
 							<i class="icon-envelop text-muted"></i>
@@ -155,7 +154,7 @@ body1 {
 
 
 					<div class="form-group" style="margin: 0;">
-						<button type="submit" onclick="subPassForForm1()"
+						<button type="submit" 
 							class="buttonlogin">Submit</button>
 						<div class="forgot_pass" style="text-align: left;">
 							<a href="${pageContext.request.contextPath}/">Back</a>

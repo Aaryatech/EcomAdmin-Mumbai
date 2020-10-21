@@ -3,6 +3,7 @@ package com.ats.ecomadmin;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.DateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -38,24 +39,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Controller
 public class HomeController {
-	
-	
+
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) {
-		
+
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		
+
 		String formattedDate = dateFormat.format(date);
-		
-		model.addAttribute("serverTime", formattedDate );
-		
+
+		model.addAttribute("serverTime", formattedDate);
+
 		return "login";
 	}
-	
+
 	@RequestMapping(value = "/loginProcess", method = RequestMethod.POST)
 	public String loginProcess(HttpServletRequest request, HttpServletResponse response, Model model) {
 		System.err.println("req loginProcess " + request.toString());
@@ -67,53 +67,44 @@ public class HomeController {
 			String key = (String) session.getAttribute("generatedKey");
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-			
+
 			if (token.trim().equals(key.trim())) {
 
-				//System.err.println("Key matched");
-		
-			
-			String name = request.getParameter("username");
-			String password = request.getParameter("password");
+				// System.err.println("Key matched");
 
-			if (name.equalsIgnoreCase("") || password.equalsIgnoreCase("") || name == null || password == null) {
+				String name = request.getParameter("username");
+				String password = request.getParameter("password");
 
-				mav = "redirect:/";
-				session.setAttribute("errorMsg", "Login Failed - User name or password can not be null");
-			} else {
-				
-				MessageDigest md = MessageDigest.getInstance("MD5");
-				byte[] messageDigest = md.digest(password.getBytes());
-				BigInteger number = new BigInteger(1, messageDigest);	
+				if (name.equalsIgnoreCase("") || password.equalsIgnoreCase("") || name == null || password == null) {
 
-				String hashtext = number.toString(16);
-				System.out.println("Password---------->"+hashtext);
-				
-				map.add("userName", name);
-				map.add("pass", hashtext);
-				//map.add("pass", password);
-				
-				Object checkLogin = Constants.getRestTemplate()
-						.postForObject(Constants.url + "checkUserNamePassForLogin", map, Object.class);
-				ObjectMapper objMapper = new ObjectMapper();
+					mav = "redirect:/";
+					session.setAttribute("errorMsg", "Login Failed - User name or password can not be null");
+				} else {
 
-				Info info = objMapper.convertValue(checkLogin, Info.class);
+					MessageDigest md = MessageDigest.getInstance("MD5");
+					byte[] messageDigest = md.digest(password.getBytes());
+					BigInteger number = new BigInteger(1, messageDigest);
 
-				if (info.isError() == false) {
+					String hashtext = number.toString(16);
+					System.out.println("Password---------->" + hashtext);
 
-					User userObj = objMapper.readValue(info.getResponseObject1(), User.class);
+					map.add("userName", name);
+					map.add("pass", hashtext);
+					// map.add("pass", password);
 
-					if (userObj.getIsEnrolled() == 0) {
-						// new User First time login, send to change for password.
-						//mav = "redirect:/changePassPage";
-						model.addAttribute("userId", userObj.getUserId());
-						model.addAttribute("userName", userObj.getUserName());
-						mav = "changePass";
-					} else {
+					Object checkLogin = Constants.getRestTemplate()
+							.postForObject(Constants.url + "checkUserNamePassForLogin", map, Object.class);
+					ObjectMapper objMapper = new ObjectMapper();
+
+					Info info = objMapper.convertValue(checkLogin, Info.class);
+
+					if (info.isError() == false) {
+
+						User userObj = objMapper.readValue(info.getResponseObject1(), User.class);
 						// existing user login send to welcome page/dash board.
-					
+
 						mav = "home";
-						
+
 						map = new LinkedMultiValueMap<String, Object>();
 						map.add("roleId", userObj.getRoleId());
 
@@ -121,7 +112,8 @@ public class HomeController {
 							ParameterizedTypeReference<List<ModuleJson>> typeRef = new ParameterizedTypeReference<List<ModuleJson>>() {
 							};
 							ResponseEntity<List<ModuleJson>> responseEntity = Constants.getRestTemplate().exchange(
-									Constants.url + "getRoleJsonByRoleId", HttpMethod.POST, new HttpEntity<>(map), typeRef);
+									Constants.url + "getRoleJsonByRoleId", HttpMethod.POST, new HttpEntity<>(map),
+									typeRef);
 
 							List<ModuleJson> newModuleList = responseEntity.getBody();
 
@@ -130,32 +122,28 @@ public class HomeController {
 						} catch (Exception e) {
 							System.err.println("Access Right get Exception  " + e.getMessage());
 						}
-						
+
+						map = new LinkedMultiValueMap<>();
+						map.add("compId", userObj.getCompanyId());
+
+						CompMaster comp = Constants.getRestTemplate()
+								.postForObject(Constants.url + "getCompanyByCompanyId", map, CompMaster.class);
+
+						session.setAttribute("userId", userObj.getUserId());
+						session.setAttribute("userObj", userObj);
+						session.setAttribute("companyId", userObj.getCompanyId());
+
+						session.setAttribute("company", comp);
+
+					} else {
+						// Login Failed
+						// show msg in jsp
+
+						mav = "redirect:/";
+						session.setAttribute("errorMsg", info.getMsg());
+
 					}
-					
-					
-					
-					  map = new LinkedMultiValueMap<>();
-					map.add("compId",  userObj.getCompanyId());
-
-					CompMaster comp = Constants.getRestTemplate().postForObject(Constants.url + "getCompanyByCompanyId", map,
-							CompMaster.class);
-
-					session.setAttribute("userId", userObj.getUserId());
-					session.setAttribute("userObj", userObj);
-					session.setAttribute("companyId", userObj.getCompanyId());
-					
-					session.setAttribute("company", comp);
-
-				} else {
-					// Login Failed
-					// show msg in jsp
-
-					mav = "redirect:/";
-					session.setAttribute("errorMsg", info.getMsg());
-
 				}
-			}
 			}
 		} catch (Exception e) {
 			mav = "redirect:/";
@@ -165,18 +153,17 @@ public class HomeController {
 
 		return mav;
 	}
-	
-	
+
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET)
 	public String dashboard(Locale locale, Model model) {
-		
+
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		
+
 		String formattedDate = dateFormat.format(date);
-		
-		model.addAttribute("serverTime", formattedDate );
-		
+
+		model.addAttribute("serverTime", formattedDate);
+
 		return "home";
 	}
 
@@ -190,7 +177,6 @@ public class HomeController {
 		session.removeAttribute("exportExcelList");
 	}
 
-	
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout(HttpSession session) {
 
@@ -205,56 +191,49 @@ public class HomeController {
 		session.invalidate();
 		return "redirect:/";
 	}
-	
+
 	@RequestMapping(value = "/changePassword", method = RequestMethod.GET)
 	public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model) {
-		
+
 		try {
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
-			
+
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			
+
 			map.add("userId", userObj.getUserId());
 			User user = Constants.getRestTemplate().postForObject(Constants.url + "getUserById", map, User.class);
 
 			model.addAttribute("userId", user.getUserId());
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-				
+
 		return "acc_right/updatePassword";
 	}
-	
-	
+
 	@RequestMapping(value = "/renewPassword", method = RequestMethod.POST)
 	public String renewPassword(HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-			
+
 			HttpSession session = request.getSession();
-			
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			int isEnroll = 0;
-			try {
-				isEnroll = Integer.parseInt(request.getParameter("isEnroll"));
-			}catch (Exception e) {
-				isEnroll = 0;
-			}
-			
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();			
+
 			int userId = Integer.parseInt(request.getParameter("userId"));
-			
-			String password = request.getParameter("new_password");			
+
+			String password = request.getParameter("new_password");
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			byte[] messageDigest = md.digest(password.getBytes());
 			BigInteger number = new BigInteger(1, messageDigest);
 			String hashtext = number.toString(16);
-			
+
 			map.add("userId", userId);
-			map.add("isEnroll", isEnroll);
 			map.add("newPassword", hashtext);
-			
-			Info info = Constants.getRestTemplate().postForObject(Constants.url + "updateUserPassword", map, Info.class);
+
+			Info info = Constants.getRestTemplate().postForObject(Constants.url + "updateUserPassword", map,
+					Info.class);
 			if (!info.isError()) {
 				session.setAttribute("successMsg", info.getMsg());
 			} else {
@@ -268,5 +247,90 @@ public class HomeController {
 		return "redirect:/logout";
 
 	}
-	
+
+	@RequestMapping(value = "/showForgetPass", method = RequestMethod.GET)
+	public String showForgetPass(HttpServletRequest request, HttpServletResponse response) {
+
+		return "login_fpass";
+	}
+
+	Instant start = null;
+
+	@RequestMapping(value = "/getUserInfoByMobNo", method = RequestMethod.POST)
+	public String getUserInfoByMobNo(HttpServletRequest request, HttpServletResponse response, Model model) {
+		Info info = new Info();
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+
+			String mobEmail = request.getParameter("mobEmail");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			map.add("mobEmail", mobEmail);
+
+			User user = Constants.getRestTemplate().postForObject(Constants.url + "getMnUserDetailByMobNo", map,
+					User.class);
+			System.err.println("User Info-----------" + user);
+			if (user != null) {
+				mav = "otpPage";
+				model.addAttribute("contact", user.getUserMobileNo());
+				info.setError(false);
+				info.setMsg("User Found");
+				System.err.println(info);
+
+				start = Instant.now();
+				;
+			} else {
+				info.setError(true);
+				info.setMsg("User Not Found");
+				System.err.println(info);
+				session.setAttribute("invalidMob", "Invalid Mobile No.");
+				mav = "login_fpass";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return mav;
+
+	}
+
+	@RequestMapping(value = "/otpVerification", method = RequestMethod.POST)
+	public String OTPVerificationByContact(HttpServletRequest request, HttpServletResponse response, Model model) {
+		HttpSession session = request.getSession();
+		System.err.println("Hiii  OTPVerification  ");
+		Info info = new Info();
+		String mav = new String();
+		try {
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			String otp = request.getParameter("otp");
+
+			map.add("otp", otp);
+
+			User user = Constants.getRestTemplate().postForObject(Constants.url + "verifyOTP", map, User.class);
+			// System.err.println("OTP User--------------"+user);
+
+			if (user.getUserId() == 0) {
+
+				session.setAttribute("errorMsg", "Invalid OTP.");
+				mav = "login_fpass";
+				model.addAttribute("msg", "Incorrect OTP");
+
+			} else {
+				System.err.println("User" + user);
+				mav = "changePass";
+				model.addAttribute("userId", user.getUserId());
+
+			}
+
+		} catch (Exception e) {
+			System.err.println("Exce in otpVerification  " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+
+	}
+
 }

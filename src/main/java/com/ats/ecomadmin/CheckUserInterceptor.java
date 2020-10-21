@@ -56,7 +56,11 @@ public class CheckUserInterceptor extends HandlerInterceptorAdapter {
 				if (request.getServletPath().equals("/") || request.getServletPath().equals("/loginProcess")
 						|| request.getServletPath().equals("/logout") || request.getServletPath().equals("/login") ||request.getServletPath().equals("/checkUserAndSendOtpEmail")
 						|| request.getServletPath().startsWith("/pdf")|| request.getServletPath().startsWith("/showOTPPage")|| request.getServletPath().startsWith("/validateOTP")
-						|| request.getServletPath().startsWith("/chngNewPassword")|| request.getServletPath().startsWith("/changePassPage")||request.getServletPath().equals("/showForPassPage") ) { // ||request.getServletPath().equals("/logout")) { // ||request.getServletPath().equals("/logout")
+						|| request.getServletPath().startsWith("/chngNewPassword")|| request.getServletPath().startsWith("/changePassPage")
+						||request.getServletPath().equals("/showForgetPass")
+						||request.getServletPath().equals("/getUserInfoByMobNo")
+						||request.getServletPath().equals("/otpVerification")
+						||request.getServletPath().equals("/renewPassword")) { // ||request.getServletPath().equals("/logout")) { // ||request.getServletPath().equals("/logout")
 					// System.out.println("Login request"); 
 					return true;
 				} else if (userObj == null) {
