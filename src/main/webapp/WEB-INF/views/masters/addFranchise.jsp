@@ -65,7 +65,7 @@
 							</div>
 
 
-							<div class="card-body">
+							<div class="card-body">		
 
 								<ul class="nav nav-tabs nav-tabs-highlight mb-0">
 									<li class="nav-item"><a href="#bordered-tab1" id="tab1"
@@ -81,7 +81,8 @@
 									</c:if>
 								</ul>
 
-
+								<div class="form-group row"></div>
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 
 								<div
@@ -337,7 +338,7 @@
 												<label class="col-form-label font-weight-bold col-lg-2"
 													for="cust_name">Image <span class="text-danger"></span>:
 												</label>
-												<div class="col-lg-4">
+												<div class="col-lg-10">
 													<label class="form-check-label"> <img id="output"
 														width="150" src="${imgPath}${franchise.frImage}" /> <input
 														type="file" class="form-control-uniform" data-fouc
@@ -347,6 +348,8 @@
 														class="validation-invalid-label text-danger"
 														id="error_doc" style="display: none;">This field is
 															required.</span>
+															<span class="text-danger">*Please upload file having extensions
+														 .jpeg/.jpg/.png only.</span>
 													</label>
 												</div>												
 											</div>
@@ -477,7 +480,7 @@
 											<div class="form-group row">
 												<label class="col-form-label font-weight-bold col-lg-2"
 													for="servePincode">Pin Code we Served <span
-													class="text-danger">* </span>:
+													class="text-danger"> </span>:
 												</label>
 												<div class="col-lg-4">
 													<input type="text"
@@ -609,7 +612,7 @@
 
 												<label class="col-form-label font-weight-bold col-lg-2"
 													for="samePayGateWay">Payment Gate Way Same as
-													Parent<span class="text-danger">* </span>:
+													Parent<span class="text-danger"></span>:
 												</label>
 												<div class="col-lg-4">
 													<input type="text"
@@ -625,7 +628,7 @@
 
 											<div class="form-group row">
 												<label class="col-form-label font-weight-bold col-lg-2"
-													for="panNo">Pan No<span class="text-danger">*
+													for="panNo">Pan No<span class="text-danger">
 												</span>:
 												</label>
 												<div class="col-lg-4">
@@ -764,12 +767,37 @@
 				}
 
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbtn").disabled = true;
-						return true;
-					}
-				}
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										$(".btn").attr("disabled", true);
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError
+
+
 
 				return false;
 
@@ -830,14 +858,14 @@
 													$("#error_kmCover").hide()
 												}
 
-												if (!$("#servePincode").val()) {
+											/* 	if (!$("#servePincode").val()) {
 													isError = true;
 													$("#error_servePincode")
 															.show()
 												} else {
 													$("#error_servePincode")
 															.hide()
-												}
+												} */
 
 												if (!$("#longitude").val()) {
 													isError = true;
@@ -856,13 +884,35 @@
 												}
 
 												if (!isError) {
-													var x = true;
-													if (x == true) {
-														document
-																.getElementById("submtFdabtn").disabled = true;
-														return true;
-													}
-												}
+													var x = false;
+													bootbox
+															.confirm({
+																title : 'Confirm ',
+																message : 'Are you sure you want to Submit ?',
+																buttons : {
+																	confirm : {
+																		label : 'Yes',
+																		className : 'btn-success'
+																	},
+																	cancel : {
+																		label : 'Cancel',
+																		className : 'btn-danger'
+																	}
+																},
+																callback : function(
+																		result) {
+																	if (result) {
+																		$(".btn").attr("disabled", true);
+																		var form = document
+																				.getElementById("submitFdaGstDtl")
+																		form
+																				.submit();
+																	}
+																}
+															});
+													//end ajax send this to php page
+													return false;
+												}//end of if !isError
 
 												return false;
 
@@ -920,7 +970,7 @@
 															.hide()
 												}
 
-												if (!$("#samePayGateWay").val()) {
+											/* 	if (!$("#samePayGateWay").val()) {
 													isError = true;
 													$("#error_samePayGateWay")
 															.show()
@@ -934,16 +984,38 @@
 													$("#error_panNo").show()
 												} else {
 													$("#error_panNo").hide()
-												}
+												} */
 
 												if (!isError) {
-													var x = true;
-													if (x == true) {
-														document
-																.getElementById("submtbankbtn").disabled = true;
-														return true;
-													}
-												}
+													var x = false;
+													bootbox
+															.confirm({
+																title : 'Confirm ',
+																message : 'Are you sure you want to Submit ?',
+																buttons : {
+																	confirm : {
+																		label : 'Yes',
+																		className : 'btn-success'
+																	},
+																	cancel : {
+																		label : 'Cancel',
+																		className : 'btn-danger'
+																	}
+																},
+																callback : function(
+																		result) {
+																	if (result) {
+																		$(".btn").attr("disabled", true);
+																		var form = document
+																				.getElementById("submitBankDtl")
+																		form
+																				.submit();
+																	}
+																}
+															});
+													//end ajax send this to php page
+													return false;
+												}//end of if !isError
 
 												return false;
 

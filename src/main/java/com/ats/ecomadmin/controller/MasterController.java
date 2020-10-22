@@ -81,8 +81,8 @@ public class MasterController {
 
 			} else {
 				mav = "masters/uomList";
-				
-				int compId = (int) session.getAttribute("companyId");	
+
+				int compId = (int) session.getAttribute("companyId");
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
@@ -317,10 +317,10 @@ public class MasterController {
 				mav = "accessDenied";
 
 			} else {
-				
+
 				mav = "masters/taxList";
-				
-				int compId = (int) session.getAttribute("companyId");				
+
+				int compId = (int) session.getAttribute("companyId");
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
@@ -511,24 +511,26 @@ public class MasterController {
 				String taxId = FormValidation.DecodeKey(base64encodedString);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("taxId", Integer.parseInt(taxId));		
-				
-				int res = Constants.getRestTemplate().postForObject(Constants.url + "getProdIdCntByTax", map, Integer.class);
-				
-				if(res>0) {
+				map.add("taxId", Integer.parseInt(taxId));
+
+				int res = Constants.getRestTemplate().postForObject(Constants.url + "getProdIdCntByTax", map,
+						Integer.class);
+
+				if (res > 0) {
 					session.setAttribute("errorMsg", "Failed to Delete Tax, Products are assign to this tax");
 					mav = "redirect:/showTaxList";
-				}else {
+				} else {
 					mav = "redirect:/showTaxList";
-					Info info = Constants.getRestTemplate().postForObject(Constants.url + "deleteTaxById", map, Info.class);
-	
+					Info info = Constants.getRestTemplate().postForObject(Constants.url + "deleteTaxById", map,
+							Info.class);
+
 					if (!info.isError()) {
 						session.setAttribute("successMsg", info.getMsg());
 					} else {
 						session.setAttribute("errorMsg", info.getMsg());
 					}
 				}
-				
+
 			}
 
 		} catch (Exception e) {
@@ -563,7 +565,7 @@ public class MasterController {
 				int compId = (int) session.getAttribute("companyId");
 
 				mav = "masters/userList";
-				
+
 				User userObj = (User) session.getAttribute("userObj");
 				model.addAttribute("currUserId", userObj.getUserId());
 
@@ -580,8 +582,7 @@ public class MasterController {
 				}
 				model.addAttribute("userList", userList);
 				model.addAttribute("title", "Users List");
-				
-				
+
 				// export To Excel
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
@@ -596,7 +597,7 @@ public class MasterController {
 				rowData.add("Department");
 				rowData.add("User Type");
 				rowData.add("Status");
-				
+
 				String userStatus = "";
 				String userDept = "";
 
@@ -612,17 +613,20 @@ public class MasterController {
 					rowData.add(" " + userList.get(i).getUserMobileNo());
 					rowData.add(" " + userList.get(i).getUserEmail());
 					rowData.add(" " + userList.get(i).getBirthDate());
-					
-					userDept = userList.get(i).getDeptId()== 1 ? "Sales" : userList.get(i).getDeptId() == 2 ? "Production" : userList.get(i).getDeptId() == 3 ? "Marketing" : 
-					userList.get(i).getDeptId() == 4 ? "HR" : userList.get(i).getDeptId() == 5 ? "Finance" : userList.get(i).getDeptId() == 6 ? "Other" : "";
-					
+
+					userDept = userList.get(i).getDeptId() == 1 ? "Sales"
+							: userList.get(i).getDeptId() == 2 ? "Production"
+									: userList.get(i).getDeptId() == 3 ? "Marketing"
+											: userList.get(i).getDeptId() == 4 ? "HR"
+													: userList.get(i).getDeptId() == 5 ? "Finance"
+															: userList.get(i).getDeptId() == 6 ? "Other" : "";
+
 					userStatus = userList.get(i).getIsActive() == 1 ? "Active" : "In-Active";
-					
+
 					rowData.add(" " + userDept);
 					rowData.add(" " + userList.get(i).getExVar4());
 					rowData.add(" " + userStatus);
 
-					
 					expoExcel.setRowData(rowData);
 					exportToExcelList.add(expoExcel);
 
@@ -630,7 +634,8 @@ public class MasterController {
 				session.setAttribute("exportExcelListNew", exportToExcelList);
 				session.setAttribute("excelNameNew", "Users");
 				session.setAttribute("reportNameNew", "User List");
-				//session.setAttribute("searchByNew", "From Date: " + fromDate + "  To Date: " + toDate + " ");
+				// session.setAttribute("searchByNew", "From Date: " + fromDate + " To Date: " +
+				// toDate + " ");
 				session.setAttribute("mergeUpto1", "$A$1:$L$1");
 				session.setAttribute("mergeUpto2", "$A$2:$L$2");
 
@@ -871,7 +876,7 @@ public class MasterController {
 				User user = Constants.getRestTemplate().postForObject(Constants.url + "getUserById", map, User.class);
 
 				model.addAttribute("user", user);
-				
+
 				model.addAttribute("isEdit", 1);
 
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
@@ -950,7 +955,7 @@ public class MasterController {
 			map.add("userId", userId);
 
 			User res = Constants.getRestTemplate().postForObject(Constants.url + "getUserByMobNo", map, User.class);
-		//	System.out.println("userRes  ------  " + res);
+			// System.out.println("userRes ------ " + res);
 			if (res != null) {
 				info.setError(false);
 				info.setMsg("User Found");
@@ -1004,34 +1009,35 @@ public class MasterController {
 		}
 		return info;
 	}
-	
+
 	@RequestMapping(value = "pdf/getUserListPdf", method = RequestMethod.GET)
-	public ModelAndView getOrdrListPdf(HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
+	public ModelAndView getOrdrListPdf(HttpServletRequest request, HttpServletResponse response)
+			throws FileNotFoundException {
 		ModelAndView model = null;
 		try {
 			model = new ModelAndView("masters/userListPdf");
-			
+
 			HttpSession session = request.getSession();
-			
+
 			int companyId = (int) session.getAttribute("companyId");
-			
+
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("compId", companyId);
 
 			User[] userArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllUsers", map,
 					User[].class);
 			List<User> userList = new ArrayList<User>(Arrays.asList(userArr));
-		
-			model.addObject("userList",  userList);
-			
+
+			model.addObject("userList", userList);
+
 			CompMaster compDtl = (CompMaster) session.getAttribute("company");
-			model.addObject("company",  compDtl.getCompanyName());
-			
-			}catch (Exception e) {
-				System.out.println("Excep in /pdf/getUserListPdf "+e.getMessage());
-				e.printStackTrace();
-			}
-		
+			model.addObject("company", compDtl.getCompanyName());
+
+		} catch (Exception e) {
+			System.out.println("Excep in /pdf/getUserListPdf " + e.getMessage());
+			e.printStackTrace();
+		}
+
 		return model;
 
 	}
@@ -1287,25 +1293,25 @@ public class MasterController {
 				mav = "redirect:/showCategoryList";
 				String base64encodedString = request.getParameter("catId");
 				String catId = FormValidation.DecodeKey(base64encodedString);
-				
+
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				
+
 				map.add("catId", Integer.parseInt(catId));
 				int catIdCnt = Constants.getRestTemplate().postForObject(Constants.url + "getCatIdCount", map,
-						Integer.class);	
-				
-				int prodIdCnt = Constants.getRestTemplate().postForObject(Constants.url + "getProdIdCntByCatId", map,
-						Integer.class);	
-				
+						Integer.class);
 
-				if(catIdCnt>0 && prodIdCnt>0) {
-					session.setAttribute("errorMsg", "This Category cannot be delete, Subcategory or Product are assigned.");
-				}else{
+				int prodIdCnt = Constants.getRestTemplate().postForObject(Constants.url + "getProdIdCntByCatId", map,
+						Integer.class);
+
+				if (catIdCnt > 0 && prodIdCnt > 0) {
+					session.setAttribute("errorMsg",
+							"This Category cannot be delete, Subcategory or Product are assigned.");
+				} else {
 					map.add("catId", Integer.parseInt(catId));
-					
+
 					Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteCategoryById", map,
 							Info.class);
-	
+
 					if (!res.isError()) {
 						session.setAttribute("successMsg", res.getMsg());
 					} else {
@@ -1328,9 +1334,9 @@ public class MasterController {
 
 		try {
 			HttpSession session = request.getSession();
-			
+
 			int companyId = (int) session.getAttribute("companyId");
-			
+
 			String prefix = request.getParameter("prefix");
 			int catId = Integer.parseInt(request.getParameter("catId"));
 
@@ -1759,26 +1765,26 @@ public class MasterController {
 			filter.setExVar1("NA");
 			filter.setExVar2("NA");
 			filter.setExVar3("NA");
-			
-			if(filter.getCostAffect()==1) {
+
+			if (filter.getCostAffect() == 1) {
 				try {
-				filter.setAddOnType(Integer.parseInt(request.getParameter("costEffectType")));
-				filter.setAddOnRs(Float.parseFloat(request.getParameter("add_on_rs")));
-				
-				filter.setIsTagAdd(Integer.parseInt(request.getParameter("addToTag")));
-				filter.setTagId(0);
-				String type="One Time";
-				if(filter.getAddOnType()==1) {
-					type="One Time";
-				}else {
-					type="Per UOM";
+					filter.setAddOnType(Integer.parseInt(request.getParameter("costEffectType")));
+					filter.setAddOnRs(Float.parseFloat(request.getParameter("add_on_rs")));
+
+					filter.setIsTagAdd(Integer.parseInt(request.getParameter("addToTag")));
+					filter.setTagId(0);
+					String type = "One Time";
+					if (filter.getAddOnType() == 1) {
+						type = "One Time";
+					} else {
+						type = "Per UOM";
+					}
+					String adminName = filter.getFilterName() + "_" + type + " " + filter.getAddOnRs();
+					filter.setAdminName(adminName);
+				} catch (Exception e) {
+
 				}
-				String adminName=filter.getFilterName()+"_" + type+" " +filter.getAddOnRs();
-				filter.setAdminName(adminName);
-				}catch (Exception e) {
-					
-				}
-			}else {
+			} else {
 				filter.setAddOnType(0);
 				filter.setAddOnRs(0);
 				filter.setIsTagAdd(0);
@@ -2029,8 +2035,8 @@ public class MasterController {
 					map = new LinkedMultiValueMap<>();
 					map.add("compId", companyId);
 
-					CompMaster comp = Constants.getRestTemplate().postForObject(Constants.url + "getCompanyByCompanyId", map,
-							CompMaster.class);
+					CompMaster comp = Constants.getRestTemplate().postForObject(Constants.url + "getCompanyByCompanyId",
+							map, CompMaster.class);
 
 					String coPrefix = comp.getCompanyPrefix();
 
@@ -2069,6 +2075,7 @@ public class MasterController {
 	public String insertFranchise(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
 		int savedFrId = 0;
+		String mav = new String();
 		try {
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
@@ -2078,6 +2085,7 @@ public class MasterController {
 			SimpleDateFormat sfd = new SimpleDateFormat("yyyy-MM-dd ");
 			String profileImage = null;
 
+			Info info = new Info();
 			int companyId = (int) session.getAttribute("companyId");
 
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
@@ -2087,7 +2095,7 @@ public class MasterController {
 				profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
 
 				try {
-					new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
 				} catch (Exception e) {
 				}
 
@@ -2096,129 +2104,134 @@ public class MasterController {
 				profileImage = request.getParameter("editImg");
 			}
 
-			 
-			
-
 			int frId = Integer.parseInt(request.getParameter("frId"));
-
-			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("frId", frId);
-			Franchise getFr = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseById", map,
-					Franchise.class);
-
-			Franchise franchise = new Franchise();
-
-			franchise.setFrId(frId);	
-			
-			if (frId > 0) {
+			if (info.isError()) {
+				session.setAttribute("errorMsg", "Invalid image formate");
 				
-				franchise.setFrPassword(getFr.getFrPassword());
-				franchise.setEditDateTime(sf.format(date));
+				mav = "redirect:/newFranchise/" + frId;
 			} else {
-				String password = request.getParameter("pass");
-				System.out.println("Password----------->"+password);
-				MessageDigest md = MessageDigest.getInstance("MD5");
-				byte[] messageDigest = md.digest(password.getBytes());
-				BigInteger number = new BigInteger(1, messageDigest);
-				String hashtext = number.toString(16);
-				
-				franchise.setFrPassword(hashtext);
-				franchise.setAddDateTime(sf.format(date));
-			}
 
-			franchise.setFrAddress(request.getParameter("address"));
-			franchise.setFrCity(Integer.parseInt(request.getParameter("city")));
-			franchise.setState("NA");
-			franchise.setFrCode(request.getParameter("frCode"));
-			franchise.setFrContactNo(request.getParameter("mobNo"));
-			franchise.setFrEmailId(request.getParameter("email"));
-			franchise.setFrImage(profileImage);
-			franchise.setFrName(request.getParameter("frName"));
-			
-			franchise.setOpeningDate(request.getParameter("openDate"));
-			franchise.setOwnersBirthDay(request.getParameter("ownerDob"));
-			franchise.setPincode(request.getParameter("pincode"));
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("frId", frId);
+				Franchise getFr = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseById", map,
+						Franchise.class);
 
-			franchise.setIsActive(Integer.parseInt(request.getParameter("active_stats")));
-			franchise.setDelStatus(1);
-			franchise.setCompanyId(companyId);
-			franchise.setCity("NA");
+				Franchise franchise = new Franchise();
 
-			if (frId > 0) {
-				// FDA& GST Detail
-				franchise.setFdaLicenseDateExp(getFr.getFdaLicenseDateExp());
-				franchise.setFdaNumber(getFr.getFdaNumber());
-				franchise.setGstNumber(getFr.getGstNumber());
-				franchise.setGstType(getFr.getGstType());
-				franchise.setPincodeWeServed(getFr.getPincodeWeServed());
+				franchise.setFrId(frId);
+
+				if (frId > 0) {
+
+					franchise.setFrPassword(getFr.getFrPassword());
+					franchise.setEditDateTime(sf.format(date));
+				} else {
+					String password = request.getParameter("pass");
+					System.out.println("Password----------->" + password);
+					MessageDigest md = MessageDigest.getInstance("MD5");
+					byte[] messageDigest = md.digest(password.getBytes());
+					BigInteger number = new BigInteger(1, messageDigest);
+					String hashtext = number.toString(16);
+
+					franchise.setFrPassword(hashtext);
+					franchise.setAddDateTime(sf.format(date));
+				}
+
+				franchise.setFrAddress(request.getParameter("address"));
+				franchise.setFrCity(Integer.parseInt(request.getParameter("city")));
+				franchise.setState("NA");
+				franchise.setFrCode(request.getParameter("frCode"));
+				franchise.setFrContactNo(request.getParameter("mobNo"));
+				franchise.setFrEmailId(request.getParameter("email"));
+				franchise.setFrImage(profileImage);
+				franchise.setFrName(request.getParameter("frName"));
+
+				franchise.setOpeningDate(request.getParameter("openDate"));
+				franchise.setOwnersBirthDay(request.getParameter("ownerDob"));
+				franchise.setPincode(request.getParameter("pincode"));
+
+				franchise.setIsActive(Integer.parseInt(request.getParameter("active_stats")));
+				franchise.setDelStatus(1);
+				franchise.setCompanyId(companyId);
+				franchise.setCity("NA");
+
+				if (frId > 0) {
+					// FDA& GST Detail
+					franchise.setFdaLicenseDateExp(getFr.getFdaLicenseDateExp());
+					franchise.setFdaNumber(getFr.getFdaNumber());
+					franchise.setGstNumber(getFr.getGstNumber());
+					franchise.setGstType(getFr.getGstType());
+					franchise.setPincodeWeServed(getFr.getPincodeWeServed());
+
+					try {
+						franchise.setNoOfKmAreaCover(getFr.getNoOfKmAreaCover());
+						franchise.setShopsLatitude(getFr.getShopsLatitude());
+						franchise.setShopsLogitude(getFr.getShopsLogitude());
+
+					} catch (Exception e) {
+						franchise.setNoOfKmAreaCover(0);
+						franchise.setShopsLatitude("NA");
+						franchise.setShopsLogitude("NA");
+						e.printStackTrace();
+					}
+
+					// Bank Details
+					franchise.setPanNo(getFr.getPanNo());
+					franchise.setCoBankAccNo(getFr.getCoBankAccNo());
+					franchise.setCoBankBranchName(getFr.getCoBankBranchName());
+					franchise.setCoBankIfscCode(getFr.getCoBankIfscCode());
+					franchise.setCoBankName(getFr.getCoBankName());
+					franchise.setPaymentGetwayLink(getFr.getPaymentGetwayLink());
+					franchise.setPaymentGetwayLinkSameAsParent(getFr.getPaymentGetwayLinkSameAsParent());
+				}
+
+				franchise.setExDate1(sfd.format(date));
+				franchise.setExDate2(sfd.format(date));
+				franchise.setExFloat1(0);
+				franchise.setExFloat2(0);
+				franchise.setExFloat3(0);
+				franchise.setExFloat4(0);
+				franchise.setExFloat5(0);
+				franchise.setExInt1(0);
+				franchise.setExInt2(0);
+				franchise.setExInt3(0);
+				franchise.setExVar1("NA");
+				franchise.setExVar2("NA");
+				franchise.setExVar3("NA");
+				franchise.setExVar4("NA");
+				franchise.setExVar5("NA");
+				franchise.setExVar6("NA");
+				franchise.setExVar7("NA");
+
+				franchise.setUserId(userObj.getUserId());
 
 				try {
-					franchise.setNoOfKmAreaCover(getFr.getNoOfKmAreaCover());
-					franchise.setShopsLatitude(getFr.getShopsLatitude());
-					franchise.setShopsLogitude(getFr.getShopsLogitude());
-
+					franchise.setFrRating(Float.parseFloat(request.getParameter("frRating")));
 				} catch (Exception e) {
-					franchise.setNoOfKmAreaCover(0);
-					franchise.setShopsLatitude("NA");
-					franchise.setShopsLogitude("NA");
+					franchise.setFrRating(0);
 					e.printStackTrace();
 				}
 
-				// Bank Details
-				franchise.setPanNo(getFr.getPanNo());
-				franchise.setCoBankAccNo(getFr.getCoBankAccNo());
-				franchise.setCoBankBranchName(getFr.getCoBankBranchName());
-				franchise.setCoBankIfscCode(getFr.getCoBankIfscCode());
-				franchise.setCoBankName(getFr.getCoBankName());
-				franchise.setPaymentGetwayLink(getFr.getPaymentGetwayLink());
-				franchise.setPaymentGetwayLinkSameAsParent(getFr.getPaymentGetwayLinkSameAsParent());
+				Franchise res = Constants.getRestTemplate().postForObject(Constants.url + "saveFranchise", franchise,
+						Franchise.class);
+
+				if (res.getFrId() > 0) {
+					savedFrId = res.getFrId();
+					if (frId == 0)
+						session.setAttribute("successMsg", "Franchise Saved Sucessfully");
+					else
+						session.setAttribute("successMsg", "Franchise  Update Sucessfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Save Franchise");
+				}
+				
+				mav =  "redirect:/newFranchise/" + savedFrId;
 			}
-
-			franchise.setExDate1(sfd.format(date));
-			franchise.setExDate2(sfd.format(date));
-			franchise.setExFloat1(0);
-			franchise.setExFloat2(0);
-			franchise.setExFloat3(0);
-			franchise.setExFloat4(0);
-			franchise.setExFloat5(0);
-			franchise.setExInt1(0);
-			franchise.setExInt2(0);
-			franchise.setExInt3(0);
-			franchise.setExVar1("NA");
-			franchise.setExVar2("NA");
-			franchise.setExVar3("NA");
-			franchise.setExVar4("NA");
-			franchise.setExVar5("NA");
-			franchise.setExVar6("NA");
-			franchise.setExVar7("NA");
-
-			franchise.setUserId(userObj.getUserId());
-
-			try {
-				franchise.setFrRating(Float.parseFloat(request.getParameter("frRating")));
-			} catch (Exception e) {
-				franchise.setFrRating(0);
-				e.printStackTrace();
-			}
-
-			Franchise res = Constants.getRestTemplate().postForObject(Constants.url + "saveFranchise", franchise,
-					Franchise.class);
-
-			if (res.getFrId() > 0) {
-				savedFrId = res.getFrId();
-				if (frId == 0)
-					session.setAttribute("successMsg", "Franchise Saved Sucessfully");
-				else
-					session.setAttribute("successMsg", "Franchise  Update Sucessfully");
-			} else {
-				session.setAttribute("errorMsg", "Failed to Save Franchise");
-			}
-
 		} catch (Exception e) {
 			System.out.println("Execption in /insertFranchise : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/newFranchise/" + savedFrId;
+
+		return mav;
 
 	}
 
@@ -2482,7 +2495,7 @@ public class MasterController {
 
 			Franchise res = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseByMobNo", map,
 					Franchise.class);
-			
+
 			if (res != null) {
 				info.setError(false);
 				info.setMsg("User Found");
@@ -2956,10 +2969,10 @@ public class MasterController {
 			System.out.println("Execption in /insertCity : " + e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		int btnVal = Integer.parseInt(request.getParameter("btnType"));
-		
-		if(btnVal==0)
+
+		if (btnVal == 0)
 			return "redirect:/showCities";
 		else
 			return "redirect:/addNewCity";
@@ -2994,7 +3007,7 @@ public class MasterController {
 
 				City city = Constants.getRestTemplate().postForObject(Constants.url + "getCityById", map, City.class);
 				model.addAttribute("city", city);
-				
+
 				model.addAttribute("title", "Edit City");
 				model.addAttribute("isEdit", 1);
 			}
@@ -3257,7 +3270,7 @@ public class MasterController {
 			map.add("compId", userObj.getCompanyId());
 
 			Area cityRes = Constants.getRestTemplate().postForObject(Constants.url + "getAreaByCode", map, Area.class);
-			
+
 			if (cityRes != null) {
 				info.setError(false);
 				info.setMsg("Area Found");
@@ -3335,7 +3348,7 @@ public class MasterController {
 			map.add("cityId", cityId);
 			city = Constants.getRestTemplate().postForObject(Constants.url + "getCityById", map, City.class);
 
-			city.setCityCode(city.getCityCode() + "-" + no);			
+			city.setCityCode(city.getCityCode() + "-" + no);
 
 		} catch (Exception e) {
 			System.out.println("Execption in /getCityBycityId : " + e.getMessage());
@@ -3466,7 +3479,7 @@ public class MasterController {
 
 			DeliveryInstruction captionRes = Constants.getRestTemplate()
 					.postForObject(Constants.url + "getDeliveryInstructionByCaptn", map, DeliveryInstruction.class);
-			
+
 			if (captionRes != null) {
 				info.setError(false);
 				info.setMsg("Caption Found");
@@ -3765,7 +3778,7 @@ public class MasterController {
 
 			GrievencesTypeInstructn captionRes = Constants.getRestTemplate()
 					.postForObject(Constants.url + "getGrievTypeInstructByCaptn", map, GrievencesTypeInstructn.class);
-			
+
 			if (captionRes != null) {
 				info.setError(false);
 				info.setMsg("Caption Found");

@@ -70,7 +70,7 @@
 					<table class="table datatable-header-basic">
 						<thead>
 							<tr>
-								<th width="5%">SR. No.</th>
+								<th width="10%">Sr. No.</th>
 								<th>Franchise</th>
 								<th>Contact No.</th>
 								<th>FDA Lic. Expiry Date</th>
@@ -142,7 +142,7 @@
 											},
 											cancel : {
 												label : 'Cancel',
-												className : 'btn-link'
+												className : 'btn-danger'
 											}
 										},
 										callback : function(result) {

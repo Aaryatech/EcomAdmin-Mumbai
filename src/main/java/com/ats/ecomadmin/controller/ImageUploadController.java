@@ -1,6 +1,7 @@
 package com.ats.ecomadmin.controller;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ats.ecomadmin.commons.Constants;
@@ -37,6 +38,36 @@ public class ImageUploadController {
 		Files.write(path, bytes);
 
 	}
+	
+	public static Info saveImgFiles(MultipartFile file, String[] allowExt, String imageName)
+			throws IOException {
+
+		Info info = new Info();
+		try {
+			String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+			String[] filetypes = file.getOriginalFilename().split("\\.");
+			if (ArrayUtils.contains(allowExt, extension.toLowerCase()) && filetypes.length==2) {
+				Path path = Paths.get(Constants.UPLOAD_URL + imageName);
+
+				byte[] bytes = file.getBytes();
+
+				path = Paths.get(Constants.UPLOAD_URL + imageName);
+
+				Files.write(path, bytes);
+				info.setError(false);
+				info.setMsg("Upload Successfully ");
+			} else {
+				info.setError(true);
+				info.setMsg("Error While Uploading Image");
+			}
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("Error While Uploading Image");
+			e.printStackTrace();
+		}
+		return info;
+	}
+
 
 	public Info saveUploadedImgeWithResize(MultipartFile file, String imageName, int width, int hieght)
 			throws IOException {
