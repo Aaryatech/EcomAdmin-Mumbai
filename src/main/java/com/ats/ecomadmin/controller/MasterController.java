@@ -2106,8 +2106,7 @@ public class MasterController {
 
 			int frId = Integer.parseInt(request.getParameter("frId"));
 			if (info.isError()) {
-				session.setAttribute("errorMsg", "Invalid image formate");
-				
+				session.setAttribute("errorMsg", "Invalid Image Formate");				
 				mav = "redirect:/newFranchise/" + frId;
 			} else {
 
