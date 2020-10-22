@@ -279,9 +279,9 @@ public class CompanyAdminController {
 				// System.err.println(res.toString());
 				if (res.getCompanyId() > 0) {
 					if (companyId == 0)
-						session.setAttribute("successMsg", "Company Saved Sucessfully");
+						session.setAttribute("successMsg", "Company Saved Successfully");
 					else
-						session.setAttribute("successMsg", "Company  Update Sucessfully");
+						session.setAttribute("successMsg", "Company  Update Successfully");
 				} else {
 					session.setAttribute("errorMsg", "Failed to Save Company");
 				}
@@ -729,9 +729,9 @@ public class CompanyAdminController {
 			// System.err.println(res.toString());
 			if (res.getCustId() > 0) {
 				if (cust_id == 0)
-					session.setAttribute("successMsg", "Customer Saved Sucessfully");
+					session.setAttribute("successMsg", "Customer Saved Successfully");
 				else
-					session.setAttribute("successMsg", "Customer  Update Sucessfully");
+					session.setAttribute("successMsg", "Customer  Update Successfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Customer");
 			}
@@ -950,9 +950,9 @@ public class CompanyAdminController {
 
 			if (res.getCustDetailId() > 0) {
 				if (custDetailId == 0)
-					session.setAttribute("successMsg", "Customer Address Saved Sucessfully");
+					session.setAttribute("successMsg", "Customer Address Saved Successfully");
 				else
-					session.setAttribute("successMsg", "Customer Address Update Sucessfully");
+					session.setAttribute("successMsg", "Customer Address Update Successfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Customer Address");
 			}
@@ -1437,9 +1437,9 @@ public class CompanyAdminController {
 
 			if (res.getSubCatId() > 0) {
 				if (subCatId == 0)
-					session.setAttribute("successMsg", "SubCategory Address Saved Sucessfully");
+					session.setAttribute("successMsg", "SubCategory Address Saved Successfully");
 				else
-					session.setAttribute("successMsg", "SubCategory Address Update Sucessfully");
+					session.setAttribute("successMsg", "SubCategory Address Update Successfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save SubCategory Address");
 			}
@@ -1692,9 +1692,9 @@ public class CompanyAdminController {
 
 			if (res.getBannerId() > 0) {
 				if (bannerId == 0)
-					session.setAttribute("successMsg", "BannerPage   Saved Sucessfully");
+					session.setAttribute("successMsg", "BannerPage   Saved Successfully");
 				else
-					session.setAttribute("successMsg", "BannerPage   Update Sucessfully");
+					session.setAttribute("successMsg", "BannerPage   Update Successfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save BannerPage Address");
 			}
@@ -2077,20 +2077,7 @@ public class CompanyAdminController {
 
 				model.addAttribute("title", "Route List");
 
-				mav = "masters/routeList";
-				int companyId = (int) session.getAttribute("companyId");
-
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("compId", companyId);
-				GetRouteList[] userArr = Constants.getRestTemplate()
-						.postForObject(Constants.url + "getAllRouteByCompId", map, GetRouteList[].class);
-				List<GetRouteList> userList = new ArrayList<GetRouteList>(Arrays.asList(userArr));
-
-				for (int i = 0; i < userList.size(); i++) {
-
-					userList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(userList.get(i).getRouteId())));
-				}
-				model.addAttribute("routeList", userList);
+				mav = "masters/routeList";		
 
 				Info add = AccessControll.checkAccess("showRouteList", "showRouteList", "0", "1", "0", "0",
 						newModuleList);
@@ -2101,7 +2088,6 @@ public class CompanyAdminController {
 
 				if (add.isError() == false) { // System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
-
 				}
 				if (edit.isError() == false) { // System.out.println(" edit Accessable ");
 					model.addAttribute("editAccess", 0);
@@ -2109,13 +2095,27 @@ public class CompanyAdminController {
 				if (delete.isError() == false) { //
 					System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
+				
+				List<GetRouteList> routeList = new ArrayList<GetRouteList>();
+				
+				int companyId = (int) session.getAttribute("companyId");
 
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);
+				GetRouteList[] routeArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getAllRouteByCompId", map, GetRouteList[].class);
+				routeList = new ArrayList<GetRouteList>(Arrays.asList(routeArr));
+
+				for (int i = 0; i < routeList.size(); i++) {
+
+					routeList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouteId())));
+				}
+				model.addAttribute("routeList", routeList);
 			}
 
 		} catch (Exception e) {
-			System.out.println("Execption in /Customer : " + e.getMessage());
+			System.out.println("Execption in /showRouteList : " + e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -2237,9 +2237,9 @@ public class CompanyAdminController {
 
 			if (res.getRouteId() > 0) {
 				if (routeId == 0)
-					session.setAttribute("successMsg", "Route Saved Sucessfully");
+					session.setAttribute("successMsg", "Route Saved Successfully");
 				else
-					session.setAttribute("successMsg", "Route  Update Sucessfully");
+					session.setAttribute("successMsg", "Route  Update Successfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Route");
 			}
@@ -2401,7 +2401,7 @@ public class CompanyAdminController {
 				RouteType route = new RouteType();
 				model.addAttribute("route", route);
 				model.addAttribute("title", "Add Route Type");
-
+				model.addAttribute("isEdit", 0);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /newUom : " + e.getMessage());
@@ -2450,7 +2450,7 @@ public class CompanyAdminController {
 						RouteType.class);
 
 				model.addAttribute("route", route);
-
+				model.addAttribute("isEdit", 1);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /showEditRouteType : " + e.getMessage());
@@ -2510,9 +2510,9 @@ public class CompanyAdminController {
 
 			if (res.getRouteTypeId() > 0) {
 				if (routeTypeId == 0)
-					session.setAttribute("successMsg", "Route Type Saved Sucessfully");
+					session.setAttribute("successMsg", "Route Type Saved successfully");
 				else
-					session.setAttribute("successMsg", "Route Type  Update Sucessfully");
+					session.setAttribute("successMsg", "Route Type  Update successfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Route Type");
 			}
@@ -2521,8 +2521,12 @@ public class CompanyAdminController {
 			System.out.println("Execption in /insertUom : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showRouteTypeList";
-
+		
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		if(btnVal==0)
+			return "redirect:/showRouteTypeList";
+		else
+			return "redirect:/showAddRouteType";	
 	}
 
 	/**************************** Route del *********************************/
@@ -2786,9 +2790,9 @@ public class CompanyAdminController {
 
 			if (res.getRouidDelveryId() > 0) {
 				if (rouidDelveryId == 0)
-					session.setAttribute("successMsg", "Route Delivery Saved Sucessfully");
+					session.setAttribute("successMsg", "Route Delivery Saved Successfully");
 				else
-					session.setAttribute("successMsg", "Route Delivery  Update Sucessfully");
+					session.setAttribute("successMsg", "Route Delivery  Update Successfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Route Delivery");
 			}

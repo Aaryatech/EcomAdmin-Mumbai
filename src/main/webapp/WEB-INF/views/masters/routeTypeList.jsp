@@ -71,7 +71,7 @@
 					<table class="table datatable-header-basic">
 						<thead>
 							<tr>
-								<th width="5%">SR. No.</th>
+								<th width="10%">Sr. No.</th>
 								<th>Name</th>
 								<th>Km Range</th>
  								<th>Sort No.</th>
@@ -143,7 +143,7 @@
 											},
 											cancel : {
 												label : 'Cancel',
-												className : 'btn-link'
+												className : 'btn-danger'
 											}
 										},
 										callback : function(result) {

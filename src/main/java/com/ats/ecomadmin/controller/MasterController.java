@@ -2833,7 +2833,7 @@ public class MasterController {
 
 				model.addAttribute("cityList", cityList);
 
-				model.addAttribute("title", "City/Village List");
+				model.addAttribute("title", "City List");
 
 				Info add = AccessControll.checkAccess("showCities", "showCities", "0", "1", "0", "0", newModuleList);
 				Info edit = AccessControll.checkAccess("showCities", "showCities", "0", "0", "1", "0", newModuleList);
@@ -2881,7 +2881,8 @@ public class MasterController {
 
 				mav = "masters/addCity";
 				model.addAttribute("city", city);
-				model.addAttribute("title", "Add City/Village");
+				model.addAttribute("title", "Add City");
+				model.addAttribute("isEdit", 0);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /showCities : " + e.getMessage());
@@ -2935,7 +2936,7 @@ public class MasterController {
 			city.setCompanyId(userObj.getCompanyId());
 			city.setDelStatus(1);
 			city.setDescription(request.getParameter("city_decp"));
-			city.setExInt1(Integer.parseInt(request.getParameter("type")));
+			city.setExInt1(0);
 			city.setExInt2(0);
 			city.setExVar1("NA");
 			city.setExVar2("NA");
@@ -2945,18 +2946,23 @@ public class MasterController {
 
 			if (cityRes.getCityId() > 0) {
 				if (cityId == 0)
-					session.setAttribute("successMsg", "City/Village Saved Sucessfully");
+					session.setAttribute("successMsg", "City Saved Successfully");
 				else
-					session.setAttribute("successMsg", "City/Village Update Sucessfully");
+					session.setAttribute("successMsg", "City Update Successfully");
 			} else {
-				session.setAttribute("errorMsg", "Failed to Save City/Village");
+				session.setAttribute("errorMsg", "Failed to Save City");
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /insertCity : " + e.getMessage());
 			e.printStackTrace();
 		}
-
-		return "redirect:/showCities";
+		
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		
+		if(btnVal==0)
+			return "redirect:/showCities";
+		else
+			return "redirect:/addNewCity";
 	}
 
 	// Created By :- Mahendra Singh
@@ -2988,8 +2994,9 @@ public class MasterController {
 
 				City city = Constants.getRestTemplate().postForObject(Constants.url + "getCityById", map, City.class);
 				model.addAttribute("city", city);
-
-				model.addAttribute("title", "Edit City/Village");
+				
+				model.addAttribute("title", "Edit City");
+				model.addAttribute("isEdit", 1);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /editLang : " + e.getMessage());
@@ -3173,9 +3180,9 @@ public class MasterController {
 
 			if (areaRes.getAreaId() > 0) {
 				if (areaId == 0)
-					session.setAttribute("successMsg", "Area Saved Sucessfully");
+					session.setAttribute("successMsg", "Area Saved Successfully");
 				else
-					session.setAttribute("successMsg", "Area Update Sucessfully");
+					session.setAttribute("successMsg", "Area Update Successfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Area");
 			}
@@ -3503,9 +3510,9 @@ public class MasterController {
 
 			if (instructRes.getInstruId() > 0) {
 				if (instructId == 0)
-					session.setAttribute("successMsg", "Delivery Instruction Saved Sucessfully");
+					session.setAttribute("successMsg", "Delivery Instruction Saved Successfully");
 				else
-					session.setAttribute("successMsg", "Delivery Instruction Update Sucessfully");
+					session.setAttribute("successMsg", "Delivery Instruction Update Successfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Delivery Instruction");
 			}
@@ -3724,9 +3731,9 @@ public class MasterController {
 
 			if (instructRes.getGrevTypeId() > 0) {
 				if (grievId == 0)
-					session.setAttribute("successMsg", "Grievances Type Instruction Saved Sucessfully");
+					session.setAttribute("successMsg", "Grievances Type Instruction Saved Successfully");
 				else
-					session.setAttribute("successMsg", "Grievances Type Instruction Update Sucessfully");
+					session.setAttribute("successMsg", "Grievances Type Instruction Update Successfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Grievances Type Instruction");
 			}
@@ -4001,9 +4008,9 @@ public class MasterController {
 
 			if (grievanceRes.getGrievanceId() > 0) {
 				if (grievanceId == 0)
-					session.setAttribute("successMsg", "Grievances Instruction Saved Sucessfully");
+					session.setAttribute("successMsg", "Grievances Instruction Saved Successfully");
 				else
-					session.setAttribute("successMsg", "Grievances Instruction Update Sucessfully");
+					session.setAttribute("successMsg", "Grievances Instruction Update Successfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Grievances Instruction");
 			}
@@ -4385,9 +4392,9 @@ public class MasterController {
 
 			if (res.getSpDayId() > 0) {
 				if (spDayId == 0)
-					session.setAttribute("successMsg", "Special Day Home Page Saved Sucessfully");
+					session.setAttribute("successMsg", "Special Day Home Page Saved Successfully");
 				else
-					session.setAttribute("successMsg", "Special Day Home Page Update Sucessfully");
+					session.setAttribute("successMsg", "Special Day Home Page Update Successfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Special Day Home Page");
 			}

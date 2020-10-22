@@ -75,6 +75,8 @@
 
 
 							<div class="card-body">
+							<div class="form-group row"></div>
+							<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 								<form action="${pageContext.request.contextPath}/insertCity"
 									id="submitInsert" method="post">
@@ -94,7 +96,7 @@
 											<input type="text"
 												class="form-control maxlength-badge-position"
 												name="city_code" style="text-transform: uppercase;"
-												placeholder="3 Character of your city. eg(mub for mumbai)"
+												placeholder="enter city code .eg(mub for mumbai)"
 												onkeypress="return (event.charCode > 64 && 
 												event.charCode < 91) || (event.charCode > 96 && event.charCode < 123)"
 												id="city_code" maxlength="3" autocomplete="off"
@@ -114,7 +116,7 @@
 										<div class="col-lg-4">
 											<input type="text"
 												class="form-control maxlength-badge-position"
-												name="city_name" id="city_name" maxlength="70"
+												name="city_name" id="city_name" maxlength="30"
 												autocomplete="off" onchange="trim(this)"
 												value="${city.cityName}"> <span
 												class="validation-invalid-label text-danger"
@@ -132,8 +134,8 @@
 
 										<div class="col-lg-10">
 											<textarea class="form-control maxlength-badge-position"
-												placeholder="Enter City Description" id="city_decp"
-												name="city_decp" autocomplete="off" maxlength="100"
+												id="city_decp"
+												name="city_decp" autocomplete="off" maxlength="200"
 												onchange="trim(this)">${city.description}</textarea>
 										</div>
 									</div>
@@ -145,7 +147,9 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
+										<c:choose>
+											<c:when test="${city.cityId>0}">
+												<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
 													class="form-check-input" checked value="1" name="city"
 													id="city_y" ${city.isActive==1 ? 'checked' : ''}>
@@ -159,9 +163,27 @@
 													${city.isActive==0 ? 'checked' : ''}> In-Active
 												</label>
 											</div>
+											</c:when>
+											<c:otherwise>
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1" name="city">
+													Active
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" value="0" name="city" id="city_n"> In-Active
+												</label>
+											</div>
+											</c:otherwise>
+										</c:choose>
+										
+											
 										</div>
 										
-										<label class="col-form-label font-weight-bold col-lg-2"
+										<%-- <label class="col-form-label font-weight-bold col-lg-2"
 											for="cust_name">Type <span class="text-danger">*
 										</span>:
 										</label>
@@ -180,15 +202,23 @@
 													${city.exInt1==1 ? 'checked' : ''}> Village
 												</label>
 											</div>
-										</div>
+										</div> --%>
 									</div>
+									<input type="hidden" id="btnType" name="btnType">
 									<br>
-									<div class="text-center">
-										<button type="submit" class="btn btn-primary" id="submtbtn">
+									<div class="text-center">								
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+									
+									<c:if test="${isEdit==0}">
+										<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+											Save & Next<i class="icon-paperplane ml-2"></i>
+										</button>
+									</c:if>
 									</div>
 								</form>
+								<input type="hidden" value="${isEdit}" id="isEdit">
 							</div>
 						</div>
 					</div>
@@ -219,41 +249,80 @@
 				console.log(err);
 			}
 		};
+		
+		function pressBtn(btnVal){
+			$("#btnType").val(btnVal)
+		}
 	</script>
 
 	<script type="text/javascript">
-		$(document).ready(function($) {
+		
+		$(document)
+				.ready(
+						function($) {
 
-			$("#submitInsert").submit(function(e) {
-				var isError = false;
-				var errMsg = "";
+							$("#submitInsert")
+									.submit(
+											function(e) {
+												var isError = false;
+												var errMsg = "";
 
-				if (!$("#city_code").val()) {
-					isError = true;
-					$("#error_city_code").show()
-				} else {
-					$("#error_city_code").hide()
-				}
+												if (!$("#city_code").val()) {
+													isError = true;
+													$("#error_city_code")
+															.show()
+												} else {
+													$("#error_city_code")
+															.hide()
+												}
 
-				if (!$("#city_name").val()) {
-					isError = true;
-					$("#error_city_name").show()
-				} else {
-					$("#error_city_name").hide()
-				}
+												if (!$("#city_name").val()) {
+													isError = true;
+													$("#error_city_name")
+															.show()
+												} else {
+													$("#error_city_name")
+															.hide()
+												}
 
-				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbtn").disabled = true;
-						return true;
-					}
-				}
-
-				return false;
-
-			});
-		});
+												if (!isError) {
+													var x = false;
+													bootbox
+															.confirm({
+																title : 'Confirm ',
+																message : 'Are you sure you want to Submit ?',
+																buttons : {
+																	confirm : {
+																		label : 'Yes',
+																		className : 'btn-success'
+																	},
+																	cancel : {
+																		label : 'Cancel',
+																		className : 'btn-danger'
+																	}
+																},
+																callback : function(
+																		result) {
+																	if (result) {
+																		document
+																				.getElementById("submtbtn").disabled = true;
+																		if(isEdit==0){
+																		document
+																				.getElementById("submtbtn1").disabled = true;
+																		}
+																		var form = document
+																				.getElementById("submitInsert")
+																		form
+																				.submit();
+																	}
+																}
+															});
+													//end ajax send this to php page
+													return false;
+												}//end of if !isError	
+												return false;
+											});
+						});
 
 		$("#city_code").change(function() { // 1st
 			var code = $("#city_code").val();

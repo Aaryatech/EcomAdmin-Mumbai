@@ -70,11 +70,11 @@
 					<table class="table datatable-header-basic">
 						<thead>
 							<tr>
-								<th width="5%">SR. No.</th>
+								<th width="10%">Sr. No.</th>
 								<th>City Code</th>
 								<th>City Name</th>
 								<th>Status</th>
-								<th>Location Type</th>
+								<th style="display: none;"></th>
 								<th style="display: none;"></th>
 								<th class="text-center">Actions</th>
 							</tr>
@@ -93,16 +93,7 @@
 										<c:set value="In-Active" var="status" />
 									</c:if>
 									<td>${status}</td>
-
-									<c:set value="" var="type" />
-									<c:if test="${cityList.exInt1==0}">
-										<c:set value="City" var="type" />
-									</c:if>
-									<c:if test="${cityList.exInt1==1}">
-										<c:set value="Village" var="type" />
-									</c:if>
-									<td>${type}</td>
-
+									<td style="display: none;"></td>
 									<td style="display: none;"></td>
 									<td style="display: none;"></td>
 									<td class="text-center"><c:if test="${editAccess==0}">
@@ -162,7 +153,7 @@
 											},
 											cancel : {
 												label : 'Cancel',
-												className : 'btn-link'
+												className : 'btn-danger'
 											}
 										},
 										callback : function(result) {
