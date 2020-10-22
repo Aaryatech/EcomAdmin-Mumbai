@@ -73,7 +73,7 @@
 											Information</a></li>
 									<c:if test="${frId>0}">
 										<li class="nav-item"><a href="#bordered-tab2" id="tab2"
-											name="tab2" class="nav-link" data-toggle="tab">FDA & GST
+											name="tab2" class="nav-link" data-toggle="tab">FDA, GST &  Location
 												Details</a></li>
 										<li class="nav-item"><a href="#bordered-tab3" id="tab3"
 											name="tab3" class="nav-link" data-toggle="tab">Bank
@@ -214,16 +214,11 @@
 														field is required.</span>
 												</div>
 
-												<label class="col-form-label font-weight-bold col-lg-1"
+												<label class="col-form-label font-weight-bold col-lg-2"
 													for="city">City <span class="text-danger">*
 												</span>:
 												</label>
-												<div class="col-lg-2">
-													<%-- <input type="text"
-														class="form-control maxlength-badge-position" name="city"
-														id="city" maxlength="30" autocomplete="off"
-														onchange="trim(this)" value="${franchise.frCity}"> --%>
-
+												<div class="col-lg-4">													
 													<select class="form-control select-search" data-fouc
 														data-placeholder="Select City" name="city" id="city">
 														<c:forEach items="${cityList}" var="cityList">
@@ -238,20 +233,6 @@
 														</c:forEach>
 													</select> <span class="validation-invalid-label text-danger"
 														id="error_city" style="display: none;">This field
-														is required.</span>
-												</div>
-
-												<label class="col-form-label font-weight-bold col-lg-1"
-													for="state">State<span class="text-danger">*
-												</span>:
-												</label>
-												<div class="col-lg-2">
-													<input type="text"
-														class="form-control maxlength-badge-position" name="state"
-														id="state" maxlength="30" autocomplete="off"
-														onchange="trim(this)" value="${franchise.state}">
-													<span class="validation-invalid-label text-danger"
-														id="error_state" style="display: none;">This field
 														is required.</span>
 												</div>
 											</div>
@@ -271,40 +252,67 @@
 														id="error_pincode" style="display: none;">This
 														field is required.</span>
 												</div>
-
-												<label class="col-form-label font-weight-bold col-lg-2"
-													for="password">Password<span class="text-danger">*
-												</span>:
-												</label>
-												<div class="col-lg-4">
-													<input type="password"
-														class="form-control maxlength-badge-position" name="pass"
-														id="pass" maxlength="30" autocomplete="off"
-														onchange="trim(this)"> <span
-														class="validation-invalid-label text-danger"
-														id="error_password" style="display: none;">This
-														field is required.</span>
-												</div>
-											</div>
-
-											<div class="form-group row">
-												<label class="col-form-label font-weight-bold col-lg-2"
-													for="cust_name">Image <span class="text-danger"></span>:
-												</label>
-												<div class="col-lg-4">
-													<label class="form-check-label"> <img id="output"
-														width="150" src="${imgPath}${franchise.frImage}" /> <input
-														type="file" class="form-control-uniform" data-fouc
-														onchange="loadFile(event)" name="doc" id="doc"> <input
-														type="hidden" class="form-control-uniform" name="editImg"
-														id="editImg" value="${franchise.frImage}"> <span
-														class="validation-invalid-label text-danger"
-														id="error_doc" style="display: none;">This field is
-															required.</span>
+												
+												<c:if test="${frId==0}">
+													<label class="col-form-label font-weight-bold col-lg-2"
+														for="password">Password<span class="text-danger">*
+													</span>:
 													</label>
-												</div>
+													<div class="col-lg-4">
+														<input type="password"
+															class="form-control maxlength-badge-position" name="pass"
+															id="pass" maxlength="30" autocomplete="off"
+															onchange="trim(this)" placeholder="Enter new password if you want to change"> <span
+															class="validation-invalid-label text-danger"
+															id="error_password" style="display: none;">This
+															field is required.</span>
+													</div>
+												 </c:if>
+											</div>
+											
+											<div class="form-group row">									
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="cust_name">Status <span class="text-danger">*
+										</span>:
+										</label>
+										<div class="col-lg-4">
+											<c:choose>
+												<c:when test="${frId>0}">
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="active_stats" id="active_y"
+															${franchise.isActive==1 ? 'checked' : ''}> Active
+														</label>
+													</div>
 
-												<label class="col-form-label font-weight-bold col-lg-2"
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" value="0"
+															name="active_stats" id="active_n"
+															${franchise.isActive==0 ? 'checked' : ''}> In-Active
+														</label>
+													</div>
+												</c:when>
+												<c:otherwise>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="active_stats" id="active_y"> Active
+														</label>
+													</div>
+
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" value="0"
+															name="active_stats" id="active_n"> In-Active
+														</label>
+													</div>
+												</c:otherwise>
+											</c:choose>
+
+										</div>
+										<label class="col-form-label font-weight-bold col-lg-2"
 													for="cust_name">Rating <span class="text-danger"></span>:
 												</label>
 												<div class="col-lg-4">
@@ -323,9 +331,26 @@
 															${franchise.frRating==5 ? 'selected' : '' }>5</option>
 													</select>
 												</div>
+									</div>
+
+											<div class="form-group row">
+												<label class="col-form-label font-weight-bold col-lg-2"
+													for="cust_name">Image <span class="text-danger"></span>:
+												</label>
+												<div class="col-lg-4">
+													<label class="form-check-label"> <img id="output"
+														width="150" src="${imgPath}${franchise.frImage}" /> <input
+														type="file" class="form-control-uniform" data-fouc
+														onchange="loadFile(event)" name="doc" id="doc"> <input
+														type="hidden" class="form-control-uniform" name="editImg"
+														id="editImg" value="${franchise.frImage}"> <span
+														class="validation-invalid-label text-danger"
+														id="error_doc" style="display: none;">This field is
+															required.</span>
+													</label>
+												</div>												
 											</div>
-
-
+											
 											<br>
 											<div class="text-center">
 												<button type="submit" class="btn btn-primary" id="submtbtn">
@@ -726,11 +751,16 @@
 					$("#error_pincode").hide()
 				}
 
-				if (!$("#pass").val()) {
-					isError = true;
-					$("#error_password").show()
-				} else {
-					$("#error_password").hide()
+				if($("#frId").val()==0){
+					if (!$("#pass").val()) {
+						isError = true;
+						$("#error_password").show()
+					} else {
+						isError = false;
+						$("#error_password").hide()
+					}
+				}else{
+					isError = false;
 				}
 
 				if (!isError) {

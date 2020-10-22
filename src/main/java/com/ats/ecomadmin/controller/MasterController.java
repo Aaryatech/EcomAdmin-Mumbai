@@ -2096,12 +2096,8 @@ public class MasterController {
 				profileImage = request.getParameter("editImg");
 			}
 
-			String pass = request.getParameter("pass");
-			String password = pass;
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			byte[] messageDigest = md.digest(password.getBytes());
-			BigInteger number = new BigInteger(1, messageDigest);
-			String hashtext = number.toString(16);
+			 
+			
 
 			int frId = Integer.parseInt(request.getParameter("frId"));
 
@@ -2112,27 +2108,38 @@ public class MasterController {
 
 			Franchise franchise = new Franchise();
 
-			franchise.setFrId(frId);
+			franchise.setFrId(frId);	
+			
 			if (frId > 0) {
+				
+				franchise.setFrPassword(getFr.getFrPassword());
 				franchise.setEditDateTime(sf.format(date));
 			} else {
+				String password = request.getParameter("pass");
+				System.out.println("Password----------->"+password);
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				byte[] messageDigest = md.digest(password.getBytes());
+				BigInteger number = new BigInteger(1, messageDigest);
+				String hashtext = number.toString(16);
+				
+				franchise.setFrPassword(hashtext);
 				franchise.setAddDateTime(sf.format(date));
 			}
 
 			franchise.setFrAddress(request.getParameter("address"));
 			franchise.setFrCity(Integer.parseInt(request.getParameter("city")));
-			franchise.setState(request.getParameter("state"));
+			franchise.setState("NA");
 			franchise.setFrCode(request.getParameter("frCode"));
 			franchise.setFrContactNo(request.getParameter("mobNo"));
 			franchise.setFrEmailId(request.getParameter("email"));
 			franchise.setFrImage(profileImage);
 			franchise.setFrName(request.getParameter("frName"));
-			franchise.setFrPassword(hashtext);
+			
 			franchise.setOpeningDate(request.getParameter("openDate"));
 			franchise.setOwnersBirthDay(request.getParameter("ownerDob"));
 			franchise.setPincode(request.getParameter("pincode"));
 
-			franchise.setIsActive(1);
+			franchise.setIsActive(Integer.parseInt(request.getParameter("active_stats")));
 			franchise.setDelStatus(1);
 			franchise.setCompanyId(companyId);
 			franchise.setCity("NA");
@@ -2241,7 +2248,7 @@ public class MasterController {
 			franchise.setGstNumber(request.getParameter("gstNo"));
 			franchise.setGstType(request.getParameter("gstType"));
 			franchise.setPincodeWeServed(request.getParameter("servePincode"));
-			franchise.setState(request.getParameter("state"));
+			franchise.setState("NA");
 
 			try {
 				franchise.setNoOfKmAreaCover(Float.parseFloat(request.getParameter("kmCover")));
@@ -2265,7 +2272,7 @@ public class MasterController {
 
 				franchise.setFrAddress(getFr.getFrAddress());
 				franchise.setFrCity(getFr.getFrCity());
-				franchise.setState(getFr.getState());
+				franchise.setState("NA");
 				franchise.setFrCode(getFr.getFrCode());
 				franchise.setFrContactNo(getFr.getFrContactNo());
 				franchise.setFrEmailId(getFr.getFrEmailId());
@@ -2277,7 +2284,7 @@ public class MasterController {
 				franchise.setPincode(getFr.getPincode());
 				franchise.setUserId(userObj.getUserId());
 
-				franchise.setIsActive(1);
+				franchise.setIsActive(getFr.getIsActive());
 				franchise.setDelStatus(1);
 				franchise.setCompanyId(companyId);
 				franchise.setCity("NA");
@@ -2352,7 +2359,7 @@ public class MasterController {
 
 				franchise.setFrAddress(getFr.getFrAddress());
 				franchise.setFrCity(getFr.getFrCity());
-				franchise.setState(getFr.getState());
+				franchise.setState("NA");
 				franchise.setFrCode(getFr.getFrCode());
 				franchise.setFrContactNo(getFr.getFrContactNo());
 				franchise.setFrEmailId(getFr.getFrEmailId());
@@ -2364,7 +2371,7 @@ public class MasterController {
 				franchise.setPincode(getFr.getPincode());
 				franchise.setUserId(userObj.getUserId());
 
-				franchise.setIsActive(1);
+				franchise.setIsActive(getFr.getIsActive());
 				franchise.setDelStatus(1);
 				franchise.setCompanyId(companyId);
 				franchise.setCity("NA");
