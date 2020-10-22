@@ -130,7 +130,7 @@
 										<div class="col-lg-4">
 											<input type="text"
 												class="form-control maxlength-badge-position float-num" name="cessPer"
-												id="cessPer" maxlength="5" autocomplete="off"
+												id="cessPer" maxlength="5" autocomplete="off" oninput="calCess(this.value)"
 												onchange="trim(this)" value="${tax.cessPer}"> <span
 												class="validation-invalid-label text-danger"
 												id="error_cessPer" style="display: none;">This
@@ -329,10 +329,22 @@
 		};
 		
 		function calTaxes(ttlTax){
-			if(ttlTax > 0){
-				$("#cgstPer").val(ttlTax/2);
-				$("#sgstPer").val(ttlTax/2);
-				$("#igstPer").val(ttlTax);
+			if(ttlTax > 0){				
+				var cessPer = $("#cessPer").val();
+				var calTax = ttlTax-cessPer;
+				$("#cgstPer").val(calTax/2);
+				$("#sgstPer").val(calTax/2);
+				$("#igstPer").val(calTax);
+			}
+		}
+		
+		function calCess(cessPer){
+			var ttlTax = $("#totalTaxPer").val();
+			if(cessPer > 0 && ttlTax > 0){				
+				var calTax = ttlTax-cessPer;
+				$("#cgstPer").val(calTax/2);
+				$("#sgstPer").val(calTax/2);
+				$("#igstPer").val(calTax);
 			}
 		}
 		

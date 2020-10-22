@@ -2152,8 +2152,8 @@ public class MasterController {
 
 				} catch (Exception e) {
 					franchise.setNoOfKmAreaCover(0);
-					franchise.setShopsLatitude(0);
-					franchise.setShopsLogitude(0);
+					franchise.setShopsLatitude("NA");
+					franchise.setShopsLogitude("NA");
 					e.printStackTrace();
 				}
 
@@ -2245,13 +2245,13 @@ public class MasterController {
 
 			try {
 				franchise.setNoOfKmAreaCover(Float.parseFloat(request.getParameter("kmCover")));
-				franchise.setShopsLatitude(Float.parseFloat(request.getParameter("latitude")));
-				franchise.setShopsLogitude(Float.parseFloat(request.getParameter("longitude")));
+				franchise.setShopsLatitude(request.getParameter("latitude"));
+				franchise.setShopsLogitude(request.getParameter("longitude"));
 
 			} catch (Exception e) {
 				franchise.setNoOfKmAreaCover(0);
-				franchise.setShopsLatitude(0);
-				franchise.setShopsLogitude(0);
+				franchise.setShopsLatitude("NA");
+				franchise.setShopsLogitude("NA");
 				e.printStackTrace();
 			}
 
@@ -2383,8 +2383,8 @@ public class MasterController {
 
 				} catch (Exception e) {
 					franchise.setNoOfKmAreaCover(0);
-					franchise.setShopsLatitude(0);
-					franchise.setShopsLogitude(0);
+					franchise.setShopsLatitude("NA");
+					franchise.setShopsLogitude("NA");
 					e.printStackTrace();
 				}
 			}

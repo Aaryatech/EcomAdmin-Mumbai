@@ -146,7 +146,7 @@
 												</div>
 
 												<label class="col-form-label font-weight-bold col-lg-2"
-													for="ownerDob">Owners Date oF Birth<span
+													for="ownerDob">Owners Date Of Birth<span
 													class="text-danger">* </span>:
 												</label>
 												<div class="col-lg-4">

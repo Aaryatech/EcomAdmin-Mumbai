@@ -23,8 +23,8 @@ public class Franchise {
 	private String pincode;
 	private String ownersBirthDay;
 	private String fdaLicenseDateExp;
-	private float shopsLatitude;
-	private float shopsLogitude;
+	private String shopsLatitude;
+	private String shopsLogitude;
 	private int isActive;
 		
 	/****Franchise Bank Details***************************************/
@@ -200,19 +200,19 @@ public class Franchise {
 		this.fdaLicenseDateExp = fdaLicenseDateExp;
 	}
 
-	public float getShopsLatitude() {
+	public String getShopsLatitude() {
 		return shopsLatitude;
 	}
 
-	public void setShopsLatitude(float shopsLatitude) {
+	public void setShopsLatitude(String shopsLatitude) {
 		this.shopsLatitude = shopsLatitude;
 	}
 
-	public float getShopsLogitude() {
+	public String getShopsLogitude() {
 		return shopsLogitude;
 	}
 
-	public void setShopsLogitude(float shopsLogitude) {
+	public void setShopsLogitude(String shopsLogitude) {
 		this.shopsLogitude = shopsLogitude;
 	}
 
