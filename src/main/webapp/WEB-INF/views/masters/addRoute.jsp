@@ -32,6 +32,7 @@
 
 <body class="sidebar-xs">
 	<c:url value="/getCustInfo" var="getCustInfo"></c:url>
+	<c:url value="/chkUnqRouteCode" var="chkUnqRouteCode"></c:url>
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -78,7 +79,9 @@
 
 
 							<div class="card-body">
-
+							<div class="form-group row"></div>
+							<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
+							
 								<form action="${pageContext.request.contextPath}/insertNewRoute"
 									id="submitInsert" method="post">
 
@@ -90,15 +93,13 @@
 
 
 									<div class="form-group row">
-
-
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="routeName">Route Name <span class="text-danger">*
 										</span>:
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="70"
+												class="form-control maxlength-badge-position" maxlength="50"
 												autocomplete="off" onchange="trim(this)"
 												value="${route.routeName}" name="routeName"
 												id="routeName"> <span
@@ -113,32 +114,28 @@
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="70"
+												class="form-control maxlength-badge-position" maxlength="6"
 												autocomplete="off" onchange="trim(this)"
 												value="${route.routeCode}" name="routeCode"
 												id="routeCode"> <span
 												class="validation-invalid-label" id="error_routeCode"
 												style="display: none;">This field is required.</span>
+												<span
+												class="validation-invalid-label" id="unq_route_code"
+												style="display: none;">Route code already exist.</span>
 										</div>
-
 									</div>
 
-
-
 									<div class="form-group row">
-
-
-
-
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="routeKm">Route Km. <span class="text-danger">*
 										</span>:
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="70"
+												class="form-control maxlength-badge-position" maxlength="6"
 												autocomplete="off" onchange="trim(this)"
-												value="${route.routeKm}" name="routeKm"
+												value="${route.routeKm > 0 ? route.routeKm : 1}" name="routeKm"
 												id="routeKm"> <span
 												class="validation-invalid-label" id="error_routeKm"
 												style="display: none;">This field is required.</span>
@@ -150,16 +147,13 @@
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="10"
+												class="form-control maxlength-badge-position" maxlength="6"
 												autocomplete="off" onchange="trim(this)"
-												value="${route.sortNo}" name="sortNo" id="sortNo"> <span
+												value="${route.sortNo > 0 ? route.sortNo : 1}" name="sortNo" id="sortNo"> <span
 												class="validation-invalid-label text-danger"
 												id="error_sortNo" style="display: none;">This field
 												is required.</span>
 										</div>
-
-										
-
 									</div>
 
 									<div class="form-group row">
@@ -169,13 +163,27 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<select class="form-control select" multiple="multiple"
+											<select class="form-control select-search" multiple="multiple"
 												data-fouc name="frId" id="frId" data-placholder="Select">
 
 												<c:forEach items="${frList}" var="list" varStatus="count">
-
-													<option value="${list.frId}"
-														${fn:contains(frIds, list.frId) ? 'selected' : ''}>${list.frName}</option>
+													<c:set value="0" var="flag" />
+													<c:forEach items="${frIds}" var="frIds">
+														<c:if test="${frIds == list.frId}">
+															<c:set value="1" var="flag" />
+														</c:if>
+													</c:forEach>
+													
+													<c:choose>
+															<c:when test="${flag==1}">
+																<option value="${list.frId}" selected="selected">${list.frName}</option>
+															</c:when>
+															<c:otherwise>
+																<option value="${list.frId}">${list.frName}</option>
+															</c:otherwise>
+													</c:choose>
+													<%-- <option value="${list.frId}"
+														${fn:contains(frIds, list.frId) ? 'selected' : ''}>${list.frName}</option> --%>
 
 												</c:forEach>
 											</select> <span class="validation-invalid-label text-danger"
@@ -258,21 +266,23 @@
 										</div>
 									</div>
 
-
-
-
+										<input type="hidden" id="btnType" name="btnType">
 
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary">
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+									
+										<c:if test="${isEdit==0}">
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+										</c:if>
 									</div>
 								</form>
 							</div>
-
-
-
+							<input type="hidden" value="${isEdit}" id="isEdit">
 						</div>
 						<!-- /a legend -->
 					</div>
@@ -300,6 +310,39 @@
 				console.log(err);
 			}
 		};
+		
+		function pressBtn(btnVal){
+			$("#btnType").val(btnVal)
+		}
+		
+		$('#routeKm').on('input', function() {
+			 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+			});
+		
+		$('#sortNo').on('input', function() {
+			 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+			});
+		
+		$("#routeCode").change(function() { // 1st
+			var code = $("#routeCode").val();
+			var routeId = $("#routeId").val();
+			//alert(code)
+
+			$.getJSON('${chkUnqRouteCode}', {
+				code : code,
+				routeId : routeId,
+				ajax : 'true',
+			}, function(data) {
+
+				if (data.error == false) {
+					$("#unq_route_code").show();
+					$("#routeCode").val('');
+					document.getElementById("city_code").focus();
+				} else {
+					$("#unq_route_code").hide();
+				}
+			});
+		});
 	</script>
 
 	<script type="text/javascript">
@@ -309,10 +352,6 @@
 				var isError = false;
 				var errMsg = "";
 				
-				 
-				
-				
-
 				if (!$("#routeName").val()) {
 					isError = true;
 					$("#error_routeName").show()
@@ -367,12 +406,43 @@
 				
 				
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbtn").disabled = true;
-						return true;
-					}
-				}
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										/* document
+												.getElementById("submtbtn").disabled = true;
+										if(isEdit==0){
+										document
+												.getElementById("submtbtn1").disabled = true;
+										} */
+										
+										$(".btn").attr("disabled", true);
+										
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError	
 
 				return false;
 

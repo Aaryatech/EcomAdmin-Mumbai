@@ -1944,6 +1944,7 @@ public class CompanyAdminController {
 				Route route = new Route();
 				model.addAttribute("route", route);
 				model.addAttribute("title", "Add Route");
+				model.addAttribute("isEdit", 0);
 
 				int companyId = (int) session.getAttribute("companyId");
 
@@ -2248,10 +2249,44 @@ public class CompanyAdminController {
 			System.out.println("Execption in /insertUom : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showRouteList";
+		
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		
+		if(btnVal==0)
+			return "redirect:/showRouteList";
+		else
+			return "redirect:/showAddRoute";	
 
 	}
 	
+	@RequestMapping(value = "/chkUnqRouteCode", method = RequestMethod.GET)
+	@ResponseBody
+	public Info chkUnqRouteCode(HttpServletRequest request, HttpServletResponse response) {
+
+		Info info = new Info();
+		try {
+			String code = request.getParameter("code");
+			int routeId = Integer.parseInt(request.getParameter("routeId"));
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("code", code);
+			map.add("routeId", routeId);
+
+			Route routeRes = Constants.getRestTemplate().postForObject(Constants.url + "getRouteDtlByCode", map, Route.class);
+
+			if (routeRes != null) {
+				info.setError(false);
+				info.setMsg("Route Found");
+			} else {
+				info.setError(true);
+				info.setMsg("Route Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /chkUnqRouteCode : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+	}
 	
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil

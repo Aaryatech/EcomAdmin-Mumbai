@@ -288,12 +288,14 @@
 								callback : function(
 										result) {
 									if (result) {
-										document
+										/* document
 												.getElementById("submtbtn").disabled = true;
 										if(isEdit==0){
 										document
 												.getElementById("submtbtn1").disabled = true;
-										}
+										} */
+										
+										$(".btn").attr("disabled", true);
 										var form = document
 												.getElementById("submitInsert")
 										form
