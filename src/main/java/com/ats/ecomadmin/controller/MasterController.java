@@ -2223,13 +2223,18 @@ public class MasterController {
 					session.setAttribute("errorMsg", "Failed to Save Franchise");
 				}
 				
-				mav =  "redirect:/newFranchise/" + savedFrId;
+				//
+				int btnVal = Integer.parseInt(request.getParameter("btnType"));
+
+				if (btnVal == 0)
+					mav =  "redirect:/showFranchises";
+				else
+					mav =  "redirect:/newFranchise/" + savedFrId;
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /insertFranchise : " + e.getMessage());
 			e.printStackTrace();
 		}
-
 		return mav;
 
 	}
@@ -2237,9 +2242,12 @@ public class MasterController {
 	@RequestMapping(value = "/insertFrFdaAndGst", method = RequestMethod.POST)
 	public String insertFrFdaAndGst(HttpServletRequest request, HttpServletResponse response) {
 		int savedFrId = 0;
+		String mav = new String();
 		try {
+			
 			Date date = new Date();
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
 
@@ -2322,13 +2330,20 @@ public class MasterController {
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Franchise");
 			}
+			
+			int btnVal = Integer.parseInt(request.getParameter("btnType"));
+
+			if (btnVal == 0)
+				mav =  "redirect:/showFranchises";
+			else
+				mav =  "redirect:/newFranchise/" + savedFrId;
 
 		} catch (Exception e) {
 			System.out.println("Execption in /insertFranchise : " + e.getMessage());
 			e.printStackTrace();
-		}
-		return "redirect:/newFranchise/" + savedFrId;
-
+		}		
+		
+		return mav;
 	}
 
 	@RequestMapping(value = "/submitBankDtl", method = RequestMethod.POST)

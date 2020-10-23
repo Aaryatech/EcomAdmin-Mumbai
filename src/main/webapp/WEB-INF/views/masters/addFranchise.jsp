@@ -353,12 +353,16 @@
 													</label>
 												</div>												
 											</div>
-											
+											<input type="hidden" id="btnType" name="btnType">
 											<br>
 											<div class="text-center">
-												<button type="submit" class="btn btn-primary" id="submtbtn">
-													Save <i class="icon-paperplane ml-2"></i>
-												</button>
+												<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
+											Save <i class="icon-paperplane ml-2"></i>
+										</button>
+										
+										<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+											Save & Next<i class="icon-paperplane ml-2"></i>
+										</button>
 											</div>
 										</form>
 
@@ -508,12 +512,16 @@
 														field is required.</span>
 												</div>
 											</div>
+											<input type="hidden" id="btnType2" name="btnType">
 											<br>
 											<div class="text-center">
-												<button type="submit" class="btn btn-primary"
-													id="submtFdabtn">
-													Save <i class="icon-paperplane ml-2"></i>
-												</button>
+												<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn2(0)">
+											Save <i class="icon-paperplane ml-2"></i>
+										</button>
+										
+										<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn2(1)">
+											Save & Next<i class="icon-paperplane ml-2"></i>
+										</button>
 											</div>
 										</form>
 									</div>
@@ -681,6 +689,15 @@
 				console.log(err);
 			}
 		};
+		
+		function pressBtn(btnVal){
+			$("#btnType").val(btnVal);
+			
+		}
+		function pressBtn2(btnVal){
+			$("#btnType").val(btnVal);
+			$("#btnType2").val(btnVal);
+		}
 	</script>
 
 	<script type="text/javascript">
