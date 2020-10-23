@@ -60,15 +60,15 @@
 									class="font-size-sm text-uppercase font-weight-semibold card-title">${title}</span>
 								<!--  -->
 								<span class="font-size-sm text-uppercase font-weight-semibold"><a
-									class="card-title"
-									href="${pageContext.request.contextPath}/showOfferConfigurationList"
+									class="card-title" 
+									href="${pageContext.request.contextPath}/configFranchiseList"
 									style="color: white;"><i class="icon-list2 ml-2"></i>&nbsp;&nbsp;&nbsp;&nbsp;View
-										List</a></span>
+										List</a></span><!-- showOfferConfigurationList -->
 							</div>
 							<div class="form-group row"></div>
 							<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
-							<div class="card-body">
+							<div class="card-body">														
 								<p class="desc text-danger fontsize11">Note : * Fields are
 									mandatory.</p>
 								<form
@@ -81,7 +81,7 @@
 											for="catId">Category <span class="text-danger">*
 										</span>:
 										</label>
-										<div class="col-lg-3">
+										<div class="col-lg-4">
 											<select class="form-control select-search" data-fouc
 												name="catId" id="catId"
 												onchange="getConfiguration(this.value)">
@@ -109,7 +109,7 @@
 											for="configId">Configuration <span
 											class="text-danger">* </span>:
 										</label>
-										<div class="col-lg-3">
+										<div class="col-lg-4">
 											<select class="form-control select-search" data-fouc
 												name="configId" id="configId">
 
@@ -117,18 +117,17 @@
 												id="error_configId" style="display: none;">This field
 												is required.</span>
 										</div>
-
-
-
-										<div class="col-lg-2">
-											<button type="submit" class="btn btn-primary">
+									</div>									
+									
+									<div class="text-center">								
+										<button type="submit" class="btn btn-primary">
 												Search <i class="icon-paperplane ml-2"></i>
 											</button>
-										</div>
 									</div>
-
 								</form>
-
+								</div>
+								
+								<div class="card-body">
 								<form
 									action="${pageContext.request.contextPath}/saveFrConfiguration"
 									id="submitInsert" method="post">
@@ -140,7 +139,7 @@
 											for="displayRate">Display Rate<span
 											class="text-danger">* </span>:
 										</label>
-										<div class="col-lg-3">
+										<div class="col-lg-4">
 											<select class="form-control select-search" data-fouc
 												name="displayRate" id="displayRate"
 												data-placholder="Select ">
@@ -162,7 +161,7 @@
 											for="actualRate">Actual Rate<span class="text-danger">*
 										</span>:
 										</label>
-										<div class="col-lg-3">
+										<div class="col-lg-4">
 											<select class="form-control select-search" data-fouc
 												name="actualRate" id="actualRate" data-placholder="Select ">
 												<option value=""></option>
@@ -215,13 +214,23 @@
 											</c:forEach>
 										</tbody>
 									</table>
+									<input type="hidden" id="btnType" name="btnType">
+									
 									<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
 									<div class="text-center">
 										<br>
-										<button type="submit" class="btn btn-primary" id="submtbtn">
+										<!-- <button type="submit" class="btn btn-primary" id="submtbtn">
 											Submit <i class="icon-paperplane ml-2"></i>
+										</button> -->
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
+											Save <i class="icon-paperplane ml-2"></i>
+										</button>								
+									
+										<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+											Save & Next<i class="icon-paperplane ml-2"></i>
 										</button>
+									
 									</div>
 								</form>
 							</div>
@@ -244,6 +253,9 @@
 	<!-- /page content -->
 
 	<script>
+	function pressBtn(btnVal){
+		$("#btnType").val(btnVal)
+	}
 		$(document).ready(
 
 				function() {
@@ -258,6 +270,41 @@
 	</Script>
 	
 		<script type="text/javascript">
+		
+		$(document).ready(function($) {
+			$("#configFranchise").submit(function(e) {
+				var isError = false;
+				var errMsg = "";
+				
+				
+				if ($("#catId").val() == 0 || !$("#catId").val()) {
+					isError = true;
+					$("#error_category").show()
+				} else {
+					$("#error_category").hide()
+				}
+				
+				if ($("#configId").val() == 0 || !$("#configId").val()) {
+					isError = true;
+					$("#error_configId").show()
+				} else {
+					$("#error_configId").hide()
+				}				 
+			
+				if (!isError) {
+					var x = true;
+					if (x == true) {
+						document
+								.getElementById("subBtn").disabled = true;
+						return true;
+					}
+				}
+
+				return false;
+
+			});
+		});
+		
 		$(document).ready(function($) {
 
 			$("#submitInsert").submit(function(e) {
@@ -297,8 +344,6 @@
 					$("#error_displayRate").hide()
 				}
 				
-				
-
 				if (!$("#actualRate").val()) {
 					isError = true;
 					$("#error_actualRate").show()
@@ -308,12 +353,35 @@
 
 				 
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbtn").disabled = true;
-						return true;
-					}
-				}
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										$(".btn").attr("disabled", true);
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError
 
 				return false;
 
