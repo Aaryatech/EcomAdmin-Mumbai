@@ -78,42 +78,7 @@
 							</div>
 
 							<div class="card-body">
-
-								<%
-									if (session.getAttribute("errorMsg") != null) {
-								%>
-								<div
-									class="alert bg-danger text-white alert-styled-left alert-dismissible">
-									<button type="button" class="close" data-dismiss="alert">
-										<span>×</span>
-									</button>
-									<span class="font-weight-semibold">Oh snap!</span>
-									<%
-										out.println(session.getAttribute("errorMsg"));
-									%>
-								</div>
-
-								<%
-									session.removeAttribute("errorMsg");
-									}
-								%>
-								<%
-									if (session.getAttribute("successMsg") != null) {
-								%>
-								<div
-									class="alert bg-success text-white alert-styled-left alert-dismissible">
-									<button type="button" class="close" data-dismiss="alert">
-										<span>×</span>
-									</button>
-									<span class="font-weight-semibold">Well done!</span>
-									<%
-										out.println(session.getAttribute("successMsg"));
-									%>
-								</div>
-								<%
-									session.removeAttribute("successMsg");
-									}
-								%>
+					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 								<form
 									action="${pageContext.request.contextPath}/submitProductSave"
@@ -228,7 +193,7 @@
 												placeholder="Minimum Order Quantity" id="min_qty"
 												name="min_qty" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_min_qty"
-												style="display: none;">This field is required.</span>
+												style="display: none;">This field is required. (min value 1)</span>
 										</div>
 
 										<label class="col-form-label col-lg-2" for="shelf_life">
@@ -263,11 +228,11 @@
 											Return % <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="3" class="form-control numbersOnly maxlength-badge-position"
+											<input type="text" maxlength="5" class="form-control floatOnly maxlength-badge-position"
 												placeholder="Product Return %" id="return_per"
 												name="return_per" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_return_per"
-												style="display: none;">This field is required.</span>
+												style="display: none;">This field is required (range(1 to 100)).</span>
 										</div>
 									</div>
 
@@ -297,15 +262,14 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data
-												placeholder="Select Shape" id="shape_id" name="shape_id">
+												data-fouc="" aria-hidden="true" multiple="multiple" data-Placeholder="Select Shape" id="shape_id" name="shape_id">
 											</select> <span class="validation-invalid-label" id="error_shape_id"
 												style="display: none;">This field is required.</span>
 										</div>
 									</div>
 
 
-									<div class="form-group row">
+									<div class="form-group row" style="display: none">
 										<label class="col-form-label col-lg-2" for="is_sameDay_del">
 											Same Day Delivery<span style="color: red">* </span>:
 										</label>
@@ -344,8 +308,7 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data
-												placeholder="Select Product Type" id="prod_type_id"
+												data-fouc="" aria-hidden="true" data-placeholder="Select Product Type" id="prod_type_id"
 												name="prod_type_id">
 												
 											</select> <span class="validation-invalid-label"
@@ -395,7 +358,7 @@
 												placeholder="Book before days" id="book_b4" name="book_b4"
 												autocomplete="off"> <span
 												class="validation-invalid-label" id="error_book_b4"
-												style="display: none;">This field is required.</span>
+												style="display: none;">This field is required. (min value 1)</span>
 										</div>
 
 										<label class="col-form-label col-lg-2" for="event_ids">
@@ -475,17 +438,17 @@
 									</div>
 
 									<div class="form-group row">
-										<label class="col-form-label col-lg-2" for="is_cover_ph">
+										<label style="text-align: center;" class="col-form-label col-lg-2" for="is_cover_ph">
 											Cover Photo Upload <span style="color: red">* </span>:
-										</label> <label class="col-form-label col-lg-2" for="is_base_ph">
+										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_base_ph">
 											Base Photo Upload <span style="color: red">* </span>:
-										</label> <label class="col-form-label col-lg-2" for="is_sp_inst">
+										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_sp_inst">
 											Special Instruction <span style="color: red">* </span>:
-										</label> <label class="col-form-label col-lg-2" for="is_msg_on_cake">
+										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_msg_on_cake">
 											Message On Cake <span style="color: red">* </span>:
-										</label> <label class="col-form-label col-lg-2" for="is_slot_used">
+										</label> <label class="col-form-label col-lg-2" style="text-align: center;" for="is_slot_used">
 											    Is Slot Used <span style="color: red">* </span>:
-										</label> <label class="col-form-label col-lg-2" for="is_used">
+										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_used">
 											Is Used <span style="color: red">* </span>:
 										</label>
 									</div>
@@ -605,9 +568,9 @@
 											Ingredients<span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="100" class="form-control maxlength-badge-position"
+											<textarea maxlength="150" class="form-control maxlength-badge-position"
 												placeholder="Ingredients" id="Ingredients"
-												name="Ingredients" autocomplete="off"> <span
+												name="Ingredients" autocomplete="off"></textarea> <span
 												class="validation-invalid-label" id="error_Ingredients"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -633,11 +596,10 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data
-												placeholder="Select Veg Non Veg" id="is_veg" name="is_veg">
-											<option value="0">Veg</option>
+												data-fouc="" aria-hidden="true" multiple data-placeholder="Select Veg Non Veg" id="is_veg" name="is_veg">
+											<!-- <option value="0">Veg</option>
 												<option value="1">Non Veg</option>
-											    <option value="2">Both</option></select> <span class="validation-invalid-label" id="error_is_veg"
+											    <option value="2">Both</option> --></select> <span class="validation-invalid-label" id="error_is_veg"
 												style="display: none;">This field is required.</span>
 										</div>
 
@@ -678,7 +640,7 @@
 										<button type="button" onclick="show_apply_weight()"
 													class="btn btn-primary"
 													id="11" >Apply</button>
-										</div>
+										</div><div class="col-lg-1"></div>
 									<label class="col-form-label col-lg-2" for="weight_ids">
 											Available In Weights <span style="color: red">* </span>:
 										</label>
@@ -709,9 +671,20 @@
 
 										</div>
 
-										<div class="col-lg-4"></div>
-									</div>
-
+										
+										
+										<label class="col-form-label col-lg-2" for="prep_time" title="Product Basic MRP">
+											Basic MRP <span style="color: red">* </span>:
+										</label>
+										<div class="col-lg-4">
+											<input type="text"  class="form-control floatOnly maxlength-badge-position"
+												placeholder="Basic Product MRP" maxlength="5" id="basic_mrp" name="basic_mrp"
+												autocomplete="off"> <span
+												class="validation-invalid-label" id="error_basic_mrp"
+												style="display: none;">This field is required. (min value 1)</span>
+										</div>
+										</div>
+									
 									<div class="form-group row mb-0">
 	<div style="margin: 0 auto;">											<!-- <button type="reset" class="btn btn-light legitRipple">Reset</button> -->
 											<button type="submit" class="btn bg-blue ml-3 legitRipple"
@@ -777,9 +750,9 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 		var weightHtml;
 		var p = "";
 		var q = "Select Weight";
-		weightHtml += '<option disabled value="'+p+'" selected>' + q
+	/* 	weightHtml += '<option disabled value="'+p+'" selected>' + q
 				+ '</option>';
-				weightHtml += '</option>';
+				weightHtml += '</option>'; */
 		for(var i=0.5;i<=parseFloat(maxWt);i=i+0.5){
 			weightHtml += '<option value="'+i+'">'
 			+ i +  ' Kg</option>';
@@ -797,51 +770,58 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 			prod_statushtml += '</option>';
 	
 	var event_idshtml;
-	var p = "";
-	var q = "Select Events";
+	var p = "0";
+	var q = "NA";
+	event_idshtml += '<option  value="'+p+'">' + q
+	+ '</option>';
+	event_idshtml += '</option>';
 	
 	var bread_idhtml;
-	var p = "";
-	var q = "Select Bread Type";
-	bread_idhtml += '<option disabled value="'+p+'" selected>' + q
+	var p = "0";
+	var q = "NA";
+	bread_idhtml += '<option value="'+p+'">' + q
 			+ '</option>';
 	bread_idhtml += '</option>';
 	
 	var cream_idhtml;
-	var p = "";
-	var q = "Select Cream Type";
-	cream_idhtml += '<option disabled value="'+p+'" selected>' + q
+	var p = "0";
+	var q = "NA";
+	cream_idhtml += '<option  value="'+p+'">' + q
 			+ '</option>';
 	cream_idhtml += '</option>';
 	
 	var layering_cream_idhtml;
-	var p = "";
-	var q = "Select Layering Cream";
-	layering_cream_idhtml += '<option disabled value="'+p+'" selected>' + q
+	var p = "0";
+	var q = "NA";
+	layering_cream_idhtml += '<option  value="'+p+'">' + q
 			+ '</option>';
 	layering_cream_idhtml += '</option>';
 	
 	var topping_cream_idhtml;
-	var p = "";
-	var q = "Select Topping Cream";
-	topping_cream_idhtml += '<option disabled value="'+p+'" selected>' + q
+	var p = "0";
+	var q = "NA";
+	topping_cream_idhtml += '<option  value="'+p+'">' + q
 			+ '</option>';
 	topping_cream_idhtml += '</option>';
 	
 	var flav_idshtml;
-	var p = "";
-	var q = "Select Flavor";
+	var p = "0";
+	var q = "NA";
+	
+	flav_idshtml += '<option  value="'+p+'">' + q
+	+ '</option>';
+	flav_idshtml += '</option>';
 	
 	var shape_idhtml;
-	var p = "";
-	var q = "Select Product Shape";
-	shape_idhtml += '<option disabled value="'+p+'" selected>' + q
+	var p = "0";
+	var q = "NA";
+	shape_idhtml += '<option disabled value="'+p+'">' + q
 			+ '</option>';
 	shape_idhtml += '</option>';
 	
 	var sameDay_timeSlothtml;
-	var p = "";
-	var q = "Select Time Slot";
+	var p = "0";
+	var q = "NA";
 	
 	
 	var prod_type_idhtml;
@@ -854,6 +834,14 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 	var appl_tagshtml;
 	var p = "";
 	var q = "Select Applicable Tags";
+	
+	
+	var is_veg_html;
+	/* var p = "";
+	var q = "Select Veg Non Veg";
+	is_veg_html += '<option disabled value="'+p+'" selected>' + q
+			+ '</option>';
+			is_veg_html += '</option>'; */
 	
 	data=${filterJSON};
 	
@@ -904,8 +892,18 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 			topping_cream_idhtml += '<option value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
 	}//end of if
+		else if(12==parseInt(data[i].filterTypeId)){
+			is_veg_html += '<option value="' + data[i].filterId + '">'
+			+ data[i].filterName + '</option>';
+	}//end of if
 	
+		
+		
 	}//end of for loop
+	
+	
+	$('#is_veg').html(is_veg_html);
+	$("#is_veg").trigger("chosen:updated");
 	
 	$('#flav_ids').html(flav_idshtml);
 	$("#flav_ids").trigger("chosen:updated");
@@ -1089,16 +1087,17 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 													
 													
 
-													if (!$("#min_qty").val()) { 
+													if (!$("#min_qty").val()||parseFloat($("#min_qty").val())<1) { 
 														$("#error_min_qty").show();
 														isError = true;
 													} else {
 														$("#error_min_qty").hide();
 													}	
 
-													if (!$("#shelf_life").val()) { 
-														$("#error_shelf_life").show();
+													if (!$("#shelf_life").val()||parseFloat($("#shelf_life").val())<1) { 
 														isError = true;
+														$("#error_shelf_life").show();
+
 													} else {
 														$("#error_shelf_life").hide();
 													}
@@ -1111,7 +1110,7 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 
 
 												if (parseInt($("#is_return_allow").val())==1){
-													if (!$("#return_per").val()) { 
+													if (!$("#return_per").val() || parseFloat($("#return_per").val())>100 || parseFloat($("#return_per").val())<1) { 
 													$("#error_return_per").show();
 													isError = true;
 													} else {
@@ -1129,7 +1128,9 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 														$("#error_uom_id").hide()
 													}
 												
-												if (!$("#shape_id").val()) { 
+												var shapeCount = $('#shape_id > option:selected');
+										         if(shapeCount.length == 0){
+												//if (!$("#shape_id").val()) { 
 													$("#error_shape_id").show();
 													isError = true;
 													} else {
@@ -1137,7 +1138,7 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 													}
 
 
-												if (!$("#is_sameDay_del").val()) { 
+												/* if (!$("#is_sameDay_del").val()) { 
 													$("#error_is_sameDay_del").show();
 													isError = true;
 													} else {
@@ -1153,9 +1154,8 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 														$("#error_sameDay_timeSlot").hide();
 													}
 												}else{
-													//$("#sameDay_timeSlot").val()=0;
 														$("#error_sameDay_timeSlot").hide();
-												}
+												} */
 
 												if (!$("#prod_type_id").val()) { 
 													$("#error_prod_type_id").show();
@@ -1179,7 +1179,7 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 														$("#error_prod_status").hide();
 													}
 
-												if (!$("#book_b4").val()) { 
+												if (!$("#book_b4").val()|| parseInt($("#book_b4").val())<1) { 
 													$("#error_book_b4").show();
 													isError = true;
 													} else {
@@ -1282,14 +1282,16 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 													}
 
 
-												if (!$("#prep_time").val()) {
+												if (!$("#prep_time").val()|| parseInt($("#prep_time").val())<1) {
 														 $("#error_prep_time").show();
 														isError = true;
 													} else {
 														$("#error_prep_time").hide()
 			 										}
 
-												if (!$("#is_veg").val()) {
+												var vegcnt = $('#is_veg > option:selected');
+										         if(vegcnt.length == 0){
+												//if (!$("#is_veg").val()) {
 														 $("#error_is_veg").show();
 														isError = true;
 													} else {
@@ -1329,17 +1331,41 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 														$("#error_weight_ids").hide();
 													}
 												}
+												
+												if (!$("#basic_mrp").val()|| parseInt($("#basic_mrp").val())<1) { 
+													$("#error_basic_mrp").show();
+													isError = true;
+													} else {
+														$("#error_basic_mrp").hide();
+													}
 												//alert("Is Error "+isError)
 												if (!isError) {
-													//alert("! Is Error ")
-													var x = true;
-													if (x == true) {
-														document
-																.getElementById("submtbtn").disabled = true;
-														return true;
-													}
+													var x = false;
+													bootbox.confirm({
+														title : 'Confirm ',
+														message : 'Are you sure you want to Submit ?',
+														buttons : {
+															confirm : {
+																label : 'Yes',
+																className : 'btn-success'
+															},
+															cancel : {
+																label : 'Cancel',
+																className : 'btn-danger'
+															}
+														},
+														callback : function(result) {
+															if(result){
+																document
+																	.getElementById("submtbtn").disabled = true;
+																var form = document.getElementById("submitProdForm")
+															    form.submit();
+															}
+														}
+													});
 													//end ajax send this to php page
-												}
+													return false;
+												}//end of if !isError
 												return false;
 											});
 						});
@@ -1372,16 +1398,7 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 
 	<script type="text/javascript">
 		function readURL(input) {
-			/* 
-			if (input.files && input.files[0]) {
-				var reader = new FileReader();
-
-				reader.onload = function(e) {
-					$('#image1').attr('src', e.target.result);
-				}
-
-				reader.readAsDataURL(input.files[0]);
-			} */
+			
 		}
 
 		$("#profilePic").change(function() {
@@ -1434,131 +1451,5 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 			//end  
 		});
 	</script>
-
-	<script type="text/javascript">
-		function checkUnique(inputValue, valueType) {
-			//alert("hi");
-
-			document.getElementById("submtbtn").disabled = false;
-
-			var valid = false;
-			if (valueType == 1) {
-				//alert("Its Mob no");
-				if (inputValue.length == 10) {
-					valid = true;
-					//alert("Len 10")
-				} else {
-					//alert("Not 10");
-				}
-			} else if (valueType == 2) {
-				//alert("Its Email " );
-
-				var mailformat = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-				if (inputValue.match(mailformat)) {
-					valid = true;
-					//alert("Valid Email Id");
-				} else {
-					valid = false;
-					//alert("InValid Email Id");
-				}
-			}
-			if (valid == true) {
-				$
-						.getJSON(
-								'${getUserInfo}',
-								{
-									inputValue : inputValue,
-									valueType : valueType,
-									ajax : 'true',
-
-								},
-								function(data) {
-
-									if (valueType == 2) {
-
-										if (data.empId == 0) {
-
-											$("#error_email").hide();
-											document
-													.getElementById("emailExist").value = 0;
-
-										} else {
-											$("#error_email").show();
-											/* document.getElementById("email").value = ""; */
-											document
-													.getElementById("emailExist").value = 1;
-											document
-													.getElementById("error_email").innerHTML = "This Email is already exist.";
-										}
-
-									} else {
-
-										if (data.empId == 0) {
-
-											$("#error_mobile1").hide();
-											document
-													.getElementById("mobile1Exist").value = 0;
-
-										} else {
-											$("#error_mobile1").show()
-											/* document.getElementById("mobile1").value = ""; */
-											document
-													.getElementById("mobile1Exist").value = 1;
-											document
-													.getElementById("error_mobile1").innerHTML = "This Mobile No. is already exist.";
-										}
-
-									}
-
-								});
-				document.getElementById("uname").value = document
-						.getElementById("email").value;
-			}
-		}
-	</script>
-
-	<!-- <script type="text/javascript">
-	$('#submtbtn').on('click', function() {
-        swalInit({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'No, cancel!',
-            confirmButtonClass: 'btn btn-success',
-            cancelButtonClass: 'btn btn-danger',
-            buttonsStyling: false
-        }).then(function(result) {
-            if(result.value) {
-                swalInit(
-                    'Deleted!',
-                    'Your file has been deleted.',
-                    'success'
-                );
-            }
-            else if(result.dismiss === swal.DismissReason.cancel) {
-                swalInit(
-                    'Cancelled',
-                    'Your imaginary file is safe :)',
-                    'error'
-                );
-            }
-        });
-    });
-	
-	</script> -->
-
 </body>
 </html>
-<%-- <select name="locId2" id="locId2" data-placeholder="Select Location"
-												
-												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" tabindex="-1" aria-hidden="true">
-
-												<option value="">Select Location</option>
-
-												<c:forEach items="${locationList}" var="locationList">
-													<option value="${locationList.locId}">${locationList.locName}</option>
-												</c:forEach>
-											</select> --%>

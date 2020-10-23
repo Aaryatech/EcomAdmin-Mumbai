@@ -16,6 +16,9 @@
 .daterangepicker .calendar, .daterangepicker .ranges {
 	float: right;
 }
+.table caption+thead tr:first-child td, .table caption+thead tr:first-child th, .table colgroup+thead tr:first-child td, .table colgroup+thead tr:first-child th, .table thead:first-child tr:first-child td, .table thead:first-child tr:first-child th {
+      border-top-width: 1px!important;  
+}
 </style>
 
 <jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
@@ -56,15 +59,15 @@
 						class="card-header bg-blue text-white d-flex justify-content-between">
 						<span
 							class="font-size-sm text-uppercase font-weight-semibold card-title">
-							Add Product Configuration</span>
+							Add Product Configuration${viewAccess}</span>
 						<!--  -->
-						<c:if test="${addAccess==0}">
+						<c:if test="${viewAccess==1}">
 							<span class="font-size-sm text-uppercase font-weight-semibold"><a
 								class="card-title"
-								href="${pageContext.request.contextPath}/showAddProduct"
+								href="${pageContext.request.contextPath}/showViewProdConfigHeader"
 								style="color: white;"><i class="icon-add-to-list ml-2"
-									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add
-									Product</a></span>
+									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;PRODUCT CONFIG LIST
+</a></span>
 						</c:if>
 					</div>
 					<div class="card-body">
@@ -86,7 +89,14 @@
 									>
 									<option selected disabled value="">Select Category</option>
 									<c:forEach items="${catList}" var="catList" varStatus="count">
+										<c:choose>
+										<c:when test="${catId==catList.catId}">
+										<option selected value="${catList.catId}">${catList.catName}</option>
+										</c:when>
+										<c:otherwise>
 										<option value="${catList.catId}">${catList.catName}</option>
+										</c:otherwise>
+										</c:choose>
 									</c:forEach>
 								</select> <span class="validation-invalid-label" id="error_cat_id"
 									style="display: none;">This field is required.</span>
@@ -100,16 +110,14 @@
 
 </form>
 <form action="${pageContext.request.contextPath}/saveInsertProdConf"
-						id="submitProdForm1" method="post">
-						
-						
+						id="saveInsertProdConfForm" method="post">
 						<div class="form-group row">
 						<label class="col-form-label col-lg-2" for="conf_name">
 											Configuration Name <span style="color: red">* </span>:
 										</label>
-										<div class="col-lg-2">
-											<input type="text" class="form-control" required maxlength="50"
-												placeholder="Configuration Name" id="conf_name" name="conf_name"
+										<div class="col-lg-3">
+											<input type="text" class="form-control maxlength-badge-position" maxlength="25"
+												placeholder="Enter Configuration Name" id="conf_name" name="conf_name"
 												autocomplete="off"> <span
 												class="validation-invalid-label" id="error_conf_name"
 												style="display: none;">This field is required.</span>
@@ -123,9 +131,12 @@
 								<thead>
 									<tr>
 										<th>Product Name</th>
-										<th>Flavor</th>
-										<th>Veg Type</th>
+										
 										<th>Qty/Weight</th>
+										<th>Veg-NonVeg</th>
+										<th>Shape</th>
+										<th>Flavor</th>
+										
 										<th>Rate 1</th>
 										<th>Rate 2</th>
 										<th>Rate 3</th>
@@ -138,33 +149,36 @@
 									<c:forEach items="${tempProdConfList}" var="prod" varStatus="count">
 										<tr>
 											<td>${count.index+1}) ${prod.productName}</td>
-											<td>${prod.flavorName}</td>
-											<td>${prod.vegType==0 ? 'Veg' :prod.vegType==1 ? 'Non Veg' : 'Veg-Non Veg'}</td>
 											<td>${prod.weight}</td>
-											<td><input type="text" id="r1${prod.uuid}${prod.productId}" name="r1${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r2${prod.uuid}${prod.productId}" name="r2${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r3${prod.uuid}${prod.productId}" name="r3${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r4${prod.uuid}${prod.productId}" name="r4${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r5${prod.uuid}${prod.productId}" name="r5${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r6${prod.uuid}${prod.productId}" name="r6${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
+												<td>${prod.vegNonVegName}</td>
+												<td>${prod.shapeName}</td>
+											<td>${prod.flavorName}</td>
+											<%-- <td>${prod.vegType==0 ? 'Veg' :prod.vegType==1 ? 'Non Veg' : 'Veg-Non Veg'}</td> --%>
+										
+											<td><input type="text" id="r1${prod.uuid}${prod.productId}" name="r1${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r2${prod.uuid}${prod.productId}" name="r2${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r3${prod.uuid}${prod.productId}" name="r3${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r4${prod.uuid}${prod.productId}" name="r4${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r5${prod.uuid}${prod.productId}" name="r5${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r6${prod.uuid}${prod.productId}" name="r6${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
 										</tr>
 									</c:forEach>
 								</tbody>
 							</table>
+							<span class="validation-invalid-label" id="error_price_show"
+												style="display: none;">Configuration price not set for any combination</span>
+				
 						</div>
 							<div class="form-group row mb-0">
 	<div style="margin: 0 auto;">		
-								<button type="submit" class="btn bg-blue ml-3 legitRipple">Save</button>
+								<button type="submit"  id="submtbtn" class="btn bg-blue ml-3 legitRipple">Save Configuration</button>
 							</div>
 						</div>
 					</form>
 					</div>
-					
 					<!-- /colReorder integration -->
-
 				</div>
 				<!-- /content area -->
-
 
 				<!-- Footer -->
 				<jsp:include page="/WEB-INF/views/include/footer.jsp"></jsp:include>
@@ -176,14 +190,74 @@
 	</div>
 	<!-- /page content -->
 	<script>
+	$(document)
+	.ready(
+			function($) {
+				$("#saveInsertProdConfForm")
+						.submit(
+								function(e) {
+									var isError = false;
+									var errMsg = "";
+									if (!$("#conf_name").val()) {
+										isError = true;
+										$("#error_conf_name").show();
+									} else {
+										$("#error_conf_name").hide();
+									}
+
+									var price = 0;
+									$(".floatOnly").each(function() {
+										if(!isNaN(this.value) && this.value.length!=0) {
+											price += parseFloat(this.value);
+										}
+									});
+									
+									if (parseFloat(price)<1) {
+										isError = true;
+										$("#error_price_show").show();
+									} else {
+										$("#error_price_show").hide();
+									}
+									
+									if (!isError) {
+									bootbox
+									.confirm({
+										title : 'Confirm ',
+										message : 'Are you sure you want save the configuration',
+										buttons : {
+											confirm : {
+												label : 'Yes',
+												className : 'btn-success'
+											},
+											cancel : {
+												label : 'Cancel',
+												className : 'btn-link'
+											}
+										},
+										callback : function(result) {
+											if (result) {
+												document
+												.getElementById("submtbtn").disabled = true;
+											var form = document.getElementById("saveInsertProdConfForm")
+										    form.submit();
+											}
+										}
+									});
+									}
+									return false;
+								})
+			})
+	$('.maxlength-badge-position').maxlength({
+		alwaysShow : true,
+		placement : 'top'
+	});
 		$('.datatable-fixed-left_custom').DataTable({
 			columnDefs : [ {
 				orderable : true,
 				targets : [ 0 ]
 			} ],
-			//scrollX : true,
 			scrollX : true,
-			scrollY : '50vh',
+			scrollY : '65vh',
 			scrollCollapse : true,
 			paging : false,
 			order:[],

@@ -16,6 +16,7 @@
 .daterangepicker .calendar, .daterangepicker .ranges {
 	float: right;
 }
+
 </style>
 
 <jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
@@ -72,7 +73,7 @@
 					<div class="form-group row"></div>
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 					<div class="table-responsive">
-						<table class="table datatable-scroll-y  table-bordered table-hover table-striped"
+						<table class="table datatable-fixed-left_custom  table-bordered table-hover table-striped"
 										width="100%" id="printtable2">
 										
 						<thead>
@@ -93,7 +94,7 @@
 							<c:forEach items="${prodList}" var="prod" varStatus="count">
 								<tr>
 					<td>${count.index+1}) ${prod.productCode}</td>
-					<td>${prod.productName}</td>
+					<td width="20%;">${prod.productName}</td>
 					<td>${prod.catName}</td>
 					<td>${prod.subCatName}</td>
 					<td>${prod.uomShowName}</td>
@@ -174,7 +175,7 @@
 	</div>
 	<!-- /page content -->
 <script>
-	$('.datatable-fixed-left_custom1').DataTable({
+	$('.datatable-fixed-left_custom').DataTable({
 
 		columnDefs : [ {
 			orderable : false,
@@ -182,7 +183,7 @@
 		} ],
 		//scrollX : true,
 		scrollX : true,
-		scrollY : '50vh',
+		scrollY : '65vh',
 		scrollCollapse : true,
 		order:[],
 		paging : false,

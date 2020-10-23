@@ -52,7 +52,7 @@
 						class="card-header bg-blue text-white d-flex justify-content-between">
 						<span
 							class="font-size-sm text-uppercase font-weight-semibold card-title">
-							Edit Product ${editProd.productCode}-${editProd.productName}</span>
+							Edit Product ${editProd.productName}-(${editProd.productCode})</span>
 						<!--  -->
 						<c:if test="${addAccess==0}">
 							<span class="font-size-sm text-uppercase font-weight-semibold"><a
@@ -175,7 +175,7 @@
 											Product Name <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control  "
+											<input maxlength="60" type="text" class="form-control maxlength-badge-position"
 												placeholder="Product Name" id="prod_name" name="prod_name"
 												autocomplete="off" value="${editProd.productName}"> <span
 												class="validation-invalid-label" id="error_prod_name"
@@ -187,7 +187,7 @@
 											Short Name <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control  "
+											<input type="text" maxlength="30" class="form-control maxlength-badge-position"
 												placeholder="Product Short Name" id="short_name"
 												name="short_name" autocomplete="off" value="${editProd.shortName}"> <span
 												class="validation-invalid-label" id="error_short_name"
@@ -225,7 +225,7 @@
 											Sort No <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="4" class="form-control numbersOnly"
 												placeholder="Product Sort No" id="sort_no" name="sort_no"
 												autocomplete="off" value="${editProd.sortId}"> <span
 												class="validation-invalid-label" id="error_sort_no"
@@ -238,22 +238,22 @@
 											Min Quantity <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="5" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Minimum Order Quantity" id="min_qty"
 												name="min_qty" autocomplete="off" value="${editProd.minQty}"> <span
 												class="validation-invalid-label" id="error_min_qty"
-												style="display: none;">This field is required.</span>
+												style="display: none;">This field is required. (min value 1)</span>
 										</div>
 
 										<label class="col-form-label col-lg-2" for="shelf_life">
 											Shelf Life <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="3" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Product Shelf Life" id="shelf_life"
 												name="shelf_life" autocomplete="off" value="${editProd.shelfLife}"> <span
 												class="validation-invalid-label" id="error_shelf_life"
-												style="display: none;">This field is required.</span>
+												style="display: none;">This field is required. </span>
 										</div>
 									</div>
 									<div class="form-group row">
@@ -283,7 +283,7 @@
 											Return % <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="5" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Product Return %" id="return_per"
 												name="return_per" autocomplete="off" value="${editProd.retPer}"> <span
 												class="validation-invalid-label" id="error_return_per"
@@ -324,7 +324,7 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data
+												data-fouc="" aria-hidden="true" multiple data
 												placeholder="Select Shape" id="shape_id" name="shape_id">
 											</select> <span class="validation-invalid-label" id="error_shape_id"
 												style="display: none;">This field is required.</span>
@@ -332,7 +332,7 @@
 									</div>
 
 
-									<div class="form-group row">
+									<div class="form-group row" style="display: none;">
 										<label class="col-form-label col-lg-2" for="is_sameDay_del">
 											Same Day Delivery<span style="color: red">* </span>:
 										</label>
@@ -426,11 +426,11 @@
 											Book before Days <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="2" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Book before days" id="book_b4" name="book_b4"
 												autocomplete="off" value="${editProd.bookBefore}"> <span
 												class="validation-invalid-label" id="error_book_b4"
-												style="display: none;">This field is required.</span>
+												style="display: none;">This field is required. (min value 1)</span>
 										</div>
 
 										<label class="col-form-label col-lg-2" for="event_ids">
@@ -475,7 +475,7 @@
 											No of Alphabets <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="2"  class="form-control numbersOnly maxlength-badge-position"
 												placeholder="No of Alphabets" id="no_of_alpha"
 												name="no_of_alpha" autocomplete="off" value="${editProd.noOfCharsForAlphaCake}"> <span
 												class="validation-invalid-label" id="error_no_of_alpha"
@@ -517,17 +517,17 @@
 									</div>
 
 									<div class="form-group row">
-										<label class="col-form-label col-lg-2" for="is_cover_ph">
+										<label style="text-align: center;" class="col-form-label col-lg-2" for="is_cover_ph">
 											Cover Photo Upload <span style="color: red">* </span>:
-										</label> <label class="col-form-label col-lg-2" for="is_base_ph">
+										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_base_ph">
 											Base Photo Upload <span style="color: red">* </span>:
-										</label> <label class="col-form-label col-lg-2" for="is_sp_inst">
+										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_sp_inst">
 											Special Instruction <span style="color: red">* </span>:
-										</label> <label class="col-form-label col-lg-2" for="is_msg_on_cake">
+										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_msg_on_cake">
 											Message On Cake <span style="color: red">* </span>:
-										</label> <label class="col-form-label col-lg-2" for="is_slot_used">
+										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_slot_used">
 											Is Slot Used <span style="color: red">* </span>:
-										</label> <label class="col-form-label col-lg-2" for="is_used">
+										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_used">
 											Is Used <span style="color: red">* </span>:
 										</label>
 									</div>
@@ -537,7 +537,7 @@
 											No of Msg Characters <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" maxlength="4" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="No of Message Characters" id="no_of_msg_char"
 												name="no_of_msg_char" autocomplete="off" value="${editProd.noOfCharsOnCake}"> <span
 												class="validation-invalid-label" id="error_no_of_msg_char"
@@ -589,8 +589,7 @@
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Layering Cream" id="layering_cream_id"
 												name="layering_cream_id">
-												<option selected value="1">L1</option>
-												<option selected value="0">L2</option>
+												
 											</select> <span class="validation-invalid-label"
 												id="error_layering_cream_id" style="display: none;">This
 												field is required.</span>
@@ -628,10 +627,10 @@
 										</div>
 
 										<label class="col-form-label col-lg-2" for="prod_desc">
-											Product Desc <span style="color: red">* </span>:
+											Product Desc <span style="color:red;">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control"
+											<input type="text" maxlength="90" class="form-control maxlength-badge-position"
 												placeholder="Product Description" id="prod_desc"
 												name="prod_desc" autocomplete="off" value="${editProd.productDesc}"> <span
 												class="validation-invalid-label" id="error_prod_desc"
@@ -647,9 +646,9 @@
 											Ingredients<span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control"
+											<textarea maxlength="150" class="form-control maxlength-badge-position"
 												placeholder="Ingredients" id="Ingredients"
-												name="Ingredients" autocomplete="off" value="${editProd.ingerdiants}"> <span
+												name="Ingredients" autocomplete="off" >${editProd.ingerdiants}</textarea> <span
 												class="validation-invalid-label" id="error_Ingredients"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -658,7 +657,7 @@
 											Preparation Time <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control numbersOnly"
+											<input type="text" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Preparation Time in Minutes" maxlength="3" id="prep_time" name="prep_time"
 												autocomplete="off" value="${editProd.prepTime}"> <span
 												class="validation-invalid-label" id="error_prep_time"
@@ -675,11 +674,10 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data
-												placeholder="Select Veg Non Veg" id="is_veg" name="is_veg">
-												<option ${editProd.isVeg==0 ? 'selected' : ''}  value="0">Veg</option>
+												data-fouc=""  aria-hidden="true" multiple data-placeholder="Select Veg Non Veg"  id="is_veg" name="is_veg">
+												<%-- <option ${editProd.isVeg==0 ? 'selected' : ''}  value="0">Veg</option>
 												<option  ${editProd.isVeg==1 ? 'selected' : ''} value="1">Non Veg</option>
-											    <option  ${editProd.isVeg==2 ? 'selected' : ''} value="2">Both</option></select> 
+											    <option  ${editProd.isVeg==2 ? 'selected' : ''} value="2">Both</option> --%></select> 
 											    <span class="validation-invalid-label" id="error_is_veg"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -710,7 +708,7 @@
 											Max Weights <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-2">
-										<input type="text" class="form-control numbersOnly" value="${editProd.maxWt}"
+										<input type="text" class="form-control numbersOnly maxlength-badge-position" value="${editProd.maxWt}"
 												placeholder="Maximum Weight Range" maxlength="3" id="max_wt" name="max_wt"
 												autocomplete="off"> <span
 												class="validation-invalid-label" id="error_max_wt"
@@ -721,7 +719,7 @@
 										<button type="button" onclick="show_apply_weight()"
 													class="btn btn-primary"
 													id="11" >Apply</button>
-										</div>
+										</div><div class="col-lg-1"></div>
 									<label class="col-form-label col-lg-2" for="weight_ids">
 											Available In Weights <span style="color: red">* </span>:
 										</label>
@@ -755,8 +753,16 @@
 
 
 										</div>
-
-										<div class="col-lg-4"></div>
+<label class="col-form-label col-lg-2" for="prep_time" title="Product Basic MRP">
+											Basic MRP <span style="color: red">* </span>:
+										</label>
+										<div class="col-lg-4">
+											<input type="text"  class="form-control floatOnly maxlength-badge-position"
+												placeholder="Basic Product MRP" maxlength="5" value="${editProd.basicMrp}" id="basic_mrp" name="basic_mrp"
+												autocomplete="off"> <span
+												class="validation-invalid-label" id="error_basic_mrp"
+												style="display: none;">This field is required. (min value 1)</span>
+										</div>
 									</div>
 									
 									<!-- <div class="form-group row">
@@ -812,6 +818,14 @@
 								<input type="hidden" value="${editProd.productCode}" id="prodCod">
 								<input type="hidden" name="prod_id" value="${productId}" id="prod_id">
 								<input type="hidden" name="idtime" value="${editProd.insertDttime}">
+							
+							
+							<input type="hidden" value="${editProd.shapeId}" id="shapeids">
+						   <input type="hidden" value="${editProd.isVeg}" id="vegids">
+
+						   						   <input type="hidden" value="${editProd.prodImagePrimary}" name="prime_image">
+						   
+						   
 								
 								</form>
 							</div>
@@ -867,9 +881,9 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 		var weightHtml;
 		var p = "";
 		var q = "Select Weight";
-		weightHtml += '<option disabled value="'+p+'" selected>' + q
+		/* weightHtml += '<option disabled value="'+p+'" selected>' + q
 				+ '</option>';
-				weightHtml += '</option>';
+				weightHtml += '</option>'; */
 		for(var i=0.5;i<=parseFloat(maxWt);i=i+0.5){
 			weightHtml += '<option value="'+i+'">'
 			+ i +  ' Kg</option>';
@@ -887,51 +901,54 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 			prod_statushtml += '</option>';
 	
 	var event_idshtml;
-	var p = "";
-	var q = "Select Events";
+	var p = "0";
+	var q = "NA";
+	event_idshtml += '<option  value="'+p+'">' + q
+	+ '</option>';
+	event_idshtml += '</option>';
 	
 	var bread_idhtml;
-	var p = "";
-	var q = "Select Bread Type";
-	bread_idhtml += '<option disabled value="'+p+'" selected>' + q
+	var p = "0";
+	var q = "NA";
+	bread_idhtml += '<option value="'+p+'" selected>' + q
 			+ '</option>';
 	bread_idhtml += '</option>';
 	
 	var cream_idhtml;
-	var p = "";
-	var q = "Select Cream Type";
-	cream_idhtml += '<option disabled value="'+p+'" selected>' + q
+	var p = "0";
+	var q = "NA";
+	cream_idhtml += '<option  value="'+p+'">' + q
 			+ '</option>';
 	cream_idhtml += '</option>';
 	
 	var layering_cream_idhtml;
-	var p = "";
-	var q = "Select Layering Cream";
-	layering_cream_idhtml += '<option disabled value="'+p+'" selected>' + q
+	var p = "0";
+	var q = "NA";
+	layering_cream_idhtml += '<option value="'+p+'">' + q
 			+ '</option>';
 	layering_cream_idhtml += '</option>';
 	
 	var topping_cream_idhtml;
-	var p = "";
-	var q = "Select Topping Cream";
-	topping_cream_idhtml += '<option disabled value="'+p+'" selected>' + q
+	var p = "0";
+	var q = "NA";
+	topping_cream_idhtml += '<option  value="'+p+'">' + q
 			+ '</option>';
 	topping_cream_idhtml += '</option>';
 	
 	var flav_idshtml;
-	var p = "";
-	var q = "Select Flavor";
+	var p = "0";
+	var q = "NA";
 	
 	var shape_idhtml;
-	var p = "";
-	var q = "Select Product Shape";
-	shape_idhtml += '<option disabled value="'+p+'" selected>' + q
+	var p = "0";
+	var q = "NA";
+	shape_idhtml += '<option disabled value="'+p+'">' + q
 			+ '</option>';
 	shape_idhtml += '</option>';
 	
 	var sameDay_timeSlothtml;
-	var p = "";
-	var q = "Select Time Slot";
+	var p = "0";
+	var q = "NA";
 	
 	
 	var prod_type_idhtml;
@@ -945,9 +962,17 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 	var p = "";
 	var q = "Select Applicable Tags";
 	
-	data=${filterJSON};
-	var shapeId=${editProd.shapeId};
+	var is_veg_html; //2020-10-21
 	
+	data=${filterJSON};
+	//var shapeId=${editProd.shapeId};
+	
+  	var shp =$("#shapeids").val();//2020-10-21
+	var shapeids=shp.split(",");
+	
+  	var vng =$("#vegids").val();//2020-10-21
+	var vegids=vng.split(",");
+  	
 	var ts =$("#slots").val();
 	var sdts=ts.split(",");
 	
@@ -972,7 +997,8 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 	var len = data.length;
 	for (var i = 0; i < len; i++) {
 		if(1==parseInt(data[i].filterTypeId)){
-		 	if(parseInt(shapeId)==parseInt(data[i].filterId)){
+		 	//if(parseInt(shapeId)==parseInt(data[i].filterId)){
+		 		if(shapeids.includes(''+data[i].filterId)){ //2020-10-21
 			shape_idhtml += '<option selected value="' + data[i].filterId + '">'
 				+ data[i].filterName + '</option>';
 			}
@@ -1074,6 +1100,16 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 				+ data[i].filterName + '</option>';
 			}
 	}//end of if
+		else if(12==parseInt(data[i].filterTypeId)){
+			if(vegids.includes(''+data[i].filterId)){
+				is_veg_html += '<option selected value="' + data[i].filterId + '">'
+				+ data[i].filterName + '</option>';
+				}else{
+					is_veg_html += '<option value="' + data[i].filterId + '">'
+					+ data[i].filterName + '</option>';
+				}
+			
+		}//end of if //2020-10-21
 	
 	}//end of for loop
 	
@@ -1109,6 +1145,12 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 	
 	$('#appl_tags').html(appl_tagshtml);
 	$("#appl_tags").trigger("chosen:updated");
+	
+	$('#is_veg').html(is_veg_html);
+	$("#is_veg").trigger("chosen:updated");
+	
+	
+	
 	function setSubCatList(){
 		var catId=document.getElementById("cat_id").value;
 		prodCod=document.getElementById("prodCod").value;
@@ -1262,14 +1304,14 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 													
 													
 
-													if (!$("#min_qty").val()) { 
+													if (!$("#min_qty").val()||parseFloat($("#min_qty").val())<1) { 
 														$("#error_min_qty").show();
 														isError = true;
 													} else {
 														$("#error_min_qty").hide();
 													}	
 
-													if (!$("#shelf_life").val()) { 
+													if (!$("#shelf_life").val()||parseFloat($("#shelf_life").val())<1) { 
 														$("#error_shelf_life").show();
 														isError = true;
 													} else {
@@ -1284,7 +1326,7 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 
 
 												if (parseInt($("#is_return_allow").val())==1){
-													if (!$("#return_per").val()) { 
+													if (!$("#return_per").val() || parseFloat($("#return_per").val())>100 || parseFloat($("#return_per").val())<1) { 
 													$("#error_return_per").show();
 													isError = true;
 													} else {
@@ -1301,8 +1343,9 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 													} else {
 														$("#error_uom_id").hide()
 													}
-												
-												if (!$("#shape_id").val()) { 
+												var shapecnt = $('#shape_id > option:selected');
+										         if(shapecnt.length == 0){
+											//	if (!$("#shape_id").val()) { 
 													$("#error_shape_id").show();
 													isError = true;
 													} else {
@@ -1310,7 +1353,7 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 													}
 
 
-												if (!$("#is_sameDay_del").val()) { 
+												/* if (!$("#is_sameDay_del").val()) { 
 													$("#error_is_sameDay_del").show();
 													isError = true;
 													} else {
@@ -1328,7 +1371,7 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 												}else{
 													//$("#sameDay_timeSlot").val()=0;
 														$("#error_sameDay_timeSlot").hide();
-												}
+												} */
 
 												if (!$("#prod_type_id").val()) { 
 													$("#error_prod_type_id").show();
@@ -1352,7 +1395,7 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 														$("#error_prod_status").hide();
 													}
 
-												if (!$("#book_b4").val()) { 
+												if (!$("#book_b4").val()|| parseInt($("#book_b4").val())<1) { 
 													$("#error_book_b4").show();
 													isError = true;
 													} else {
@@ -1455,14 +1498,15 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 													}
 
 
-												if (!$("#prep_time").val()) {
+												if (!$("#prep_time").val()|| parseInt($("#prep_time").val())<1) {
 														 $("#error_prep_time").show();
 														isError = true;
 													} else {
 														$("#error_prep_time").hide()
 			 										}
-
-												if (!$("#is_veg").val()) {
+												var vegcnt = $('#is_veg > option:selected');
+										         if(vegcnt.length == 0){
+											//	if (!$("#is_veg").val()) {
 														 $("#error_is_veg").show();
 														isError = true;
 													} else {
@@ -1502,17 +1546,42 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 														$("#error_weight_ids").hide();
 													}
 												}
+												
+												if (!$("#basic_mrp").val()|| parseInt($("#basic_mrp").val())<1) { 
+													$("#error_basic_mrp").show();
+													isError = true;
+													} else {
+														$("#error_basic_mrp").hide();
+													}
+												
 												//alert("Is Error "+isError)
 												if (!isError) {
-													//alert("! Is Error ")
-													var x = true;
-													if (x == true) {
-														document
-																.getElementById("submtbtn").disabled = true;
-														return true;
-													}
+													var x = false;
+													bootbox.confirm({
+														title : 'Confirm ',
+														message : 'Are you sure you want to Submit ?',
+														buttons : {
+															confirm : {
+																label : 'Yes',
+																className : 'btn-success'
+															},
+															cancel : {
+																label : 'Cancel',
+																className : 'btn-danger'
+															}
+														},
+														callback : function(result) {
+															if(result){
+																document
+																	.getElementById("submtbtn").disabled = true;
+																var form = document.getElementById("submitProdForm")
+															    form.submit();
+															}
+														}
+													});
 													//end ajax send this to php page
-												}
+													return false;
+												}//end of if !isError
 												return false;
 											});
 						});

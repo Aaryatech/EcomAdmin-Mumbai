@@ -34,6 +34,21 @@ public class TempProdConfig {
 	private int makerUserId;
 	private String updtDttime;
 	
+	private String vegNonVegName;//Sachin 22-10-2020
+	
+	private String shapeName;//Sachin 22-10-2020
+	private int shapeId;//Sachin 22-10-2020
+	
+	
+	
+	public String getVegNonVegName() {
+		return vegNonVegName;
+	}
+
+	public void setVegNonVegName(String vegNonVegName) {
+		this.vegNonVegName = vegNonVegName;
+	}
+
 	public int getConfigDetailId() {
 		return configDetailId;
 	}
@@ -195,6 +210,25 @@ public class TempProdConfig {
 		this.updtDttime = updtDttime;
 	}
 
+	
+	
+	
+	public String getShapeName() {
+		return shapeName;
+	}
+
+	public void setShapeName(String shapeName) {
+		this.shapeName = shapeName;
+	}
+
+	public int getShapeId() {
+		return shapeId;
+	}
+
+	public void setShapeId(int shapeId) {
+		this.shapeId = shapeId;
+	}
+
 	@Override
 	public String toString() {
 		return "TempProdConfig [uuid=" + uuid + ", productId=" + productId + ", productName=" + productName
@@ -203,7 +237,9 @@ public class TempProdConfig {
 				+ ", configDetailId=" + configDetailId + ", configHeaderId=" + configHeaderId + ", rateAmt=" + rateAmt
 				+ ", mrpAmt=" + mrpAmt + ", spRateAmt1=" + spRateAmt1 + ", spRateAmt2=" + spRateAmt2 + ", spRateAmt3="
 				+ spRateAmt3 + ", spRateAmt4=" + spRateAmt4 + ", makerUserId=" + makerUserId + ", updtDttime="
-				+ updtDttime + "]";
+				+ updtDttime + ", vegNonVegName=" + vegNonVegName + ", shapeName=" + shapeName + ", shapeId=" + shapeId
+				+ "]";
 	}
+
 	
 }

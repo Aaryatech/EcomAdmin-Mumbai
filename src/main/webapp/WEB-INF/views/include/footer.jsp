@@ -7,7 +7,7 @@
 
 	<div class="navbar-collapse1 collapse1 text-center w-100"
 		id="navbar-footer1">
-		<span class="navbar-text"> &copy; 2019 - 2022. Madhvi</span>
+		<span class="navbar-text"> &copy; 2019 - 2022. Monginis</span>
 
 	
 	</div>
