@@ -49,7 +49,7 @@ public class ProdConfController {
 		ModelAndView model = new ModelAndView("product/new_item_in_ExProdConf");
 
 		try {
-
+ 
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 			Info view = AccessControll.checkAccess("showAddNewItemsinExProdConf", "showAddNewItemsinExProdConf", "1", "0",
