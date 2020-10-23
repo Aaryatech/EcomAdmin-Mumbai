@@ -3721,6 +3721,7 @@ public class MasterController {
 
 				model.addAttribute("griev", griev);
 				model.addAttribute("title", "Add Grievances Type Instruction");
+				model.addAttribute("isEdit", 0);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /addGrievanceTypInstruct : " + e.getMessage());
@@ -3769,8 +3770,12 @@ public class MasterController {
 			System.out.println("Execption in /insertGrievanceTypeInstruction : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showGrievencesTypeIntructn";
-
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		
+		if(btnVal==0)
+			return "redirect:/showGrievencesTypeIntructn";
+		else
+			return "redirect:/addGrievanceTypInstruct";
 	}
 
 	@RequestMapping(value = "/getGrievanceCaptionInfo", method = RequestMethod.GET)
@@ -3842,8 +3847,9 @@ public class MasterController {
 						.postForObject(Constants.url + "getGrievTypeInstructById", map, GrievencesTypeInstructn.class);
 
 				model.addAttribute("griev", griev);
-
-				model.addAttribute("title", "Edit Grievances Type Instruction");
+				
+				model.addAttribute("title", "Edit Grievances Type Instruction");				
+				model.addAttribute("isEdit", 1);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /editGrievanceTypeInsrtuctn : " + e.getMessage());
@@ -3997,6 +4003,7 @@ public class MasterController {
 
 				model.addAttribute("grievance", grievance);
 				model.addAttribute("title", "Add Grievances Instruction");
+				model.addAttribute("isEdit", 0);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /addGrievanceInstructn : " + e.getMessage());
@@ -4046,7 +4053,13 @@ public class MasterController {
 			System.out.println("Execption in /insertGrievanceInstruction : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showGrievences";
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+				
+		if(btnVal==0)
+			return "redirect:/showGrievences";
+		else
+			return "redirect:/addGrievanceInstructn";
+				
 
 	}
 
@@ -4095,6 +4108,7 @@ public class MasterController {
 				model.addAttribute("grievList", grievList);
 
 				model.addAttribute("title", "Edit Grievances Instruction");
+				model.addAttribute("isEdit", 1);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /editGrievance : " + e.getMessage());

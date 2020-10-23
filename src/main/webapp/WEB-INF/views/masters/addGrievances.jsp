@@ -153,50 +153,96 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1" name="grievance"
-													id="grievance_y" ${grievance.isActive==1 ? 'checked' : ''}>
-													Active
-												</label>
-											</div>
+											<c:choose>
+												<c:when test="${grievance.grievanceId>0}">
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="grievance" id="grievance_y"
+															${grievance.isActive==1 ? 'checked' : ''}> Active
+														</label>
+													</div>
 
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" value="0" name="grievance"
-													id="grievance_n" ${grievance.isActive==0 ? 'checked' : ''}>
-													In-Active
-												</label>
-											</div>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" value="0"
+															name="grievance" id="grievance_n"
+															${grievance.isActive==0 ? 'checked' : ''}>
+															In-Active
+														</label>
+													</div>
+												</c:when>
+												<c:otherwise>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="grievance" id="grievance_y"> Active
+														</label>
+													</div>
+
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" value="0"
+															name="grievance" id="grievance_n"> In-Active
+														</label>
+													</div>
+												</c:otherwise>
+											</c:choose>
 										</div>
-										
+
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="allowCopy">Allow Copy <span class="text-danger">*
 										</span>:
 										</label>
-										 <div class="col-lg-4">
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1" name="allowCopy"
-													id="copy_y" ${grievance.allowToCopy==1 ? 'checked' : ''}>
-													Yes
-												</label>
-											</div>
+										<div class="col-lg-4">
+											<c:choose>
+												<c:when test="${grievance.grievanceId>0}">
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="allowCopy" id="copy_y"
+															${grievance.allowToCopy==1 ? 'checked' : ''}> Yes
+														</label>
+													</div>
 
-											<div class="form-check form-check-inline">
-												<label class="form-check-label "> <input
-													type="radio" class="form-check-input" value="0" name="allowCopy"
-													id="copy_n" ${grievance.allowToCopy==0 ? 'checked' : ''}>
-													No
-												</label>
-											</div>
-										</div> 
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="allowCopy" id="copy_n"
+															${grievance.allowToCopy==0 ? 'checked' : ''}> No
+														</label>
+													</div>
+												</c:when>
+												<c:otherwise>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="allowCopy" id="copy_y"> Yes
+														</label>
+													</div>
+
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="allowCopy" id="copy_n"> No
+														</label>
+													</div>
+												</c:otherwise>
+											</c:choose>
+
+										</div>
 									</div>
+									<input type="hidden" id="btnType" name="btnType">
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary" id="submtbtn">
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+										<c:if test="${isEdit==0}">
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+										</c:if>
 									</div>
 								</form>
 							</div>
@@ -229,6 +275,10 @@
 				console.log(err);
 			}
 		};
+		
+		function pressBtn(btnVal){
+			$("#btnType").val(btnVal)
+		}
 	</script>
 
 	<script type="text/javascript">
@@ -253,12 +303,35 @@
 				}
 
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbtn").disabled = true;
-						return true;
-					}
-				}
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										$(".btn").attr("disabled", true);
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError
 
 				return false;
 
