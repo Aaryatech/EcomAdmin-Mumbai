@@ -19,6 +19,10 @@
 .daterangepicker .calendar, .daterangepicker .ranges {
 	float: right;
 }
+
+.select2-selection--multiple .select2-selection__rendered {
+	border-bottom: 1px solid #ddd;
+}
 </style>
 
 <jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
@@ -63,10 +67,10 @@
 									class="font-size-sm text-uppercase font-weight-semibold card-title">${title}</span>
 								<!--  -->
 								<span class="font-size-sm text-uppercase font-weight-semibold"><a
-									class="card-title"
-									href="${pageContext.request.contextPath}/showOfferConfigurationList"
-									style="color: white;"><i class="icon-list2 ml-2"></i>&nbsp;&nbsp;&nbsp;&nbsp;View
-										List</a></span>
+									class="card-title" 
+									href="${pageContext.request.contextPath}/configFranchise"
+									style="color: white;"><i class="icon-add-to-list"></i>&nbsp;&nbsp;&nbsp;&nbsp;Configure
+										Franchise</a></span><!-- showOfferConfigurationList -->
 							</div>
 							<div class="form-group row"></div>
 							<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
@@ -85,7 +89,7 @@
 									<div class="form-group row">
 
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="frId">Franchisee<span class="text-danger">*
+											for="frId">Franchise<span class="text-danger">*
 										</span>:
 										</label>
 										<div class="col-lg-4">
@@ -249,7 +253,7 @@
 							bootbox
 									.confirm({
 										title : 'Confirm ',
-										message : 'Are you sure you want to delete selected records ?',
+										message : 'Are you sure you want to delete selected records?',
 										buttons : {
 											confirm : {
 												label : 'Yes',
@@ -257,7 +261,7 @@
 											},
 											cancel : {
 												label : 'Cancel',
-												className : 'btn-link'
+												className : 'btn-danger'
 											}
 										},
 										callback : function(result) {
@@ -286,6 +290,32 @@
 	</Script>
 
 	<script type="text/javascript">
+	
+	$(document).ready(function($) {
+		$("#configFranchiseList").submit(function(e) {
+			var isError = false;
+			var errMsg = "";
+			
+			if (!$("#orderBy").val()) {
+				isError = true;
+				$("#error_orderBy").show()
+			} else {
+				$("#error_orderBy").hide()
+			}		 
+		
+			if (!isError) {
+				var x = true;
+				if (x == true) {
+					
+					return true;
+				}
+			}
+
+			return false;
+
+		});
+	});
+	
 		$(document)
 				.ready(
 						function($) {
@@ -327,15 +357,46 @@
 												} else {
 													$("#error_orderBy").hide()
 												}
-
+												
 												if (!isError) {
+													var x = false;
+													bootbox
+															.confirm({
+																title : 'Confirm ',
+																message : 'Are you sure you want to delete selected records?',
+																buttons : {
+																	confirm : {
+																		label : 'Yes',
+																		className : 'btn-success'
+																	},
+																	cancel : {
+																		label : 'Cancel',
+																		className : 'btn-danger'
+																	}
+																},
+																callback : function(
+																		result) {
+																	if (result) {
+																		$(".btn").attr("disabled", true);
+																		var form = document
+																				.getElementById("deleteFrConfiguration")
+																		form
+																				.submit();
+																	}
+																}
+															});
+													//end ajax send this to php page
+													return false;
+												}//end of if !isErro
+
+												/* if (!isError) {
 													var x = true;
 													if (x == true) {
 														document
 																.getElementById("submtbtn").disabled = true;
 														return true;
 													}
-												}
+												} */
 
 												return false;
 

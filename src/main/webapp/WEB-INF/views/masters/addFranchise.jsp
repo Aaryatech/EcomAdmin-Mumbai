@@ -190,7 +190,7 @@
 													<input type="text"
 														class="form-control maxlength-badge-position non-char"
 														name="mobNo" id="mobNo" maxlength="10"
-														placeholder="Contact No." autocomplete="off"
+														autocomplete="off"
 														onchange="trim(this)" value="${franchise.frContactNo}">
 													<span class="validation-invalid-label text-danger"
 														id="error_mobNo" style="display: none;">This field
@@ -353,12 +353,16 @@
 													</label>
 												</div>												
 											</div>
-											
+											<input type="hidden" id="btnType" name="btnType">
 											<br>
 											<div class="text-center">
-												<button type="submit" class="btn btn-primary" id="submtbtn">
-													Save <i class="icon-paperplane ml-2"></i>
-												</button>
+												<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
+											Save <i class="icon-paperplane ml-2"></i>
+										</button>
+										
+										<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+											Save & Next<i class="icon-paperplane ml-2"></i>
+										</button>
 											</div>
 										</form>
 
@@ -508,12 +512,16 @@
 														field is required.</span>
 												</div>
 											</div>
+											<input type="hidden" id="btnType2" name="btnType">
 											<br>
 											<div class="text-center">
-												<button type="submit" class="btn btn-primary"
-													id="submtFdabtn">
-													Save <i class="icon-paperplane ml-2"></i>
-												</button>
+												<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn2(0)">
+											Save <i class="icon-paperplane ml-2"></i>
+										</button>
+										
+										<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn2(1)">
+											Save & Next<i class="icon-paperplane ml-2"></i>
+										</button>
 											</div>
 										</form>
 									</div>
@@ -681,6 +689,14 @@
 				console.log(err);
 			}
 		};
+		
+		function pressBtn(btnVal){
+			$("#btnType").val(btnVal);
+			
+		}
+		function pressBtn2(btnVal){
+			$("#btnType2").val(btnVal);
+		}
 	</script>
 
 	<script type="text/javascript">
@@ -691,20 +707,32 @@
 				var isError = false;
 				var errMsg = "";
 
+				if($("#frId").val()==0){
+					if (!$("#pass").val()) {
+						isError = true;
+						$("#error_password").show()
+					} else {
+						isError = false;
+						$("#error_password").hide()
+					}
+				}else{
+					isError = false;
+				}
+				
 				if (!$("#frName").val()) {
 					isError = true;
 					$("#error_frName").show()
 				} else {
 					$("#error_frName").hide()
 				}
-
+				
 				if (!$("#ownerDob").val()) {
 					isError = true;
 					$("#error_ownerDob").show()
 				} else {
 					$("#error_ownerDob").hide()
 				}
-
+				
 				if (!$("#openDate").val()) {
 					isError = true;
 					$("#error_openDate").show()
@@ -740,32 +768,13 @@
 					$("#error_city").hide()
 				}
 
-				if (!$("#state").val()) {
-					isError = true;
-					$("#error_state").show()
-				} else {
-					$("#error_state").hide()
-				}
-
 				if (!$("#pincode").val()) {
 					isError = true;
 					$("#error_pincode").show()
 				} else {
 					$("#error_pincode").hide()
 				}
-
-				if($("#frId").val()==0){
-					if (!$("#pass").val()) {
-						isError = true;
-						$("#error_password").show()
-					} else {
-						isError = false;
-						$("#error_password").hide()
-					}
-				}else{
-					isError = false;
-				}
-
+			
 				if (!isError) {
 					var x = false;
 					bootbox
@@ -796,9 +805,6 @@
 					//end ajax send this to php page
 					return false;
 				}//end of if !isError
-
-
-
 				return false;
 
 			});
@@ -913,7 +919,6 @@
 													//end ajax send this to php page
 													return false;
 												}//end of if !isError
-
 												return false;
 
 											});

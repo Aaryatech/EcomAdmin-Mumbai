@@ -56,7 +56,7 @@ public class FranchiseConfigurationController {
 	public String configFranchise(HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		HttpSession session = request.getSession();
-		model.addAttribute("title", "Configure Franchisee");
+		model.addAttribute("title", "Configure Franchise");
 		String mav = new String();
 
 		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
@@ -107,9 +107,13 @@ public class FranchiseConfigurationController {
 					GetFrForConfig[] frArr = Constants.getRestTemplate()
 							.postForObject(Constants.url + "getFranchiseForConfig", map, GetFrForConfig[].class);
 					frList = new ArrayList<GetFrForConfig>(Arrays.asList(frArr));
-
+					
+					if(frList.isEmpty()) {
+						session.setAttribute("errorMsg", "No Record Found.");
+					}else {
+						session.removeAttribute("errorMsg");
+					}
 				}
-
 				model.addAttribute("frList", frList);
 
 			} catch (Exception e) {
@@ -170,7 +174,7 @@ public class FranchiseConfigurationController {
 		Calendar cal = Calendar.getInstance();
 		String curDateTime = dateFormat.format(cal.getTime());
 		User userObj = (User) session.getAttribute("userObj");
-
+		
 		try {
 			int cfgId = Integer.parseInt(request.getParameter("cfgId"));
 			StringBuilder sb = new StringBuilder();
@@ -205,8 +209,13 @@ public class FranchiseConfigurationController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return "redirect:/configFranchise";
+		
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		
+		if(btnVal==0)
+			return "redirect:/configFranchiseList";
+		else
+			return "redirect:/configFranchise";
 
 	}
 	
@@ -223,7 +232,7 @@ public class FranchiseConfigurationController {
 	public String configFranchiseList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		HttpSession session = request.getSession();
-		model.addAttribute("title", "Configure Franchisee List");
+		model.addAttribute("title", "Configure Franchise List");
 		String mav = new String();
 
 		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
@@ -326,7 +335,6 @@ public class FranchiseConfigurationController {
 					frConfigList = new ArrayList<GetFrConfigList>(Arrays.asList(confArr));
 
 				}
-
 				model.addAttribute("frConfigList", frConfigList);
 
 				Info delete = AccessControll.checkAccess("configFranchiseList", "configFranchiseList", "0", "0", "0",

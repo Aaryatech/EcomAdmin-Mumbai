@@ -303,14 +303,7 @@
 																},
 																callback : function(
 																		result) {
-																	if (result) {
-																		/* document
-																				.getElementById("submtbtn").disabled = true;
-																		if(isEdit==0){
-																		document
-																				.getElementById("submtbtn1").disabled = true;
-																		} */
-																		
+																	if (result) {	
 																		$(".btn").attr("disabled", true);
 																		var form = document
 																				.getElementById("submitInsert")
