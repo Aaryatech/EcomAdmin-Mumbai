@@ -70,7 +70,7 @@
 									Product</a></span>
 						</c:if>
 					</div>
-
+					<div class="card-body">
 					<div class="form-group row"></div>
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
@@ -104,7 +104,7 @@
 
 						<div class="form-group row">
 							<label class="col-form-label font-weight-bold col-lg-2"
-								for="cust_name">Offer Image Upload <span
+								for="cust_name">Product Image Upload <span
 								class="text-danger">* </span>:
 							</label>
 							<div class="col-lg-10">
@@ -116,7 +116,7 @@
 						</div>
 
 					</form>
-
+</div>
 
 					<!-- /colReorder integration -->
 

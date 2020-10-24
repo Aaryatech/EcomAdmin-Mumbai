@@ -16,6 +16,9 @@
 .daterangepicker .calendar, .daterangepicker .ranges {
 	float: right;
 }
+.table caption+thead tr:first-child td, .table caption+thead tr:first-child th, .table colgroup+thead tr:first-child td, .table colgroup+thead tr:first-child th, .table thead:first-child tr:first-child td, .table thead:first-child tr:first-child th {
+      border-top-width: 1px!important;  
+}
 </style>
 
 <jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
@@ -139,7 +142,7 @@
 											<td>${count.index+1}) ${confHead.configName}</td>
 											<td>${confHead.catName}</td>
 											<td>${confHead.isActive==0 ? 'In Active' :confHead.isActive==1 ? 'Active' : 'Active'}</td>
-											<td><%-- <a href="${pageContext.request.contextPath}/getProdConfDetailByConfHeader/?configHeaderId=${confHead.configHeaderId}">Edit Details</a> --%>
+											<td align="center"><%-- <a href="${pageContext.request.contextPath}/getProdConfDetailByConfHeader/?configHeaderId=${confHead.configHeaderId}">Edit Details</a> --%>
 											<div class="list-icons">
 												<a
 													href="${pageContext.request.contextPath}/getProdConfDetailByConfHeader/?configHeaderId=${confHead.configHeaderId}"
@@ -155,7 +158,7 @@
 							</table>
 						</div>
 						
-						<div class="form-group row mb-0">
+						<div class="form-group row mb-0" style="display: none;">
 					<div style="margin: 0 auto;">
 								<button type="submit" class="btn blue_btn ml-3 legitRipple">Save</button>
 							</div>

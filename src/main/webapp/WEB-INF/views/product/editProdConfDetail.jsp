@@ -16,6 +16,10 @@
 .daterangepicker .calendar, .daterangepicker .ranges {
 	float: right;
 }
+
+.table caption+thead tr:first-child td, .table caption+thead tr:first-child th, .table colgroup+thead tr:first-child td, .table colgroup+thead tr:first-child th, .table thead:first-child tr:first-child td, .table thead:first-child tr:first-child th {
+      border-top-width: 1px!important;  
+}
 </style>
 
 <jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
@@ -124,7 +128,7 @@
 
 								<thead>
 									<tr>
-										<th>Product Name</th>
+										<!-- <th>Product Name</th>
 										<th>Flavor</th>
 										<th>Veg Type</th>
 										<th>Qty/Weight</th>
@@ -133,16 +137,32 @@
 										<th>Rate 1</th>
 										<th>Rate 2</th>
 										<th>Rate 3</th>
+										<th>Rate 4</th> -->
+										
+											<th>Product Name</th>
+										
+										<th>Qty/Weight</th>
+										<th>Veg-NonVeg</th>
+										<th>Shape</th>
+										<th>Flavor</th>
+										
+										<th>Rate 1</th>
+										<th>Rate 2</th>
+										<th>Rate 3</th>
 										<th>Rate 4</th>
+										<th>Rate 5</th>
+										<th>Rate 6</th>
+										
 									</tr>
 								</thead>
 								<tbody>
 									<c:forEach items="${tempProdConfList}" var="prod" varStatus="count">
 										<tr>
 											<td>${count.index+1}) ${prod.productName}</td>
-											<td>${prod.flavorName}</td>
-											<td>${prod.vegType==0 ? 'Veg' :prod.vegType==1 ? 'Non Veg' : 'Veg-Non Veg'}</td>
 											<td>${prod.weight}</td>
+												<td>${prod.vegNonVegName}</td>
+												<td>${prod.shapeName}</td>
+											<td>${prod.flavorName}</td>
 											<td><input type="text" id="r1${prod.uuid}${prod.productId}" name="r1${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
 											<td><input type="text" id="r2${prod.uuid}${prod.productId}" name="r2${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
 											<td><input type="text" id="r3${prod.uuid}${prod.productId}" name="r3${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
@@ -155,9 +175,10 @@
 									<c:forEach items="${prodConfDetList}" var="prod" varStatus="count">
 										<tr>
 											<td>${count.index+1}) ${prod.productName}</td>
+											<td>${prod.weight}</td>
+											<td>${prod.vegNonVegName}</td>
+											<td>${prod.shapeName}</td>
 											<td>${prod.flavorName}</td>
-											<td>${prod.vegType==0 ? 'Veg' :prod.vegType==1 ? 'Non Veg' : 'Veg-Non Veg'}</td>
-											<td>${prod.weight} <input type="text" id="is_change${prod.uuid}${prod.productId}" name="is_change${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
 											<td><input type="text" id="r1${prod.uuid}${prod.productId}" name="r1${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" onkeyup="setIsChange('${prod.uuid}',${prod.productId})" class="form-control floatOnly"/></td>
 											<td><input type="text" id="r2${prod.uuid}${prod.productId}" name="r2${prod.uuid}${prod.productId}" value="${prod.rateAmt}" maxlength="7" onkeyup="setIsChange('${prod.uuid}',${prod.productId})" class="form-control floatOnly"/></td>
 											<td><input type="text" id="r3${prod.uuid}${prod.productId}" name="r3${prod.uuid}${prod.productId}" value="${prod.spRateAmt1}" maxlength="7" onkeyup="setIsChange('${prod.uuid}',${prod.productId})" class="form-control floatOnly"/></td>

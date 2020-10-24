@@ -16,7 +16,9 @@
 .daterangepicker .calendar, .daterangepicker .ranges {
 	float: right;
 }
-
+.table caption+thead tr:first-child td, .table caption+thead tr:first-child th, .table colgroup+thead tr:first-child td, .table colgroup+thead tr:first-child th, .table thead:first-child tr:first-child td, .table thead:first-child tr:first-child th {
+      border-top-width: 1px!important;  
+}
 </style>
 
 <jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
