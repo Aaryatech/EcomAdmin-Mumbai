@@ -78,7 +78,9 @@
 
 
 							<div class="card-body">
-
+								<div class="form-group row"></div>
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
+								
 								<form
 									action="${pageContext.request.contextPath}/insertNewBanner"
 									id="submitInsert" method="post" enctype="multipart/form-data">
@@ -112,7 +114,7 @@
 									<div class="form-group row">
 
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="frId">Franchisee<span class="text-danger">*
+											for="frId">Franchise<span class="text-danger">*
 										</span>:
 										</label>
 										<div class="col-lg-4">
@@ -121,9 +123,25 @@
 												data-placholder="Select">
 
 												<c:forEach items="${frList}" var="list" varStatus="count">
+												
+												
+												<c:set value="0" var="flag" />
+													<c:forEach items="${frIds}" var="frIds">
+														<c:if test="${frIds == list.frId}">
+															<c:set value="1" var="flag" />
+														</c:if>
+													</c:forEach>
+													<c:choose>
+														<c:when test="${flag==1}">
+															<option value="${list.frId}" selected="selected">${list.frName}</option>
+														</c:when>
+														<c:otherwise>
+															<option value="${list.frId}">${list.frName}</option>
+														</c:otherwise>
+													</c:choose>
 
-													<option value="${list.frId}"
-														${fn:contains(frIds, list.frId) ? 'selected' : ''}>${list.frName}</option>
+													<%-- <option value="${list.frId}"
+														${fn:contains(frIds, list.frId) ? 'selected' : ''}>${list.frName}</option> --%>
 
 												</c:forEach>
 											</select> <span class="validation-invalid-label text-danger"
@@ -144,8 +162,23 @@
 												<c:forEach items="${filterList}" var="list"
 													varStatus="count">
 
-													<option value="${list.filterId}"
-														${fn:contains(tagIds, list.filterId) ? 'selected' : ''}>${list.filterName}</option>
+													<c:set value="0" var="flag" />
+													<c:forEach items="${tagIds}" var="tagIds">
+														<c:if test="${tagIds == list.filterId}">
+															<c:set value="1" var="flag" />
+														</c:if>
+													</c:forEach>
+													<c:choose>
+														<c:when test="${flag==1}">
+															<option value="${list.filterId}" selected="selected">${list.filterName}</option>
+														</c:when>
+														<c:otherwise>
+															<option value="${list.filterId}">${list.filterName}</option>
+														</c:otherwise>
+													</c:choose>
+
+													<%-- <option value="${list.filterId}"
+														${fn:contains(tagIds, list.filterId) ? 'selected' : ''}>${list.filterName}</option> --%>
 
 												</c:forEach>
 											</select> <span class="validation-invalid-label text-danger"
@@ -169,7 +202,7 @@
 											<input type="text"
 												class="form-control maxlength-badge-position" maxlength="10"
 												autocomplete="off" onchange="trim(this)"
-												value="${banner.sortNo}" name="sortNo" id="sortNo">
+												value="${banner.sortNo > 0 ? banner.sortNo : 1}" name="sortNo" id="sortNo">
 											<span class="validation-invalid-label text-danger"
 												id="error_sortNo" style="display: none;">This field
 												is required.</span>
@@ -187,22 +220,56 @@
 											<input type="text"
 												class="form-control maxlength-badge-position"
 												autocomplete="off" onchange="trim(this)"
-												value="${banner.captionOnproductPage}"
+												value="${banner.captionOnproductPage}" maxlength="70"
 												name="captionOnproductPage" id="captionOnproductPage">
 											<span class="validation-invalid-label text-danger"
 												id="error_captionOnproductPage" style="display: none;">This
 												field is required.</span>
 										</div>
+									</div>
+									
+									<div class="form-group row">
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="cust_name">Status <span class="text-danger">*
+										</span>:
+										</label>
+										<div class="col-lg-4">
+										<c:choose>
+											<c:when test="${banner.bannerId>0}">
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1" name="isActive"
+													id="isActive_y" ${banner.isActive==1 ? 'checked' : ''}>
+													Active
+												</label>
+											</div>
 
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" value="0" name="isActive" id="isActive_n"
+													${banner.isActive==0 ? 'checked' : ''}> In-Active
+												</label>
+											</div>
+											</c:when>
+											<c:otherwise>
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1" name="isActive" id="isActive_y">
+													Active
+												</label>
+											</div>
 
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" value="0" name="isActive" id="isActive_n"> In-Active
+												</label>
+											</div>
+											</c:otherwise>
+										</c:choose>
+										</div>							
 									</div>
 
-
-
 									<div class="form-group row">
-
-
-
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="doc">Profile Image <span class="text-danger">*</span>:
 										</label>
@@ -217,17 +284,19 @@
 												style="display: none;">This field is required.</span>
 											</label>
 										</div>
-
-
-
-
 									</div>
-
+									
+									<input type="hidden" id="btnType" name="btnType">
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary">
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+										<c:if test="${banner.bannerId==0}">
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+										</c:if>
 									</div>
 								</form>
 							</div>
@@ -261,6 +330,14 @@
 				console.log(err);
 			}
 		};
+		
+		function pressBtn(btnVal){
+			$("#btnType").val(btnVal)
+		}
+		
+		$('#sortNo').on('input', function() {
+			 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+			});
 	</script>
 
 	<script type="text/javascript">
@@ -312,12 +389,35 @@
 				}  */
 
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbtn").disabled = true;
-						return true;
-					}
-				}
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										$(".btn").attr("disabled", true);
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError
 
 				return false;
 

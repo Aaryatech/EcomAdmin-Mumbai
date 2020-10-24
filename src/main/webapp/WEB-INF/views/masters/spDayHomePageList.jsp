@@ -70,9 +70,9 @@
 					<table class="table datatable-header-basic">
 						<thead>
 							<tr>
-								<th width="5%">SR. No.</th>
-								<th>Sp Day Name</th>
-								<th>Sp Day Caption</th>
+								<th width="10%">Sr. No.</th>
+								<th>SP Day Name</th>
+								<th>SP Day Caption</th>
 								<th>Status</th>		
 								<th style="display: none;"></th>
 								<th style="display: none;"></th>	
@@ -148,7 +148,7 @@ $('.bootbox_custom')
 									},
 									cancel : {
 										label : 'Cancel',
-										className : 'btn-link'
+										className : 'btn-danger'
 									}
 								},
 								callback : function(result) {

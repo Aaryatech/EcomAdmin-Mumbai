@@ -2106,7 +2106,7 @@ public class MasterController {
 
 			int frId = Integer.parseInt(request.getParameter("frId"));
 			if (info.isError()) {
-				session.setAttribute("errorMsg", "Invalid Image Formate");				
+				session.setAttribute("errorMsg", "Invalid Image Formate");
 				mav = "redirect:/newFranchise/" + frId;
 			} else {
 
@@ -2222,14 +2222,14 @@ public class MasterController {
 				} else {
 					session.setAttribute("errorMsg", "Failed to Save Franchise");
 				}
-				
+
 				//
 				int btnVal = Integer.parseInt(request.getParameter("btnType"));
 
 				if (btnVal == 0)
-					mav =  "redirect:/showFranchises";
+					mav = "redirect:/showFranchises";
 				else
-					mav =  "redirect:/newFranchise/" + savedFrId;
+					mav = "redirect:/newFranchise/" + savedFrId;
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /insertFranchise : " + e.getMessage());
@@ -2244,10 +2244,10 @@ public class MasterController {
 		int savedFrId = 0;
 		String mav = new String();
 		try {
-			
+
 			Date date = new Date();
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			
+
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
 
@@ -2330,19 +2330,19 @@ public class MasterController {
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Franchise");
 			}
-			
+
 			int btnVal = Integer.parseInt(request.getParameter("btnType"));
 
 			if (btnVal == 0)
-				mav =  "redirect:/showFranchises";
+				mav = "redirect:/showFranchises";
 			else
-				mav =  "redirect:/newFranchise/" + savedFrId;
+				mav = "redirect:/newFranchise/" + savedFrId;
 
 		} catch (Exception e) {
 			System.out.println("Execption in /insertFranchise : " + e.getMessage());
 			e.printStackTrace();
-		}		
-		
+		}
+
 		return mav;
 	}
 
@@ -2698,13 +2698,13 @@ public class MasterController {
 			System.out.println("Execption in /addLanguage : " + e.getMessage());
 			e.printStackTrace();
 		}
-		
-		int btnVal = Integer.parseInt(request.getParameter("btnType"));		
-		if(btnVal==0)
+
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		if (btnVal == 0)
 			return "redirect:/showLanguage";
 		else
 			return "redirect:/addLanguage";
-		
+
 	}
 
 	@RequestMapping(value = "/getLangInfoByCode", method = RequestMethod.GET)
@@ -3777,8 +3777,8 @@ public class MasterController {
 			e.printStackTrace();
 		}
 		int btnVal = Integer.parseInt(request.getParameter("btnType"));
-		
-		if(btnVal==0)
+
+		if (btnVal == 0)
 			return "redirect:/showGrievencesTypeIntructn";
 		else
 			return "redirect:/addGrievanceTypInstruct";
@@ -3853,8 +3853,8 @@ public class MasterController {
 						.postForObject(Constants.url + "getGrievTypeInstructById", map, GrievencesTypeInstructn.class);
 
 				model.addAttribute("griev", griev);
-				
-				model.addAttribute("title", "Edit Grievances Type Instruction");				
+
+				model.addAttribute("title", "Edit Grievances Type Instruction");
 				model.addAttribute("isEdit", 1);
 			}
 		} catch (Exception e) {
@@ -4060,12 +4060,11 @@ public class MasterController {
 			e.printStackTrace();
 		}
 		int btnVal = Integer.parseInt(request.getParameter("btnType"));
-				
-		if(btnVal==0)
+
+		if (btnVal == 0)
 			return "redirect:/showGrievences";
 		else
 			return "redirect:/addGrievanceInstructn";
-				
 
 	}
 
@@ -4335,6 +4334,7 @@ public class MasterController {
 	@RequestMapping(value = "/insertSpHomePages", method = RequestMethod.POST)
 	public String insertSpHomePages(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
+		String mav = new String();
 		try {
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
@@ -4344,7 +4344,10 @@ public class MasterController {
 			SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy");
 			String profileImage = null;
 
+			Info info = new Info();
+
 			int companyId = (int) session.getAttribute("companyId");
+			int spDayId = Integer.parseInt(request.getParameter("spDayId"));
 
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
@@ -4353,7 +4356,8 @@ public class MasterController {
 				profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
 
 				try {
-					new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					// new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
 				} catch (Exception e) {
 				}
 
@@ -4362,95 +4366,107 @@ public class MasterController {
 				profileImage = request.getParameter("editImg");
 
 			}
-
-			SpDayHomePage spDay = new SpDayHomePage();
-
-			int spDayId = Integer.parseInt(request.getParameter("spDayId"));
-
-			if (spDayId > 0) {
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("spDayId", spDayId);
-				SpDayHomePage res = Constants.getRestTemplate().postForObject(Constants.url + "getSpDayHomePageById",
-						map, SpDayHomePage.class);
-
-				spDay.setInsertDateTime(res.getInsertDateTime());
-				spDay.setInsertUserId(res.getInsertUserId());
-			}
-
-			String frIdsStr = "";
-			String[] frIds = request.getParameterValues("frId");
-			if (frIds.length > 0) {
-				StringBuilder sb = new StringBuilder();
-				for (String s : frIds) {
-					sb.append(s).append(",");
-				}
-				frIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
-
-			}
-
-			String tagsStr = "";
-			String[] tagIds = request.getParameterValues("tag");
-			if (tagIds.length > 0) {
-				StringBuilder sb = new StringBuilder();
-				for (String s : tagIds) {
-					sb.append(s).append(",");
-				}
-				tagsStr = sb.deleteCharAt(sb.length() - 1).toString();
-
-			}
-
-			String strDate = request.getParameter("dates");
-			String string = strDate;
-			String[] parts = string.split("to");
-			String part1 = parts[0];
-			String part2 = parts[1];
-
-			spDay.setSpDayId(spDayId);
-			spDay.setSpdayName(request.getParameter("spdayName"));
-			spDay.setCaptionOnProductPage(request.getParameter("captionOnProductPage"));
-			spDay.setFrIds(frIdsStr);
-			spDay.setTagIds(tagsStr);
-			spDay.setFromDate(part1);
-			spDay.setToDate(part2);
-			spDay.setFromTime(request.getParameter("fromTime"));
-			spDay.setToTime(request.getParameter("toTime"));
-
-			if (spDayId == 0) {
-				spDay.setInsertDateTime(sf.format(date));
-				spDay.setInsertUserId(userObj.getUserId());
-			} else {
-				spDay.setUpdateDateTime(sf.format(date));
-				spDay.setUpdateUserId(userObj.getUserId());
-			}
-			spDay.setSpdayCaptionHomePage(request.getParameter("spdayCaption"));
-			spDay.setSpdayCaptionImageHomePage(profileImage);
-			spDay.setSortNo(Integer.parseInt(request.getParameter("sortNo")));
-
-			spDay.setIsActive(Integer.parseInt(request.getParameter("isActive")));
-			spDay.setCompanyId(companyId);
-			spDay.setDelStatus(1);
-			spDay.setExInt1(0);
-			spDay.setExInt2(0);
-			spDay.setExVar1("NA");
-			spDay.setExVar2("NA");
-
-			SpDayHomePage res = Constants.getRestTemplate().postForObject(Constants.url + "saveSpDayHomePage", spDay,
-					SpDayHomePage.class);
-
-			if (res.getSpDayId() > 0) {
-				if (spDayId == 0)
-					session.setAttribute("successMsg", "Special Day Home Page Saved Successfully");
+			if (info.isError()) {
+				session.setAttribute("errorMsg", "Invalid Image Formate");
+				if (spDayId > 0)
+					mav = "redirect:/editSpday?spDayId=" + FormValidation.Encrypt(String.valueOf(spDayId));
 				else
-					session.setAttribute("successMsg", "Special Day Home Page Update Successfully");
+					mav = "redirect:/newSpDayHomePage";
 			} else {
-				session.setAttribute("errorMsg", "Failed to Save Special Day Home Page");
+				SpDayHomePage spDay = new SpDayHomePage();
+
+				if (spDayId > 0) {
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("spDayId", spDayId);
+					SpDayHomePage res = Constants.getRestTemplate()
+							.postForObject(Constants.url + "getSpDayHomePageById", map, SpDayHomePage.class);
+
+					spDay.setInsertDateTime(res.getInsertDateTime());
+					spDay.setInsertUserId(res.getInsertUserId());
+				}
+
+				String frIdsStr = "";
+				String[] frIds = request.getParameterValues("frId");
+				if (frIds.length > 0) {
+					StringBuilder sb = new StringBuilder();
+					for (String s : frIds) {
+						sb.append(s).append(",");
+					}
+					frIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
+
+				}
+
+				String tagsStr = "";
+				String[] tagIds = request.getParameterValues("tag");
+				if (tagIds.length > 0) {
+					StringBuilder sb = new StringBuilder();
+					for (String s : tagIds) {
+						sb.append(s).append(",");
+					}
+					tagsStr = sb.deleteCharAt(sb.length() - 1).toString();
+
+				}
+
+				String strDate = request.getParameter("dates");
+				String string = strDate;
+				String[] parts = string.split("to");
+				String part1 = parts[0];
+				String part2 = parts[1];
+
+				spDay.setSpDayId(spDayId);
+				spDay.setSpdayName(request.getParameter("spdayName"));
+				spDay.setCaptionOnProductPage(request.getParameter("captionOnProductPage"));
+				spDay.setFrIds(frIdsStr);
+				spDay.setTagIds(tagsStr);
+				spDay.setFromDate(part1);
+				spDay.setToDate(part2);
+				spDay.setFromTime(request.getParameter("fromTime"));
+				spDay.setToTime(request.getParameter("toTime"));
+
+				if (spDayId == 0) {
+					spDay.setInsertDateTime(sf.format(date));
+					spDay.setInsertUserId(userObj.getUserId());
+				} else {
+					spDay.setUpdateDateTime(sf.format(date));
+					spDay.setUpdateUserId(userObj.getUserId());
+				}
+				spDay.setSpdayCaptionHomePage(request.getParameter("spdayCaption"));
+				spDay.setSpdayCaptionImageHomePage(profileImage);
+				spDay.setSortNo(Integer.parseInt(request.getParameter("sortNo")));
+
+				spDay.setIsActive(Integer.parseInt(request.getParameter("isActive")));
+				spDay.setCompanyId(companyId);
+				spDay.setDelStatus(1);
+				spDay.setExInt1(0);
+				spDay.setExInt2(0);
+				spDay.setExVar1("NA");
+				spDay.setExVar2("NA");
+
+				SpDayHomePage res = Constants.getRestTemplate().postForObject(Constants.url + "saveSpDayHomePage",
+						spDay, SpDayHomePage.class);
+
+				if (res.getSpDayId() > 0) {
+					if (spDayId == 0)
+						session.setAttribute("successMsg", "Special Day Home Page Saved Successfully");
+					else
+						session.setAttribute("successMsg", "Special Day Home Page Update Successfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Save Special Day Home Page");
+				}
+				
+				int btnVal = Integer.parseInt(request.getParameter("btnType"));
+				
+				if(btnVal==0)
+					mav = "redirect:/showSpHomePages";
+				else
+					mav = "redirect:/newSpDayHomePage";
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /insertSpHomePages : " + e.getMessage());
 			e.printStackTrace();
 		}
 
-		return "redirect:/showSpHomePages";
+		return mav;
 
 	}
 

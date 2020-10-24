@@ -71,7 +71,7 @@
 					<table class="table datatable-header-basic">
 						<thead>
 							<tr>
-								<th width="5%">SR. No.</th>
+								<th width="10%">Sr. No.</th>
 								<th>Delivery Name</th>
 								<th>Time Slot</th>
  								<th>Sort No.</th>

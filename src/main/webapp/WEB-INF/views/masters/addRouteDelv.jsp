@@ -95,7 +95,7 @@
 
 
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="deliveryName">Delivery Name <span
+											for="deliveryName">Delivery Name<span
 											class="text-danger">* </span>:
 										</label>
 										<div class="col-lg-4">
@@ -112,7 +112,7 @@
 									<div class="form-group row">
  
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="timeSlots">Time Slot <span
+											for="timeSlots">Time Slot<span
 											class="text-danger">* </span>:
 										</label>
 										<div class="col-lg-4">
@@ -150,7 +150,7 @@
  
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="isCopy">Allow To Copy<span
-											class="text-danger">* </span>:
+											class="text-danger">*</span>:
 										</label>
 										<div class="col-lg-4">
 											<div class="form-check form-check-inline">

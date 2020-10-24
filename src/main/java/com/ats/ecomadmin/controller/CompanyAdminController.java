@@ -186,7 +186,7 @@ public class CompanyAdminController {
 			mav = "redirect:/showCompanys";
 			try {
 				int companyId = Integer.parseInt(request.getParameter("companyId"));
-				
+
 				if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
 					profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
@@ -200,18 +200,17 @@ public class CompanyAdminController {
 					profileImage = request.getParameter("editImg");
 
 				}
-				
+
 				if (info.isError()) {
 					session.setAttribute("errorMsg", "Invalid Image Formate");
-					
-					if(companyId>0)
-						mav = "redirect:/showEditCompany?companyId="+FormValidation.Encrypt(String.valueOf(companyId));
+
+					if (companyId > 0)
+						mav = "redirect:/showEditCompany?companyId="
+								+ FormValidation.Encrypt(String.valueOf(companyId));
 					else
 						mav = "redirect:/showAddCompany";
-						
-				} else {
 
-					
+				} else {
 
 					String comp_name = request.getParameter("comp_name");
 
@@ -325,10 +324,10 @@ public class CompanyAdminController {
 		int btnVal = Integer.parseInt(request.getParameter("btnType"));
 
 		if (btnVal == 0)
-			mav="redirect:/showCompanys";
+			mav = "redirect:/showCompanys";
 		else
-			mav= "redirect:/showAddCompany";
-		
+			mav = "redirect:/showAddCompany";
+
 		return mav;
 
 	}
@@ -1764,10 +1763,14 @@ public class CompanyAdminController {
 	@RequestMapping(value = "/insertNewBanner", method = RequestMethod.POST)
 	public String insertNewBanner(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
+		
+		String mav = new String();
 		try {
 
 			Date date = new Date();
 			HttpSession session = request.getSession();
+
+			Info info = new Info();
 
 			int companyId = (int) session.getAttribute("companyId");
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -1775,12 +1778,15 @@ public class CompanyAdminController {
 			String curDateTime = CommonUtility.getCurrentYMDDateTime();
 			User userObj = (User) session.getAttribute("userObj");
 			String profileImage = new String();
+			
+			int bannerId = Integer.parseInt(request.getParameter("bannerId"));
+			
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
 				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
 
 				try {
-					new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
 				} catch (Exception e) {
 				}
 
@@ -1789,93 +1795,106 @@ public class CompanyAdminController {
 
 			}
 
-			String bannerEventName = request.getParameter("bannerEventName");
-			String captionOnproductPage = request.getParameter("captionOnproductPage");
-			int bannerId = Integer.parseInt(request.getParameter("bannerId"));
-			int sortNo = Integer.parseInt(request.getParameter("sortNo"));
+			if (info.isError()) {
+				session.setAttribute("errorMsg", "Invalid Image Formate");
+				if(bannerId > 0)
+					mav = "redirect:/showEditBanner?bannerId=" +FormValidation.Encrypt(String.valueOf(bannerId)); 
+				else 
+					mav = "redirect:/showAddBanner"; 
+			} else {
 
-			StringBuilder sbEmp = new StringBuilder();
-			String frIds[] = request.getParameterValues("frId");
+				String bannerEventName = request.getParameter("bannerEventName");
+				String captionOnproductPage = request.getParameter("captionOnproductPage");
+				
+				int sortNo = Integer.parseInt(request.getParameter("sortNo"));
 
-			String daysList = "";
-			if (frIds != null) {
-				List<String> daysIdList = new ArrayList<>();
-				daysIdList = Arrays.asList(frIds);
+				StringBuilder sbEmp = new StringBuilder();
+				String frIds[] = request.getParameterValues("frId");
 
-				daysList = daysIdList.toString().substring(1, daysIdList.toString().length() - 1);
-				daysList = daysList.replaceAll("\"", "");
-				daysList = daysList.replaceAll(" ", "");
-			}
+				String daysList = "";
+				if (frIds != null) {
+					List<String> daysIdList = new ArrayList<>();
+					daysIdList = Arrays.asList(frIds);
 
-			String tagIds[] = request.getParameterValues("tagId");
+					daysList = daysIdList.toString().substring(1, daysIdList.toString().length() - 1);
+					daysList = daysList.replaceAll("\"", "");
+					daysList = daysList.replaceAll(" ", "");
+				}
 
-			String daysList1 = "";
-			if (tagIds != null) {
-				List<String> daysIdList1 = new ArrayList<>();
-				daysIdList1 = Arrays.asList(tagIds);
+				String tagIds[] = request.getParameterValues("tagId");
 
-				daysList1 = daysIdList1.toString().substring(1, daysIdList1.toString().length() - 1);
-				daysList1 = daysList1.replaceAll("\"", "");
-				daysList1 = daysList1.replaceAll(" ", "");
-			}
+				String daysList1 = "";
+				if (tagIds != null) {
+					List<String> daysIdList1 = new ArrayList<>();
+					daysIdList1 = Arrays.asList(tagIds);
 
-			BannerPage banner = new BannerPage();
-			banner.setBannerEventName(bannerEventName);
-			banner.setBannerId(bannerId);
-			banner.setBannerImage(profileImage);
-			banner.setCaptionOnproductPage(captionOnproductPage);
-			banner.setFrIds(daysList);
-			banner.setSortNo(sortNo);
-			banner.setTagIds(daysList1);
-			banner.setCompId(companyId);
-			banner.setSortNo(sortNo);
-			banner.setIsActive(1);
-			banner.setDelStatus(1);
-			banner.setExInt1(0);
-			banner.setExInt2(0);
-			banner.setExInt3(0);
-			banner.setExVar1("NA");
-			banner.setExVar2("NA");
-			banner.setExVar3("NA");
+					daysList1 = daysIdList1.toString().substring(1, daysIdList1.toString().length() - 1);
+					daysList1 = daysList1.replaceAll("\"", "");
+					daysList1 = daysList1.replaceAll(" ", "");
+				}
 
-			if (bannerId > 0) {
+				BannerPage banner = new BannerPage();
+				banner.setBannerEventName(bannerEventName);
+				banner.setBannerId(bannerId);
+				banner.setBannerImage(profileImage);
+				banner.setCaptionOnproductPage(captionOnproductPage);
+				banner.setFrIds(daysList);
+				banner.setSortNo(sortNo);
+				banner.setTagIds(daysList1);
+				banner.setCompId(companyId);
+				banner.setSortNo(sortNo);
+				banner.setIsActive(Integer.parseInt(request.getParameter("isActive")));
+				banner.setDelStatus(1);
+				banner.setExInt1(0);
+				banner.setExInt2(0);
+				banner.setExInt3(0);
+				banner.setExVar1("NA");
+				banner.setExVar2("NA");
+				banner.setExVar3("NA");
 
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("bannerId", bannerId);
+				if (bannerId > 0) {
 
-				BannerPage banner1 = Constants.getRestTemplate().postForObject(Constants.url + "getBannerById", map,
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("bannerId", bannerId);
+
+					BannerPage banner1 = Constants.getRestTemplate().postForObject(Constants.url + "getBannerById", map,
+							BannerPage.class);
+
+					banner.setInsertDateTime(banner1.getInsertDateTime());
+					banner.setUpdateDateTime(curDateTime);
+					banner.setInsertUserId(banner1.getInsertUserId());
+					banner.setUpdateUserId(userObj.getUserId());
+
+				} else {
+					banner.setInsertDateTime(curDateTime);
+					banner.setUpdateDateTime(curDateTime);
+					banner.setInsertUserId(userObj.getUserId());
+					banner.setUpdateUserId(0);
+
+				}
+				BannerPage res = Constants.getRestTemplate().postForObject(Constants.url + "saveBanner", banner,
 						BannerPage.class);
 
-				banner.setInsertDateTime(banner1.getInsertDateTime());
-				banner.setUpdateDateTime(curDateTime);
-				banner.setInsertUserId(banner1.getInsertUserId());
-				banner.setUpdateUserId(userObj.getUserId());
-
-			} else {
-				banner.setInsertDateTime(curDateTime);
-				banner.setUpdateDateTime(curDateTime);
-				banner.setInsertUserId(userObj.getUserId());
-				banner.setUpdateUserId(0);
-
-			}
-			BannerPage res = Constants.getRestTemplate().postForObject(Constants.url + "saveBanner", banner,
-					BannerPage.class);
-
-			if (res.getBannerId() > 0) {
-				if (bannerId == 0)
-					session.setAttribute("successMsg", "BannerPage   Saved Successfully");
+				if (res.getBannerId() > 0) {
+					if (bannerId == 0)
+						session.setAttribute("successMsg", "Banner Saved Successfully");
+					else
+						session.setAttribute("successMsg", "Banner Update Successfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Save Banner");
+				}
+				
+				int btnVal = Integer.parseInt(request.getParameter("btnType"));
+				if (btnVal == 0)
+					mav = "redirect:/showBannerList";
 				else
-					session.setAttribute("successMsg", "BannerPage   Update Successfully");
-			} else {
-				session.setAttribute("errorMsg", "Failed to Save BannerPage Address");
+					mav = "redirect:/showAddBanner";
 			}
-
 		} catch (Exception e) {
 			System.out.println("Execption in /insertUom : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showBannerList";
-
+		return mav;
 	}
 
 	/*--------------------------------------------------------------------------------*/
@@ -2966,7 +2985,7 @@ public class CompanyAdminController {
 			e.printStackTrace();
 		}
 		int btnVal = Integer.parseInt(request.getParameter("btnType"));
-		if(btnVal==0)
+		if (btnVal == 0)
 			return "redirect:/showRouteDelList";
 		else
 			return "redirect:/showAddRouteDel";

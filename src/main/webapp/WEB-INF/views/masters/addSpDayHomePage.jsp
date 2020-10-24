@@ -75,6 +75,8 @@
 
 
 							<div class="card-body">
+									<div class="form-group row"></div>
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 								<form
 									action="${pageContext.request.contextPath}/insertSpHomePages"
@@ -90,7 +92,7 @@
 
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="spdayName">Sp day Name<span class="text-danger">*
+											for="spdayName">SP Day Name<span class="text-danger">*
 										</span>:
 										</label>
 										<div class="col-lg-4">
@@ -188,11 +190,11 @@
 									</div>
 
 									<div class="form-group row">
-										<label class="col-form-label font-weight-bold col-lg-2"
+										<label class="col-form-label font-weight-bold col-lg-1"
 											for="cust_name">Dates<span class="text-danger">*
 										</span>:
 										</label>
-										<div class="col-lg-2">
+										<div class="col-lg-3">
 											<input type="text" class="form-control daterange-basic_new"
 												autocomplete="off" name="dates" id="dates" value="${spDay.fromDate} to ${spDay.toDate}"> <span
 												class="validation-invalid-label text-danger" id="error_date"
@@ -246,7 +248,7 @@
 											<input type="text"
 												class="form-control maxlength-badge-position" maxlength="5"
 												autocomplete="off" onchange="trim(this)"
-												value="${spDay.sortNo}" name="sortNo"
+												value="${spDay.sortNo > 0 ? spDay.sortNo : 1}" name="sortNo"
 												id="sortNo"> <span
 												class="validation-invalid-label" id="error_sortNo"
 												style="display: none;">This field is required.</span>
@@ -275,7 +277,9 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
+										<c:choose>
+											<c:when test="${spDay.spDayId>0}">
+												<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
 													class="form-check-input" checked value="1" name="isActive"
 													id="active_n" ${spDay.isActive==1 ? 'checked' : ''}>
@@ -291,14 +295,40 @@
 													In-Active
 												</label>
 											</div>
+											</c:when>
+											<c:otherwise>
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1" name="isActive"
+													id="active_n">
+													Active
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0"
+													name="isActive" id="active_n">
+													In-Active
+												</label>
+											</div>
+											</c:otherwise>
+										</c:choose>
+											
 										</div>
 									</div>
+									<input type="hidden" id="btnType" name="btnType">
 									
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary" id="subBtn">
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+										<c:if test="${spDay.spDayId==0}">
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>										
+										</c:if>
 									</div>
 								</form>
 							</div>
@@ -329,6 +359,10 @@
 				console.log(err);
 			}
 		};
+		
+		function pressBtn(btnVal){
+			$("#btnType").val(btnVal)
+		}
 	</script>
 	
 	<script type="text/javascript">
@@ -395,12 +429,37 @@
 				}
 				
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("subBtn").disabled = true;
-						return true;
-					}
-				}
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										$(".btn").attr("disabled", true);
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError
+
+
 
 				return false;
 
