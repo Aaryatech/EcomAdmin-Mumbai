@@ -929,8 +929,7 @@ public class ProdMasteController {
 				
 				float basicMrp=0;//prod.getBasicMrp();
 				
-				if(prod.getProductId()==16) {
-					System.err.println(" Work For  ONLY prod Id " +prod.getProductId());
+				//	System.err.println(" Work For  ONLY prod Id " +prod.getProductId());
 				List<String> prodFlavIdList = Arrays.asList(prodList.get(i).getFlavourIds().split(",", -1));
 				List<MFilter> flavList = getFlavList(prodFlavIdList);
 
@@ -1088,7 +1087,7 @@ public class ProdMasteController {
 					}//end of vegTypeList For V
 									
 				}//end of wtList For W
-				}
+				
 			}
 				//upto
 				System.err.println("tempProdConfList " +tempProdConfList.toString());
@@ -1697,7 +1696,7 @@ if(!confDetailList.isEmpty()) {
 						confDetail.setExFloat2(0);
 						confDetail.setExFloat3(0);
 
-						confDetail.setExInt1(0);
+						confDetail.setExInt1(tempConf.getShapeId());
 						confDetail.setExInt2(0);
 						confDetail.setExInt3(0);
 

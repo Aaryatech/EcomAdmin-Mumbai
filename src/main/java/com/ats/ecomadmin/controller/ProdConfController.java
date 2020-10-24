@@ -204,15 +204,15 @@ public class ProdConfController {
 			for (int i = 0; i < prodList.size(); i++) {
 				List<Integer> vegNonVegList = new ArrayList<>();
 
-				if (prodList.get(i).getIsVeg() == 2) {
-
-					vegNonVegList.add(0);
-					vegNonVegList.add(1);
-
-				} else {
-
-				}
-
+				/* 24-10
+				 * if (prodList.get(i).getIsVeg() == 2) {
+				 * 
+				 * vegNonVegList.add(0); vegNonVegList.add(1);
+				 * 
+				 * } else {
+				 * 
+				 * }
+				 */
 				List<String> prodFlavIdList = Arrays.asList(prodList.get(i).getFlavourIds().split(",", -1));
 
 
@@ -271,7 +271,7 @@ public class ProdConfController {
 										config.setProductName(prodList.get(i).getProductName());
 										config.setRateSetingType(prodList.get(i).getRateSettingType());
 
-										config.setVegType(prodList.get(i).getIsVeg());
+										//24-10config.setVegType(prodList.get(i).getIsVeg());
 
 										config.setWeight(Float.parseFloat(wtList.get(x)));
 										tempProdConfList.add(config);
@@ -326,7 +326,7 @@ public class ProdConfController {
 									config.setProductName(prodList.get(i).getProductName());
 									config.setRateSetingType(prodList.get(i).getRateSettingType());
 
-									config.setVegType(prodList.get(i).getIsVeg());
+								//24-10	config.setVegType(prodList.get(i).getIsVeg());
 
 									config.setWeight(1);
 									tempProdConfList.add(config);
