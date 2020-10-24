@@ -117,7 +117,7 @@
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="70"
+												class="form-control maxlength-badge-position" maxlength="10"
 												autocomplete="off" onchange="trim(this)"
 												value="${route.timeSlots}" name="timeSlots" id="timeSlots">
 											<span class="validation-invalid-label" id="error_timeSlots"
@@ -135,9 +135,9 @@
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="10"
+												class="form-control maxlength-badge-position" maxlength="6"
 												autocomplete="off" onchange="trim(this)"
-												value="${route.sortNo}" name="sortNo" id="sortNo"> <span
+												value="${route.sortNo > 0 ? route.sortNo : 1}" name="sortNo" id="sortNo"> <span
 												class="validation-invalid-label text-danger"
 												id="error_sortNo" style="display: none;">This field
 												is required.</span>
@@ -170,12 +170,17 @@
 											</div>
 										</div>
 									</div>
- 
+ 									<input type="hidden" id="btnType" name="btnType">
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary">
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+										<c:if test="${route.rouidDelveryId==0}">										
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+										</c:if>
 									</div>
 								</form>
 							</div>
@@ -209,6 +214,12 @@
 				console.log(err);
 			}
 		};
+		function pressBtn(btnVal){
+			$("#btnType").val(btnVal)
+		}
+		$('#sortNo').on('input', function() {
+			 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
+			});
 	</script>
 
 	<script type="text/javascript">
@@ -244,12 +255,36 @@
 
 			 
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbtn").disabled = true;
-						return true;
-					}
-				}
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										$(".btn").attr("disabled", true);
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError
+
 
 				return false;
 

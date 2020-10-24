@@ -278,44 +278,6 @@
 												id="error_gstCode" style="display: none;">This field
 												is required.</span>
 										</div>
-
-										<label class="col-form-label font-weight-bold col-lg-2"
-											for="compGstType">Company Type<span
-											class="text-danger">* </span>:
-										</label>
-										<div class="col-lg-4">
-										<c:choose>
-											<c:when test="${comp.companyId>0}">
-												<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input name="compType" value="1"
-													type="radio" class="form-check-input" ${comp.companyType==1 ? 'checked' : ''}>
-													Parent
-												</label>
-											</div>
-
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input name="compType" value="0"
-													type="radio" class="form-check-input" ${comp.companyType==0 ? 'checked' : ''}>Child
-												</label>
-											</div>
-											</c:when>
-											<c:otherwise>
-												<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input name="compType"
-													type="radio" class="form-check-input" value="1" checked>
-													Parent
-												</label>
-											</div>
-
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input name="compType"
-													type="radio" class="form-check-input" value="0">Child
-												</label>
-											</div>
-											</c:otherwise>
-										</c:choose>
-											
-										</div>
 									</div>
 
 									<div class="form-group row">

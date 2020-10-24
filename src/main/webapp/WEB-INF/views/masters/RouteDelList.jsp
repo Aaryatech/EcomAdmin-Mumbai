@@ -72,8 +72,8 @@
 						<thead>
 							<tr>
 								<th width="5%">SR. No.</th>
-								<th>Name</th>
-								<th>Km Range</th>
+								<th>Delivery Name</th>
+								<th>Time Slot</th>
  								<th>Sort No.</th>
 								<th class="text-center">Actions</th>
 							</tr>
@@ -143,7 +143,7 @@
 											},
 											cancel : {
 												label : 'Cancel',
-												className : 'btn-link'
+												className : 'btn-danger'
 											}
 										},
 										callback : function(result) {

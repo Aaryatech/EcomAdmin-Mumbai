@@ -278,7 +278,7 @@ public class CompanyAdminController {
 					comp.setExFloat1(0);
 					comp.setExFloat2(0);
 					comp.setExFloat3(0);
-					comp.setCompanyType(Integer.parseInt(request.getParameter("compType")));
+					comp.setCompanyType(0);
 					comp.setParentCompId(0);
 
 					if (companyId > 0) {
@@ -2965,8 +2965,11 @@ public class CompanyAdminController {
 			System.out.println("Execption in /insertUom : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showRouteDelList";
-
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		if(btnVal==0)
+			return "redirect:/showRouteDelList";
+		else
+			return "redirect:/showAddRouteDel";
 	}
 
 }
