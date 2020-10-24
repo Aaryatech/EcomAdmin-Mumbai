@@ -30,13 +30,16 @@ import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.BannerPage;
 import com.ats.ecomadmin.model.Category;
+import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.Customer;
 import com.ats.ecomadmin.model.CustomerAddDetail;
+import com.ats.ecomadmin.model.CustomerDetailInfo;
 import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.GetCustomerInfo;
 import com.ats.ecomadmin.model.GetRouteList;
 import com.ats.ecomadmin.model.Info;
+import com.ats.ecomadmin.model.Language;
 import com.ats.ecomadmin.model.MFilter;
 import com.ats.ecomadmin.model.Route;
 import com.ats.ecomadmin.model.RouteDelivery;
@@ -439,7 +442,26 @@ public class CompanyAdminController {
 				model.addAttribute("title", "Add Customer");
 
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+				model.addAttribute("isEdit", 0);
+				
+				int compId = (int) session.getAttribute("companyId");
 
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+				Language[] langArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllLanguages", map,
+						Language[].class);
+				List<Language> langList = new ArrayList<Language>(Arrays.asList(langArr));
+				model.addAttribute("langList", langList);
+
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				City[] cityArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCities", map,
+						City[].class);
+				List<City> cityList = new ArrayList<City>(Arrays.asList(cityArr));
+				
+				model.addAttribute("cityList", cityList);
+				
 				/*
 				 * CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url
 				 * + "getAllCompany", CompMaster[].class); List<CompMaster> userList = new
@@ -457,6 +479,7 @@ public class CompanyAdminController {
 	}
 
 	/*--------------------------------------------------------------------------------*/
+	List<City> cityList;
 	// Created By :- Harsha Patil
 	// Created On :- 15-09-2020
 	// Modified By :- NA
@@ -485,21 +508,71 @@ public class CompanyAdminController {
 				model.addAttribute("title", "Edit Customer");
 
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
-
-				/*
-				 * CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url
-				 * + "getAllCompany", CompMaster[].class); List<CompMaster> userList = new
-				 * ArrayList<CompMaster>(Arrays.asList(userArr));
-				 * 
-				 * model.addAttribute("compList", userList);
-				 */
+				
+				int compId = (int) session.getAttribute("companyId");
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+				Language[] langArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllLanguages", map,
+						Language[].class);
+				List<Language> langList = new ArrayList<Language>(Arrays.asList(langArr));
+				model.addAttribute("langList", langList);
+
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				City[] cityArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCities", map,
+						City[].class);
+				cityList = new ArrayList<City>(Arrays.asList(cityArr));
+				
+				model.addAttribute("cityList", cityList);
+				
+				map = new LinkedMultiValueMap<>();
 				map.add("custId", custId);
 				Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
 						Customer.class);
 
 				model.addAttribute("cust", cust);
+				
+				CustomerAddDetail custDet = new CustomerAddDetail();
+				model.addAttribute("custDet", custDet);
+				
+				
+				//Customer Address List
+				//map = new LinkedMultiValueMap<>();
+				//map.add("custId", custId);
+				CustomerAddDetail[] userArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getAllCustomerDetailByCustId", map, CustomerAddDetail[].class);
+				List<CustomerAddDetail> userList = new ArrayList<CustomerAddDetail>(Arrays.asList(userArr));
+
+//				for (int i = 0; i < userList.size(); i++) {
+//
+//					userList.get(i)
+//							.setExVar1(FormValidation.Encrypt(String.valueOf(userList.get(i).getCustDetailId())));
+//					userList.get(i).setExVar2(FormValidation.Encrypt(String.valueOf(userList.get(i).getCustId())));
+//				}
+				model.addAttribute("custAddList", userList);
+				Info add = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "1",
+						"0", "0", newModuleList);
+				Info edit = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0",
+						"1", "0", newModuleList);
+				Info delete = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0",
+						"0", "1", newModuleList);
+
+				if (add.isError() == false) { // System.out.println(" add Accessable ");
+					model.addAttribute("addAccess", 0);
+
+				}
+				if (edit.isError() == false) { // System.out.println(" edit Accessable ");
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) { //
+					System.out.println(" delete Accessable ");
+					model.addAttribute("deleteAccess", 0);
+
+				}
+				
+				model.addAttribute("isEdit", 1);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /Customer : " + e.getMessage());
@@ -509,6 +582,11 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+	@RequestMapping(value = "/getCityListAjax", method = RequestMethod.GET)
+	@ResponseBody
+	public List<City> getCityListAjax(HttpServletRequest request, HttpServletResponse response, Model model) {
+		return cityList;
+	}
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 15-09-2020
@@ -636,7 +714,7 @@ public class CompanyAdminController {
 	@RequestMapping(value = "/insertNewCustomer", method = RequestMethod.POST)
 	public String insertNewCustomer(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
-
+		String mav = new String();
 		try {
 
 			Date date = new Date();
@@ -648,14 +726,18 @@ public class CompanyAdminController {
 			String profileImage = null;
 			User userObj = (User) session.getAttribute("userObj");
 			int companyId = (int) session.getAttribute("companyId");
-
+			Info info = new Info();
+			
+			int cust_id = Integer.parseInt(request.getParameter("cust_id"));
+			
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
 
 				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
 
 				try {
-					new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					//new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
 				} catch (Exception e) {
 				}
 
@@ -663,6 +745,15 @@ public class CompanyAdminController {
 				profileImage = request.getParameter("editImg");
 
 			}
+			if (info.isError()) {
+				session.setAttribute("errorMsg", "Invalid Image Formate");	
+				if(cust_id>0) {
+					mav = "redirect:/showEditCustomer?custId="+ FormValidation.Encrypt(String.valueOf(cust_id));
+				}else {
+					mav = "redirect:/showAddCustomer";
+				}
+				
+			} else {
 			Customer cust = new Customer();
 
 			// int companyId = Integer.parseInt(request.getParameter("companyId"));
@@ -673,7 +764,7 @@ public class CompanyAdminController {
 			String email = request.getParameter("email");
 			String dateOfBirth = request.getParameter("dateOfBirth");
 			int city = Integer.parseInt(request.getParameter("city"));
-			int cust_id = Integer.parseInt(request.getParameter("cust_id"));
+			
 
 			int custGender = Integer.parseInt(request.getParameter("custGender"));
 			int ageRange = Integer.parseInt(request.getParameter("ageRange"));
@@ -691,7 +782,7 @@ public class CompanyAdminController {
 			cust.setCustId(cust_id);
 			cust.setCustMobileNo(custMobileNo);
 			cust.setCustName(cust_name);
-			cust.setDateOfBirth(CommonUtility.convertToYMD(dateOfBirth));
+			cust.setDateOfBirth(dateOfBirth);
 			cust.setEmailId(email);
 			cust.setIsPrimiunmCust(0);
 			cust.setLanguageId(languageId);
@@ -735,12 +826,19 @@ public class CompanyAdminController {
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Customer");
 			}
+			int btnVal = Integer.parseInt(request.getParameter("btnType"));
+
+			if (btnVal == 0)
+				mav =  "redirect:/showCustomers";
+			else
+				mav =  "redirect:/showAddCustomer";
+			}
 
 		} catch (Exception e) {
 			System.out.println("Execption in /insertUom : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showCustomers";
+		return mav;
 
 	}
 
@@ -881,51 +979,34 @@ public class CompanyAdminController {
 		try {
 
 			Date date = new Date();
-
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			String curDateTime = CommonUtility.getCurrentYMDDateTime();
+			
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
 
-			String address = request.getParameter("address");
-			String landmark = request.getParameter("landmark");
-			String caption = request.getParameter("caption");
-			int cityId = Integer.parseInt(request.getParameter("cityId"));
-			int areaId = Integer.parseInt(request.getParameter("areaId"));
-
-			double latitude;
-			try {
-				latitude = Double.parseDouble(request.getParameter("latitude"));
-			} catch (Exception e) {
-				latitude = 0;
-			}
-			double longitude;
-			try {
-				longitude = Double.parseDouble(request.getParameter("longitude"));
-			} catch (Exception e) {
-				longitude = 0;
-			}
 			cust_id = Integer.parseInt(request.getParameter("cust_id"));
 			int custDetailId = Integer.parseInt(request.getParameter("custDetailId"));
+			
 			CustomerAddDetail custDet = new CustomerAddDetail();
 
-			custDet.setAddress(address);
-			custDet.setAreaId(areaId);
-			custDet.setCaption(caption);
-			custDet.setCityId(cityId);
+			custDet.setAddress(request.getParameter("address"));
+			custDet.setAreaId(0);
+			custDet.setCaption(request.getParameter("caption"));
+			custDet.setCityId(Integer.parseInt(request.getParameter("cityId")));
 			custDet.setCustDetailId(custDetailId);
 			custDet.setCustId(cust_id);
-			custDet.setLandmark(landmark);
-			custDet.setLatitude(latitude);
-			custDet.setLongitude(longitude);
+			custDet.setLandmark(request.getParameter("landmark"));
+			custDet.setLatitude(request.getParameter("latitude"));
+			custDet.setLongitude(request.getParameter("longitude"));
 			custDet.setIsActive(1);
 			custDet.setDelStatus(1);
 			custDet.setExInt1(0);
 			custDet.setExInt2(0);
 			custDet.setExInt3(0);
-			custDet.setExVar1("NA");
-			custDet.setExVar2("NA");
+			custDet.setExVar1(request.getParameter("address2"));
+			custDet.setExVar2(request.getParameter("address3"));
 			custDet.setExVar3("NA");
 
 			custDet.setMakerUserId(userObj.getUserId());
@@ -961,7 +1042,8 @@ public class CompanyAdminController {
 			System.out.println("Execption in /insertUom : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showCustomerAddressList?custId=" + FormValidation.Encrypt(String.valueOf(cust_id));
+		return "redirect:/showEditCustomer?custId=" + FormValidation.Encrypt(String.valueOf(cust_id));
+		//return "redirect:/showCustomerAddressList?custId=" + FormValidation.Encrypt(String.valueOf(cust_id));
 
 	}
 
@@ -986,20 +1068,19 @@ public class CompanyAdminController {
 				mav = "accessDenied";
 
 			} else {
-
-
-				String base64encodedString = request.getParameter("custDetailId");
-				String custDetailId = FormValidation.DecodeKey(base64encodedString);
-
-				String base64encodedString1 = request.getParameter("custId");
-				String custId = FormValidation.DecodeKey(base64encodedString1);
-				mav = "redirect:/showCustomerAddressList?custId=" + FormValidation.Encrypt(String.valueOf(custId));
+				
+				int custDetailId = Integer.parseInt(request.getParameter("custDetailId"));
+				
+				int custId = Integer.parseInt(request.getParameter("custId"));
+				
+			//	mav = "redirect:/showCustomerAddressList?custId=" + FormValidation.Encrypt(String.valueOf(custId));
+				mav = "redirect:/showEditCustomer?custId=" + FormValidation.Encrypt(String.valueOf(custId));
 
 				User userObj = (User) session.getAttribute("userObj");
 				String dateTime = CommonUtility.getCurrentYMDDateTime();
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("custDetId", Integer.parseInt(custDetailId));
+				map.add("custDetId", custDetailId);
 				map.add("userId", userObj.getUserId());
 				map.add("dateTime", dateTime);
 
@@ -1076,6 +1157,41 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+		// Created By :- Mahendra Singh
+		// Created On :- 23-010-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Get Customer And Address Details
+		@RequestMapping(value = "/getCustAdrsDtl", method = RequestMethod.GET)
+		@ResponseBody
+		public CustomerDetailInfo getCustAdrsDtl(HttpServletRequest request, HttpServletResponse response) {
+
+			CustomerDetailInfo custDtl = new CustomerDetailInfo();
+			try {			
+				
+				int custDetId = Integer.parseInt(request.getParameter("custDetailId"));				
+				int custId = Integer.parseInt(request.getParameter("custId"));
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("custDetId", custDetId);
+				CustomerAddDetail custDet = Constants.getRestTemplate().postForObject(Constants.url + "getCustDetById",
+						map, CustomerAddDetail.class);
+				custDtl.setCustAdd(custDet);
+				//model.addAttribute("custDet", custDet);
+
+			
+				map = new LinkedMultiValueMap<>();
+				map.add("custId", custId);
+				Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
+						Customer.class);
+				custDtl.setCust(cust);
+				
+			} catch (Exception e) {
+				System.out.println("Execption in /validateUnqFrMobNo : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return custDtl;
+		}
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 15-09-2020

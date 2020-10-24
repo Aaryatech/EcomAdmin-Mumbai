@@ -17,7 +17,7 @@ import java.util.Date;
 
 	private String profilePic;
 
-	private int cityId;
+	private String cityName;
 
 	private int companyId;
 
@@ -78,13 +78,14 @@ import java.util.Date;
 		this.profilePic = profilePic;
 	}
 
-	public int getCityId() {
-		return cityId;
+	public String getCityName() {
+		return cityName;
 	}
 
-	public void setCityId(int cityId) {
-		this.cityId = cityId;
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
 	}
+
 
 	public int getCompanyId() {
 		return companyId;
@@ -163,7 +164,7 @@ import java.util.Date;
 	@Override
 	public String toString() {
 		return "GetCustomerInfo [custId=" + custId + ", custName=" + custName + ", custMobileNo=" + custMobileNo
-				+ ", emailId=" + emailId + ", profilePic=" + profilePic + ", cityId=" + cityId + ", companyId="
+				+ ", emailId=" + emailId + ", profilePic=" + profilePic + ", cityName=" + cityName + ", companyId="
 				+ companyId + ", dateOfBirth=" + dateOfBirth + ", custGender=" + custGender + ", ageRange=" + ageRange
 				+ ", languageId=" + languageId + ", isActive=" + isActive + ", delStatus=" + delStatus + ", exVar1="
 				+ exVar1 + ", companyName=" + companyName + "]";
