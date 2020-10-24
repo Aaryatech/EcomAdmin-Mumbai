@@ -2849,7 +2849,7 @@ public class CompanyAdminController {
 				mav = "masters/addRouteDelv";
 				RouteDelivery route = new RouteDelivery();
 				model.addAttribute("route", route);
-				model.addAttribute("title", "Add Route Type");
+				model.addAttribute("title", "Add Route Delivery");
 
 			}
 		} catch (Exception e) {
