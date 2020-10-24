@@ -3554,7 +3554,13 @@ public class MasterController {
 			System.out.println("Execption in /insertDeliveryInstruction : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showDeliveryInstructn";
+		
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		
+		if(btnVal==0)
+			return "redirect:/showDeliveryInstructn";
+		else
+			return "redirect:/addDeliveryInstruction";		
 
 	}
 

@@ -225,7 +225,8 @@ public class ConfigurationFilterController {
 		try {
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("configProductAndFilter", "configProductAndFilter", "0", "1", "0", "0", newModuleList);
+			Info view = AccessControll.checkAccess("configProductAndFilter", "configProductAndFilter", "0", "1", "0",
+					"0", newModuleList);
 
 			if (view.isError() == true) {
 
@@ -618,13 +619,13 @@ public class ConfigurationFilterController {
 		try {
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
-			
+
 			int filterStatus = Integer.parseInt(request.getParameter("filterStatus"));
 			int sortNo = Integer.parseInt(request.getParameter("statusSortNo"));
 			int isActve = Integer.parseInt(request.getParameter("activeStat"));
 			int homePageSatusId = Integer.parseInt(request.getParameter("homePageStatusId"));
 
-			String[] productIds = request.getParameterValues("chk");			
+			String[] productIds = request.getParameterValues("chk");
 
 			int isEdit = Integer.parseInt(request.getParameter("isEdit"));
 
@@ -709,11 +710,10 @@ public class ConfigurationFilterController {
 						}
 						List<ProductHomePageDetail> saveDtl = Constants.getRestTemplate().postForObject(
 								Constants.url + "saveHomePagePrdctConfigDtl", homePageDtlList, List.class);
-					
-						
-						if (saveDtl.get(0).getHpStatusDetailId()>0) { 
+
+						if (saveDtl.get(0).getHpStatusDetailId() > 0) {
 							session.setAttribute("successMsg", "Configuration Update Successfully");
-							
+
 						} else {
 							session.setAttribute("errorMsg", "Failed to Update Configuration");
 						}
@@ -932,6 +932,7 @@ public class ConfigurationFilterController {
 	@RequestMapping(value = "/insertHomePageTestimonial", method = RequestMethod.POST)
 	public String insertSpHomePages(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
+		String mav = new String();
 		try {
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
@@ -940,6 +941,8 @@ public class ConfigurationFilterController {
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 			String profileImage = null;
+			
+			Info info = new Info();
 
 			int companyId = (int) session.getAttribute("companyId");
 
@@ -950,7 +953,8 @@ public class ConfigurationFilterController {
 				profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
 
 				try {
-					new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+				//	new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
 				} catch (Exception e) {
 				}
 
@@ -959,10 +963,22 @@ public class ConfigurationFilterController {
 				profileImage = request.getParameter("editImg");
 
 			}
+			
+			int testimonialId = Integer.parseInt(request.getParameter("testimonialId"));
+			
+			if (info.isError()) {
+				session.setAttribute("errorMsg", "Invalid Image Formate");
+				if(testimonialId>0) {
+					mav = "redirect:/editTestimonial?testimonialId=" + FormValidation.Encrypt(String.valueOf(testimonialId)); 
+				}else{
+					mav = "redirect:/newTestimonial";
+				}
+				 
+			} else {
 
 			HomePageTestimonial testimonial = new HomePageTestimonial();
 
-			int testimonialId = Integer.parseInt(request.getParameter("testimonialId"));
+			
 
 			if (testimonialId > 0) {
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -1020,13 +1036,21 @@ public class ConfigurationFilterController {
 					session.setAttribute("successMsg", "Home Page Testimonial Update Sucessfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Home Page Testimonial");
+			}		
+			
+				int btnVal = Integer.parseInt(request.getParameter("btnType"));
+
+				if (btnVal == 0)
+					return "redirect:/showHomePageTestimonial";
+				else
+					return "redirect:/newTestimonial";
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /insertHomePageTestimonial : " + e.getMessage());
 			e.printStackTrace();
 		}
 
-		return "redirect:/showHomePageTestimonial";
+		return mav;
 	}
 
 	// Created By :- Mahendra Singh

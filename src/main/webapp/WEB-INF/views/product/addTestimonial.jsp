@@ -62,6 +62,9 @@
 
 
 							<div class="card-body">
+							
+							<div class="form-group row"></div>
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 								<form action="${pageContext.request.contextPath}/insertHomePageTestimonial"
 									id="submitInsert" method="post" enctype="multipart/form-data">
@@ -151,23 +154,44 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1"
-													name="isActive" id="isActive_y"
-													${testimonial.isActive==1 ? 'checked' : ''}> Active
-												</label>
-											</div>
+											<c:choose>
+												<c:when test="${testimonial.testimonialsId>0}">
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="isActive" id="isActive_y"
+															${testimonial.isActive==1 ? 'checked' : ''}>
+															Active
+														</label>
+													</div>
 
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" value="0" name="isActive"
-													id="isActive_n" ${testimonial.isActive==0 ? 'checked' : ''}>
-													In-Active
-												</label>
-											</div>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" value="0"
+															name="isActive" id="isActive_n"
+															${testimonial.isActive==0 ? 'checked' : ''}>
+															In-Active
+														</label>
+													</div>
+												</c:when>
+												<c:otherwise>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="isActive" id="isActive_y"> Active
+														</label>
+													</div>
+
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" value="0"
+															name="isActive" id="isActive_n"> In-Active
+														</label>
+													</div>
+												</c:otherwise>
+											</c:choose>
 										</div>
-										
+
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="sortNo">Sort No<span class="text-danger">*
 										</span>:
@@ -176,7 +200,7 @@
 											<input type="text"
 												class="form-control maxlength-badge-position" name="sortNo"
 												id="sortNo" maxlength="3" autocomplete="off"
-												onchange="trim(this)" value="${testimonial.sortNo}">
+												onchange="trim(this)" value="${testimonial.sortNo > 0 ? testimonial.sortNo : 1}">
 											<span class="validation-invalid-label text-danger"
 												id="error_sortNo" style="display: none;">This field
 												is required.</span>
@@ -221,7 +245,7 @@
 											for="cust_name">Profile Image <span
 											class="text-danger"></span>:
 										</label>
-										<div class="col-lg-4">
+										<div class="col-lg-10">
 											<label class="form-check-label"> <img id="output"
 												width="150" src="${imgPath}${testimonial.images}" /> <input
 												type="file" class="form-control-uniform" data-fouc
@@ -230,15 +254,22 @@
 												id="editImg" value="${testimonial.images}"> <span
 												class="validation-invalid-label text-danger" id="error_doc"
 												style="display: none;">This field is required.</span>
+												<span class="text-danger">*Please upload file having extensions
+														 .jpeg/.jpg/.png only.</span>
 											</label>
 										</div>
 									</div>
-
+										<input type="hidden" id="btnType" name="btnType">
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary" id="submtbtn">
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+										<c:if test="${testimonial.testimonialsId==0}">
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+										</c:if>
 									</div>
 								</form>
 							</div>
@@ -271,6 +302,10 @@
 				console.log(err);
 			}
 		};
+		function pressBtn(btnVal){
+			$("#btnType").val(btnVal)
+		}
+
 		
 		$('#sortNo').on('input', function() {
 			 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
@@ -328,15 +363,36 @@
 					$("#error_frId").hide()
 				}	
 				
-				
-
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbtn").disabled = true;
-						return true;
-					}
-				}
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										$(".btn").attr("disabled", true);
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError
 
 				return false;
 
