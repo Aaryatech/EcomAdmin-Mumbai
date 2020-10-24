@@ -70,7 +70,7 @@
 					<table class="table datatable-header-basic">
 						<thead>
 							<tr>
-								<th width="5%">SR. No.</th>
+								<th width="10%">Sr. No.</th>
 								<th>Company Name</th>
 								<th>Address</th>
 								<th>City</th>
@@ -86,10 +86,10 @@
 									<td>${count.index+1}</td>
 									<td>${compList.companyName}</td>
 									<td>${compList.compAddress}</td>
-									<td>${compList.compCity==1 ? 'Nasik' :compList.compCity==2 ? 'Mumbai' : 'Pune'}</td>
+									<td>${compList.exVar4}</td>
 									<td>${compList.compWebsite}</td>
  									 
-									<td>${compList.companyType==1 ? 'Child' : 'Parent'}</td>
+									<td>${compList.companyType==1 ? 'Parent' : 'Child'}</td>
 									<td class="text-center"><c:if test="${editAccess==0}">
 											<div class="list-icons">
 												<a
@@ -146,7 +146,7 @@
 											},
 											cancel : {
 												label : 'Cancel',
-												className : 'btn-link'
+												className : 'btn-danger'
 											}
 										},
 										callback : function(result) {

@@ -120,7 +120,9 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
+											<c:choose>
+												<c:when test="${lang.langId>0}">
+													<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
 													class="form-check-input" checked value="1"
 													name="language" id="language_y"
@@ -135,13 +137,36 @@
 													${lang.isActive==0 ? 'checked' : ''}> In-Active
 												</label>
 											</div>
+												</c:when>
+												<c:otherwise>
+													<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1"
+													name="language" id="language_y"> Active
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" value="0" name="language"
+													id="language_n" > In-Active
+												</label>
+											</div>
+												</c:otherwise>
+											</c:choose>
 										</div>
 									</div>
+									<input type="hidden" id="btnType" name="btnType">
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary" id="submtbtn">
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+										<c:if test="${lang.langId==0}">
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+										</c:if>
 									</div>
 								</form>
 							</div>
@@ -174,6 +199,10 @@
 				console.log(err);
 			}
 		};
+		
+		function pressBtn(btnVal){
+			$("#btnType").val(btnVal)
+		}
 	</script>
 
 	<script type="text/javascript">
@@ -196,17 +225,36 @@
 				} else {
 					$("#error_language_code").hide()
 				}				
-				
-				
-
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbtn").disabled = true;
-						return true;
-					}
-				}
-
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										$(".btn").attr("disabled", true);
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError
 				return false;
 
 			});

@@ -76,7 +76,7 @@
 								<th>Mobile No.</th>
 								<th>Company Name</th>
 								<th>City</th>
-								<th>Birth Date</th>
+								<th>Date Of Birth</th>
 								<th class="text-center">Actions</th>
 							</tr>
 						</thead>

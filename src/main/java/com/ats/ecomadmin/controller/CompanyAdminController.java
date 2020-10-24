@@ -80,6 +80,16 @@ public class CompanyAdminController {
 				model.addAttribute("comp", comp);
 				model.addAttribute("title", "Add Company");
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+
+				int compId = (int) session.getAttribute("companyId");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				City[] cityArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCities", map,
+						City[].class);
+				List<City> cityList = new ArrayList<City>(Arrays.asList(cityArr));
+				model.addAttribute("cityList", cityList);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /newUom : " + e.getMessage());
@@ -111,6 +121,7 @@ public class CompanyAdminController {
 
 			} else {
 				mav = "masters/addCompany";
+				int sessCompId = (int) session.getAttribute("companyId");
 
 				String base64encodedString = request.getParameter("companyId");
 				String companyId = FormValidation.DecodeKey(base64encodedString);
@@ -124,6 +135,13 @@ public class CompanyAdminController {
 				model.addAttribute("comp", comp);
 				model.addAttribute("title", "Edit Company");
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", sessCompId);
+				City[] cityArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCities", map,
+						City[].class);
+				List<City> cityList = new ArrayList<City>(Arrays.asList(cityArr));
+				model.addAttribute("cityList", cityList);
 
 			}
 		} catch (Exception e) {
@@ -153,7 +171,7 @@ public class CompanyAdminController {
 		HttpSession session = request.getSession();
 		String profileImage = null;
 		User userObj = (User) session.getAttribute("userObj");
-
+		Info info = new Info();
 		String mav = null;
 
 		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
@@ -167,14 +185,14 @@ public class CompanyAdminController {
 
 			mav = "redirect:/showCompanys";
 			try {
-
+				int companyId = Integer.parseInt(request.getParameter("companyId"));
+				
 				if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
-
 
 					profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
 
 					try {
-						new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+						info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
 					} catch (Exception e) {
 					}
 
@@ -182,111 +200,121 @@ public class CompanyAdminController {
 					profileImage = request.getParameter("editImg");
 
 				}
-
-				int companyId = Integer.parseInt(request.getParameter("companyId"));
-
-				String comp_name = request.getParameter("comp_name");
-
-				String contact_no = request.getParameter("contact_no");
-				String email = request.getParameter("email");
-				String openDate = request.getParameter("openDate");
-				String address = request.getParameter("address");
-				int city = Integer.parseInt(request.getParameter("city"));
-				String state = request.getParameter("state");
-				String companyPrefix = request.getParameter("companyPrefix");
-				String website = request.getParameter("website");
-				String gstCode = request.getParameter("gstCode");
-				String gstNo = request.getParameter("gstNo");
-				int compGstType = Integer.parseInt(request.getParameter("compGstType"));
-				int paymentGatewayApplicable = Integer.parseInt(request.getParameter("paymentGatewayApplicable"));
-				String bankName = request.getParameter("bankName");
-				String branchName = request.getParameter("branchName");
-				String ifscCode = request.getParameter("ifscCode");
-				String accNo = request.getParameter("accNo");
-				String cinNo = request.getParameter("cinNo");
-				String fdaNo = request.getParameter("fdaNo");
-				String fdaDelc = request.getParameter("fdaDelc");
-				String panNo = request.getParameter("panNo");
-
-				String paymentGatewayLink = new String();
-
-				if (paymentGatewayApplicable == 1) {
-					paymentGatewayLink = request.getParameter("paymentGatewayLink");
-				}
-
-				// System.err.println("CommonUtility.convertToYMD(openDate)" +
-				// CommonUtility.convertToYMD(openDate));
-				// System.err.println("curDateTime" + curDateTime);
-
-				comp.setCompAddress(address);
-				comp.setCompanyLogo(profileImage);
-				comp.setCompanyName(comp_name);
-				comp.setCompanyPrefix(companyPrefix);
-				comp.setCompBankAccNo(accNo);
-				comp.setCompBankBranchName(branchName);
-				comp.setCompBankIfsc(ifscCode);
-				comp.setCompBankName(bankName);
-				comp.setCompCinNo(cinNo);
-				comp.setCompCity(city);
-				comp.setCompContactNo(contact_no);
-				comp.setCompEmailAddress(email);
-				comp.setCompFdaDeclarText(fdaDelc);
-				comp.setCompFdaNo(fdaNo);
-				comp.setCompGstNo(gstNo);
-				comp.setCompGstType(compGstType);
-				comp.setCompOpeningDate(CommonUtility.convertToYMD(openDate));
-				comp.setCompPanNo(panNo);
-				comp.setCompState(state);
-				comp.setCompStateGstCode(gstCode);
-				comp.setCompWebsite(website);
-				comp.setCompanyId(companyId);
-				comp.setDelStatus(1);
-				comp.setExInt1(0);
-				comp.setExInt2(0);
-				comp.setExInt3(0);
-				comp.setExVar1("NA");
-				comp.setExVar2("NA");
-				comp.setExVar3("NA");
-				comp.setExVar4("NA");
-				comp.setExFloat1(0);
-				comp.setExFloat2(0);
-				comp.setExFloat3(0);
-				comp.setCompanyType(0);
-				comp.setParentCompId(0);
-
-				if (companyId > 0) {
-
-					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-					map.add("compId", companyId);
-
-					CompMaster comp1 = Constants.getRestTemplate()
-							.postForObject(Constants.url + "getCompanyByCompanyId", map, CompMaster.class);
-
-					comp.setUpdtDttime(curDateTime);
-					comp.setInsertDttime(comp1.getInsertDttime());
-
-				} else {
-					comp.setUpdtDttime(curDateTime);
-					comp.setInsertDttime(curDateTime);
-
-				}
-
-				comp.setPaymentGatewayApplicable(paymentGatewayApplicable);
-				comp.setPaymentGatewayLink(paymentGatewayLink);
-				comp.setMakerUserId(userObj.getUserId());
-
-				// System.err.println(comp.toString());
-				CompMaster res = Constants.getRestTemplate().postForObject(Constants.url + "saveCompany", comp,
-						CompMaster.class);
-
-				// System.err.println(res.toString());
-				if (res.getCompanyId() > 0) {
-					if (companyId == 0)
-						session.setAttribute("successMsg", "Company Saved Successfully");
+				
+				if (info.isError()) {
+					session.setAttribute("errorMsg", "Invalid Image Formate");
+					
+					if(companyId>0)
+						mav = "redirect:/showEditCompany?companyId="+FormValidation.Encrypt(String.valueOf(companyId));
 					else
-						session.setAttribute("successMsg", "Company  Update Successfully");
+						mav = "redirect:/showAddCompany";
+						
 				} else {
-					session.setAttribute("errorMsg", "Failed to Save Company");
+
+					
+
+					String comp_name = request.getParameter("comp_name");
+
+					String contact_no = request.getParameter("contact_no");
+					String email = request.getParameter("email");
+					String openDate = request.getParameter("openDate");
+					String address = request.getParameter("address");
+					int city = Integer.parseInt(request.getParameter("city"));
+					String companyPrefix = request.getParameter("companyPrefix");
+					String website = request.getParameter("website");
+					String gstCode = request.getParameter("gstCode");
+					String gstNo = request.getParameter("gstNo");
+					int compGstType = Integer.parseInt(request.getParameter("compGstType"));
+					int paymentGatewayApplicable = Integer.parseInt(request.getParameter("paymentGatewayApplicable"));
+					String bankName = request.getParameter("bankName");
+					String branchName = request.getParameter("branchName");
+					String ifscCode = request.getParameter("ifscCode");
+					String accNo = request.getParameter("accNo");
+					String cinNo = request.getParameter("cinNo");
+					String fdaNo = request.getParameter("fdaNo");
+					String fdaDelc = request.getParameter("fdaDelc");
+					String panNo = request.getParameter("panNo");
+
+					String paymentGatewayLink = new String();
+
+					if (paymentGatewayApplicable == 1) {
+						paymentGatewayLink = request.getParameter("paymentGatewayLink");
+					}
+
+					// System.err.println("CommonUtility.convertToYMD(openDate)" +
+					// CommonUtility.convertToYMD(openDate));
+					// System.err.println("curDateTime" + curDateTime);
+
+					comp.setCompAddress(address);
+					comp.setCompanyLogo(profileImage);
+					comp.setCompanyName(comp_name);
+					comp.setCompanyPrefix(companyPrefix.toUpperCase());
+					comp.setCompBankAccNo(accNo);
+					comp.setCompBankBranchName(branchName);
+					comp.setCompBankIfsc(ifscCode);
+					comp.setCompBankName(bankName);
+					comp.setCompCinNo(cinNo);
+					comp.setCompCity(city);
+					comp.setCompContactNo(contact_no);
+					comp.setCompEmailAddress(email);
+					comp.setCompFdaDeclarText(fdaDelc);
+					comp.setCompFdaNo(fdaNo);
+					comp.setCompGstNo(gstNo);
+					comp.setCompGstType(compGstType);
+					comp.setCompOpeningDate(CommonUtility.convertToYMD(openDate));
+					comp.setCompPanNo(panNo);
+					comp.setCompState("NA");
+					comp.setCompStateGstCode(gstCode);
+					comp.setCompWebsite(website);
+					comp.setCompanyId(companyId);
+					comp.setDelStatus(1);
+					comp.setExInt1(0);
+					comp.setExInt2(0);
+					comp.setExInt3(0);
+					comp.setExVar1("NA");
+					comp.setExVar2("NA");
+					comp.setExVar3("NA");
+					comp.setExVar4("NA");
+					comp.setExFloat1(0);
+					comp.setExFloat2(0);
+					comp.setExFloat3(0);
+					comp.setCompanyType(Integer.parseInt(request.getParameter("compType")));
+					comp.setParentCompId(0);
+
+					if (companyId > 0) {
+
+						MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+						map.add("compId", companyId);
+
+						CompMaster comp1 = Constants.getRestTemplate()
+								.postForObject(Constants.url + "getCompanyByCompanyId", map, CompMaster.class);
+
+						comp.setUpdtDttime(curDateTime);
+						comp.setInsertDttime(comp1.getInsertDttime());
+
+					} else {
+						comp.setUpdtDttime(curDateTime);
+						comp.setInsertDttime(curDateTime);
+
+					}
+
+					comp.setPaymentGatewayApplicable(paymentGatewayApplicable);
+					comp.setPaymentGatewayLink(paymentGatewayLink);
+					comp.setMakerUserId(userObj.getUserId());
+
+					// System.err.println(comp.toString());
+					CompMaster res = Constants.getRestTemplate().postForObject(Constants.url + "saveCompany", comp,
+							CompMaster.class);
+
+					// System.err.println(res.toString());
+					if (res.getCompanyId() > 0) {
+						if (companyId == 0)
+							session.setAttribute("successMsg", "Company Saved Successfully");
+						else
+							session.setAttribute("successMsg", "Company  Update Successfully");
+					} else {
+						session.setAttribute("errorMsg", "Failed to Save Company");
+					}
 				}
 
 			} catch (Exception e) {
@@ -294,6 +322,13 @@ public class CompanyAdminController {
 				e.printStackTrace();
 			}
 		}
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+
+		if (btnVal == 0)
+			mav="redirect:/showCompanys";
+		else
+			mav= "redirect:/showAddCompany";
+		
 		return mav;
 
 	}
@@ -414,6 +449,41 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+	// Created By :- Mahendra Singh
+	// Created On :- 24-10-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Check Company Unique Prefix
+	@RequestMapping(value = "/chkUniqCompPrefix", method = RequestMethod.GET)
+	@ResponseBody
+	public Info chkUniqPrefix(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		Info res = new Info();
+
+		try {
+			String prefix = request.getParameter("prefix");
+			int companyId = Integer.parseInt(request.getParameter("companyId"));
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("prefix", prefix);
+			map.add("compId", companyId);
+
+			CompMaster cmp = Constants.getRestTemplate().postForObject(Constants.url + "getCompByPrefix", map,
+					CompMaster.class);
+			if (cmp != null) {
+				res.setError(false);
+				res.setMsg("Prefix Found");
+			} else {
+				res.setError(true);
+				res.setMsg("Prefix Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /chkUniqPrefix : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return res;
+	}
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 14-09-2020
@@ -443,7 +513,7 @@ public class CompanyAdminController {
 
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 				model.addAttribute("isEdit", 0);
-				
+
 				int compId = (int) session.getAttribute("companyId");
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -459,9 +529,9 @@ public class CompanyAdminController {
 				City[] cityArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCities", map,
 						City[].class);
 				List<City> cityList = new ArrayList<City>(Arrays.asList(cityArr));
-				
+
 				model.addAttribute("cityList", cityList);
-				
+
 				/*
 				 * CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url
 				 * + "getAllCompany", CompMaster[].class); List<CompMaster> userList = new
@@ -508,7 +578,7 @@ public class CompanyAdminController {
 				model.addAttribute("title", "Edit Customer");
 
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
-				
+
 				int compId = (int) session.getAttribute("companyId");
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -524,23 +594,22 @@ public class CompanyAdminController {
 				City[] cityArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCities", map,
 						City[].class);
 				cityList = new ArrayList<City>(Arrays.asList(cityArr));
-				
+
 				model.addAttribute("cityList", cityList);
-				
+
 				map = new LinkedMultiValueMap<>();
 				map.add("custId", custId);
 				Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
 						Customer.class);
 
 				model.addAttribute("cust", cust);
-				
+
 				CustomerAddDetail custDet = new CustomerAddDetail();
 				model.addAttribute("custDet", custDet);
-				
-				
-				//Customer Address List
-				//map = new LinkedMultiValueMap<>();
-				//map.add("custId", custId);
+
+				// Customer Address List
+				// map = new LinkedMultiValueMap<>();
+				// map.add("custId", custId);
 				CustomerAddDetail[] userArr = Constants.getRestTemplate()
 						.postForObject(Constants.url + "getAllCustomerDetailByCustId", map, CustomerAddDetail[].class);
 				List<CustomerAddDetail> userList = new ArrayList<CustomerAddDetail>(Arrays.asList(userArr));
@@ -552,12 +621,12 @@ public class CompanyAdminController {
 //					userList.get(i).setExVar2(FormValidation.Encrypt(String.valueOf(userList.get(i).getCustId())));
 //				}
 				model.addAttribute("custAddList", userList);
-				Info add = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "1",
-						"0", "0", newModuleList);
-				Info edit = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0",
-						"1", "0", newModuleList);
-				Info delete = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0",
-						"0", "1", newModuleList);
+				Info add = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0", "0", "1",
+						newModuleList);
 
 				if (add.isError() == false) { // System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
@@ -571,7 +640,7 @@ public class CompanyAdminController {
 					model.addAttribute("deleteAccess", 0);
 
 				}
-				
+
 				model.addAttribute("isEdit", 1);
 			}
 		} catch (Exception e) {
@@ -727,16 +796,15 @@ public class CompanyAdminController {
 			User userObj = (User) session.getAttribute("userObj");
 			int companyId = (int) session.getAttribute("companyId");
 			Info info = new Info();
-			
-			int cust_id = Integer.parseInt(request.getParameter("cust_id"));
-			
-			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
+			int cust_id = Integer.parseInt(request.getParameter("cust_id"));
+
+			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
 				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
 
 				try {
-					//new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					// new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
 					info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
 				} catch (Exception e) {
 				}
@@ -746,92 +814,91 @@ public class CompanyAdminController {
 
 			}
 			if (info.isError()) {
-				session.setAttribute("errorMsg", "Invalid Image Formate");	
-				if(cust_id>0) {
-					mav = "redirect:/showEditCustomer?custId="+ FormValidation.Encrypt(String.valueOf(cust_id));
-				}else {
+				session.setAttribute("errorMsg", "Invalid Image Formate");
+				if (cust_id > 0) {
+					mav = "redirect:/showEditCustomer?custId=" + FormValidation.Encrypt(String.valueOf(cust_id));
+				} else {
 					mav = "redirect:/showAddCustomer";
 				}
-				
+
 			} else {
-			Customer cust = new Customer();
+				Customer cust = new Customer();
 
-			// int companyId = Integer.parseInt(request.getParameter("companyId"));
+				// int companyId = Integer.parseInt(request.getParameter("companyId"));
 
-			String cust_name = request.getParameter("custName");
+				String cust_name = request.getParameter("custName");
 
-			String custMobileNo = request.getParameter("custMobileNo");
-			String email = request.getParameter("email");
-			String dateOfBirth = request.getParameter("dateOfBirth");
-			int city = Integer.parseInt(request.getParameter("city"));
-			
+				String custMobileNo = request.getParameter("custMobileNo");
+				String email = request.getParameter("email");
+				String dateOfBirth = request.getParameter("dateOfBirth");
+				int city = Integer.parseInt(request.getParameter("city"));
 
-			int custGender = Integer.parseInt(request.getParameter("custGender"));
-			int ageRange = Integer.parseInt(request.getParameter("ageRange"));
+				int custGender = Integer.parseInt(request.getParameter("custGender"));
+				int ageRange = Integer.parseInt(request.getParameter("ageRange"));
 
-			int languageId = Integer.parseInt(request.getParameter("languageId"));
+				int languageId = Integer.parseInt(request.getParameter("languageId"));
 
-			// System.err.println("CommonUtility.convertToYMD(openDate)" +
-			// CommonUtility.convertToYMD(dateOfBirth));
-			// System.err.println("curDateTime" + curDateTime);
+				// System.err.println("CommonUtility.convertToYMD(openDate)" +
+				// CommonUtility.convertToYMD(dateOfBirth));
+				// System.err.println("curDateTime" + curDateTime);
 
-			cust.setAgeRange(ageRange);
-			cust.setCityId(city);
-			cust.setCustAddPlatform(1);
-			cust.setCustGender(custGender);
-			cust.setCustId(cust_id);
-			cust.setCustMobileNo(custMobileNo);
-			cust.setCustName(cust_name);
-			cust.setDateOfBirth(dateOfBirth);
-			cust.setEmailId(email);
-			cust.setIsPrimiunmCust(0);
-			cust.setLanguageId(languageId);
-			cust.setProfilePic(profileImage);
-			cust.setCompanyId(companyId);
-			cust.setIsActive(1);
-			cust.setDelStatus(1);
-			cust.setExInt1(0);
-			cust.setExInt2(0);
-			cust.setExInt3(0);
-			cust.setExVar1("NA");
-			cust.setExVar2("NA");
-			cust.setExVar3("NA");
-			cust.setMakerUserId(userObj.getUserId());
-			if (cust_id > 0) {
+				cust.setAgeRange(ageRange);
+				cust.setCityId(city);
+				cust.setCustAddPlatform(1);
+				cust.setCustGender(custGender);
+				cust.setCustId(cust_id);
+				cust.setCustMobileNo(custMobileNo);
+				cust.setCustName(cust_name);
+				cust.setDateOfBirth(dateOfBirth);
+				cust.setEmailId(email);
+				cust.setIsPrimiunmCust(0);
+				cust.setLanguageId(languageId);
+				cust.setProfilePic(profileImage);
+				cust.setCompanyId(companyId);
+				cust.setIsActive(1);
+				cust.setDelStatus(1);
+				cust.setExInt1(0);
+				cust.setExInt2(0);
+				cust.setExInt3(0);
+				cust.setExVar1("NA");
+				cust.setExVar2("NA");
+				cust.setExVar3("NA");
+				cust.setMakerUserId(userObj.getUserId());
+				if (cust_id > 0) {
 
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("custId", cust_id);
-				Customer cust1 = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("custId", cust_id);
+					Customer cust1 = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
+							Customer.class);
+
+					cust.setUpdtDttime(curDateTime);
+					cust.setInsertDttime(cust1.getInsertDttime());
+
+				} else {
+					cust.setInsertDttime(curDateTime);
+					cust.setUpdtDttime(curDateTime);
+
+				}
+
+				System.err.println(cust.toString());
+				Customer res = Constants.getRestTemplate().postForObject(Constants.url + "saveCustomer", cust,
 						Customer.class);
 
-				cust.setUpdtDttime(curDateTime);
-				cust.setInsertDttime(cust1.getInsertDttime());
+				// System.err.println(res.toString());
+				if (res.getCustId() > 0) {
+					if (cust_id == 0)
+						session.setAttribute("successMsg", "Customer Saved Successfully");
+					else
+						session.setAttribute("successMsg", "Customer  Update Successfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Save Customer");
+				}
+				int btnVal = Integer.parseInt(request.getParameter("btnType"));
 
-			} else {
-				cust.setInsertDttime(curDateTime);
-				cust.setUpdtDttime(curDateTime);
-
-			}
-
-			System.err.println(cust.toString());
-			Customer res = Constants.getRestTemplate().postForObject(Constants.url + "saveCustomer", cust,
-					Customer.class);
-
-			// System.err.println(res.toString());
-			if (res.getCustId() > 0) {
-				if (cust_id == 0)
-					session.setAttribute("successMsg", "Customer Saved Successfully");
+				if (btnVal == 0)
+					mav = "redirect:/showCustomers";
 				else
-					session.setAttribute("successMsg", "Customer  Update Successfully");
-			} else {
-				session.setAttribute("errorMsg", "Failed to Save Customer");
-			}
-			int btnVal = Integer.parseInt(request.getParameter("btnType"));
-
-			if (btnVal == 0)
-				mav =  "redirect:/showCustomers";
-			else
-				mav =  "redirect:/showAddCustomer";
+					mav = "redirect:/showAddCustomer";
 			}
 
 		} catch (Exception e) {
@@ -876,8 +943,7 @@ public class CompanyAdminController {
 				Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
 						Customer.class);
 				model.addAttribute("cust", cust);
-				
-				
+
 				model.addAttribute("custIdVal", FormValidation.Encrypt(custId));
 
 			}
@@ -938,12 +1004,12 @@ public class CompanyAdminController {
 				}
 				model.addAttribute("custAddList", userList);
 
-				Info add = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "1",
-						"0", "0", newModuleList);
-				Info edit = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0",
-						"1", "0", newModuleList);
-				Info delete = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0",
-						"0", "1", newModuleList);
+				Info add = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0", "0", "1",
+						newModuleList);
 
 				if (add.isError() == false) { // System.out.println(" add Accessable ");
 					model.addAttribute("addAccess", 0);
@@ -982,13 +1048,13 @@ public class CompanyAdminController {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			String curDateTime = CommonUtility.getCurrentYMDDateTime();
-			
+
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
 
 			cust_id = Integer.parseInt(request.getParameter("cust_id"));
 			int custDetailId = Integer.parseInt(request.getParameter("custDetailId"));
-			
+
 			CustomerAddDetail custDet = new CustomerAddDetail();
 
 			custDet.setAddress(request.getParameter("address"));
@@ -1043,7 +1109,8 @@ public class CompanyAdminController {
 			e.printStackTrace();
 		}
 		return "redirect:/showEditCustomer?custId=" + FormValidation.Encrypt(String.valueOf(cust_id));
-		//return "redirect:/showCustomerAddressList?custId=" + FormValidation.Encrypt(String.valueOf(cust_id));
+		// return "redirect:/showCustomerAddressList?custId=" +
+		// FormValidation.Encrypt(String.valueOf(cust_id));
 
 	}
 
@@ -1068,12 +1135,13 @@ public class CompanyAdminController {
 				mav = "accessDenied";
 
 			} else {
-				
+
 				int custDetailId = Integer.parseInt(request.getParameter("custDetailId"));
-				
+
 				int custId = Integer.parseInt(request.getParameter("custId"));
-				
-			//	mav = "redirect:/showCustomerAddressList?custId=" + FormValidation.Encrypt(String.valueOf(custId));
+
+				// mav = "redirect:/showCustomerAddressList?custId=" +
+				// FormValidation.Encrypt(String.valueOf(custId));
 				mav = "redirect:/showEditCustomer?custId=" + FormValidation.Encrypt(String.valueOf(custId));
 
 				User userObj = (User) session.getAttribute("userObj");
@@ -1144,8 +1212,7 @@ public class CompanyAdminController {
 				Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
 						Customer.class);
 				model.addAttribute("cust", cust);
-				
-				
+
 				model.addAttribute("custIdVal", FormValidation.Encrypt(custId));
 
 			}
@@ -1157,41 +1224,40 @@ public class CompanyAdminController {
 		return mav;
 	}
 
-		// Created By :- Mahendra Singh
-		// Created On :- 23-010-2020
-		// Modified By :- NA
-		// Modified On :- NA
-		// Description :- Get Customer And Address Details
-		@RequestMapping(value = "/getCustAdrsDtl", method = RequestMethod.GET)
-		@ResponseBody
-		public CustomerDetailInfo getCustAdrsDtl(HttpServletRequest request, HttpServletResponse response) {
+	// Created By :- Mahendra Singh
+	// Created On :- 23-010-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Get Customer And Address Details
+	@RequestMapping(value = "/getCustAdrsDtl", method = RequestMethod.GET)
+	@ResponseBody
+	public CustomerDetailInfo getCustAdrsDtl(HttpServletRequest request, HttpServletResponse response) {
 
-			CustomerDetailInfo custDtl = new CustomerDetailInfo();
-			try {			
-				
-				int custDetId = Integer.parseInt(request.getParameter("custDetailId"));				
-				int custId = Integer.parseInt(request.getParameter("custId"));
+		CustomerDetailInfo custDtl = new CustomerDetailInfo();
+		try {
 
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("custDetId", custDetId);
-				CustomerAddDetail custDet = Constants.getRestTemplate().postForObject(Constants.url + "getCustDetById",
-						map, CustomerAddDetail.class);
-				custDtl.setCustAdd(custDet);
-				//model.addAttribute("custDet", custDet);
+			int custDetId = Integer.parseInt(request.getParameter("custDetailId"));
+			int custId = Integer.parseInt(request.getParameter("custId"));
 
-			
-				map = new LinkedMultiValueMap<>();
-				map.add("custId", custId);
-				Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
-						Customer.class);
-				custDtl.setCust(cust);
-				
-			} catch (Exception e) {
-				System.out.println("Execption in /validateUnqFrMobNo : " + e.getMessage());
-				e.printStackTrace();
-			}
-			return custDtl;
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("custDetId", custDetId);
+			CustomerAddDetail custDet = Constants.getRestTemplate().postForObject(Constants.url + "getCustDetById", map,
+					CustomerAddDetail.class);
+			custDtl.setCustAdd(custDet);
+			// model.addAttribute("custDet", custDet);
+
+			map = new LinkedMultiValueMap<>();
+			map.add("custId", custId);
+			Customer cust = Constants.getRestTemplate().postForObject(Constants.url + "getCustById", map,
+					Customer.class);
+			custDtl.setCust(cust);
+
+		} catch (Exception e) {
+			System.out.println("Execption in /validateUnqFrMobNo : " + e.getMessage());
+			e.printStackTrace();
 		}
+		return custDtl;
+	}
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 15-09-2020
@@ -1263,8 +1329,8 @@ public class CompanyAdminController {
 
 				model.addAttribute("subCat", subCat);
 				model.addAttribute("title", "Add Sub Category");
-				model.addAttribute("imgPath", Constants.showDocSaveUrl);				
-				
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
@@ -1285,67 +1351,67 @@ public class CompanyAdminController {
 	@ResponseBody
 	public Info getSubCatCodeByCatId(HttpServletRequest request, HttpServletResponse response) {
 
-			Info info = new Info();
+		Info info = new Info();
 
 		try {
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			HttpSession session = request.getSession();
-			
+
 			int companyId = (int) session.getAttribute("companyId");
 			int cateId = Integer.parseInt(request.getParameter("catId"));
 
 			map = new LinkedMultiValueMap<>();
 			map.add("cateId", cateId);
-			
-			String catePrefix = Constants.getRestTemplate().postForObject(Constants.url + "getCatePrefixByCateId", map, String.class);
-			
+
+			String catePrefix = Constants.getRestTemplate().postForObject(Constants.url + "getCatePrefixByCateId", map,
+					String.class);
+
 			map = new LinkedMultiValueMap<>();
 			map.add("cateId", cateId);
 			map.add("compId", companyId);
-			
+
 			int subCatCount = Constants.getRestTemplate().postForObject(Constants.url + "getSubCateIdCnt", map,
 					Integer.class);
-			
-			String subCatCode = catePrefix+"0"+(subCatCount+1);
-			
+
+			String subCatCode = catePrefix + "0" + (subCatCount + 1);
+
 			info.setMsg(subCatCode);
-			
+
 		} catch (Exception e) {
 			System.out.println("Execption in /getSubCatCodeByCatId : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return info;
 	}
-	
+
 	@RequestMapping(value = "/chkUnqSubCatPrfx", method = RequestMethod.GET)
 	@ResponseBody
 	public Info chkUnqSubCatPrfx(HttpServletRequest request, HttpServletResponse response) {
 
-			Info info = new Info();
+		Info info = new Info();
 
 		try {
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			HttpSession session = request.getSession();
-			
+
 			int companyId = (int) session.getAttribute("companyId");
 			String prefix = request.getParameter("prefix");
 			int subCateId = Integer.parseInt(request.getParameter("subCatId"));
-		
+
 			map = new LinkedMultiValueMap<>();
 			map.add("prefix", prefix);
 			map.add("compId", companyId);
 			map.add("subCateId", subCateId);
-			
-			info = Constants.getRestTemplate().postForObject(Constants.url + "unqSubCatePrefix", map,
-					Info.class);
-					
+
+			info = Constants.getRestTemplate().postForObject(Constants.url + "unqSubCatePrefix", map, Info.class);
+
 		} catch (Exception e) {
 			System.out.println("Execption in /chkUnqSubCatPrfx : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return info;
 	}
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 15-09-2020
@@ -1404,8 +1470,7 @@ public class CompanyAdminController {
 
 		return mav;
 	}
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 15-09-2020
@@ -1478,8 +1543,6 @@ public class CompanyAdminController {
 		return mav;
 	}
 
-	
-	
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 15-09-2020
@@ -1489,18 +1552,17 @@ public class CompanyAdminController {
 	@RequestMapping(value = "/insertNewSubCat", method = RequestMethod.POST)
 	public String insertNewSubCat(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
-		
+
 		String submBtn = request.getParameter("submbtn");
 		try {
 			HttpSession session = request.getSession();
 			Date date = new Date();
 			int companyId = (int) session.getAttribute("companyId");
-			
+
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 
 			String profileImage = new String();
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
-
 
 				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
 
@@ -1564,16 +1626,14 @@ public class CompanyAdminController {
 			System.out.println("Execption in /insertUom : " + e.getMessage());
 			e.printStackTrace();
 		}
-		
-		
-		if(submBtn.equals("Save"))
+
+		if (submBtn.equals("Save"))
 			return "redirect:/showAddSubCat";
 		else
 			return "redirect:/showSubCatList";
 
 	}
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 15-09-2020
@@ -1596,7 +1656,6 @@ public class CompanyAdminController {
 
 			} else {
 
-				
 				String base64encodedString = request.getParameter("subCatId");
 				String subCatId = FormValidation.DecodeKey(base64encodedString);
 
@@ -1605,16 +1664,17 @@ public class CompanyAdminController {
 
 				int result = Constants.getRestTemplate().postForObject(Constants.url + "getProdIdCntBySubCatId", map,
 						Integer.class);
-				if(result>0){
-					session.setAttribute("errorMsg", "Failed to Delete SubCategory, Products are assigned to this SubCategory");
+				if (result > 0) {
+					session.setAttribute("errorMsg",
+							"Failed to Delete SubCategory, Products are assigned to this SubCategory");
 					mav = "redirect:/showSubCatList";
-				}else {
+				} else {
 					mav = "redirect:/showSubCatList";
-					
+
 					map.add("subCatId", Integer.parseInt(subCatId));
 					Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteSubCatById", map,
 							Info.class);
-	
+
 					if (!res.isError()) {
 						session.setAttribute("successMsg", res.getMsg());
 					} else {
@@ -1630,8 +1690,7 @@ public class CompanyAdminController {
 	}
 
 	// *************************Banner****
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 21-09-2020
@@ -1694,16 +1753,13 @@ public class CompanyAdminController {
 
 		return mav;
 	}
-	
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 21-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- insert Banner
-
 
 	@RequestMapping(value = "/insertNewBanner", method = RequestMethod.POST)
 	public String insertNewBanner(HttpServletRequest request, HttpServletResponse response,
@@ -1720,7 +1776,6 @@ public class CompanyAdminController {
 			User userObj = (User) session.getAttribute("userObj");
 			String profileImage = new String();
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
-
 
 				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
 
@@ -1822,16 +1877,13 @@ public class CompanyAdminController {
 		return "redirect:/showBannerList";
 
 	}
-	
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 21-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- Edit Banner
-
 
 	@RequestMapping(value = "/showEditBanner", method = RequestMethod.GET)
 	public String showEditBanner(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -1901,16 +1953,13 @@ public class CompanyAdminController {
 
 		return mav;
 	}
-	
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 21-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- Delete Banner
-
 
 	@RequestMapping(value = "/deleteBanner", method = RequestMethod.GET)
 	public String deleteBanner(HttpServletRequest request, HttpServletResponse response) {
@@ -1953,16 +2002,13 @@ public class CompanyAdminController {
 		}
 		return mav;
 	}
-	
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 21-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :-   Banner List
-
+	// Descriprion :- Banner List
 
 	@RequestMapping(value = "/showBannerList", method = RequestMethod.GET)
 	public String showBannerList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -2030,16 +2076,13 @@ public class CompanyAdminController {
 
 		return mav;
 	}
-	
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 25-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- Add Route
-
 
 	@RequestMapping(value = "/showAddRoute", method = RequestMethod.GET)
 	public String showAddRoute(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -2092,15 +2135,13 @@ public class CompanyAdminController {
 
 		return mav;
 	}
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 25-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- Edit Route
-
 
 	@RequestMapping(value = "/showEditRoute", method = RequestMethod.GET)
 	public String showEditRoute(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -2167,13 +2208,12 @@ public class CompanyAdminController {
 		return mav;
 	}
 
-	
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 25-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :-   Route List
+	// Descriprion :- Route List
 
 	@RequestMapping(value = "/showRouteList", method = RequestMethod.GET)
 	public String showRouteList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -2194,7 +2234,7 @@ public class CompanyAdminController {
 
 				model.addAttribute("title", "Route List");
 
-				mav = "masters/routeList";		
+				mav = "masters/routeList";
 
 				Info add = AccessControll.checkAccess("showRouteList", "showRouteList", "0", "1", "0", "0",
 						newModuleList);
@@ -2213,9 +2253,9 @@ public class CompanyAdminController {
 					System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
 				}
-				
+
 				List<GetRouteList> routeList = new ArrayList<GetRouteList>();
-				
+
 				int companyId = (int) session.getAttribute("companyId");
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -2238,14 +2278,13 @@ public class CompanyAdminController {
 
 		return mav;
 	}
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 25-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- Delete Route
-
 
 	@RequestMapping(value = "/deleteRoute", method = RequestMethod.GET)
 	public String deleteRoute(HttpServletRequest request, HttpServletResponse response) {
@@ -2284,8 +2323,7 @@ public class CompanyAdminController {
 		}
 		return mav;
 	}
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 25-09-2020
@@ -2293,12 +2331,10 @@ public class CompanyAdminController {
 	// Modified On :- NA
 	// Descriprion :- Insert Route
 
-
 	@RequestMapping(value = "/insertNewRoute", method = RequestMethod.POST)
 	public String insertNewRoute(HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-
 
 			HttpSession session = request.getSession();
 
@@ -2365,16 +2401,16 @@ public class CompanyAdminController {
 			System.out.println("Execption in /insertUom : " + e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		int btnVal = Integer.parseInt(request.getParameter("btnType"));
-		
-		if(btnVal==0)
+
+		if (btnVal == 0)
 			return "redirect:/showRouteList";
 		else
-			return "redirect:/showAddRoute";	
+			return "redirect:/showAddRoute";
 
 	}
-	
+
 	@RequestMapping(value = "/chkUnqRouteCode", method = RequestMethod.GET)
 	@ResponseBody
 	public Info chkUnqRouteCode(HttpServletRequest request, HttpServletResponse response) {
@@ -2388,7 +2424,8 @@ public class CompanyAdminController {
 			map.add("code", code);
 			map.add("routeId", routeId);
 
-			Route routeRes = Constants.getRestTemplate().postForObject(Constants.url + "getRouteDtlByCode", map, Route.class);
+			Route routeRes = Constants.getRestTemplate().postForObject(Constants.url + "getRouteDtlByCode", map,
+					Route.class);
 
 			if (routeRes != null) {
 				info.setError(false);
@@ -2403,14 +2440,13 @@ public class CompanyAdminController {
 		}
 		return info;
 	}
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 26-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- showRouteTypeList
-
 
 	@RequestMapping(value = "/showRouteTypeList", method = RequestMethod.GET)
 	public String showRouteTypeList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -2474,15 +2510,13 @@ public class CompanyAdminController {
 
 		return mav;
 	}
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 26-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- Delete Type
-
 
 	@RequestMapping(value = "/deleteRouteType", method = RequestMethod.GET)
 	public String deleteRouteType(HttpServletRequest request, HttpServletResponse response) {
@@ -2522,8 +2556,6 @@ public class CompanyAdminController {
 		}
 		return mav;
 	}
-	
-	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -2561,8 +2593,6 @@ public class CompanyAdminController {
 
 		return mav;
 	}
-	
-	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -2610,8 +2640,6 @@ public class CompanyAdminController {
 
 		return mav;
 	}
-	
-	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -2624,7 +2652,6 @@ public class CompanyAdminController {
 	public String insertNewRouteType(HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-
 
 			HttpSession session = request.getSession();
 
@@ -2672,25 +2699,22 @@ public class CompanyAdminController {
 			System.out.println("Execption in /insertUom : " + e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		int btnVal = Integer.parseInt(request.getParameter("btnType"));
-		if(btnVal==0)
+		if (btnVal == 0)
 			return "redirect:/showRouteTypeList";
 		else
-			return "redirect:/showAddRouteType";	
+			return "redirect:/showAddRouteType";
 	}
 
 	/**************************** Route del *********************************/
-	
-	
-	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 26-09-2020
 	// Modified By :- NA
 	// Modified On :- NA
-	// Descriprion :-   route Delivery list
+	// Descriprion :- route Delivery list
 
 	@RequestMapping(value = "/showRouteDelList", method = RequestMethod.GET)
 	public String showRouteDelList(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -2755,9 +2779,6 @@ public class CompanyAdminController {
 		return mav;
 	}
 
-	
-	
-
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 26-09-2020
@@ -2803,9 +2824,6 @@ public class CompanyAdminController {
 		return mav;
 	}
 
-	
-	
-
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 26-09-2020
@@ -2841,8 +2859,6 @@ public class CompanyAdminController {
 
 		return mav;
 	}
-
-	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -2889,8 +2905,6 @@ public class CompanyAdminController {
 
 		return mav;
 	}
-	
-	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -2903,7 +2917,6 @@ public class CompanyAdminController {
 	public String insertNewRouteDelv(HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-
 
 			HttpSession session = request.getSession();
 

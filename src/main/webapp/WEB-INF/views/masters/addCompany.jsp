@@ -30,6 +30,7 @@
 <body class="sidebar-xs">
 	<c:url value="/getUserInfo" var="getUserInfo"></c:url>
 	<c:url value="/getUserInfoByEmail" var="getUserInfoByEmail" />
+	<c:url value="/chkUniqCompPrefix" var="chkUniqCompPrefix" />
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -76,6 +77,8 @@
 
 
 							<div class="card-body">
+								<div class="form-group row"></div>
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 								<form
 									action="${pageContext.request.contextPath}/insertNewCompany"
@@ -106,22 +109,18 @@
 												style="display: none;">This field is required.</span>
 										</div>
 
-
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="doc">Profile Image <span class="text-danger"></span>:
+											for="openDate">Opening Date<span class="text-danger">*
+										</span>:
 										</label>
 										<div class="col-lg-4">
-											<label class="form-check-label"> <img id="output"
-												width="150" src="${imgPath}${comp.companyLogo}" /> <input
-												type="file" class="form-control-uniform" data-fouc
-												onchange="loadFile(event)" name="doc" id="doc"> <input
-												type="hidden" class="form-control-uniform" name="editImg"
-												id="editImg" value="${comp.companyLogo}"> <span
-												class="validation-invalid-label text-danger" id="error_doc"
-												style="display: none;">This field is required.</span>
-											</label>
+											<input type="text" class="form-control datepickerclass"
+												autocomplete="off" value="${comp.compOpeningDate}"
+												name="openDate" id="openDate"> <span
+												class="validation-invalid-label text-danger"
+												id="error_openDate" style="display: none;">This field
+												is required.</span>
 										</div>
-
 									</div>
 
 
@@ -129,7 +128,7 @@
 
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="contact_no">Contact No.<span class="text-danger">
-										</span>:
+										*</span>:
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
@@ -140,14 +139,10 @@
 												class="validation-invalid-label text-danger"
 												id="error_contact_no" style="display: none;">This
 												field is required.</span>
-
-
 										</div>
 
-
-
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="email">Email <span class="text-danger"> </span>:
+											for="email">Email <span class="text-danger">* </span>:
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
@@ -162,19 +157,25 @@
 									</div>
 
 									<div class="form-group row">
-
-
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="openDate">Opening Date<span class="text-danger">*
-										</span>:
+											for="city">City<span class="text-danger">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control datepickerclass"
-												autocomplete="off" value="${comp.compOpeningDate}"
-												name="openDate" id="openDate"> <span
-												class="validation-invalid-label text-danger"
-												id="error_openDate" style="display: none;">This field
-												is required.</span>
+											<select class="form-control select-search" data-fouc
+												name="city" id="city" data-placholder="Select City">
+												<c:forEach items="${cityList}" var="list" varStatus="count">
+													<c:choose>
+														<c:when test="${list.cityId==comp.compCity}">
+															<option selected value="${list.cityId}">${list.cityName}</option>
+														</c:when>
+														<c:otherwise>
+															<option value="${list.cityId}">${list.cityName}</option>
+														</c:otherwise>
+													</c:choose>
+												</c:forEach>
+											</select> <span class="validation-invalid-label text-danger"
+												id="error_city" style="display: none;">This field is
+												required.</span>
 										</div>
 
 										<label class="col-form-label font-weight-bold col-lg-2"
@@ -189,51 +190,6 @@
 												id="error_address" style="display: none;">This field
 												is required.</span>
 										</div>
-
-
-									</div>
-
-									<div class="form-group row">
-										<label class="col-form-label font-weight-bold col-lg-2"
-											for="city">City<span class="text-danger">* </span>:
-										</label>
-										<div class="col-lg-4">
-											<select class="form-control select-search" data-fouc
-												name="city" id="city" data-placholder="Select City">
-												<option value=""></option>
-												<option value="1" ${comp.compCity==1 ? 'selected' : '' }>Nasik</option>
-												<option value="2" ${comp.compCity==2 ? 'selected' : '' }>Mumbai</option>
-												<option value="3" ${comp.compCity==3 ? 'selected' : '' }>Pune</option>
-												<%-- <c:forEach items="${desigList}" var="list" varStatus="count">
-													<c:choose>
-														<c:when test="${list.designationId==comp.designationId}">
-															<option selected value="${list.designationId}">${list.designation}</option>
-														</c:when>
-														<c:otherwise>
-															<option value="${list.designationId}">${list.designation}</option>
-														</c:otherwise>
-													</c:choose>
-												</c:forEach> --%>
-											</select> <span class="validation-invalid-label text-danger"
-												id="error_city" style="display: none;">This field is
-												required.</span>
-										</div>
-
-
-										<label class="col-form-label font-weight-bold col-lg-2"
-											for="state">State <span class="text-danger">*
-										</span>:
-										</label>
-										<div class="col-lg-4">
-											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="70"
-												autocomplete="off" onchange="trim(this)"
-												value="${comp.compState}" name="state" id="state"> <span
-												class="validation-invalid-label" id="error_state"
-												style="display: none;">This field is required.</span>
-										</div>
-
-
 									</div>
 
 
@@ -260,21 +216,21 @@
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position"
-												maxlength="100" autocomplete="off" onchange="trim(this)"
+												class="form-control maxlength-badge-position" maxlength="6"
+												autocomplete="off" onchange="trim(this)"
 												value="${comp.companyPrefix}" name="companyPrefix"
-												id="companyPrefix"> <span
-												class="validation-invalid-label text-danger"
+												id="companyPrefix" style="text-transform: uppercase;">
+											<span class="validation-invalid-label text-danger"
 												id="error_companyPrefix" style="display: none;">This
-												field is required.</span>
+												field is required.</span> <span
+												class="validation-invalid-label text-danger" id="unq_prefix"
+												style="display: none;">This Prefix already exits.</span>
 										</div>
 
 									</div>
 									<!--  ************************************-->
 
 									<div class="form-group row">
-
-
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="compGstType">Company GST Type<span
 											class="text-danger">* </span>:
@@ -284,58 +240,101 @@
 												name="compGstType" id="compGstType"
 												data-placholder="Select GST Type">
 												<option value=""></option>
-												<option value="1" ${comp.compGstType==1 ? 'selected' : '' }>CGST</option>
-												<option value="2" ${comp.compGstType==2 ? 'selected' : '' }>IGST</option>
-												<option value="3" ${comp.compGstType==3 ? 'selected' : '' }>SGST</option>
-												<%-- <c:forEach items="${desigList}" var="list" varStatus="count">
-													<c:choose>
-														<c:when test="${list.designationId==comp.designationId}">
-															<option selected value="${list.designationId}">${list.designation}</option>
-														</c:when>
-														<c:otherwise>
-															<option value="${list.designationId}">${list.designation}</option>
-														</c:otherwise>
-													</c:choose>
-												</c:forEach> --%>
+												<option value="1" ${comp.compGstType==1 ? 'selected' : '' }>Regular</option>
+												<option value="2" ${comp.compGstType==2 ? 'selected' : '' }>Composite</option>
+												<option value="3" ${comp.compGstType==3 ? 'selected' : '' }>Non-Register</option>
 											</select> <span class="validation-invalid-label text-danger"
 												id="error_compGstType" style="display: none;">This
 												field is required.</span>
 										</div>
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="gstNo">GST No. <span class="text-danger">*
+											for="gstNo">GST No. <span class="text-danger">
 										</span>:
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position"
-												maxlength="100" autocomplete="off" onchange="trim(this)"
+												class="form-control maxlength-badge-position" maxlength="15"
+												autocomplete="off" onchange="trim(this)"
 												value="${comp.compGstNo}" name="gstNo" id="gstNo">
 											<!-- <span
 												class="validation-invalid-label text-danger"
 												id="error_gstNo" style="display: none;">This field is
 												required.</span> -->
 										</div>
-
-
-
 									</div>
 
 
 									<div class="form-group row">
-
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="gstCode">GST Code <span class="text-danger">*
+											for="gstCode">GST Code <span class="text-danger">
 										</span>:
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="70"
+												class="form-control maxlength-badge-position" maxlength="3"
 												autocomplete="off" onchange="trim(this)"
 												value="${comp.compStateGstCode}" name="gstCode" id="gstCode">
 											<span class="validation-invalid-label text-danger"
 												id="error_gstCode" style="display: none;">This field
 												is required.</span>
 										</div>
+
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="compGstType">Company Type<span
+											class="text-danger">* </span>:
+										</label>
+										<div class="col-lg-4">
+										<c:choose>
+											<c:when test="${comp.companyId>0}">
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input name="compType" value="1"
+													type="radio" class="form-check-input" ${comp.companyType==1 ? 'checked' : ''}>
+													Parent
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input name="compType" value="0"
+													type="radio" class="form-check-input" ${comp.companyType==0 ? 'checked' : ''}>Child
+												</label>
+											</div>
+											</c:when>
+											<c:otherwise>
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input name="compType"
+													type="radio" class="form-check-input" value="1" checked>
+													Parent
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input name="compType"
+													type="radio" class="form-check-input" value="0">Child
+												</label>
+											</div>
+											</c:otherwise>
+										</c:choose>
+											
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="doc">Profile Image <span class="text-danger"></span>:
+										</label>
+										<div class="col-lg-10">
+											<label class="form-check-label"> <img id="output"
+												width="150" src="${imgPath}${comp.companyLogo}" /> <input
+												type="file" class="form-control-uniform" data-fouc
+												onchange="loadFile(event)" name="doc" id="doc"> <input
+												type="hidden" class="form-control-uniform" name="editImg"
+												id="editImg" value="${comp.companyLogo}"> <span
+												class="validation-invalid-label text-danger" id="error_doc"
+												style="display: none;">This field is required.</span>
+											</label>
+										</div>
+
+
 									</div>
 
 									<label class="col-form-label font-weight-bold" for="comp_name">Company
@@ -386,7 +385,7 @@
 										<div class="col-lg-4">
 											<input type="text"
 												class="form-control maxlength-badge-position"
-												maxlength="100" autocomplete="off" onchange="trim(this)"
+												maxlength="11" autocomplete="off" onchange="trim(this)"
 												value="${comp.compBankIfsc}" name="ifscCode" id="ifscCode">
 											<span class="validation-invalid-label text-danger"
 												id="error_ifscCode" style="display: none;">This field
@@ -399,7 +398,7 @@
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="70"
+												class="form-control maxlength-badge-position" maxlength="17"
 												autocomplete="off" onchange="trim(this)"
 												value="${comp.compBankAccNo}" name="accNo" id="accNo">
 											<span class="validation-invalid-label text-danger"
@@ -420,8 +419,8 @@
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position"
-												maxlength="100" autocomplete="off" onchange="trim(this)"
+												class="form-control maxlength-badge-position" maxlength="21"
+												autocomplete="off" onchange="trim(this)"
 												value="${comp.compCinNo}" name="cinNo" id="cinNo"> <span
 												class="validation-invalid-label text-danger"
 												id="error_cinNo" style="display: none;">This field is
@@ -434,7 +433,7 @@
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="70"
+												class="form-control maxlength-badge-position" maxlength="14"
 												autocomplete="off" onchange="trim(this)"
 												value="${comp.compFdaNo}" name="fdaNo" id="fdaNo"> <span
 												class="validation-invalid-label text-danger"
@@ -462,12 +461,12 @@
 										</div>
 
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="panNo">PAN No. <span class="text-danger">*
+											for="panNo">PAN No. <span class="text-danger">
 										</span>:
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
-												class="form-control maxlength-badge-position" maxlength="70"
+												class="form-control maxlength-badge-position" maxlength="10"
 												autocomplete="off" onchange="trim(this)"
 												value="${comp.compPanNo}" name="panNo" id="panNo"> <span
 												class="validation-invalid-label text-danger"
@@ -481,30 +480,47 @@
 
 
 									<div class="form-group row">
-
-
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="paymentGatewayApplicable">Payment Gateway
 											Applicable <span class="text-danger">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
-												<label class="form-check-label"> <input type="radio"
-													class="form-check-input" checked value="1"
-													name="paymentGatewayApplicable" id="app_y"
-													${comp.paymentGatewayApplicable ==1 ? 'checked' : ''}>
-													Yes
-												</label>
-											</div>
+											<c:choose>
+												<c:when test="${comp.companyId>0}">
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="paymentGatewayApplicable" id="app_y"
+															${comp.paymentGatewayApplicable ==1 ? 'checked' : ''}>
+															Yes
+														</label>
+													</div>
 
-											<div class="form-check form-check-inline">
-												<label class="form-check-label "> <input
-													type="radio" class="form-check-input" value="0"
-													name="paymentGatewayApplicable" id="app_n"
-													${comp.paymentGatewayApplicable==0 ? 'checked' : ''}>
-													No
-												</label>
-											</div>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="paymentGatewayApplicable" id="app_n"
+															${comp.paymentGatewayApplicable==0 ? 'checked' : ''}>
+															No
+														</label>
+													</div>
+												</c:when>
+												<c:otherwise>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="paymentGatewayApplicable" id="app_y"> Yes
+														</label>
+													</div>
+
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="paymentGatewayApplicable" id="app_n"> No
+														</label>
+													</div>
+												</c:otherwise>
+											</c:choose>
 										</div>
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="paymentGatewayLink">Payment Gateway Link <span
@@ -520,20 +536,18 @@
 												id="error_paymentGatewayLink" style="display: none;">This
 												field is required.</span>
 										</div>
-
-
 									</div>
-
-
-
-
-
-
+										<input type="hidden" id="btnType" name="btnType">	
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary">
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+										<c:if test="${comp.companyId==0}">
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+										</c:if>
 									</div>
 								</form>
 							</div>
@@ -558,17 +572,25 @@
 
 	</div>
 	<!-- /page content -->
-	<!-- <script type="text/javascript">
-		var loadFile = function(event) {
-			try {
-				var image = document.getElementById('output');
-				image.src = URL.createObjectURL(event.target.files[0]);
-			} catch (err) {
-				console.log(err);
-			}
-		};
+	<script type="text/javascript">
+	function pressBtn(btnVal){
+		$("#btnType").val(btnVal)
+	}
+		$('#contact_no').on(
+				'input',
+				function() {
+					this.value = this.value.replace(/[^0-9]/g, '').replace(
+							/(\..*)\./g, '$1');
+				});
+
+		$('#accNo').on(
+				'input',
+				function() {
+					this.value = this.value.replace(/[^0-9]/g, '').replace(
+							/(\..*)\./g, '$1');
+				});
 	</script>
- -->
+
 	<script type="text/javascript">
 		$(document)
 				.ready(
@@ -589,9 +611,7 @@
 															.hide()
 												}
 
-												 
-												if ( $("#contact_no").val().length != 0) {
-
+												
 													if (!$("#contact_no").val()
 															|| !validateMobile($(
 																	"#contact_no")
@@ -602,10 +622,8 @@
 													} else {
 														$("#error_contact_no")
 																.hide()
-													}
-												}
-												if ( $("#email").val().length != 0) {
-
+													}											
+												
 													if (!$("#email").val()
 															|| !validateEmail($(
 																	"#email")
@@ -618,7 +636,7 @@
 																.hide()
 													}
 
-												}
+												
 
 												if (!$("#address").val()) {
 													isError = true;
@@ -640,19 +658,12 @@
 													$("#error_city").hide()
 												}
 
-												if (!$("#state").val()) {
-													isError = true;
-													$("#error_state").show()
-												} else {
-													$("#error_state").hide()
-												}
-
-												if (!$("#website").val()) {
+												/* if (!$("#website").val()) {
 													isError = true;
 													$("#error_website").show()
 												} else {
 													$("#error_website").hide()
-												}
+												} */
 
 												if (!$("#companyPrefix").val()) {
 													isError = true;
@@ -672,12 +683,12 @@
 															.hide()
 												}
 
-												if (!$("#gstCode").val()) {
+												/* if (!$("#gstCode").val()) {
 													isError = true;
 													$("#error_gstCode").show()
 												} else {
 													$("#error_gstCode").hide()
-												}
+												} */
 
 												if (!$("#bankName").val()) {
 													isError = true;
@@ -723,12 +734,12 @@
 													$("#error_fdaNo").hide()
 												}
 
-												if (!$("#panNo").val()) {
+												/* if (!$("#panNo").val()) {
 													isError = true;
 													$("#error_panNo").show()
 												} else {
 													$("#error_panNo").hide()
-												}
+												} */
 
 												/* var temp = document.getElementsByName('paymentGatewayApplicable').value;
 												alert(temp);
@@ -748,14 +759,36 @@
 												}
 												 */
 
-												if (!isError) {
-													var x = true;
-													if (x == true) {
-														document
-																.getElementById("submtbtn").disabled = true;
-														return true;
-													}
-												}
+												 if (!isError) {
+														var x = false;
+														bootbox
+																.confirm({
+																	title : 'Confirm ',
+																	message : 'Are you sure you want to Submit ?',
+																	buttons : {
+																		confirm : {
+																			label : 'Yes',
+																			className : 'btn-success'
+																		},
+																		cancel : {
+																			label : 'Cancel',
+																			className : 'btn-danger'
+																		}
+																	},
+																	callback : function(
+																			result) {
+																		if (result) {
+																			$(".btn").attr("disabled", true);
+																			var form = document
+																					.getElementById("submitInsert")
+																			form
+																					.submit();
+																		}
+																	}
+																});
+														//end ajax send this to php page
+														return false;
+													}//end of if !isError
 
 												return false;
 
@@ -771,8 +804,29 @@
 				console.log(err);
 			}
 		};
+
+		$("#companyPrefix").change(function() {
+
+			var prefix = $("#companyPrefix").val();
+			var companyId = $("#companyId").val();
+
+			$.getJSON('${chkUniqCompPrefix}', {
+				companyId : companyId,
+				prefix : prefix,
+				ajax : 'true'
+			}, function(data) {
+
+				if (data.error == false) {
+					$("#companyPrefix").val("");
+					$("#unq_prefix").show();
+				} else {
+					$("#unq_prefix").hide();
+				}
+
+			});
+		});
 	</script>
-	
+
 	<script type="text/javascript">
 		function trim(el) {
 			el.value = el.value.replace(/(^\s*)|(\s*$)/gi, ""). // removes leading and trailing spaces
