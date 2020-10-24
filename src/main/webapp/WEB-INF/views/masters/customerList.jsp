@@ -71,10 +71,9 @@
 					<table class="table datatable-header-basic">
 						<thead>
 							<tr>
-								<th width="5%">SR. No.</th>
+								<th width="10%">Sr. No.</th>
 								<th>Customer Name</th>
 								<th>Mobile No.</th>
-
 								<th>Company Name</th>
 								<th>City</th>
 								<th>Birth Date</th>
@@ -88,8 +87,7 @@
 									<td>${custList.custName}</td>
 									<td>${custList.custMobileNo}</td>
 									<td>${custList.companyName}</td>
-									<td>${custList.cityId==1 ? 'Nasik' :custList.cityId==2 ? 'Mumbai' : 'Pune'}</td>
-
+									<td>${custList.cityName}</td>
 									<td>${custList.dateOfBirth}</td>
 									<td class="text-center"><c:if test="${editAccess==0}">
 											<div class="list-icons">
@@ -107,10 +105,9 @@
 													title="" data-original-title="Delete"><i
 													class="icon-trash"></i></a>
 											</div>
-										</c:if>
+										</c:if>										
 										
-										
-										<div class="list-icons">
+										<%-- <div class="list-icons">
 												<a
 													href="${pageContext.request.contextPath}/showAddCustomerAddress?custId=${custList.exVar1}"
 													class="list-icons-item" title="Add Address"> <i
@@ -124,7 +121,7 @@
 													class="list-icons-item" title="Address List"> <i
 													class="icon-database-edit2"></i>
 												</a>
-											</div></td>
+											</div> --%></td>
 								</tr>
 							</c:forEach>
 						</tbody>
