@@ -506,7 +506,7 @@ public class ConfigurationFilterController {
 			}
 			model.addAttribute("homePageList", homePageList);
 
-			model.addAttribute("title", "Home Page Product Config List");
+			model.addAttribute("title", "Home Page Product Configure List");
 
 		} catch (Exception e) {
 			System.out.println("Execption in /showHomePagePrdctConfig : " + e.getMessage());
@@ -591,6 +591,7 @@ public class ConfigurationFilterController {
 			ConfigHomePageProduct[] filterArr = Constants.getRestTemplate()
 					.postForObject(Constants.url + "getProductStatusConfigList", map, ConfigHomePageProduct[].class);
 			List<ConfigHomePageProduct> list = new ArrayList<ConfigHomePageProduct>(Arrays.asList(filterArr));
+						
 			catPrdct.setProductList(list);
 
 			List<Category> catList = new ArrayList<>();
@@ -727,7 +728,13 @@ public class ConfigurationFilterController {
 			System.out.println("Execption in /saveProductConfiguration : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showHomePagePrdctConfig";
+		
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		
+		if(btnVal==0)
+			return "redirect:/showHomePagePrdctConfig";
+		else
+			return "redirect:/configHomePageProduct";
 	}
 
 	@RequestMapping(value = "/editHomePagePrdctConfig", method = RequestMethod.GET)

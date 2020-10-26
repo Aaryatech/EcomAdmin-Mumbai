@@ -26,7 +26,7 @@ public class ConfigHomePageProduct {
 	private int uomId;  //FK Of UOM 
 	
 	private String shortName;
-	private int shapeId; //FK Of Shape
+	private String shapeId; //FK Of Shape
 	
 	private int allowSameDayDelivery;
 	
@@ -218,10 +218,10 @@ public class ConfigHomePageProduct {
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
 	}
-	public int getShapeId() {
+	public String getShapeId() {
 		return shapeId;
 	}
-	public void setShapeId(int shapeId) {
+	public void setShapeId(String shapeId) {
 		this.shapeId = shapeId;
 	}
 	public int getAllowSameDayDelivery() {

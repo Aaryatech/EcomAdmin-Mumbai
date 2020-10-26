@@ -78,7 +78,8 @@
 
 						<div class="row">
 							<div class="col-md-12">
-
+								<div class="form-group row"></div>
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 								<form
 									action="${pageContext.request.contextPath}/configurPrdctHomePage"
 									id="submitInsert" method="post">
@@ -107,7 +108,7 @@
 												<c:otherwise>
 													<select class="form-control select-search" data-fouc
 														data-placeholder="Select Type" name="filterStatus"
-														id="filterStatus" onchange="configHomePrdct()">
+														id="filterStatus" ><!-- onchange="configHomePrdct()" -->
 														<option value=""></option>
 														<c:forEach items="${filterList}" var="filterList">
 															<c:set value="0" var="flag" />
@@ -140,24 +141,13 @@
 												id="error_filterStatus" style="display: none;">This
 												field is required.</span>
 										</div>
-
-										<div id="sortDiv" class="col-lg-6" style="display: none;">
-											<div class="form-group row">
-												<label class="col-form-label font-weight-bold col-lg-2"
-													for="statusSortNo">Sort No.<span
-													class="text-danger"></span>:
-												</label>
-												<div class="col-lg-8">
-													<input type="text"
-														class="form-control maxlength-badge-position"
-														name="statusSortNo" id="statusSortNo" maxlength="5"
-														autocomplete="off" onchange="trim(this)" value="${homePage.sortNo}"> <span
-														class="validation-invalid-label text-danger"
-														id="error_statusSortNo" style="display: none;">This
-														field is required.</span>
-												</div>
-											</div>
-										</div>
+										
+										<div class="col-lg-2"></div>
+										<div class="col-lg-4">
+											<button type="button" class="btn btn-primary" id="searchbtn" onclick="configHomePrdct()">
+												Search <i class="icon-paperplane ml-2"></i>
+											</button>
+										</div>										
 									</div>
 
 
@@ -168,7 +158,9 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
+										<c:choose>
+											<c:when test="${homePage.homePageStatusId>0}">
+												<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
 													class="form-check-input" checked value="1"
 													name="activeStat" id="radio_y"
@@ -183,14 +175,42 @@
 													No
 												</label>
 											</div>
+											</c:when>
+											<c:otherwise>
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1"
+													name="activeStat" id="radio_y"> Yes
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" value="0" name="activeStat"
+													id="radio_n">
+													No
+												</label>
+											</div>
+											</c:otherwise>
+										</c:choose>											
 										</div>
 
-
-										<div class="col-lg-2"></div>
-										<div class="col-lg-4">
-											<button type="button" class="btn btn-primary" id="searchbtn" onclick="configHomePrdct()">
-												Search <i class="icon-paperplane ml-2"></i>
-											</button>
+										<div id="sortDiv" class="col-lg-6" style="display: none;">
+											<div class="form-group row">
+												<label class="col-form-label font-weight-bold col-lg-2"
+													for="statusSortNo">Sort No.<span
+													class="text-danger"></span>:
+												</label>
+												<div class="col-lg-8">
+													<input type="text"
+														class="form-control maxlength-badge-position"
+														name="statusSortNo" id="statusSortNo" maxlength="5"
+														autocomplete="off" onchange="trim(this)" value="${homePage.sortNo > 0 ? homePage.sortNo : 1}"> <span
+														class="validation-invalid-label text-danger"
+														id="error_statusSortNo" style="display: none;">This
+														field is required.</span>
+												</div>
+											</div>
 										</div>
 									</div>
 
@@ -222,16 +242,21 @@
 										<tbody>
 
 										</tbody>
-									</table>
+									</table>									
 									<input type="hidden" id="isEdit" name="isEdit" value="${isEdit}">
 									<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Product Check Box.</span>
 									<div class="text-center">
+									<input type="hidden" id="btnType" name="btnType">
 										<br>
-										<button type="submit" class="btn btn-primary" id="submtbtn"
-											disabled="disabled">
-											Submit <i class="icon-paperplane ml-2"></i>
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
+											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+										<c:if test="${homePage.homePageStatusId==0}">										
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+										</c:if>
 									</div>
 								</form>
 								<!-- -------------------------------------------------------------- -->
@@ -253,6 +278,10 @@
 
 
 	<script>
+	function pressBtn(btnVal){
+		$("#btnType").val(btnVal)
+	}
+	
 		function configHomePrdct() {
 							
 							var filterStatus = $("#filterStatus").val();
@@ -351,7 +380,8 @@
 																	.append($(
 																			'<td style="padding: 7px; line-height:0; border-top: 1px solid #ddd; display: none;"></td>')
 																			.html(
-																					'<input type="text" value="'+data.productList[j].checked+'" class="chkVal'+data.categoryList[i].catId+'">'));
+																					'<input type="text" value="'+data.productList[j].sortNo+'" class="chkVal'+data.categoryList[i].catId+'">'));
+															/* '<input type="text" value="'+data.productList[j].checked+'" class="chkVal'+data.categoryList[i].catId+'">' */
 
 															tr1
 																	.append($(
@@ -394,7 +424,7 @@
 								});
 
 			} else {
-
+			
 				$(".chkcls" + id)
 						.each(
 								function(counter) {
@@ -437,7 +467,7 @@
 							});
 
 			if (flag == 0) {
-				alert("Please select product for configuration.");
+				//alert("Please select product for configuration.");
 				return false;
 			}
 
@@ -460,15 +490,45 @@
 				} else {
 					$("#error_statusSortNo").hide()
 				}
+				
+				/* if(!validation()){
+					isError = true;
+					$("#error_chks").show();
+				}else{
+					$("#error_chks").hide();
+				} */
 
 				
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbtn").disabled = true;
-						return true;
-					}
-				}
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										$(".btn").attr("disabled", true);
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError
 
 				return false;
 
