@@ -16,9 +16,9 @@
 .daterangepicker .calendar, .daterangepicker .ranges {
 	float: right;
 }
-.table caption+thead tr:first-child td, .table caption+thead tr:first-child th, .table colgroup+thead tr:first-child td, .table colgroup+thead tr:first-child th, .table thead:first-child tr:first-child td, .table thead:first-child tr:first-child th {
+s .table caption+thead tr:first-child td, .table caption+thead tr:first-child th, .table colgroup+thead tr:first-child td, .table colgroup+thead tr:first-child th, .table thead:first-child tr:first-child td, .table thead:first-child tr:first-child th {
       border-top-width: 1px!important;  
-}
+} 
 </style>
 
 <jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
@@ -59,7 +59,7 @@
 						class="card-header bg-blue text-white d-flex justify-content-between">
 						<span
 							class="font-size-sm text-uppercase font-weight-semibold card-title">
-							Add Product Configuration${viewAccess}</span>
+							Add Product Configuration</span>
 						<!--  -->
 						<c:if test="${viewAccess==1}">
 							<span class="font-size-sm text-uppercase font-weight-semibold"><a
@@ -73,7 +73,6 @@
 					<div class="card-body">
 					<form action="${pageContext.request.contextPath}/getProdConf"
 						id="submitProdForm1" method="post">
-						<div class="form-group row"></div>
 						<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 
@@ -261,10 +260,11 @@
 			scrollCollapse : true,
 			paging : false,
 			order:[],
-			fixedColumns : {
+			fixedColumns:true,
+			/* fixedColumns : {
 				leftColumns : 1,
 				rightColumns : 0
-			}
+			} */
 		});
 	</script>
 

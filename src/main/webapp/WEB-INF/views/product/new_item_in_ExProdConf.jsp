@@ -126,7 +126,7 @@
 
 </form>
 <form action="${pageContext.request.contextPath}/saveInsertProdConfEx"
-						id="submitProdForm1" method="post">
+						id="saveInsertProdConfExForm" method="post">
 						<input type="hidden" id="configId" name="configId" value="${configId}">
 						<div class="form-group row">
 										</div>
@@ -137,10 +137,24 @@
 
 								<thead>
 									<tr>
-										<th>Product Name</th>
+										<!-- <th>Product Name</th>
 										<th>Flavor</th>
 										<th>Veg Type</th>
 										<th>Qty/Weight</th>
+										<th>Rate 1</th>
+										<th>Rate 2</th>
+										<th>Rate 3</th>
+										<th>Rate 4</th>
+										<th>Rate 5</th>
+										<th>Rate 6</th> -->
+										
+										<th>Product Name</th>
+										
+										<th>Qty/Weight</th>
+										<th>Veg-NonVeg</th>
+										<th>Shape</th>
+										<th>Flavor</th>
+										
 										<th>Rate 1</th>
 										<th>Rate 2</th>
 										<th>Rate 3</th>
@@ -152,7 +166,7 @@
 								<tbody>
 									<c:forEach items="${tempProdConfList}" var="prod" varStatus="count">
 										<tr>
-											<td>${count.index+1}) ${prod.productName}</td>
+											<%-- <td>${count.index+1}) ${prod.productName}</td>
 											<td>${prod.flavorName}</td>
 											<td>${prod.vegType==0 ? 'Veg' :prod.vegType==1 ? 'Non Veg' : 'Veg-Non Veg'}</td>
 											<td>${prod.weight}</td>
@@ -161,7 +175,21 @@
 											<td><input type="text" id="r3${prod.uuid}${prod.productId}" name="r3${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
 											<td><input type="text" id="r4${prod.uuid}${prod.productId}" name="r4${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
 											<td><input type="text" id="r5${prod.uuid}${prod.productId}" name="r5${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r6${prod.uuid}${prod.productId}" name="r6${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r6${prod.uuid}${prod.productId}" name="r6${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td> --%>
+											<td>${count.index+1}) ${prod.productName}</td>
+											<td>${prod.weight}</td>
+												<td>${prod.vegNonVegName}</td>
+												<td>${prod.shapeName}</td>
+											<td>${prod.flavorName}</td>
+											<%-- <td>${prod.vegType==0 ? 'Veg' :prod.vegType==1 ? 'Non Veg' : 'Veg-Non Veg'}</td> --%>
+										
+											<td><input type="text" id="r1${prod.uuid}${prod.productId}" name="r1${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r2${prod.uuid}${prod.productId}" name="r2${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r3${prod.uuid}${prod.productId}" name="r3${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r4${prod.uuid}${prod.productId}" name="r4${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r5${prod.uuid}${prod.productId}" name="r5${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r6${prod.uuid}${prod.productId}" name="r6${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											
 										</tr>
 									</c:forEach>
 								</tbody>
@@ -169,7 +197,7 @@
 						</div>
 							<div class="form-group row mb-0">
 	<div style="margin: 0 auto;">		
-								<button type="submit" class="btn bg-blue ml-3 legitRipple">Save</button>
+								<button type="submit" id="submtbtn" class="btn bg-blue ml-3 legitRipple">Save (Adding New Products In Configuration)</button>
 							</div>
 						</div>
 					</form>
@@ -191,6 +219,65 @@
 	</div>
 	<!-- /page content -->
 	<script>
+	
+	$(document)
+	.ready(
+			function($) {
+				$("#saveInsertProdConfExForm")
+						.submit(
+								function(e) {
+									var isError = false;
+									var errMsg = "";
+									/* if (!$("#conf_name").val()) {
+										isError = true;
+										$("#error_conf_name").show();
+									} else {
+										$("#error_conf_name").hide();
+									} */
+
+									var price = 0;
+									$(".floatOnly").each(function() {
+										if(!isNaN(this.value) && this.value.length!=0) {
+											price += parseFloat(this.value);
+										}
+									});
+									
+									if (parseFloat(price)<1) {
+										isError = true;
+										$("#error_price_show").show();
+									} else {
+										$("#error_price_show").hide();
+									}
+									
+									if (!isError) {
+									bootbox
+									.confirm({
+										title : 'Confirm ',
+										message : 'Are you sure you want save the configuration',
+										buttons : {
+											confirm : {
+												label : 'Yes',
+												className : 'btn-success'
+											},
+											cancel : {
+												label : 'Cancel',
+												className : 'btn-link'
+											}
+										},
+										callback : function(result) {
+											if (result) {
+												document
+												.getElementById("submtbtn").disabled = true;
+											var form = document.getElementById("saveInsertProdConfExForm")
+										    form.submit();
+											}
+										}
+									});
+									}
+									return false;
+								})
+			})
+			
 		$('.datatable-fixed-left_custom').DataTable({
 			columnDefs : [ {
 				orderable : true,

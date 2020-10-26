@@ -71,12 +71,12 @@
 									Product</a></span>
 						</c:if>
 					</div>
+					
 					<div class="card-body">
+					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
+					
 					<form action="${pageContext.request.contextPath}/getProdConf"
 						id="submitProdForm1" method="post">
-						<div class="form-group row"></div>
-						<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
-
 
 						<div class="form-group row">
 							<label class="col-form-label col-lg-2" for="cat_id">
@@ -107,14 +107,14 @@
 
 </form>
 <form action="${pageContext.request.contextPath}/saveUpdateProdConf"
-						id="submitProdForm1" method="post">
+						id="saveUpdateProdConfForm" method="post">
 						<input type="hidden" id="conf_id" name="conf_id" value="${prodConfHead.configHeaderId}">
 						<div class="form-group row">
 						<label class="col-form-label col-lg-2" for="conf_name">
 											Configuration Name <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-2">
-											<input type="text"  class="form-control" required maxlength="50"
+											<input type="text"  class="form-control maxlength-badge-position" maxlength="25"
 												placeholder="Configuration Name" id="conf_name" name="conf_name"
 												autocomplete="off" value="${prodConfHead.configName}"> <span
 												class="validation-invalid-label" id="error_conf_name"
@@ -163,15 +163,15 @@
 												<td>${prod.vegNonVegName}</td>
 												<td>${prod.shapeName}</td>
 											<td>${prod.flavorName}</td>
-											<td><input type="text" id="r1${prod.uuid}${prod.productId}" name="r1${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r2${prod.uuid}${prod.productId}" name="r2${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r3${prod.uuid}${prod.productId}" name="r3${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r4${prod.uuid}${prod.productId}" name="r4${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r5${prod.uuid}${prod.productId}" name="r5${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
-											<td><input type="text" id="r6${prod.uuid}${prod.productId}" name="r6${prod.uuid}${prod.productId}" value="0" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r1${prod.uuid}${prod.productId}" name="r1${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7"  class="form-control floatOnly"/></td>
+											<td><input type="text" id="r2${prod.uuid}${prod.productId}" name="r2${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r3${prod.uuid}${prod.productId}" name="r3${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r4${prod.uuid}${prod.productId}" name="r4${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r5${prod.uuid}${prod.productId}" name="r5${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
+											<td><input type="text" id="r6${prod.uuid}${prod.productId}" name="r6${prod.uuid}${prod.productId}" value="${prod.mrpAmt}" maxlength="7" class="form-control floatOnly"/></td>
 										</tr>
 									</c:forEach>
-									
+									<tr style="background-color: white;"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 									<c:forEach items="${prodConfDetList}" var="prod" varStatus="count">
 										<tr>
 											<td>${count.index+1}) ${prod.productName}</td>
@@ -190,10 +190,13 @@
 									
 								</tbody>
 							</table>
+							<span class="validation-invalid-label" id="error_price_show"
+												style="display: none;">Configuration price not set for any combination</span>
+				
 						</div>
 							<div class="form-group row mb-0">
 	<div style="margin: 0 auto;">		
-								<button type="submit" class="btn bg-blue ml-3 legitRipple">Save</button>
+								<button type="submit" id="submtbtn" class="btn bg-blue ml-3 legitRipple">Save (Update) Configuration</button>
 							</div>
 						</div>
 					</form>
@@ -215,6 +218,68 @@
 	</div>
 	<!-- /page content -->
 	<script>
+	
+	$(document)
+	.ready(
+			function($) {
+				$("#saveUpdateProdConfForm")
+						.submit(
+								function(e) {
+									var isError = false;
+									var errMsg = "";
+									if (!$("#conf_name").val()) {
+										isError = true;
+										$("#error_conf_name").show();
+									} else {
+										$("#error_conf_name").hide();
+									}
+
+									var price = 0;
+									$(".floatOnly").each(function() {
+										if(!isNaN(this.value) && this.value.length!=0) {
+											price += parseFloat(this.value);
+										}
+									});
+									
+									if (parseFloat(price)<1) {
+										isError = true;
+										$("#error_price_show").show();
+									} else {
+										$("#error_price_show").hide();
+									}
+									
+									if (!isError) {
+									bootbox
+									.confirm({
+										title : 'Confirm ',
+										message : 'Are you sure you want save the configuration',
+										buttons : {
+											confirm : {
+												label : 'Yes',
+												className : 'btn-success'
+											},
+											cancel : {
+												label : 'Cancel',
+												className : 'btn-link'
+											}
+										},
+										callback : function(result) {
+											if (result) {
+												document
+												.getElementById("submtbtn").disabled = true;
+											var form = document.getElementById("saveUpdateProdConfForm")
+										    form.submit();
+											}
+										}
+									});
+									}
+									return false;
+								})
+			})
+	$('.maxlength-badge-position').maxlength({
+		alwaysShow : true,
+		placement : 'top'
+	});
 		$('.datatable-fixed-left_custom').DataTable({
 			columnDefs : [ {
 				orderable : true,

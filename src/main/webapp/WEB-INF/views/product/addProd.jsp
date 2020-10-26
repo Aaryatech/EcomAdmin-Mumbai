@@ -54,7 +54,7 @@
 							class="font-size-sm text-uppercase font-weight-semibold card-title">
 							Add Product</span>
 						<!--  -->
-						<c:if test="${addAccess==0}">
+						<c:if test="${viewAccess==1}">
 							<span class="font-size-sm text-uppercase font-weight-semibold"><a
 								class="card-title"
 								href="${pageContext.request.contextPath}/showProdList"
@@ -177,7 +177,7 @@
 										</label>
 										<div class="col-lg-4">
 											<input type="text" maxlength="4" class="form-control numbersOnly maxlength-badge-position"
-												placeholder="Product Sort No" id="sort_no" name="sort_no"
+												placeholder="Product Sort No" value="1" id="sort_no" name="sort_no"
 												autocomplete="off"> <span
 												class="validation-invalid-label" id="error_sort_no"
 												style="display: none;">This field is required.</span>
@@ -189,7 +189,7 @@
 											Min Quantity <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="5" class="form-control numbersOnly maxlength-badge-position"
+											<input type="text" maxlength="5" value="1" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Minimum Order Quantity" id="min_qty"
 												name="min_qty" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_min_qty"
@@ -202,7 +202,7 @@
 										<div class="col-lg-4">
 											<input type="text" maxlength="3" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Product Shelf Life" id="shelf_life"
-												name="shelf_life" autocomplete="off"> <span
+												name="shelf_life" autocomplete="off" value="1"> <span
 												class="validation-invalid-label" id="error_shelf_life"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -214,11 +214,10 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data
-												placeholder="Return Allowed" id="is_return_allow"
+												data-fouc="" aria-hidden="true" data-placeholder="Return Allowed" id="is_return_allow"
 												name="is_return_allow">
-												<option selected value="1">Yes</option>
-												<option  value="0">No</option>
+												<option  value="1">Yes</option>
+												<option selected  value="0">No</option>
 											</select> <span class="validation-invalid-label"
 												id="error_is_return_allow" style="display: none;">This
 												field is required.</span>
@@ -230,7 +229,7 @@
 										<div class="col-lg-4">
 											<input type="text" maxlength="5" class="form-control floatOnly maxlength-badge-position"
 												placeholder="Product Return %" id="return_per"
-												name="return_per" autocomplete="off"> <span
+												name="return_per" autocomplete="off" value="0"> <span
 												class="validation-invalid-label" id="error_return_per"
 												style="display: none;">This field is required (range(1 to 100)).</span>
 										</div>
@@ -356,7 +355,7 @@
 										<div class="col-lg-4">
 											<input type="text" maxlength="2" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Book before days" id="book_b4" name="book_b4"
-												autocomplete="off"> <span
+												autocomplete="off" value="1"> <span
 												class="validation-invalid-label" id="error_book_b4"
 												style="display: none;">This field is required. (min value 1)</span>
 										</div>
@@ -384,8 +383,8 @@
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Limit Yes No" id="char_limit_yn"
 												name="char_limit_yn">
-												<option selected value="1">Yes</option>
-												<option value="0">No</option>
+												<option  value="1">Yes</option>
+												<option selected value="0">No</option>
 												
 											</select> <span class="validation-invalid-label"
 												id="error_char_limit_yn" style="display: none;">This
@@ -396,7 +395,7 @@
 											No of Alphabets <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="2" class="form-control numbersOnly maxlength-badge-position"
+											<input type="text" maxlength="2" value="0" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="No of Alphabets" id="no_of_alpha"
 												name="no_of_alpha" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_no_of_alpha"
@@ -422,7 +421,7 @@
 										</div>
 
 										<div class="col-lg-2">
-											<input type="checkbox" class="form-control"
+											<input type="checkbox" checked class="form-control"
 												id="is_msg_on_cake" name="is_msg_on_cake"
 												autocomplete="off">
 										</div>
@@ -449,7 +448,7 @@
 										</label> <label class="col-form-label col-lg-2" style="text-align: center;" for="is_slot_used">
 											    Is Slot Used <span style="color: red">* </span>:
 										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_used">
-											Is Used <span style="color: red">* </span>:
+											Is Active <span style="color: red">* </span>:
 										</label>
 									</div>
 
@@ -460,7 +459,7 @@
 										<div class="col-lg-4">
 											<input type="text" maxlength="4" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="No of Message Characters" id="no_of_msg_char"
-												name="no_of_msg_char" autocomplete="off"> <span
+												name="no_of_msg_char" autocomplete="off" value="10"> <span
 												class="validation-invalid-label" id="error_no_of_msg_char"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -549,12 +548,12 @@
 										</div>
 
 										<label class="col-form-label col-lg-2" for="prod_desc">
-											Product Desc <span style="color: red">* </span>:
+											Product Desc <span style="color: red"> </span>:
 										</label>
 										<div class="col-lg-4">
 											<input type="text" maxlength="90" class="form-control maxlength-badge-position"
 												placeholder="Product Description" id="prod_desc"
-												name="prod_desc" autocomplete="off"> <span
+												name="prod_desc" autocomplete="off" value="-"> <span
 												class="validation-invalid-label" id="error_prod_desc"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -565,12 +564,12 @@
 									<div class="form-group row">
 
 										<label class="col-form-label col-lg-2" for="Ingredients">
-											Ingredients<span style="color: red">* </span>:
+											Ingredients<span style="color: red"> </span>:
 										</label>
 										<div class="col-lg-4">
 											<textarea maxlength="150" class="form-control maxlength-badge-position"
 												placeholder="Ingredients" id="Ingredients"
-												name="Ingredients" autocomplete="off"></textarea> <span
+												name="Ingredients" autocomplete="off" >-</textarea> <span
 												class="validation-invalid-label" id="error_Ingredients"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -581,7 +580,7 @@
 										<div class="col-lg-4">
 											<input type="text"  class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Preparation Time in Minutes" maxlength="3" id="prep_time" name="prep_time"
-												autocomplete="off"> <span
+												autocomplete="off" value="0"> <span
 												class="validation-invalid-label" id="error_prep_time"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -631,7 +630,7 @@
 										<div class="col-lg-2">
 										<input type="text" class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Maximum Weight Range" maxlength="3" id="max_wt" name="max_wt"
-												autocomplete="off"> <span
+												autocomplete="off" onkeyup="show_apply_weight()"> <span
 												class="validation-invalid-label" id="error_max_wt"
 												style="display: none;">This field is required.</span>
 								
@@ -689,8 +688,13 @@
 	<div style="margin: 0 auto;">											<!-- <button type="reset" class="btn btn-light legitRipple">Reset</button> -->
 											<button type="submit" class="btn bg-blue ml-3 legitRipple"
 												id="submtbtn">
-												Submit <i class="icon-paperplane ml-2"></i>
+												Save <i class="icon-paperplane ml-2"></i>
+											</button>&nbsp;
+											<button type="submit" onclick="changeValue()" class="btn bg-blue ml-3 legitRipple"
+												id="submtbtnnext">
+												Save & Next<i class="icon-paperplane ml-2"></i>
 											</button>
+											&nbsp;
 											<a href="${pageContext.request.contextPath}/showProdList"><button
 													type="button" class="btn btn-primary">
 													<i class="${sessionScope.cancelIcon}" aria-hidden="true"></i>&nbsp;&nbsp;
@@ -698,6 +702,8 @@
 												</button></a>
 										</div>
 									</div>
+									<input type="hidden" id="savenext" name="savenext" value="0">
+						
 								</form>
 							</div>
 						</div>
@@ -720,6 +726,9 @@
 	</div>
 	<!-- /page content -->
 	<script type="text/javascript">
+	function changeValue(){
+		document.getElementById('savenext').value="1";
+	}
 	$('.maxlength-badge-position').maxlength({
 		alwaysShow : true,
 		placement : 'top'
@@ -772,7 +781,7 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 	var event_idshtml;
 	var p = "0";
 	var q = "NA";
-	event_idshtml += '<option  value="'+p+'">' + q
+	event_idshtml += '<option selected value="'+p+'">' + q
 	+ '</option>';
 	event_idshtml += '</option>';
 	
@@ -808,14 +817,14 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 	var p = "0";
 	var q = "NA";
 	
-	flav_idshtml += '<option  value="'+p+'">' + q
+	flav_idshtml += '<option selected value="'+p+'">' + q
 	+ '</option>';
 	flav_idshtml += '</option>';
 	
 	var shape_idhtml;
 	var p = "0";
 	var q = "NA";
-	shape_idhtml += '<option disabled value="'+p+'">' + q
+	shape_idhtml += '<option selected value="'+p+'">' + q
 			+ '</option>';
 	shape_idhtml += '</option>';
 	
@@ -1267,7 +1276,7 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 														$("#error_appl_tags").hide()
 													}
 
-												if (!$("#prod_desc").val()) {
+												/* if (!$("#prod_desc").val()) {
 														 $("#error_prod_desc").show();
 														isError = true;
 													} else {
@@ -1279,10 +1288,10 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 														isError = true;
 													} else {
 														$("#error_Ingredients").hide()
-													}
+													} */
 
 
-												if (!$("#prep_time").val()|| parseInt($("#prep_time").val())<1) {
+												if (!$("#prep_time").val()|| parseInt($("#prep_time").val())<0) {
 														 $("#error_prep_time").show();
 														isError = true;
 													} else {
@@ -1358,8 +1367,12 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 															if(result){
 																document
 																	.getElementById("submtbtn").disabled = true;
+																document
+																.getElementById("submtbtnnext").disabled = true;
+													
 																var form = document.getElementById("submitProdForm")
 															    form.submit();
+																document.getElementById('savenext').value="0";
 															}
 														}
 													});

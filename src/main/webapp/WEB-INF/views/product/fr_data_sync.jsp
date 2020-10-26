@@ -25,11 +25,8 @@
 
 
 </head>
- <body>
-<!-- <body class="sidebar-xs">
- -->
 
-
+<body class="sidebar-xs">
 
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
@@ -54,77 +51,57 @@
 			<div class="content">
 				<!-- ColReorder integration -->
 				<div class="card">
-<div class="card-body">
 
 					<div
 						class="card-header bg-blue text-white d-flex justify-content-between">
 						<span
 							class="font-size-sm text-uppercase font-weight-semibold card-title">
-							Product List</span>
+							${title}</span>
 						<!--  -->
-						<c:if test="${addAccess==1}">
+						<%-- <c:if test="${addAccess==0}">
 							<span class="font-size-sm text-uppercase font-weight-semibold"><a
 								class="card-title"
-								href="${pageContext.request.contextPath}/showAddProduct"
+								href="${pageContext.request.contextPath}/newFranchise/0"
 								style="color: white;"><i class="icon-add-to-list ml-2"
-									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add
-									Product</a></span>
-						</c:if>
+									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add Franchise</a></span>
+						</c:if> --%>
 					</div>
-
-					<div class="form-group row"></div>
+<div class="card-body">
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
-					<div class="table-responsive">
-						<table class="table datatable-fixed-left_custom  table-bordered table-hover table-striped"
-										width="100%" id="printtable2">
-										
+	<form
+									action="${pageContext.request.contextPath}/generateFrDataJSON"
+									id="dataSyncForm" method="post"
+									>
+					<table id="printtable1" class="table datatable-fixed-left_custom table-bordered table-hover table-striped">
 						<thead>
 							<tr>
-								<th>Product Code</th>
-								<th>Name</th>
-								<th>Category</th>
-								<th>Sub Category</th>
-								<th>UOM</th>
-								<!-- <th>Same Day Delivery</th> -->
-								<th>Book Before</th>
-								<!-- <th>Is Veg</th> --><th>Status</th>
-								<th>Active</th>
-								<th class="text-center">Actions</th>
+								<th width="10%">Sr. No.</th>
+								<th>All &nbsp; <input type="checkbox" name="selAll"
+													id="selAll" /></th>
+								<th>Franchise</th>
+								<th>Contact No.</th>
+								<th>Status</th>
+								<th style="display: none"></th>
+								<th style="display: none"></th>
 							</tr>
 						</thead>
 						<tbody>
-							<c:forEach items="${prodList}" var="prod" varStatus="count">
+							<c:forEach items="${frList}" var="frList" varStatus="count">
 								<tr>
-					<td>${count.index+1}) ${prod.productCode}</td>
-					<td width="20%;">${prod.productName}</td>
-					<td>${prod.catName}</td>
-					<td>${prod.subCatName}</td>
-					<td>${prod.uomShowName}</td>
-<%-- 					<td>${prod.allowSameDayDelivery==1 ? 'Yes' :prod.allowSameDayDelivery==0 ? 'No' : 'No'}</td>
- --%>					<td>${prod.bookBefore}</td>
-<%-- 					<td>${prod.isVeg==0 ? 'Veg' :prod.isVeg==1 ? 'Non Veg' : 'Veg-Non Veg'}</td>
- --%>					<td>${prod.prodStatus}</td>
-					<td>${prod.isActive==1 ? 'Yes' :prod.isActive==0 ? 'No' : 'No'}</td>
-					<td><div class="list-icons">
-												<a
-													href="${pageContext.request.contextPath}/showEditProd/${prod.exVar1}"
-													class="list-icons-item" title="Edit Product"> <i
-													class="icon-database-edit2"></i>
-												</a>
-											</div>
-											
-											<div class="list-icons">
-												<a
-													href="${pageContext.request.contextPath}/manageProdImages/${prod.exVar1}"
-													class="list-icons-item" title="Manage Product Images"> <i
-													class="icon-database-edit2"></i>
-												</a>
-											</div>
-											</td>			
+									<td>${count.index+1}</td>
+									<td><input type="checkbox"
+														id="data_sync_frId${frList.frId}"
+														value="${frList.frId}"
+														name="dataSyncFrId" class="select_all"></td>
+									<td>${frList.frCode} - ${frList.frName}</td>
+									<td>${frList.frContactNo}</td>
+									<td>${frList.isActive==1 ? 'Active' : 'In-Active'}</td>
+									<td style="display: none"></td>
+								<td style="display: none"></td>									
 									<%-- <td class="text-center"><c:if test="${editAccess==0}">
 											<div class="list-icons">
 												<a
-													href="${pageContext.request.contextPath}/showEditCustomer?custId=${custList.exVar1}"
+													href="${pageContext.request.contextPath}/newFranchise/${frList.frId}"
 													class="list-icons-item" title="Edit"> <i
 													class="icon-database-edit2"></i>
 												</a>
@@ -133,55 +110,98 @@
 											<div class="list-icons">
 												<a href="javascript:void(0)"
 													class="list-icons-item text-danger-600 bootbox_custom"
-													data-uuid="${custList.exVar1}" data-popup="tooltip"
-													title="" data-original-title="Delete"><i
-													class="icon-trash"></i></a>
+													data-uuid="${frList.frId}" data-popup="tooltip" title=""
+													data-original-title="Delete"><i class="icon-trash"></i></a>
 											</div>
-										</c:if>
-										
-										
-										<div class="list-icons">
-												<a
-													href="${pageContext.request.contextPath}/showAddCustomerAddress?custId=${custList.exVar1}"
-													class="list-icons-item" title="Add Address"> <i
-													class="icon-database-edit2"></i>
-												</a>
-											</div>
-											
-												<div class="list-icons">
-												<a
-													href="${pageContext.request.contextPath}/showCustomerAddressList?custId=${custList.exVar1}"
-													class="list-icons-item" title="Address List"> <i
-													class="icon-database-edit2"></i>
-												</a>
-											</div></td> --%>
+										</c:if></td> --%>
 								</tr>
 							</c:forEach>
 						</tbody>
 					</table>
-				</div>
+					
+					<span class="validation-invalid-label" id="error_fr_check"
+												style="display: none;">Please select some franchise</span>
+				
+						<div class="form-group row mb-0">
+	<div style="margin: 0 auto;">		
+								<button type="submit"  id="submtbtn" class="btn bg-blue ml-3 legitRipple">Sync Data</button>
+							</div>
+						</div>
+					</form>
+					</div>
 				</div>
 				<!-- /colReorder integration -->
-
 			</div>
 			<!-- /content area -->
-
-
 			<!-- Footer -->
 			<jsp:include page="/WEB-INF/views/include/footer.jsp"></jsp:include>
 			<!-- /footer -->
- 
 		</div>
 		<!-- /main content -->
-</div>
 	</div>
 	<!-- /page content -->
-<script>
-	$('.datatable-fixed-left_custom').DataTable({
+
+	<script type="text/javascript">
+		$(document)
+	.ready(
+			function($) {
+				$("#dataSyncForm")
+						.submit(
+								function(e) {
+									var isError = false;
+									var errMsg = "";
+									 if (parseInt($('input[name=dataSyncFrId]:checked').length) <1) {
+									        isError=true;
+									        $("#error_fr_check").show();
+									    }else{
+									    	 $("#error_fr_check").hide();
+									    }
+									
+									if (!isError) {
+									bootbox
+									.confirm({
+										title : 'Confirm ',
+										message : 'Are you sure you want sync data',
+										buttons : {
+											confirm : {
+												label : 'Yes',
+												className : 'btn-success'
+											},
+											cancel : {
+												label : 'Cancel',
+												className : 'btn-link'
+											}
+										},
+										callback : function(result) {
+											if (result) {
+												document
+												.getElementById("submtbtn").disabled = true;
+											var form = document.getElementById("dataSyncForm")
+										    form.submit();
+											}
+										}
+									});
+									}
+									return false;
+								})
+			})
+			
+		$(document).ready(
+
+				function() {
+
+					$("#selAll").click(
+							function() {
+								$('#printtable1 tbody input[type="checkbox"]')
+										.prop('checked', this.checked);
+
+							});
+				});
+		$('.datatable-fixed-left_custom').DataTable({
 
 		columnDefs : [ {
 			orderable : false,
-			targets : [ 0 ]
+			targets : [ 1 ]
 		} ],
 		//scrollX : true,
 		scrollX : true,
@@ -195,10 +215,6 @@
 		}
 
 	});
-	</script>
-
-	<script type="text/javascript">
-		//Custom bootbox dialog
 		$('.bootbox_custom')
 				.on(
 						'click',
@@ -215,12 +231,12 @@
 											},
 											cancel : {
 												label : 'Cancel',
-												className : 'btn-link'
+												className : 'btn-danger'
 											}
 										},
 										callback : function(result) {
 											if (result) {
-												location.href = "${pageContext.request.contextPath}/deleteCustomer?custId="
+												location.href = "${pageContext.request.contextPath}/deleteFranchise?frId="
 														+ uuid;
 
 											}

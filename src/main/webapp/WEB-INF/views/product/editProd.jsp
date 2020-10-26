@@ -528,7 +528,7 @@
 										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_slot_used">
 											Is Slot Used <span style="color: red">* </span>:
 										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_used">
-											Is Used <span style="color: red">* </span>:
+											Is Active <span style="color: red">* </span>:
 										</label>
 									</div>
 
@@ -627,7 +627,7 @@
 										</div>
 
 										<label class="col-form-label col-lg-2" for="prod_desc">
-											Product Desc <span style="color:red;">* </span>:
+											Product Desc <span style="color:red;"> </span>:
 										</label>
 										<div class="col-lg-4">
 											<input type="text" maxlength="90" class="form-control maxlength-badge-position"
@@ -643,7 +643,7 @@
 									<div class="form-group row">
 
 										<label class="col-form-label col-lg-2" for="Ingredients">
-											Ingredients<span style="color: red">* </span>:
+											Ingredients<span style="color: red"> </span>:
 										</label>
 										<div class="col-lg-4">
 											<textarea maxlength="150" class="form-control maxlength-badge-position"
@@ -995,9 +995,20 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 	var layCreamId=${editProd.layeringCream};
 	var toppCreamId=${editProd.toppingCream};
 	var len = data.length;
+	
+	if(shapeids.includes('0')){
+			shape_idhtml += '<option selected value="0">NA</option>';
+		}
+	if(flavArr.includes('0')){
+		flav_idshtml += '<option selected value="0">NA</option>';
+	}
+	if(evenArr.includes('0')){
+		event_idshtml += '<option selected value="0">NA</option>';
+	}
 	for (var i = 0; i < len; i++) {
 		if(1==parseInt(data[i].filterTypeId)){
 		 	//if(parseInt(shapeId)==parseInt(data[i].filterId)){
+		 		
 		 		if(shapeids.includes(''+data[i].filterId)){ //2020-10-21
 			shape_idhtml += '<option selected value="' + data[i].filterId + '">'
 				+ data[i].filterName + '</option>';
@@ -1483,7 +1494,7 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 														$("#error_appl_tags").hide()
 													}
 
-												if (!$("#prod_desc").val()) {
+												/* if (!$("#prod_desc").val()) {
 														 $("#error_prod_desc").show();
 														isError = true;
 													} else {
@@ -1495,10 +1506,10 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 														isError = true;
 													} else {
 														$("#error_Ingredients").hide()
-													}
+													} */
 
 
-												if (!$("#prep_time").val()|| parseInt($("#prep_time").val())<1) {
+												if (!$("#prep_time").val()|| parseInt($("#prep_time").val())<0) {
 														 $("#error_prep_time").show();
 														isError = true;
 													} else {

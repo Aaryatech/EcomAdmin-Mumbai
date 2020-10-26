@@ -74,14 +74,19 @@ public class ProdMasteController {
 			model.addObject("isEdit", 0);
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("showProdList", "showProdList", "0", "1", "0", "0", newModuleList);
 
-			if (view.isError() == true) {
+			Info add = AccessControll.checkAccess("showProdList", "showProdList", "0", "1", "0", "0", newModuleList);
+
+			
+			if (add.isError() == true) {
 
 				model = new ModelAndView("accessDenied");
 
 			} else {
-
+				Info view = AccessControll.checkAccess("showProdList", "showProdList", "1", "0", "0", "0", newModuleList);
+				if (view.isError() == false) {
+					model.addObject("viewAccess", 1);
+				}
 				List<Uom> uomList = new ArrayList<Uom>();
 				List<Tax> taxList = new ArrayList<Tax>();
 				List<Category> catList = new ArrayList<>();
@@ -166,6 +171,7 @@ public class ProdMasteController {
 	public String submitProductSave(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("primary_img") MultipartFile prodImgFile) {
 		String returnPage = null;
+		int savenext=0;
 		try {
 			//System.err.println("prodImgFile " + prodImgFile.getOriginalFilename());
 			HttpSession session = request.getSession();
@@ -449,6 +455,17 @@ public class ProdMasteController {
 					session.setAttribute("errorMsg", "Failed to Save Product");
 
 			}
+			try {
+				String saveNextStr=request.getParameter("savenext");
+				if(saveNextStr.equalsIgnoreCase("1")) {
+					savenext=1;
+				}
+			}catch (Exception e) {
+				savenext=0;
+			}
+			if(savenext!=0) {
+				returnPage = "redirect:/showAddProduct";
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -585,6 +602,11 @@ public class ProdMasteController {
 
 			} else {
 
+				Info add = AccessControll.checkAccess("showProdList", "showProdList", "0", "1", "0", "0", newModuleList);
+
+				if (add.isError() == false) {
+					model.addObject("addAccess", 1);
+				}
 				List<GetProdList> prodList = new ArrayList<GetProdList>();
 				int compId = (int) session.getAttribute("companyId");
 
@@ -854,7 +876,15 @@ public class ProdMasteController {
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		HttpSession session = request.getSession();
 		int companyId = (int) session.getAttribute("companyId");
+		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 
+		Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "1", "0",
+				"0", "0", newModuleList);
+		if(view.isError()==false) {
+			
+			model.addObject("viewAccess", 1);
+		}
+		
 		filterList = new ArrayList<MFilter>();
 
 		map = new LinkedMultiValueMap<>();
@@ -1860,7 +1890,7 @@ if(!confDetailList.isEmpty()) {
 
 			ItemConfHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveUpdateProdConfHD",
 					traveller, ItemConfHeader.class);
-
+System.err.println("saveUpdateProdConf " +res.toString());
 			if (res.getConfigHeaderId() > 0)
 				session.setAttribute("successMsg", "Product Configuration Saved Sucessfully");
 			else
@@ -1871,7 +1901,7 @@ if(!confDetailList.isEmpty()) {
 
 		}
 
-		return "redirect:/showAddProdConfig";
+		return "redirect:/showViewProdConfigHeader";
 
 	}
 
