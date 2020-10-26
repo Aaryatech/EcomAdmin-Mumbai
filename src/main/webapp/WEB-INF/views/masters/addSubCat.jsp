@@ -77,6 +77,8 @@
 
 
 							<div class="card-body">
+								<div class="form-group row"></div>
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 								<form
 									action="${pageContext.request.contextPath}/insertNewSubCat"
@@ -172,7 +174,7 @@
 											<input type="text"
 												class="form-control maxlength-badge-position" maxlength="10"
 												autocomplete="off" onchange="trim(this)"
-												value="${subCat.sortNo}" name="sortNo" id="sortNo">
+												value="${subCat.sortNo > 0 ? subCat.sortNo : 1}" name="sortNo" id="sortNo">
 											<span class="validation-invalid-label text-danger"
 												id="error_sortNo" style="display: none;">This field
 												is required.</span>
@@ -183,7 +185,9 @@
 											class="text-danger">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
+										<c:choose>
+											<c:when test="${subCat.subCatId>0}">
+												<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
 													class="form-check-input" checked value="1"
 													name="allowToCopy" id="app_y"
@@ -198,6 +202,24 @@
 													${subCat.allowToCopy==0 ? 'checked' : ''}> No
 												</label>
 											</div>
+											</c:when>
+											<c:otherwise>
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1"
+													name="allowToCopy" id="app_y"> Yes
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0"
+													name="allowToCopy" id="app_n"> No
+												</label>
+											</div>
+											</c:otherwise>
+										</c:choose>
+											
 										</div>
 									</div>
 
@@ -220,9 +242,9 @@
 
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="doc">Profile Image <span class="text-danger">*</span>:
+											for="doc">Image <span class="text-danger">*</span>:
 										</label>
-										<div class="col-lg-4">
+										<div class="col-lg-10">
 											<label class="form-check-label"> <img id="output"
 												width="150" src="${imgPath}${subCat.imageName}" /> <input
 												type="file" class="form-control-uniform" data-fouc
@@ -231,22 +253,27 @@
 												id="editImg" value="${subCat.imageName}"> <span
 												class="validation-invalid-label text-danger" id="error_doc"
 												style="display: none;">This field is required.</span>
+												<span class="text-danger">*Please upload file having extensions
+														 .jpeg/.jpg/.png only.</span>
 											</label>
 										</div>
 									</div>
-
+										<input type="hidden" id="btnType" name="btnType">										
 									<br>
 									<div class="text-center">
-										<input type="submit" class="btn btn-primary" value="Save" name="submbtn" id="btn1">
-										<input type="submit" class="btn btn-primary" value="Save & Next" name="submbtn" id="btn2">
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
+											Save <i class="icon-paperplane ml-2"></i>
+										</button>
+										<c:if test="${subCat.subCatId==0}">
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+										</c:if>
 									</div>
 								</form>
 								<input type="hidden" value="${subCat.catId}" id="cat_id">
 								<input type="hidden" value="${subCat.subCatCode}" id="cate_code">
 							</div>
-
-
-
 						</div>
 						<!-- /a legend -->
 					</div>
@@ -274,6 +301,10 @@
 				console.log(err);
 			}
 		};
+		
+		function pressBtn(btnVal){
+			$("#btnType").val(btnVal)
+		}
 		
 		$('#sortNo').on('input', function() {
 			 this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');
@@ -310,12 +341,9 @@
 			}, function(data) {							
 				if(data.error){
 					$("#error_unqPrefix").show()
-					document.getElementById("btn1").disabled = true;
-					document.getElementById("btn2").disabled = true;
+					$("#subCatPrefix").val('');
 				}else{
 					$("#error_unqPrefix").hide()
-					document.getElementById("btn1").disabled = false;
-					document.getElementById("btn2").disabled = false;
 				}
 			});
 	});
@@ -372,12 +400,35 @@
 					
  
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbtn").disabled = true;
-						return true;
-					}
-				}
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										$(".btn").attr("disabled", true);
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError
 
 				return false;
 

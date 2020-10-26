@@ -443,8 +443,12 @@ public class MasterController {
 			System.out.println("Execption in /insertTax : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showTaxList";
-
+		
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));		
+		if(btnVal==0)
+			return "redirect:/showTaxList";
+		else
+			return "redirect:/newTax";
 	}
 
 	// Created By :- Mahendra Singh
@@ -1154,12 +1158,14 @@ public class MasterController {
 	@RequestMapping(value = "/insertNewCategory", method = RequestMethod.POST)
 	public String insertNewCategory(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
+		String mav = new String();
 		try {
 			HttpSession session = request.getSession();
 			User userObj = (User) session.getAttribute("userObj");
 
 			Date date = new Date();
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Info info = new Info();
 			String profileImage = null;
 
 			int companyId = (int) session.getAttribute("companyId");
@@ -1171,7 +1177,8 @@ public class MasterController {
 				profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
 
 				try {
-					new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					// new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
 				} catch (Exception e) {
 				}
 
@@ -1184,44 +1191,61 @@ public class MasterController {
 			Category cat = new Category();
 			int catId = Integer.parseInt(request.getParameter("catId"));
 
-			cat.setCatId(catId);
-			cat.setAllowToCopy(Integer.parseInt(request.getParameter("allowCopy")));
-			cat.setCatDesc(request.getParameter("description"));
-			cat.setCatName(request.getParameter("catName"));
-			cat.setCatPrefix(request.getParameter("prefix").toUpperCase());
-			cat.setIsParent(Integer.parseInt(request.getParameter("isParent")));
-			cat.setCompanyId(companyId);
-			cat.setImageName(profileImage);
-			cat.setIsActive(Integer.parseInt(request.getParameter("catActive")));
-			cat.setSortNo(0);
-
-			cat.setDelStatus(1);
-
-			cat.setExInt1(0);
-			cat.setExInt2(0);
-			cat.setExInt3(0);
-
-			cat.setExVar1("NA");
-			cat.setExVar2("NA");
-			cat.setExVar3("NA");
-
-			Category res = Constants.getRestTemplate().postForObject(Constants.url + "saveCategory", cat,
-					Category.class);
-
-			if (res.getCatId() > 0) {
-				if (catId == 0)
-					session.setAttribute("successMsg", "Category Saved Sucessfully");
+			if (info.isError()) {
+				session.setAttribute("errorMsg", "Invalid Image Formate");
+				if (catId > 0)
+					mav = "redirect:/editCategory?catId=" + FormValidation.Encrypt(String.valueOf(catId));
 				else
-					session.setAttribute("successMsg", "Category Update Sucessfully");
+					mav = "redirect:/newCategory";
+
 			} else {
-				session.setAttribute("errorMsg", "Failed to Save Category");
+
+				cat.setCatId(catId);
+				cat.setAllowToCopy(Integer.parseInt(request.getParameter("allowCopy")));
+				cat.setCatDesc(request.getParameter("description"));
+				cat.setCatName(request.getParameter("catName"));
+				cat.setCatPrefix(request.getParameter("prefix").toUpperCase());
+				cat.setIsParent(Integer.parseInt(request.getParameter("isParent")));
+				cat.setCompanyId(companyId);
+				cat.setImageName(profileImage);
+				cat.setIsActive(Integer.parseInt(request.getParameter("catActive")));
+				cat.setSortNo(0);
+
+				cat.setDelStatus(1);
+
+				cat.setExInt1(0);
+				cat.setExInt2(0);
+				cat.setExInt3(0);
+
+				cat.setExVar1("NA");
+				cat.setExVar2("NA");
+				cat.setExVar3("NA");
+
+				Category res = Constants.getRestTemplate().postForObject(Constants.url + "saveCategory", cat,
+						Category.class);
+
+				if (res.getCatId() > 0) {
+					if (catId == 0)
+						session.setAttribute("successMsg", "Category Saved Sucessfully");
+					else
+						session.setAttribute("successMsg", "Category Update Sucessfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Save Category");
+				}
+				
+				int btnVal = Integer.parseInt(request.getParameter("btnType"));
+				
+				if(btnVal==0)
+					return "redirect:/showCategoryList";
+				else
+					return "redirect:/newCategory";
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /insertNewCategory : " + e.getMessage());
 			e.printStackTrace();
 		}
 
-		return "redirect:/showCategoryList";
+		return mav;
 
 	}
 
@@ -1499,12 +1523,19 @@ public class MasterController {
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Filter Type");
 			}
-
+			
+			
 		} catch (Exception e) {
 			System.out.println("Execption in /insertFilterType : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showFilterTypeList";
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		
+		if(btnVal==0)
+			return "redirect:/showFilterTypeList";
+		else
+			return "redirect:/newFilterType";
+
 
 	}
 
@@ -3554,13 +3585,13 @@ public class MasterController {
 			System.out.println("Execption in /insertDeliveryInstruction : " + e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		int btnVal = Integer.parseInt(request.getParameter("btnType"));
-		
-		if(btnVal==0)
+
+		if (btnVal == 0)
 			return "redirect:/showDeliveryInstructn";
 		else
-			return "redirect:/addDeliveryInstruction";		
+			return "redirect:/addDeliveryInstruction";
 
 	}
 
@@ -4459,10 +4490,10 @@ public class MasterController {
 				} else {
 					session.setAttribute("errorMsg", "Failed to Save Special Day Home Page");
 				}
-				
+
 				int btnVal = Integer.parseInt(request.getParameter("btnType"));
-				
-				if(btnVal==0)
+
+				if (btnVal == 0)
 					mav = "redirect:/showSpHomePages";
 				else
 					mav = "redirect:/newSpDayHomePage";

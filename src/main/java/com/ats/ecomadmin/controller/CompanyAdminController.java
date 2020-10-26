@@ -1550,14 +1550,13 @@ public class CompanyAdminController {
 	// Descriprion :- insert sub Cat
 	@RequestMapping(value = "/insertNewSubCat", method = RequestMethod.POST)
 	public String insertNewSubCat(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam("doc") MultipartFile doc) {
-
-		String submBtn = request.getParameter("submbtn");
+			@RequestParam("doc") MultipartFile doc) {		
+		String mav = new String();
 		try {
 			HttpSession session = request.getSession();
 			Date date = new Date();
 			int companyId = (int) session.getAttribute("companyId");
-
+			Info info = new Info();
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 
 			String profileImage = new String();
@@ -1566,14 +1565,23 @@ public class CompanyAdminController {
 				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
 
 				try {
-					new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					//new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
 				} catch (Exception e) {
 				}
 
 			} else {
 				profileImage = request.getParameter("editImg");
-
 			}
+			
+			int subCatId = Integer.parseInt(request.getParameter("subCatId"));
+			if (info.isError()) {
+				session.setAttribute("errorMsg", "Invalid Image Formate");
+				if(subCatId>0)
+					mav = "redirect:/showEditSubCat?subCatId=" + FormValidation.Encrypt(String.valueOf(subCatId)); 				
+				else 
+					mav = "redirect:/showAddSubCat"; 
+			} else {
 
 			String subCatName = request.getParameter("subCatName");
 			String subCatDesc = request.getParameter("subCatDesc");
@@ -1582,7 +1590,7 @@ public class CompanyAdminController {
 
 			int catId = Integer.parseInt(request.getParameter("catId"));
 			int allowToCopy = Integer.parseInt(request.getParameter("allowToCopy"));
-			int subCatId = Integer.parseInt(request.getParameter("subCatId"));
+			
 			int sortNo = Integer.parseInt(request.getParameter("sortNo"));
 
 			SubCategory subcat = new SubCategory();
@@ -1614,23 +1622,24 @@ public class CompanyAdminController {
 
 			if (res.getSubCatId() > 0) {
 				if (subCatId == 0)
-					session.setAttribute("successMsg", "SubCategory Address Saved Successfully");
+					session.setAttribute("successMsg", "Sub Category Saved Successfully");
 				else
-					session.setAttribute("successMsg", "SubCategory Address Update Successfully");
+					session.setAttribute("successMsg", "Sub Category Update Successfully");
 			} else {
-				session.setAttribute("errorMsg", "Failed to Save SubCategory Address");
+				session.setAttribute("errorMsg", "Failed to Save SubCategory");
 			}
-
+			
+			int btnVal = Integer.parseInt(request.getParameter("btnType"));			
+			if(btnVal==0)
+				mav = "redirect:/showSubCatList";
+			else
+				mav = "redirect:/showAddSubCat";
+			}
 		} catch (Exception e) {
-			System.out.println("Execption in /insertUom : " + e.getMessage());
+			System.out.println("Execption in /insertNewSubCat : " + e.getMessage());
 			e.printStackTrace();
 		}
-
-		if (submBtn.equals("Save"))
-			return "redirect:/showAddSubCat";
-		else
-			return "redirect:/showSubCatList";
-
+		return mav;
 	}
 
 	/*--------------------------------------------------------------------------------*/

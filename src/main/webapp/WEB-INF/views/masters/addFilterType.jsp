@@ -77,6 +77,9 @@
 
 
 							<div class="card-body">
+								<div class="form-group row"></div>
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
+			
 
 								<form
 									action="${pageContext.request.contextPath}/insertFilterType"
@@ -113,7 +116,9 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
+										<c:choose>
+											<c:when test="${filterType.filterTypeId>0}">
+												<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
 													class="form-check-input" checked value="1" name="isActive"
 													id="active_n" ${filterType.isActive==1 ? 'checked' : ''}>
@@ -128,6 +133,24 @@
 													${filterType.isActive==0 ? 'checked' : ''}> In-Active
 												</label>
 											</div>
+											</c:when>
+											<c:otherwise>
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1" name="isActive"
+													id="active_n">
+													Active
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0"
+													name="isActive" id="active_n"> In-Active
+												</label>
+											</div>
+											</c:otherwise>
+										</c:choose>											
 										</div>
 									</div>
 									
@@ -137,14 +160,15 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
+										<c:choose>
+											<c:when test="${filterType.filterTypeId>0}">
+												<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
 													class="form-check-input" checked value="1" name="isCostAffect"
 													id="costAffect_y" ${filterType.isCostAffect==1 ? 'checked' : ''}>
 													Yes
 												</label>
 											</div>
-
 											<div class="form-check form-check-inline">
 												<label class="form-check-label "> <input
 													type="radio" class="form-check-input" value="0"
@@ -152,6 +176,24 @@
 													${filterType.isCostAffect==0 ? 'checked' : ''}> No
 												</label>
 											</div>
+											</c:when>
+											<c:otherwise>
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1" name="isCostAffect"
+													id="costAffect_y">
+													Yes
+												</label>
+											</div>
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0"
+													name="isCostAffect" id="costAffect_n"> No
+												</label>
+											</div>
+											</c:otherwise>
+										</c:choose>
+											
 										</div>
 										
 										<label class="col-form-label font-weight-bold col-lg-2"
@@ -159,7 +201,9 @@
 										</span>:
 										</label>
 										<div class="col-lg-4">
-											<div class="form-check form-check-inline">
+										<c:choose>
+											<c:when test="${filterType.filterTypeId>0}">
+												<div class="form-check form-check-inline">
 												<label class="form-check-label"> <input type="radio"
 													class="form-check-input" checked value="1" name="isUsedFilter"
 													id="isUsedFilter_y" ${filterType.isUsedFilter==1 ? 'checked' : ''}>
@@ -174,13 +218,31 @@
 													${filterType.isUsedFilter==0 ? 'checked' : ''}> No
 												</label>
 											</div>
+											</c:when>
+											<c:otherwise>
+												<div class="form-check form-check-inline">
+												<label class="form-check-label"> <input type="radio"
+													class="form-check-input" checked value="1" name="isUsedFilter"
+													id="isUsedFilter_y">
+													Yes
+												</label>
+											</div>
+
+											<div class="form-check form-check-inline">
+												<label class="form-check-label "> <input
+													type="radio" class="form-check-input" value="0"
+													name="isUsedFilter" id="isUsedFilter_n"> No
+												</label>
+											</div>
+											</c:otherwise>
+										</c:choose>											
 										</div>
 									</div>
 
 
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="address">Description <span class="text-danger">*
+											for="address">Description <span class="text-danger">
 										</span>:
 										</label>
 										<div class="col-lg-10">
@@ -193,14 +255,17 @@
 												field is required.</span>
 										</div>
 									</div>
-									
-									
-
+									<input type="hidden" id="btnType" name="btnType">
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary" id="subBtn">
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+										<c:if test="${filterType.filterTypeId==0}">										
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+										</c:if>
 									</div>
 								</form>
 							</div>
@@ -223,6 +288,10 @@
 	</div>
 	<!-- /page content -->
 	<script type="text/javascript">
+	function pressBtn(btnVal){
+		$("#btnType").val(btnVal)
+	}
+	
 		$(document).ready(function($) {
 
 			$("#submitInsert").submit(function(e) {
@@ -236,21 +305,44 @@
 					$("#error_filterTypeName").hide()
 				}
 				
-				if (!$("#description").val()) {
+				/* if (!$("#description").val()) {
 					isError = true;
 					$("#error_description").show()
 				} else {
 					$("#error_description").hide()
-				}
+				} */
 				
 			
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("subBtn").disabled = true;
-						return true;
-					}
-				}
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										$(".btn").attr("disabled", true);
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError
 
 				return false;
 

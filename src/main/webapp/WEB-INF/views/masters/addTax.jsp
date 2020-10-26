@@ -61,6 +61,8 @@
 
 
 							<div class="card-body">
+								<div class="form-group row"></div>
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 								<form
 									action="${pageContext.request.contextPath}/insertTax"
@@ -289,12 +291,17 @@
 											
 										</div>
 									</div>
-									
+									<input type="hidden" id="btnType" name="btnType">
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary" id="submtbtn">
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+										<c:if test="${tax.taxId==0}">										
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+										</c:if>
 									</div>
 								</form>
 							</div>
@@ -319,6 +326,10 @@
 		src="${pageContext.request.contextPath}/resources/assets/js/scrolltable.js"></script>
 	<!-- /page content -->
 	<script type="text/javascript">
+	function pressBtn(btnVal){
+		$("#btnType").val(btnVal)
+	}
+	
 		var loadFile = function(event) {
 			try {
 				var image = document.getElementById('output');
@@ -419,12 +430,35 @@
 				}	
 				
 				if (!isError) {
-					var x = true;
-					if (x == true) {
-						document.getElementById("submtbtn").disabled = true;
-						return true;
-					}
-				}
+					var x = false;
+					bootbox
+							.confirm({
+								title : 'Confirm ',
+								message : 'Are you sure you want to Submit ?',
+								buttons : {
+									confirm : {
+										label : 'Yes',
+										className : 'btn-success'
+									},
+									cancel : {
+										label : 'Cancel',
+										className : 'btn-danger'
+									}
+								},
+								callback : function(
+										result) {
+									if (result) {
+										$(".btn").attr("disabled", true);
+										var form = document
+												.getElementById("submitInsert")
+										form
+												.submit();
+									}
+								}
+							});
+					//end ajax send this to php page
+					return false;
+				}//end of if !isError
 
 				return false;
 

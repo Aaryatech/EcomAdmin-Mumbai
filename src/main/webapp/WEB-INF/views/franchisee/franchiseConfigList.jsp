@@ -99,8 +99,24 @@
 												<option value="0" ${fn:contains(frIds, 0) ? 'selected' : ''}>All</option>
 												<c:forEach items="${frList}" var="list" varStatus="count">
 
-													<option value="${list.frId}"
-														${fn:contains(frIds, list.frId) ? 'selected' : ''}>${list.frName}</option>
+
+		<c:set value="0" var="flag" />
+																<c:forEach items="${frIds}" var="frIds">
+																	<c:if test="${frIds == list.frId}">
+																		<c:set value="1" var="flag" />
+																	</c:if>
+																</c:forEach>
+																
+																<c:choose>
+																	<c:when test="${flag==1}">
+																		<option value="${list.frId}" selected="selected">${list.frName}</option>
+																	</c:when>
+																	<c:otherwise>
+																		<option value="${list.frId}">${list.frName}</option>
+																	</c:otherwise>
+																</c:choose>
+													<%-- <option value="${list.frId}"
+														${fn:contains(frIds, list.frId) ? 'selected' : ''}>${list.frName}</option> --%>
 
 												</c:forEach>
 											</select> <span class="validation-invalid-label text-danger"
@@ -125,12 +141,28 @@
 
 												<c:forEach items="${configList}" var="list"
 													varStatus="count">
+													
+														<c:set value="0" var="flag" />
+																<c:forEach items="${configIds}" var="configIds">
+																	<c:if test="${configIds == list.configHeaderId}">
+																		<c:set value="1" var="flag" />
+																	</c:if>
+																</c:forEach>
+																
+																<c:choose>
+																	<c:when test="${flag==1}">
+																		<option value="${list.configHeaderId}" selected="selected">${list.configName}</option>
+																	</c:when>
+																	<c:otherwise>
+																		<option value="${list.configHeaderId}">${list.configName}</option>
+																	</c:otherwise>
+																</c:choose>
 
-													<option value="${list.configHeaderId}"
-														${fn:contains(configIds, list.configHeaderId) ? 'selected' : ''}>${list.configName}</option>
+													<%-- <option value="${list.configHeaderId}"
+														${fn:contains(configIds, list.configHeaderId) ? 'selected' : ''}>${list.configName}</option> --%>
 
 												</c:forEach>
-											</select> <span class="validation-invalid-label text-danger"
+											</select><span class="validation-invalid-label text-danger"
 												id="error_configId" style="display: none;">This field
 												is required.</span>
 										</div>

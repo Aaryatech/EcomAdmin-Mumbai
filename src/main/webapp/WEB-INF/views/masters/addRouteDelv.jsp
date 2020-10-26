@@ -78,7 +78,8 @@
 
 
 							<div class="card-body">
-
+								<div class="form-group row"></div>
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 								<form
 									action="${pageContext.request.contextPath}/insertNewRouteDelv"
 									id="submitInsert" method="post">

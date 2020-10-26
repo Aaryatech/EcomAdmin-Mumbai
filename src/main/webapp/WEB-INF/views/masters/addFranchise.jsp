@@ -504,9 +504,9 @@
 												<div class="col-lg-4">
 													<input type="text"
 														class="form-control maxlength-badge-position non-char-float"
-														name="kmCover" id="kmCover" maxlength="30"
+														name="kmCover" id="kmCover" maxlength="6"
 														autocomplete="off" onchange="trim(this)"
-														value="${franchise.noOfKmAreaCover}"> <span
+														value="${franchise.noOfKmAreaCover>0 ? franchise.noOfKmAreaCover : 1}"> <span
 														class="validation-invalid-label text-danger"
 														id="error_kmCover" style="display: none;">This
 														field is required.</span>

@@ -77,10 +77,13 @@
 
 
 							<div class="card-body">
+							
+							<div class="form-group row"></div>
+							<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 								<form action="${pageContext.request.contextPath}/insertNewCategory"
 									id="submitInsert" method="post" enctype="multipart/form-data">
-
+		
 
 									<p class="desc text-danger fontsize11">Note : * Fields are
 										mandatory.</p>
@@ -233,7 +236,7 @@
 											for="cust_name">Category Image <span
 											class="text-danger"></span>:
 										</label>
-										<div class="col-lg-4">
+										<div class="col-lg-10">
 											<label class="form-check-label"> <img id="output" height="180"
 												width="150" src="${imgPath}${cat.imageName}" /> <input
 												type="file" class="form-control-uniform" data-fouc
@@ -242,15 +245,23 @@
 												id="editImg" value="${cat.imageName}"> <span
 												class="validation-invalid-label text-danger" id="error_doc"
 												style="display: none;">This field is required.</span>
+												<span class="text-danger">*Please upload file having extensions
+														 .jpeg/.jpg/.png only.</span>
 											</label>
+											
 										</div>
 									</div>
-
+									<input type="hidden" id="btnType" name="btnType">
 									<br>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary" id="subBtn">
+										<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
+										<c:if test="${cat.catId==0}">
+											<button type="submit" class="btn btn-primary" id="submtbtn1" onclick="pressBtn(1)">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+										</c:if>
 									</div>
 								</form>
 							</div>
@@ -284,6 +295,11 @@
 				console.log(err);
 			}
 		};
+		
+		function pressBtn(btnVal){
+			$("#btnType").val(btnVal)
+		}
+
 		
 		$('#prefix').on('input', function() {
 			if (this.value.match(/[^a-zA-Z]/g)) {
@@ -332,13 +348,37 @@
 												} */												
 
 												if (!isError) {
-													var x = true;
-													if (x == true) {
-														document
-																.getElementById("subBtn").disabled = true;
-														return true;
-													}
-												}
+													var x = false;
+													bootbox
+															.confirm({
+																title : 'Confirm ',
+																message : 'Are you sure you want to Submit ?',
+																buttons : {
+																	confirm : {
+																		label : 'Yes',
+																		className : 'btn-success'
+																	},
+																	cancel : {
+																		label : 'Cancel',
+																		className : 'btn-danger'
+																	}
+																},
+																callback : function(
+																		result) {
+																	if (result) {
+																		$(".btn").attr("disabled", true);
+																		var form = document
+																				.getElementById("submitInsert")
+																		form
+																				.submit();
+																	}
+																}
+															});
+													//end ajax send this to php page
+													return false;
+												}//end of if !isError
+
+
 
 												return false;
 
