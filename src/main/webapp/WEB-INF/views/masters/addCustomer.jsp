@@ -31,6 +31,7 @@
 	<c:url value="/getCustInfo" var="getCustInfo"></c:url>
 	<c:url value="/getCustAdrsDtl" var="getCustAdrsDtl"></c:url>
 	<c:url value="/getCityListAjax" var="getCityListAjax"></c:url>
+	<c:url value="/getCustInfoByEmail" var="getCustInfoByEmail"></c:url>
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -169,7 +170,10 @@
 												value="${cust.emailId}" name="email" id="email"> <span
 												class="validation-invalid-label text-danger"
 												id="error_email" style="display: none;">This field is
-												required.</span>
+												required.</span><span
+												class="validation-invalid-label text-danger" id="unq_email"
+												style="display: none;">This Email Id is Already
+												Exist.</span>
 										</div>
 
 									</div>
@@ -537,6 +541,27 @@
 					document.getElementById("custMobileNo").focus();
 				} else {
 					$("#unq_mob").hide();
+				}
+			});
+		});
+		
+		$("#email").change(function() { 
+			var email = $("#email").val();
+			var custId = $("#cust_id").val();
+			//alert(code)
+
+			$.getJSON('${getCustInfoByEmail}', {
+				email : email,
+				custId : custId,
+				ajax : 'true',
+			}, function(data) {
+
+				if (data.error == false) {
+					$("#unq_email").show();
+					$("#email").val('');
+					document.getElementById("email").focus();
+				} else {
+					$("#unq_email").hide();
 				}
 			});
 		});

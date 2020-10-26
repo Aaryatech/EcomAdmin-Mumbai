@@ -75,6 +75,8 @@
 
 
 							<div class="card-body">
+							<div class="form-group row"></div>
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 								<form
 									action="${pageContext.request.contextPath}/insertGrievanceInstruction"
@@ -141,7 +143,6 @@
 										</label>
 										<div class="col-lg-10">
 											<textarea class="form-control maxlength-badge-position"
-												placeholder="Enter Grievances Type Instruction Description"
 												id="griev_decp" name="griev_decp" autocomplete="off"
 												maxlength="100" onchange="trim(this)">${grievance.description}</textarea>
 										</div>

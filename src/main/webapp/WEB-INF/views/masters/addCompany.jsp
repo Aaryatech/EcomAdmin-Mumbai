@@ -31,6 +31,9 @@
 	<c:url value="/getUserInfo" var="getUserInfo"></c:url>
 	<c:url value="/getUserInfoByEmail" var="getUserInfoByEmail" />
 	<c:url value="/chkUniqCompPrefix" var="chkUniqCompPrefix" />
+	
+	<c:url value="/getCompanyInfo" var="getCompanyInfo" />
+	<c:url value="/getCompInfoByEmail" var="getCompInfoByEmail" />
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -139,6 +142,10 @@
 												class="validation-invalid-label text-danger"
 												id="error_contact_no" style="display: none;">This
 												field is required.</span>
+												<span
+												class="validation-invalid-label text-danger" id="unq_mob"
+												style="display: none;">This Mobile No. is Already
+												Exist.</span>
 										</div>
 
 										<label class="col-form-label font-weight-bold col-lg-2"
@@ -151,7 +158,10 @@
 												value="${comp.compEmailAddress}" name="email" id="email">
 											<span class="validation-invalid-label text-danger"
 												id="error_email" style="display: none;">This field is
-												required.</span>
+												required.</span><span
+												class="validation-invalid-label text-danger" id="unq_email"
+												style="display: none;">This Email Id is Already
+												Exist.</span>
 										</div>
 
 									</div>
@@ -766,6 +776,48 @@
 				console.log(err);
 			}
 		};
+		
+		
+		$("#contact_no").change(function() {
+			var mobNo = $("#contact_no").val();
+			var compId = $("#companyId").val();
+
+			//alert(mobNo)
+
+			$.getJSON('${getCompanyInfo}', {
+				mobNo : mobNo,
+				compId : compId,
+				ajax : 'true',
+			}, function(data) {
+
+				if (data.error == false) {
+					$("#unq_mob").show();
+					$("#contact_no").val('');
+				} else {
+					$("#unq_mob").hide();
+				}
+			});
+		});
+		
+		$("#email").change(function() { 
+			var email = $("#email").val();
+			var compId = $("#companyId").val();
+			//alert(code)
+
+			$.getJSON('${getCompInfoByEmail}', {
+				email : email,
+				compId : compId,
+				ajax : 'true',
+			}, function(data) {
+
+				if (data.error == false) {
+					$("#unq_email").show();
+					$("#email").val('');
+				} else {
+					$("#unq_email").hide();
+				}
+			});
+		});
 
 		$("#companyPrefix").change(function() {
 

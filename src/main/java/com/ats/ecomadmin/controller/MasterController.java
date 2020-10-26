@@ -201,7 +201,12 @@ public class MasterController {
 			System.out.println("Execption in /insertUom : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showUomList";
+		
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));		
+		if(btnVal==0)
+			return "redirect:/showUomList";
+		else
+			return "redirect:/newUom";
 
 	}
 
@@ -1839,7 +1844,12 @@ public class MasterController {
 			System.out.println("Execption in /insertFilterType : " + e.getMessage());
 			e.printStackTrace();
 		}
-		return "redirect:/showFilter/" + filterTypeId;
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		if(btnVal==0)
+			return "redirect:/showFilter/" + filterTypeId;
+		else
+			return "redirect:/newFilter/" + filterTypeId;
+		
 
 	}
 

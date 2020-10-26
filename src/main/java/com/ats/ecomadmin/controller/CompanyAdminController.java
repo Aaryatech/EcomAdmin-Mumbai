@@ -483,6 +483,76 @@ public class CompanyAdminController {
 		return res;
 	}
 
+	// Created By :- Mahendra Singh
+	// Created On :- 26-10-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Check Company Unique Contact No
+	@RequestMapping(value = "/getCompanyInfo", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getCompanyInfo(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		Info res = new Info();
+
+		try {
+			String mobNo = request.getParameter("mobNo");
+			int compId = Integer.parseInt(request.getParameter("compId"));
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("mobNo", mobNo);
+			map.add("compId", compId);
+
+			CompMaster cmp = Constants.getRestTemplate().postForObject(Constants.url + "getCompByMobileNo", map,
+					CompMaster.class);
+			if (cmp != null) {
+				res.setError(false);
+				res.setMsg("Contact No. Found");
+			} else {
+				res.setError(true);
+				res.setMsg("Contact No. Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /chkUniqPrefix : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 26-10-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Check Company Unique Email Id
+	@RequestMapping(value = "/getCompInfoByEmail", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getCompInfoByEmail(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		Info res = new Info();
+
+		try {
+			String email = request.getParameter("email");
+			int compId = Integer.parseInt(request.getParameter("compId"));
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("email", email);
+			map.add("compId", compId);
+
+			CompMaster cmp = Constants.getRestTemplate().postForObject(Constants.url + "getCompByEmailId", map,
+					CompMaster.class);
+			if (cmp != null) {
+				res.setError(false);
+				res.setMsg("Email Found");
+			} else {
+				res.setError(true);
+				res.setMsg("Email Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /chkUniqPrefix : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return res;
+	}
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 14-09-2020
@@ -1298,6 +1368,46 @@ public class CompanyAdminController {
 		return info;
 	}
 
+	// Created By :- Mahendra Singh
+	// Created On :- 26-10-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Check unique Cust Email
+
+	@RequestMapping(value = "/getCustInfoByEmail", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getCustInfoByEmail(HttpServletRequest request, HttpServletResponse response) {
+
+		Info info = new Info();
+		try {
+			int custId = 0;
+			try {
+				custId = Integer.parseInt(request.getParameter("custId"));
+			} catch (Exception e) {
+				custId = 0;
+				e.printStackTrace();
+			}
+			String email = request.getParameter("email");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("email", email);
+			map.add("custId", custId);
+			Customer res = Constants.getRestTemplate().postForObject(Constants.url + "getCustByEmailId", map,
+					Customer.class);
+			if (res != null) {
+				info.setError(false);
+				info.setMsg("Customer Found");
+			} else {
+				info.setError(true);
+				info.setMsg("Customer Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /getUserInfo : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+	}
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 15-09-2020
@@ -1550,7 +1660,7 @@ public class CompanyAdminController {
 	// Descriprion :- insert sub Cat
 	@RequestMapping(value = "/insertNewSubCat", method = RequestMethod.POST)
 	public String insertNewSubCat(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam("doc") MultipartFile doc) {		
+			@RequestParam("doc") MultipartFile doc) {
 		String mav = new String();
 		try {
 			HttpSession session = request.getSession();
@@ -1565,7 +1675,7 @@ public class CompanyAdminController {
 				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
 
 				try {
-					//new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					// new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
 					info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
 				} catch (Exception e) {
 				}
@@ -1573,67 +1683,67 @@ public class CompanyAdminController {
 			} else {
 				profileImage = request.getParameter("editImg");
 			}
-			
+
 			int subCatId = Integer.parseInt(request.getParameter("subCatId"));
 			if (info.isError()) {
 				session.setAttribute("errorMsg", "Invalid Image Formate");
-				if(subCatId>0)
-					mav = "redirect:/showEditSubCat?subCatId=" + FormValidation.Encrypt(String.valueOf(subCatId)); 				
-				else 
-					mav = "redirect:/showAddSubCat"; 
-			} else {
-
-			String subCatName = request.getParameter("subCatName");
-			String subCatDesc = request.getParameter("subCatDesc");
-			String subCatPrefix = request.getParameter("subCatPrefix");
-			String subCatCode = request.getParameter("subCatCode");
-
-			int catId = Integer.parseInt(request.getParameter("catId"));
-			int allowToCopy = Integer.parseInt(request.getParameter("allowToCopy"));
-			
-			int sortNo = Integer.parseInt(request.getParameter("sortNo"));
-
-			SubCategory subcat = new SubCategory();
-			subcat.setAllowToCopy(allowToCopy);
-			subcat.setCatId(catId);
-			subcat.setSubCatId(subCatId);
-			subcat.setCompanyId(companyId);
-			subcat.setImageName(profileImage);
-			subcat.setIsParent(0);
-			subcat.setSubCatPrefix(subCatPrefix.toUpperCase());
-			subcat.setSubCatName(subCatName);
-			subcat.setSubCatDesc(subCatDesc);
-			subcat.setSubCatCode(subCatCode);
-			subcat.setSortNo(sortNo);
-			subcat.setIsActive(1);
-			subcat.setDelStatus(1);
-			subcat.setExInt1(0);
-			subcat.setExInt2(0);
-			subcat.setExInt3(0);
-			subcat.setExVar1("NA");
-			subcat.setExVar2("NA");
-			subcat.setExVar3("NA");
-			subcat.setExFloat1(0);
-			subcat.setExFloat2(0);
-			subcat.setExFloat3(0);
-
-			SubCategory res = Constants.getRestTemplate().postForObject(Constants.url + "saveSubCat", subcat,
-					SubCategory.class);
-
-			if (res.getSubCatId() > 0) {
-				if (subCatId == 0)
-					session.setAttribute("successMsg", "Sub Category Saved Successfully");
+				if (subCatId > 0)
+					mav = "redirect:/showEditSubCat?subCatId=" + FormValidation.Encrypt(String.valueOf(subCatId));
 				else
-					session.setAttribute("successMsg", "Sub Category Update Successfully");
+					mav = "redirect:/showAddSubCat";
 			} else {
-				session.setAttribute("errorMsg", "Failed to Save SubCategory");
-			}
-			
-			int btnVal = Integer.parseInt(request.getParameter("btnType"));			
-			if(btnVal==0)
-				mav = "redirect:/showSubCatList";
-			else
-				mav = "redirect:/showAddSubCat";
+
+				String subCatName = request.getParameter("subCatName");
+				String subCatDesc = request.getParameter("subCatDesc");
+				String subCatPrefix = request.getParameter("subCatPrefix");
+				String subCatCode = request.getParameter("subCatCode");
+
+				int catId = Integer.parseInt(request.getParameter("catId"));
+				int allowToCopy = Integer.parseInt(request.getParameter("allowToCopy"));
+
+				int sortNo = Integer.parseInt(request.getParameter("sortNo"));
+
+				SubCategory subcat = new SubCategory();
+				subcat.setAllowToCopy(allowToCopy);
+				subcat.setCatId(catId);
+				subcat.setSubCatId(subCatId);
+				subcat.setCompanyId(companyId);
+				subcat.setImageName(profileImage);
+				subcat.setIsParent(0);
+				subcat.setSubCatPrefix(subCatPrefix.toUpperCase());
+				subcat.setSubCatName(subCatName);
+				subcat.setSubCatDesc(subCatDesc);
+				subcat.setSubCatCode(subCatCode);
+				subcat.setSortNo(sortNo);
+				subcat.setIsActive(1);
+				subcat.setDelStatus(1);
+				subcat.setExInt1(0);
+				subcat.setExInt2(0);
+				subcat.setExInt3(0);
+				subcat.setExVar1("NA");
+				subcat.setExVar2("NA");
+				subcat.setExVar3("NA");
+				subcat.setExFloat1(0);
+				subcat.setExFloat2(0);
+				subcat.setExFloat3(0);
+
+				SubCategory res = Constants.getRestTemplate().postForObject(Constants.url + "saveSubCat", subcat,
+						SubCategory.class);
+
+				if (res.getSubCatId() > 0) {
+					if (subCatId == 0)
+						session.setAttribute("successMsg", "Sub Category Saved Successfully");
+					else
+						session.setAttribute("successMsg", "Sub Category Update Successfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Save SubCategory");
+				}
+
+				int btnVal = Integer.parseInt(request.getParameter("btnType"));
+				if (btnVal == 0)
+					mav = "redirect:/showSubCatList";
+				else
+					mav = "redirect:/showAddSubCat";
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /insertNewSubCat : " + e.getMessage());
@@ -1772,7 +1882,7 @@ public class CompanyAdminController {
 	@RequestMapping(value = "/insertNewBanner", method = RequestMethod.POST)
 	public String insertNewBanner(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("doc") MultipartFile doc) {
-		
+
 		String mav = new String();
 		try {
 
@@ -1787,9 +1897,9 @@ public class CompanyAdminController {
 			String curDateTime = CommonUtility.getCurrentYMDDateTime();
 			User userObj = (User) session.getAttribute("userObj");
 			String profileImage = new String();
-			
+
 			int bannerId = Integer.parseInt(request.getParameter("bannerId"));
-			
+
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
 				profileImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
@@ -1806,15 +1916,15 @@ public class CompanyAdminController {
 
 			if (info.isError()) {
 				session.setAttribute("errorMsg", "Invalid Image Formate");
-				if(bannerId > 0)
-					mav = "redirect:/showEditBanner?bannerId=" +FormValidation.Encrypt(String.valueOf(bannerId)); 
-				else 
-					mav = "redirect:/showAddBanner"; 
+				if (bannerId > 0)
+					mav = "redirect:/showEditBanner?bannerId=" + FormValidation.Encrypt(String.valueOf(bannerId));
+				else
+					mav = "redirect:/showAddBanner";
 			} else {
 
 				String bannerEventName = request.getParameter("bannerEventName");
 				String captionOnproductPage = request.getParameter("captionOnproductPage");
-				
+
 				int sortNo = Integer.parseInt(request.getParameter("sortNo"));
 
 				StringBuilder sbEmp = new StringBuilder();
@@ -1892,7 +2002,7 @@ public class CompanyAdminController {
 				} else {
 					session.setAttribute("errorMsg", "Failed to Save Banner");
 				}
-				
+
 				int btnVal = Integer.parseInt(request.getParameter("btnType"));
 				if (btnVal == 0)
 					mav = "redirect:/showBannerList";
