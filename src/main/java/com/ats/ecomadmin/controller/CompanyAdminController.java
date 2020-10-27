@@ -260,7 +260,7 @@ public class CompanyAdminController {
 					comp.setCompFdaNo(fdaNo);
 					comp.setCompGstNo(gstNo);
 					comp.setCompGstType(compGstType);
-					comp.setCompOpeningDate(CommonUtility.convertToYMD(openDate));
+					comp.setCompOpeningDate(openDate);
 					comp.setCompPanNo(panNo);
 					comp.setCompState("NA");
 					comp.setCompStateGstCode(gstCode);
