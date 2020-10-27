@@ -179,7 +179,7 @@
 																<option value="${list.frId}" selected="selected">${list.frName}</option>
 															</c:when>
 															<c:otherwise>
-																<option value="${list.frId}">${list.frName}</option>
+																<option value="${list.frId}">${list.frName} ${list.frId}</option>
 															</c:otherwise>
 													</c:choose>
 													<%-- <option value="${list.frId}"

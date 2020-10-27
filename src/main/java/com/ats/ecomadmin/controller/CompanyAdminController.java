@@ -2260,8 +2260,15 @@ public class CompanyAdminController {
 				map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
 
-				Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchises", map,
+				/*
+				 * Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url +
+				 * "getAllFranchises", map, Franchise[].class);
+				 */
+				map.add("frIds", 0);
+				Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getFrListToAddInRoute", map,
 						Franchise[].class);
+				
+				//
 				List<Franchise> frList = new ArrayList<Franchise>(Arrays.asList(frArr));
 				model.addAttribute("frList", frList);
 
@@ -2331,9 +2338,15 @@ public class CompanyAdminController {
 
 				map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
-
-				Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchises", map,
+				map.add("frIds", route.getFrIds());
+				/*
+				 * Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url +
+				 * "getAllFranchises", map, Franchise[].class);
+				 */
+				
+				Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getFrListToAddInRoute", map,
 						Franchise[].class);
+				
 				List<Franchise> frList = new ArrayList<Franchise>(Arrays.asList(frArr));
 				model.addAttribute("frList", frList);
 

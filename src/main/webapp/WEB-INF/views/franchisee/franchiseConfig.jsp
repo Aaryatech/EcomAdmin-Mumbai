@@ -120,7 +120,7 @@
 									</div>									
 									
 									<div class="text-center">								
-										<button type="submit" class="btn btn-primary">
+										<button type="submit" id="search_button" class="btn btn-primary">
 												Search <i class="icon-paperplane ml-2"></i>
 											</button>
 									</div>
@@ -267,6 +267,14 @@
 
 							});
 				});
+		
+		$("#configId").change(function(){
+			if ($("#configId").val() == 0 || !$("#configId").val()) {
+			}else{
+			 document
+				.getElementById("search_button").click();
+			}
+			});
 	</Script>
 	
 		<script type="text/javascript">
@@ -280,6 +288,7 @@
 				if ($("#catId").val() == 0 || !$("#catId").val()) {
 					isError = true;
 					$("#error_category").show()
+					$("#catId").focus();
 				} else {
 					$("#error_category").hide()
 				}
@@ -287,6 +296,7 @@
 				if ($("#configId").val() == 0 || !$("#configId").val()) {
 					isError = true;
 					$("#error_configId").show()
+					$("#configId").focus();
 				} else {
 					$("#error_configId").hide()
 				}				 
@@ -294,8 +304,8 @@
 				if (!isError) {
 					var x = true;
 					if (x == true) {
-						document
-								.getElementById("subBtn").disabled = true;
+						//document
+								//.getElementById("subBtn").disabled = true;
 						return true;
 					}
 				}
@@ -391,7 +401,7 @@
 	
 	<script type="text/javascript">
 		function getConfiguration(catId) {
-
+			
 			if (catId > 0) {
 
 				$
@@ -427,10 +437,9 @@
 										}
 
 									}
-
 									$('#configId').html(html);
 									$("#configId").trigger("chosen:updated");
-
+									
 								});
 
 			}

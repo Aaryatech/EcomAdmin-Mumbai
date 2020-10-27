@@ -2,6 +2,7 @@ package com.ats.ecomadmin.model;
  
 public class GetFrForConfig {
 
+ private String uniqueId;
  
 	private int frId;
 
@@ -12,6 +13,17 @@ public class GetFrForConfig {
 	private String frCity;
 
 	private String route;
+	
+	
+	public String getUniqueId() {
+		return uniqueId;
+	}
+
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
+	}
+
+	
 
 	public int getFrId() {
 		return frId;
@@ -55,8 +67,8 @@ public class GetFrForConfig {
 
 	@Override
 	public String toString() {
-		return "GetFrForConfig [frId=" + frId + ", frCode=" + frCode + ", frName=" + frName + ", frCity=" + frCity
-				+ ", route=" + route + "]";
+		return "GetFrForConfig [uniqueId=" + uniqueId + ", frId=" + frId + ", frCode=" + frCode + ", frName=" + frName
+				+ ", frCity=" + frCity + ", route=" + route + "]";
 	}
 
 }

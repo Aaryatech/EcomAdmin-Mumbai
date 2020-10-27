@@ -1069,11 +1069,13 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 												
 												if (!$("#prod_name").val()) {
 													isError = true;
+													$("#prod_name").focus();
 													$("#error_prod_name").show();
 												} else {
 													$("#error_prod_name").hide();
 												}
 												if (!$("#short_name").val()) { 
+													$("#short_name").focus();
 													$("#error_short_name").show();
 													isError = true;
 												} else {
@@ -1082,6 +1084,7 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 												
 												if (!$("#tax_id").val()) {
 													isError = true;
+													$("#tax_id").focus();
 													$("#error_tax_id").show();
 													} else {
 														$("#error_tax_id").hide();
