@@ -148,6 +148,10 @@
 				$("#dataSyncForm")
 						.submit(
 								function(e) {
+									
+									var table = $('#printtable1').DataTable();
+									table.search("").draw();
+									
 									var isError = false;
 									var errMsg = "";
 									 if (parseInt($('input[name=dataSyncFrId]:checked').length) <1) {

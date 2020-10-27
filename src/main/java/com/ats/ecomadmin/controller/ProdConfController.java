@@ -899,7 +899,7 @@ String mav=new String();
 
 				HttpSession session = request.getSession();
 				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-				Info view = AccessControll.checkAccess("showFranchises", "showFranchises", "1", "0", "0", "0",
+				Info view = AccessControll.checkAccess("showFrListToSyncData", "showFranchises", "1", "0", "0", "0",
 						newModuleList);
 
 				if (view.isError() == true) {

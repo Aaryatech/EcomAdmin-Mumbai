@@ -1816,7 +1816,8 @@ public class MasterController {
 						type = "Per UOM";
 					}
 					String adminName = filter.getFilterName() + "_" + type + " " + filter.getAddOnRs();
-					filter.setAdminName(adminName);
+					filter.setAdminName(filter.getFilterName());
+					filter.setFilterName(adminName);
 				} catch (Exception e) {
 
 				}
