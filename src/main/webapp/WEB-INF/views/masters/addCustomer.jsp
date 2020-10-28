@@ -161,7 +161,7 @@
 
 
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="email">Email <span class="text-danger"></span>:
+											for="email">Email <span class="text-danger">*</span>:
 										</label>
 										<div class="col-lg-4">
 											<input type="text"
@@ -278,7 +278,8 @@
 											<label class="form-check-label"> <img id="output"
 												width="150" src="${imgPath}${cust.profilePic}" /> <input
 												type="file" class="form-control-uniform" data-fouc
-												onchange="loadFile(event)" name="doc" id="doc"> <input
+												onchange="loadFile(event)" name="doc" id="doc" accept="image/*"
+												 accept=".jpg,.png,.jpeg"> <input
 												type="hidden" class="form-control-uniform" name="editImg"
 												id="editImg" value="${cust.profilePic}"> <span
 												class="validation-invalid-label text-danger" id="error_doc"
@@ -473,7 +474,7 @@
 												 }
 												 */
 
-												if ($("#email").val().length != 0) {
+												
 
 													if (!$("#email").val()
 															|| !validateEmail($(
@@ -486,7 +487,6 @@
 														$("#error_email")
 																.hide()
 													}
-												}
 												if (!isError) {
 													var x = false;
 													bootbox

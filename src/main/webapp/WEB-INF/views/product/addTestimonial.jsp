@@ -76,21 +76,7 @@
 										id="testimonialId" value="${testimonial.testimonialsId}">
 
 									<div class="form-group row">
-										<label class="col-form-label font-weight-bold col-lg-2"
-											for="caption">Caption Name<span class="text-danger">*
-										</span>:
-										</label>
-										<div class="col-lg-4">
-											<input type="text"
-												class="form-control maxlength-badge-position" name="caption"
-												id="caption" maxlength="100" autocomplete="off"
-												onchange="trim(this)" value="${testimonial.captionName}">
-											<span class="validation-invalid-label text-danger"
-												id="error_caption" style="display: none;">This field
-												is required.</span>
-										</div>
-
-										<label class="col-form-label font-weight-bold col-lg-2"
+									<label class="col-form-label font-weight-bold col-lg-2"
 											for="testimonial_name">Name<span class="text-danger">*
 										</span>:
 										</label>
@@ -103,6 +89,20 @@
 												class="validation-invalid-label text-danger"
 												id="error_testimonial_name" style="display: none;">This
 												field is required.</span>
+										</div>
+										
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="caption">Caption Name<span class="text-danger">*
+										</span>:
+										</label>
+										<div class="col-lg-4">
+											<input type="text"
+												class="form-control maxlength-badge-position" name="caption"
+												id="caption" maxlength="100" autocomplete="off"
+												onchange="trim(this)" value="${testimonial.captionName}">
+											<span class="validation-invalid-label text-danger"
+												id="error_caption" style="display: none;">This field
+												is required.</span>
 										</div>
 									</div>
 
@@ -242,14 +242,15 @@
 									
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="cust_name">Profile Image <span
+											for="cust_name">Image <span
 											class="text-danger"></span>:
 										</label>
 										<div class="col-lg-10">
 											<label class="form-check-label"> <img id="output"
 												width="150" src="${imgPath}${testimonial.images}" /> <input
 												type="file" class="form-control-uniform" data-fouc
-												onchange="loadFile(event)" name="doc" id="doc"> <input
+												onchange="loadFile(event)" name="doc" id="doc" accept="image/*"
+												 accept=".jpg,.png,.jpeg"> <input
 												type="hidden" class="form-control-uniform" name="editImg"
 												id="editImg" value="${testimonial.images}"> <span
 												class="validation-invalid-label text-danger" id="error_doc"

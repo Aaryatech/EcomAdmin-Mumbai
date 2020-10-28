@@ -248,7 +248,7 @@
 											<label class="form-check-label"> <img id="output"
 												width="150" src="${imgPath}${subCat.imageName}" /> <input
 												type="file" class="form-control-uniform" data-fouc
-												onchange="loadFile(event)" name="doc" id="doc"> <input
+												onchange="loadFile(event)" name="doc" id="doc" accept="image/*" accept=".jpg,.png,.jpeg"> <input
 												type="hidden" class="form-control-uniform" name="editImg"
 												id="editImg" value="${subCat.imageName}"> <span
 												class="validation-invalid-label text-danger" id="error_doc"

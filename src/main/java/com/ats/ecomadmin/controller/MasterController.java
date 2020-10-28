@@ -2095,10 +2095,11 @@ public class MasterController {
 					franchise.setFrCode(getFrCode);
 
 					model.addAttribute("franchise", franchise);
+					
 				}
-
 				model.addAttribute("title", "Add Franchise");
 				model.addAttribute("frId", id);
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 			}
 		} catch (Exception e) {
 			System.out.println("Execption in /newFranchise : " + e.getMessage());

@@ -271,13 +271,13 @@
 
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="doc">Profile Image <span class="text-danger">*</span>:
+											for="doc">Image <span class="text-danger">*</span>:
 										</label>
 										<div class="col-lg-10">
 											<label class="form-check-label"> <img id="output"
 												width="150" src="${imgPath}${banner.bannerImage}" /> <input
 												type="file" class="form-control-uniform" data-fouc
-												onchange="loadFile(event)" name="doc" id="doc"> <input
+												onchange="loadFile(event)" name="doc" id="doc" accept="image/*" accept=".jpg,.png,.jpeg"> <input
 												type="hidden" class="form-control-uniform" name="editImg"
 												id="editImg" value="${banner.bannerImage}"> <span
 												class="validation-invalid-label text-danger" id="error_doc"

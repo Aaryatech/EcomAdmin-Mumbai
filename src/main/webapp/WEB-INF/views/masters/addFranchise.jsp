@@ -342,7 +342,8 @@
 													<label class="form-check-label"> <img id="output"
 														width="150" src="${imgPath}${franchise.frImage}" /> <input
 														type="file" class="form-control-uniform" data-fouc
-														onchange="loadFile(event)" name="doc" id="doc"> <input
+														onchange="loadFile(event)" name="doc" id="doc" accept="image/*"
+														accept=".jpg,.png,.jpeg"> <input
 														type="hidden" class="form-control-uniform" name="editImg"
 														id="editImg" value="${franchise.frImage}"> <span
 														class="validation-invalid-label text-danger"
@@ -711,6 +712,7 @@
 					if (!$("#pass").val()) {
 						isError = true;
 						$("#error_password").show()
+						$("#pass").focus();
 					} else {
 						isError = false;
 						$("#error_password").hide()
@@ -722,6 +724,7 @@
 				if (!$("#frName").val()) {
 					isError = true;
 					$("#error_frName").show()
+					$("#frName").focus();
 				} else {
 					$("#error_frName").hide()
 				}
@@ -729,6 +732,7 @@
 				if (!$("#ownerDob").val()) {
 					isError = true;
 					$("#error_ownerDob").show()
+					$("#ownerDob").focus();
 				} else {
 					$("#error_ownerDob").hide()
 				}
@@ -736,6 +740,7 @@
 				if (!$("#openDate").val()) {
 					isError = true;
 					$("#error_openDate").show()
+					$("#openDate").focus();
 				} else {
 					$("#error_openDate").hide()
 				}
@@ -743,6 +748,7 @@
 				if (!$("#email").val() || !validateEmail($("#email").val())) {
 					isError = true;
 					$("#error_email").show()
+					$("#email").focus();
 				} else {
 					$("#error_email").hide()
 				}
@@ -750,6 +756,7 @@
 				if (!$("#mobNo").val() || !validateMobile($("#mobNo").val())) {
 					isError = true;
 					$("#error_mobNo").show()
+					$("#mobNo").focus();
 				} else {
 					$("#error_mobNo").hide()
 				}
@@ -757,6 +764,7 @@
 				if (!$("#address").val()) {
 					isError = true;
 					$("#error_address").show()
+					$("#address").focus();
 				} else {
 					$("#error_address").hide()
 				}
@@ -764,6 +772,7 @@
 				if (!$("#city").val()) {
 					isError = true;
 					$("#error_city").show()
+					$("#city").focus();
 				} else {
 					$("#error_city").hide()
 				}
@@ -771,6 +780,7 @@
 				if (!$("#pincode").val()) {
 					isError = true;
 					$("#error_pincode").show()
+					$("#pincode").focus();
 				} else {
 					$("#error_pincode").hide()
 				}
@@ -823,6 +833,7 @@
 												if (!$("#fdaNo").val()) {
 													isError = true;
 													$("#error_fdaNo").show()
+													$("#fdaNo").focus();
 												} else {
 													$("#error_fdaNo").hide()
 												}
@@ -831,6 +842,7 @@
 													isError = true;
 													$("#error_fdaExpDate")
 															.show()
+													$("#fdaExpDate").focus();
 												} else {
 													$("#error_fdaExpDate")
 															.hide()
@@ -860,6 +872,7 @@
 												if (!$("#kmCover").val()) {
 													isError = true;
 													$("#error_kmCover").show()
+													$("#kmCover").focus();
 												} else {
 													$("#error_kmCover").hide()
 												}
@@ -877,6 +890,7 @@
 													isError = true;
 													$("#error_longitude")
 															.show()
+													$("#longitude").focus();
 												} else {
 													$("#error_longitude")
 															.hide()
@@ -885,6 +899,7 @@
 												if (!$("#latitude").val()) {
 													isError = true;
 													$("#error_latitude").show()
+													$("#latitude").focus();
 												} else {
 													$("#error_latitude").hide()
 												}
@@ -938,6 +953,7 @@
 													isError = true;
 													$("#error_coBankName")
 															.show()
+													$("#coBankName").focus();
 												} else {
 													$("#error_coBankName")
 															.hide()
@@ -947,6 +963,7 @@
 													isError = true;
 													$("#error_branchName")
 															.show()
+													$("#branchName").focus();
 												} else {
 													$("#error_branchName")
 															.hide()
@@ -955,6 +972,7 @@
 												if (!$("#ifscCode").val()) {
 													isError = true;
 													$("#error_ifscCode").show()
+													$("#ifscCode").focus();
 												} else {
 													$("#error_ifscCode").hide()
 												}
@@ -962,6 +980,7 @@
 												if (!$("#accNo").val()) {
 													isError = true;
 													$("#error_accNo").show()
+													$("#accNo").focus();
 												} else {
 													$("#error_accNo").hide()
 												}
@@ -970,6 +989,7 @@
 													isError = true;
 													$("#error_paymentGateWay")
 															.show()
+													$("#paymentGateWay").focus();
 												} else {
 													$("#error_paymentGateWay")
 															.hide()

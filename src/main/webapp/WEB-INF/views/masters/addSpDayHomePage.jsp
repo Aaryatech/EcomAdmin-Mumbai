@@ -257,18 +257,20 @@
 									
 									<div class="form-group row">
 									<label class="col-form-label font-weight-bold col-lg-2"
-											for="captionImage">Caption Image<span
+											for="captionImage">Image<span
 											class="text-danger"></span>:
 										</label>
-										<div class="col-lg-4">
+										<div class="col-lg-10">
 											<label class="form-check-label"> <img id="output"
 												width="150" src="${imgPath}${spDay.spdayCaptionImageHomePage}" /> <input
 												type="file" class="form-control-uniform" data-fouc
-												onchange="loadFile(event)" name="doc" id="doc"> <input
+												onchange="loadFile(event)" name="doc" id="doc" accept="image/*" accept=".jpg,.png,.jpeg"> <input
 												type="hidden" class="form-control-uniform" name="editImg"
 												id="editImg" value="${spDay.spdayCaptionImageHomePage}"> <span
 												class="validation-invalid-label text-danger" id="error_doc"
 												style="display: none;">This field is required.</span>
+												<span class="text-danger">*Please upload file having extensions
+														 .jpeg/.jpg/.png only.</span>
 											</label>
 										</div>
 									
