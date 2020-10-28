@@ -607,6 +607,11 @@ public class ProdMasteController {
 				if (add.isError() == false) {
 					model.addObject("addAccess", 1);
 				}
+				Info edit = AccessControll.checkAccess("showProdList", "showProdList", "0", "0", "1", "0", newModuleList);
+
+				if (edit.isError() == false) {
+					model.addObject("editAccess", 1);
+				}
 				List<GetProdList> prodList = new ArrayList<GetProdList>();
 				int compId = (int) session.getAttribute("companyId");
 

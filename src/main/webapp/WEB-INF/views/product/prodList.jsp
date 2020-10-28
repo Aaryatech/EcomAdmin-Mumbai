@@ -105,20 +105,23 @@
 <%-- 					<td>${prod.isVeg==0 ? 'Veg' :prod.isVeg==1 ? 'Non Veg' : 'Veg-Non Veg'}</td>
  --%>					<td>${prod.prodStatus}</td>
 					<td>${prod.isActive==1 ? 'Yes' :prod.isActive==0 ? 'No' : 'No'}</td>
-					<td><div class="list-icons">
+					<td><div class="list-icons"><c:if test="${editAccess==1}">
 												<a
 													href="${pageContext.request.contextPath}/showEditProd/${prod.exVar1}"
 													class="list-icons-item" title="Edit Product"> <i
 													class="icon-database-edit2"></i>
-												</a>
+												</a></c:if>
 											</div>
 											
 											<div class="list-icons">
+											<c:if test="${editAccess==1}">
 												<a
 													href="${pageContext.request.contextPath}/manageProdImages/${prod.exVar1}"
 													class="list-icons-item" title="Manage Product Images"> <i
-													class="icon-database-edit2"></i>
+													class="icon-images3
+"></i>
 												</a>
+												</c:if>
 											</div>
 											</td>			
 									<%-- <td class="text-center"><c:if test="${editAccess==0}">
