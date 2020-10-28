@@ -1061,6 +1061,7 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 												if (!$("#cat_id").val()) {
 													isError = true;
 													$("#error_cat_id").show();
+													$("#cat_id").focus();
 												} else {
 													$("#error_cat_id").hide();
 												}
@@ -1068,6 +1069,7 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 												if (!$("#sub_cat_id").val()) {
 													isError = true;
 													$("#error_sub_cat_id").show();
+													$("#sub_cat_id").focus();
 												} else {
 													$("#error_sub_cat_id").hide();
 												}
@@ -1080,9 +1082,9 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 													$("#error_prod_name").hide();
 												}
 												if (!$("#short_name").val()) { 
-													$("#short_name").focus();
-													$("#error_short_name").show();
 													isError = true;
+													$("#short_name").focus();
+													$("#error_short_name").show();													
 												} else {
 													$("#error_short_name").hide();
 												}	
@@ -1096,8 +1098,9 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 													}	
 
 													if (!$("#sort_no").val()) { 
-														$("#error_sort_no").show();
 														isError = true;
+														$("#error_sort_no").show();
+														$("#sort_no").focus();														
 													} else {
 														$("#error_sort_no").hide();
 													}	
@@ -1105,22 +1108,25 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 													
 
 													if (!$("#min_qty").val()||parseFloat($("#min_qty").val())<1) { 
-														$("#error_min_qty").show();
 														isError = true;
+														$("#error_min_qty").show();
+														$("#min_qty").focus();														
 													} else {
 														$("#error_min_qty").hide();
 													}	
 
 													if (!$("#shelf_life").val()||parseFloat($("#shelf_life").val())<1) { 
 														isError = true;
-														$("#error_shelf_life").show();
-
+														$("#shelf_life").focus();
+														$("#error_shelf_life").show();														
 													} else {
 														$("#error_shelf_life").hide();
 													}
+													
 													if (!$("#is_return_allow").val()) { 
-														$("#error_is_return_allow").show();
 														isError = true;
+														$("#error_is_return_allow").show();
+														$("#is_return_allow").focus();														
 													} else {
 														$("#error_is_return_allow").hide()
 													}
@@ -1128,8 +1134,10 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 
 												if (parseInt($("#is_return_allow").val())==1){
 													if (!$("#return_per").val() || parseFloat($("#return_per").val())>100 || parseFloat($("#return_per").val())<1) { 
-													$("#error_return_per").show();
+													
 													isError = true;
+													$("#error_return_per").show();
+													$("#return_per").focus();	
 													} else {
 														$("#error_return_per").hide()
 													}
@@ -1138,9 +1146,10 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 												$("#error_return_per").hide();
 												}
 
-												if (!$("#uom_id").val()) { 
-													$("#error_uom_id").show();
+												if (!$("#uom_id").val()) { 													
 													isError = true;
+													$("#error_uom_id").show();
+													$("#uom_id").focus();	
 													} else {
 														$("#error_uom_id").hide()
 													}
@@ -1148,8 +1157,8 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 												var shapeCount = $('#shape_id > option:selected');
 										         if(shapeCount.length == 0){
 												//if (!$("#shape_id").val()) { 
-													$("#error_shape_id").show();
 													isError = true;
+													$("#error_shape_id").show();													
 													} else {
 														$("#error_shape_id").hide()
 													}
@@ -1174,9 +1183,10 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 														$("#error_sameDay_timeSlot").hide();
 												} */
 
-												if (!$("#prod_type_id").val()) { 
-													$("#error_prod_type_id").show();
+												if (!$("#prod_type_id").val()) { 													
 													isError = true;
+													$("#error_prod_type_id").show();
+													$("#prod_type_id").focus();
 													} else {
 														$("#error_prod_type_id").hide();
 													}
@@ -1184,21 +1194,23 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 												var flavCount = $('#flav_ids > option:selected');
 										         if(flavCount.length == 0){
 													$("#error_flav_ids").show();
-												isError = true;
+													isError = true;													
 													} else {
 														$("#error_flav_ids").hide();
 													}
 
 												if (!$("#prod_status").val()) { 
-													$("#error_prod_status").show();
 													isError = true;
+													$("#error_prod_status").show();
+													$("#prod_status").focus();													
 													} else {
 														$("#error_prod_status").hide();
 													}
 
 												if (!$("#book_b4").val()|| parseInt($("#book_b4").val())<1) { 
-													$("#error_book_b4").show();
 													isError = true;
+													$("#error_book_b4").show();
+													$("#book_b4").focus();
 													} else {
 														$("#error_book_b4").hide();
 													}
@@ -1210,18 +1222,20 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 														$("#error_event_ids").hide();
 													}
 
-												if (!$("#char_limit_yn").val()) { 
-													$("#error_char_limit_yn").show();
+												if (!$("#char_limit_yn").val()) { 													
 													isError = true;
+													$("#error_char_limit_yn").show();
+													$("#char_limit_yn").focus();
 													} else {
 														$("#error_char_limit_yn").hide();
 													}
 
 												
 												if (parseInt($("#char_limit_yn").val())==1) { 
-												if (!$("#no_of_alpha").val()) {
-														 $("#error_no_of_alpha").show();
+												if (!$("#no_of_alpha").val()) {														 
 														isError = true;
+														$("#error_no_of_alpha").show();
+														$("#no_of_alpha").focus();
 													} else {
 														$("#error_no_of_alpha").hide()
 													}
@@ -1229,49 +1243,50 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 													$("#error_no_of_alpha").hide()
 												}
 
-												//if (parseInt($("#is_msg_on_cake").val())==1) {
+												
 													if($("#is_msg_on_cake").prop('checked')){
-														//alert("Checked True");
-														//if (parseInt($("#no_of_msg_char").val())<1)
-															if (!$("#no_of_msg_char").val()) {
-															//alert("Checked True in if Length <1");
-														 $("#error_no_of_msg_char").show();
-														isError = true;
+														if (!$("#no_of_msg_char").val()) {
+															isError = true;
+															$("#error_no_of_msg_char").show();
+															$("#no_of_msg_char").focus();
 													}
 													 else {
-														// alert("Checked true value proper");
 														$("#error_no_of_msg_char").hide();
 													}
 												}
 												else{
-													//alert("Checked false");
+													
 													$("#error_no_of_msg_char").hide();
 												}
 
 												if (!$("#bread_id").val()) {
-														 $("#error_bread_id").show();
-														isError = true;
+														isError = true;	
+														$("#error_bread_id").show();														
+														$("#bread_id").focus();
 													} else {
 														$("#error_bread_id").hide()
 													}
 												
 												if (!$("#cream_id").val()) {
-														 $("#error_cream_id").show();
-														isError = true;
+														isError = true;	
+														$("#error_cream_id").show();														
+														$("#cream_id").focus();
 													} else {
 														$("#error_cream_id").hide()
 													}
 
 												if (!$("#layering_cream_id").val()) {
-														 $("#error_layering_cream_id").show();
-														isError = true;
+														isError = true;	
+														$("#error_layering_cream_id").show();														
+														$("#layering_cream_id").focus();
 													} else {
 														$("#error_layering_cream_id").hide()
 													}
 												
 												if (!$("#topping_cream_id").val()) {
-														 $("#error_topping_cream_id").show();
-														isError = true;
+														isError = true;	
+														$("#error_topping_cream_id").show();														
+														$("#topping_cream_id").focus();
 													} else {
 														$("#error_topping_cream_id").hide()
 													}
@@ -1300,8 +1315,9 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 
 
 												if (!$("#prep_time").val()|| parseInt($("#prep_time").val())<0) {
-														 $("#error_prep_time").show();
 														isError = true;
+														$("#error_prep_time").show();
+														$("#prep_time").focus();
 													} else {
 														$("#error_prep_time").hide()
 			 										}
@@ -1316,23 +1332,23 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 													}
 
 												if (!$("#rate_setting_type").val()) {
-														 $("#error_rate_setting_type").show();
-														isError = true;
+													isError = true;
+													$("#error_rate_setting_type").show();														
+													$("#rate_setting_type").focus();
 													} else {
 														$("#error_rate_setting_type").hide()
 													}
 
 												if (parseInt($("#rate_setting_type").val())==2||parseInt($("#rate_setting_type").val())==1)
 												{
-												if (!$("#max_wt").val()) {		
-
-												 $("#error_max_wt").show();
+													if (!$("#max_wt").val()) {	
 														isError = true;
-												}
-													 else {
-														$("#error_max_wt").hide()
+														$("#error_max_wt").show();
+														$("#max_wt").focus();
+													}else {
+															$("#error_max_wt").hide()
+														}
 													}
-												}
 												else{
 												//$("#error_max_wt").val()=0;
 												}
@@ -1350,8 +1366,9 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 												}
 												
 												if (!$("#basic_mrp").val()|| parseInt($("#basic_mrp").val())<1) { 
-													$("#error_basic_mrp").show();
 													isError = true;
+													$("#error_basic_mrp").show();													
+													$("#basic_mrp").focus();
 													} else {
 														$("#error_basic_mrp").hide();
 													}

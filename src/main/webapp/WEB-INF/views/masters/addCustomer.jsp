@@ -427,6 +427,7 @@
 												if (!$("#custName").val()) {
 													isError = true;
 													$("#error_custName").show()
+													$("#custName").focus();
 												} else {
 													$("#error_custName").hide()
 												}
@@ -436,6 +437,7 @@
 																"#custMobileNo")
 																.val())) {
 													isError = true;
+													$("#custMobileNo").focus();
 													$("#error_custMobileNo")
 															.show()
 												} else {
@@ -445,6 +447,7 @@
 
 												if (!$("#dateOfBirth").val()) {
 													isError = true;
+													$("#dateOfBirth").focus();
 													$("#error_dateOfBirth")
 															.show()
 												} else {
@@ -455,6 +458,7 @@
 												if (!$("#city").val()
 														|| $("#city").val() == 0) {
 													isError = true;
+													$("#city").focus();
 													$("#error_city").show()
 												} else {
 													$("#error_city").hide()
@@ -793,6 +797,7 @@
 				if (!$("#address").val()) {
 					isError = true;
 					$("#error_address").show()
+					$("#address").focus();
 				} else {
 					$("#error_address").hide()
 				}
@@ -800,6 +805,7 @@
 				if (!$("#address2").val()) {
 					isError = true;
 					$("#error_address2").show()
+					$("#address2").focus();
 				} else {
 					$("#error_address2").hide()
 				}
@@ -807,6 +813,7 @@
 				if (!$("#address3").val()) {
 					isError = true;
 					$("#error_address3").show()
+					$("#address3").focus();
 				} else {
 					$("#error_address3").hide()
 				}
@@ -814,6 +821,7 @@
 				if (!$("#landmark").val()) {
 					isError = true;
 					$("#error_landmark").show()
+					$("#landmark").focus();
 				} else {
 					$("#error_landmark").hide()
 				}
@@ -821,6 +829,7 @@
 				if (!$("#cityId1").val() || $("#cityId1").val() == 0) {
 					isError = true;
 					$("#error_cityId1").show()
+					$("#cityId1").focus();
 				} else {
 					$("#error_cityId1").hide()
 				}

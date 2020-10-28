@@ -578,6 +578,7 @@
 													isError = true;
 													$("#error_comp_name")
 															.show()
+														$("#comp_name").focus();
 												} else {
 													$("#error_comp_name")
 															.hide()
@@ -589,6 +590,7 @@
 																	"#contact_no")
 																	.val())) {
 														isError = true;
+														$("#contact_no").focus();
 														$("#error_contact_no")
 																.show()
 													} else {
@@ -601,6 +603,7 @@
 																	"#email")
 																	.val())) {
 														isError = true;
+														$("#email").focus();
 														$("#error_email")
 																.show()
 													} else {
@@ -613,6 +616,7 @@
 												if (!$("#address").val()) {
 													isError = true;
 													$("#error_address").show()
+													$("#address").focus();
 												} else {
 													$("#error_address").hide()
 												}
@@ -620,12 +624,14 @@
 												if (!$("#openDate").val()) {
 													isError = true;
 													$("#error_openDate").show()
+													$("#openDate").focus();
 												} else {
 													$("#error_openDate").hide()
 												}
 												if (!$("#city").val()) {
 													isError = true;
 													$("#error_city").show()
+													$("#city").focus();
 												} else {
 													$("#error_city").hide()
 												}
@@ -641,6 +647,7 @@
 													isError = true;
 													$("#error_companyPrefix")
 															.show()
+															$("#companyPrefix").focus();
 												} else {
 													$("#error_companyPrefix")
 															.hide()
@@ -650,6 +657,7 @@
 													isError = true;
 													$("#error_compGstType")
 															.show()
+															$("#compGstType").focus();
 												} else {
 													$("#error_compGstType")
 															.hide()
@@ -665,6 +673,7 @@
 												if (!$("#bankName").val()) {
 													isError = true;
 													$("#error_bankName").show()
+													$("#bankName").focus();
 												} else {
 													$("#error_bankName").hide()
 												}
@@ -673,6 +682,7 @@
 													isError = true;
 													$("#error_branchName")
 															.show()
+															$("#branchName").focus();
 												} else {
 													$("#error_branchName")
 															.hide()
@@ -681,6 +691,7 @@
 												if (!$("#ifscCode").val()) {
 													isError = true;
 													$("#error_ifscCode").show()
+													$("#ifscCode").focus();
 												} else {
 													$("#error_ifscCode").hide()
 												}
@@ -688,6 +699,7 @@
 												if (!$("#accNo").val()) {
 													isError = true;
 													$("#error_accNo").show()
+													$("#accNo").focus();
 												} else {
 													$("#error_accNo").hide()
 												}
@@ -702,6 +714,7 @@
 												if (!$("#fdaNo").val()) {
 													isError = true;
 													$("#error_fdaNo").show()
+													$("#fdaNo").focus();
 												} else {
 													$("#error_fdaNo").hide()
 												}
