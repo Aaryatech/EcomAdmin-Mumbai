@@ -377,6 +377,7 @@
 				if (!$("#spdayName").val()) {
 					isError = true;
 					$("#error_spdayName").show()
+					$("#spdayName").focus();
 				} else {
 					$("#error_spdayName").hide()
 				}
@@ -384,6 +385,7 @@
 				if (!$("#spdayCaption").val()) {
 					isError = true;
 					$("#error_spdayCaption").show()
+					$("#spdayCaption").focus();
 				} else {
 					$("#error_spdayCaption").hide()
 				}
@@ -391,6 +393,7 @@
 				if ($("#frId").val()=='') {
 					isError = true;
 					$("#error_frId").show()
+					$("#frId").focus();
 				} else {
 					$("#error_frId").hide()
 				}
@@ -398,6 +401,7 @@
 				if ($("#tag").val()=='') {
 					isError = true;
 					$("#error_tag").show()
+					$("#tag").focus();
 				} else {
 					$("#error_tag").hide()
 				}
@@ -405,6 +409,7 @@
 				if ($("#fromTime").val()=='') {
 					isError = true;
 					$("#error_fromTime").show()
+					$("#fromTime").focus();
 				} else {
 					$("#error_fromTime").hide()
 				}
@@ -412,6 +417,7 @@
 				if ($("#toTime").val()=='') {
 					isError = true;
 					$("#error_toTime").show()
+					$("#toTime").focus();
 				} else {
 					$("#error_toTime").hide()
 				}
@@ -419,6 +425,7 @@
 				if ($("#captionOnProductPage").val()=='') {
 					isError = true;
 					$("#error_captionOnProductPage").show()
+					$("#captionOnProductPage").focus();
 				} else {
 					$("#error_captionOnProductPage").hide()
 				}
@@ -426,6 +433,7 @@
 				if ($("#sortNo").val()=='') {
 					isError = true;
 					$("#error_sortNo").show()
+					$("#sortNo").focus();
 				} else {
 					$("#error_sortNo").hide()
 				}
