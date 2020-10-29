@@ -20,6 +20,9 @@
 .select2-selection--multiple .select2-selection__rendered {
 	border-bottom: 1px solid #ddd;
 }
+.table caption+thead tr:first-child td, .table caption+thead tr:first-child th, .table colgroup+thead tr:first-child td, .table colgroup+thead tr:first-child th, .table thead:first-child tr:first-child td, .table thead:first-child tr:first-child th {
+      border-top-width: 1px!important;  
+}
 </style>
 
 <jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
@@ -148,7 +151,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="card">
-							<table class="table datatable-header-basic"
+							<table class="table datatable-fixed-left_custom table-bordered table-hover table-striped"
 								id="order_table">
 								<thead>
 									<tr>
@@ -454,6 +457,25 @@
 	</div>
 	<!-- /large modal -->
 	<script>
+	$('.datatable-fixed-left_custom').DataTable({
+
+		columnDefs : [ {
+			orderable : false,
+			targets : [ 0 ]
+		} ],
+		//scrollX : true,
+		scrollX : true,
+		scrollY : '65vh',
+		scrollCollapse : true,
+		order:[],
+		paging : false,
+		fixedColumns : {
+			leftColumns : 1,
+			rightColumns : 0
+		}
+
+	});
+	
 		$("#submtbtn")
 				.click(
 						function() {
@@ -469,7 +491,8 @@
 								
 							$('#loader').show();
 							$('#order_table td').remove();
-
+							var dataTable = $('#order_table').DataTable();
+							dataTable.clear().draw();
 							$
 									.getJSON(
 											'${getOrderListByDate}',
@@ -600,11 +623,15 @@
 																					.html(
 																							acStr));
 
-																	$(
+																/* 	$(
 																			'#order_table tbody')
 																			.append(
-																					tr1);
+																					tr1); */
 
+																					
+																	dataTable.row.add(
+																			[key + 1,order.orderNo,order.orderDateDisplay,order.deliveryDateDisplay,order.custName+"-"+order.custMobile,order.frName,orderStatus,paymentMode,order.totalAmt.toFixed(2),
+																			acStr]).draw();
 																});
 											});
 						}
