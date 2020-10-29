@@ -27,23 +27,22 @@ import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
+import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.GetFrConfigList;
 import com.ats.ecomadmin.model.GetFrForConfig;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.ItemConfHeader;
+import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
+import com.ats.ecomadmin.model.offer.DeliveryBoy;
 import com.ats.ecomadmin.model.offer.OfferDetail;
 
 @Controller
 @SessionScope
 public class FranchiseConfigurationController {
-
-	
-	
-	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -107,10 +106,10 @@ public class FranchiseConfigurationController {
 					GetFrForConfig[] frArr = Constants.getRestTemplate()
 							.postForObject(Constants.url + "getFranchiseForConfig", map, GetFrForConfig[].class);
 					frList = new ArrayList<GetFrForConfig>(Arrays.asList(frArr));
-					
-					if(frList.isEmpty()) {
+
+					if (frList.isEmpty()) {
 						session.setAttribute("errorMsg", "No Record Found.");
-					}else {
+					} else {
 						session.removeAttribute("errorMsg");
 					}
 				}
@@ -123,8 +122,6 @@ public class FranchiseConfigurationController {
 		}
 		return mav;
 	}
-	
-	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -158,9 +155,6 @@ public class FranchiseConfigurationController {
 		return list;
 	}
 
-	
-	
-
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 24-09-2020
@@ -174,7 +168,7 @@ public class FranchiseConfigurationController {
 		Calendar cal = Calendar.getInstance();
 		String curDateTime = dateFormat.format(cal.getTime());
 		User userObj = (User) session.getAttribute("userObj");
-		
+
 		try {
 			int cfgId = Integer.parseInt(request.getParameter("cfgId"));
 			StringBuilder sb = new StringBuilder();
@@ -209,17 +203,15 @@ public class FranchiseConfigurationController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		int btnVal = Integer.parseInt(request.getParameter("btnType"));
-		
-		if(btnVal==0)
+
+		if (btnVal == 0)
 			return "redirect:/configFranchiseList";
 		else
 			return "redirect:/configFranchise";
 
 	}
-	
-	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -351,8 +343,7 @@ public class FranchiseConfigurationController {
 		}
 		return mav;
 	}
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 25-09-2020
@@ -396,8 +387,7 @@ public class FranchiseConfigurationController {
 		return "redirect:/configFranchiseList";
 
 	}
-	
-	
+
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 25-09-2020
@@ -440,6 +430,294 @@ public class FranchiseConfigurationController {
 			}
 		}
 		return mav;
+	}
+
+	/*--------------------------------------------------------------------------*/
+	// Created By :- Mahendra Singh
+	// Created On :- 20-10-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Show Delivery Boy List
+	@RequestMapping(value = "/showDeliveryList", method = RequestMethod.GET)
+	public String showUomList(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		List<DeliveryBoy> delBoyList = new ArrayList<DeliveryBoy>();
+		try {
+
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showDeliveryList", "showDeliveryList", "1", "0", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/delvrBoyList";
+
+				int compId = (int) session.getAttribute("companyId");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				DeliveryBoy[] uomArr = Constants.getRestTemplate().postForObject(Constants.url + "getDeliveryBoysList",
+						map, DeliveryBoy[].class);
+				delBoyList = new ArrayList<DeliveryBoy>(Arrays.asList(uomArr));
+
+				for (int i = 0; i < delBoyList.size(); i++) {
+
+					delBoyList.get(i)
+							.setExVar1(FormValidation.Encrypt(String.valueOf(delBoyList.get(i).getDelBoyId())));
+				}
+				model.addAttribute("delBoyList", delBoyList);
+
+				model.addAttribute("title", "Delivery Boy List");
+
+				Info add = AccessControll.checkAccess("showDeliveryList", "showDeliveryList", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showDeliveryList", "showDeliveryList", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showDeliveryList", "showDeliveryList", "0", "0", "0", "1",
+						newModuleList);
+
+				if (add.isError() == false) {
+					model.addAttribute("addAccess", 0);
+				}
+				if (edit.isError() == false) {
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					model.addAttribute("deleteAccess", 0);
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /showDeliveryList : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 20-10-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect to Add UOM JSP Page
+	@RequestMapping(value = "/newDeliveryBoy", method = RequestMethod.GET)
+	public String newUom(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("newDeliveryBoy", "showDeliveryList", "0", "1", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addDeliveryBoy";
+
+				DeliveryBoy delvrBoy = new DeliveryBoy();
+
+				model.addAttribute("delvrBoy", delvrBoy);
+				model.addAttribute("title", "Add DeliveryBoy");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /newDeliveryBoy : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 20-10-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Insert Delivery Boy in database
+	@RequestMapping(value = "/insertDeliveryBoy", method = RequestMethod.POST)
+	public String insertDeliveryBoy(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			DeliveryBoy delBoy = new DeliveryBoy();
+
+			HttpSession session = request.getSession();
+			int compId = (int) session.getAttribute("companyId");
+
+			int delBoyId = Integer.parseInt(request.getParameter("delBoyId"));
+			String empCode = new String();
+			try {
+				empCode = request.getParameter("empCode");
+			} catch (Exception e) {
+				empCode = null;
+			}
+
+			if (empCode.isEmpty() || empCode == null) {
+				delBoy.setEmpCode("NA");
+			} else {
+				delBoy.setEmpCode(empCode);
+			}
+
+			delBoy.setDelBoyId(delBoyId);
+			delBoy.setAddress(request.getParameter("address"));
+			delBoy.setCompId(compId);
+			delBoy.setDateOfBirth(request.getParameter("dob"));
+			delBoy.setDelStatus(1);
+			delBoy.setEmailId("NA");
+			delBoy.setExInt1(0);
+			delBoy.setExInt2(0);
+			delBoy.setExVar1("NA");
+			delBoy.setExVar2("NA");
+			delBoy.setFirstName(request.getParameter("firstName"));
+			delBoy.setJoiningDate(request.getParameter("joiningDate"));
+			delBoy.setLastName(request.getParameter("lastName"));
+			delBoy.setMobileNo(request.getParameter("mobNo"));
+			delBoy.setVehicleNo("NA");
+			delBoy.setIsActive(Integer.parseInt(request.getParameter("activeStat")));
+
+			DeliveryBoy res = Constants.getRestTemplate().postForObject(Constants.url + "saveDeliveryBoy", delBoy,
+					DeliveryBoy.class);
+
+			if (res.getDelBoyId() > 0) {
+				if (delBoyId == 0)
+					session.setAttribute("successMsg", "Delivery Boy Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Delivery Boy Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Delivery Boy");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /insertDeliveryBoy : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		if (btnVal == 0)
+			return "redirect:/showDeliveryList";
+		else
+			return "redirect:/newDeliveryBoy";
+
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 20-10-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Update Delivery Boy
+	@RequestMapping(value = "/editDeliveryBoy", method = RequestMethod.GET)
+	public String editDeliveryBoy(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("editDeliveryBoy", "showDeliveryList", "0", "0", "1", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "masters/addDeliveryBoy";
+
+				String base64encodedString = request.getParameter("delBoyId");
+				String delBoyId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("delBoyId", delBoyId);
+
+				DeliveryBoy delvrBoy = Constants.getRestTemplate().postForObject(Constants.url + "getDeliveryBoyById",
+						map, DeliveryBoy.class);
+				model.addAttribute("delvrBoy", delvrBoy);
+				model.addAttribute("title", "Edit Delivery Boy");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /editDeliveryBoy : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 20-20-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Delete Delivery Boy
+	@RequestMapping(value = "/deleteDeliveryBoy", method = RequestMethod.GET)
+	public String deleteUom(HttpServletRequest request, HttpServletResponse response) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteDeliveryBoy", "showDeliveryList", "0", "0", "0", "1",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "redirect:/showDeliveryList";
+
+				String base64encodedString = request.getParameter("delBoyId");
+				String delBoyId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+				map.add("delBoyId", Integer.parseInt(delBoyId));
+				Info info = Constants.getRestTemplate().postForObject(Constants.url + "deleteDeliveryBoyById", map,
+						Info.class);
+
+				if (!info.isError()) {
+					session.setAttribute("successMsg", info.getMsg());
+				} else {
+					session.setAttribute("errorMsg", info.getMsg());
+				}
+
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteDeliveryBoy : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+	
+	@RequestMapping(value = "/getDelvrBoyInfoByMobNo", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getCityInfoByCode(HttpServletRequest request, HttpServletResponse response) {
+
+		Info info = new Info();
+		try {
+			String delBoyId = request.getParameter("delBoyId");
+			String mobNo = request.getParameter("mobNo");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("delBoyId", delBoyId);
+			map.add("mobNo", mobNo);
+
+			DeliveryBoy res = Constants.getRestTemplate().postForObject(Constants.url + "getDeliveryBoyByMobNo", map, DeliveryBoy.class);
+
+			if (res != null) {
+				info.setError(false);
+				info.setMsg("Delivery Boy Found");
+			} else {
+				info.setError(true);
+				info.setMsg("Delivery Boy Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /getDelvrBoyInfoByMobNo : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
 	}
 
 }
