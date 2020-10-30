@@ -329,7 +329,7 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" multiple data
+												data-fouc="" aria-hidden="true" onchange="getDefaultShape()" multiple data
 												placeholder="Select Shape" id="shape_id" name="shape_id">
 											</select> <span class="validation-invalid-label" id="error_shape_id"
 												style="display: none;">This field is required.</span>
@@ -392,7 +392,16 @@
 												id="error_prod_type_id" style="display: none;">This
 												field is required.</span>
 										</div>
-
+<label class="col-form-label col-lg-2" for="def_shape">
+											Default Shape <span style="color: red">* </span>:
+										</label>
+										<div class="col-lg-4">
+											<select
+												class="form-control form-control-select2 select2-hidden-accessible"
+												data-fouc="" aria-hidden="true" data placeholder="Default Shape" id="def_shape" name="def_shape">
+											</select> <span class="validation-invalid-label" id="error_def_shape"
+												style="display: none;">This field is required.</span>
+										</div>
 										
 									</div>
 
@@ -404,8 +413,8 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" multiple aria-hidden="true" data
-												placeholder="Select Flavors" id="flav_ids" name="flav_ids">
+												data-fouc="" multiple aria-hidden="true" data 
+												placeholder="Select Flavors" onchange="getFlav()" id="flav_ids" name="flav_ids">
 											
 											</select> <span class="validation-invalid-label" id="error_flav_ids"
 												style="display: none;">This field is required.</span>
@@ -425,6 +434,34 @@
 												field is required.</span>
 										</div>
 									</div>
+									
+									<div class="form-group row">
+									<label class="col-form-label col-lg-2" for="def_flav">
+											Default Flavor <span style="color: red">* </span>:
+										</label>
+										<div class="col-lg-4">
+											<select
+												class="form-control form-control-select2 select2-hidden-accessible"
+												data-fouc="" aria-hidden="true" data placeholder="Default Flavor" id="def_flav" name="def_flav">
+											
+											</select> <span class="validation-invalid-label" id="error_def_flav"
+												style="display: none;">This field is required.</span>
+										</div>
+										<label class="col-form-label col-lg-2" for="is_veg">
+											Veg/Non Veg <span style="color: red">* </span>:
+										</label>
+										<div class="col-lg-4">
+											<select
+												class="form-control form-control-select2 select2-hidden-accessible"
+												data-fouc="" onchange="getDefaultvegNonVeg()" aria-hidden="true" multiple data-placeholder="Select Veg Non Veg" id="is_veg" name="is_veg">
+											<!-- <option value="0">Veg</option>
+												<option value="1">Non Veg</option>
+											    <option value="2">Both</option> --></select> <span class="validation-invalid-label" id="error_is_veg"
+												style="display: none;">This field is required.</span>
+										</div>										
+										
+										
+										</div>
 
 									<div class="form-group row">
 										<label class="col-form-label col-lg-2" for="book_b4">
@@ -438,15 +475,15 @@
 												style="display: none;">This field is required. (min value 1)</span>
 										</div>
 
-										<label class="col-form-label col-lg-2" for="event_ids">
-											Select Events <span style="color: red">* </span>:
+										<label class="col-form-label col-lg-2" for="def_vnv">
+											Default Veg NonVeg <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" multiple aria-hidden="true" data
-												placeholder="Select Events" id="event_ids" name="event_ids">
-											</select> <span class="validation-invalid-label" id="error_event_ids"
+												data-fouc="" aria-hidden="true" data placeholder="Default Veg NonVeg" id="def_vnv" name="def_vnv">
+											
+											</select> <span class="validation-invalid-label" id="error_def_vnv"
 												style="display: none;">This field is required.</span>
 										</div>
 									</div>
@@ -673,17 +710,16 @@
 
 
 <div class="form-group row">
-										<label class="col-form-label col-lg-2" for="is_veg">
-											Veg/Non Veg <span style="color: red">* </span>:
+										
+										<label class="col-form-label col-lg-2" for="event_ids">
+											Select Events <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc=""  aria-hidden="true" multiple data-placeholder="Select Veg Non Veg"  id="is_veg" name="is_veg">
-												<%-- <option ${editProd.isVeg==0 ? 'selected' : ''}  value="0">Veg</option>
-												<option  ${editProd.isVeg==1 ? 'selected' : ''} value="1">Non Veg</option>
-											    <option  ${editProd.isVeg==2 ? 'selected' : ''} value="2">Both</option> --%></select> 
-											    <span class="validation-invalid-label" id="error_is_veg"
+												data-fouc="" multiple aria-hidden="true" data
+												placeholder="Select Events" id="event_ids" name="event_ids">
+											</select> <span class="validation-invalid-label" id="error_event_ids"
 												style="display: none;">This field is required.</span>
 										</div>
 
@@ -859,6 +895,132 @@
 		alwaysShow : true,
 		placement : 'top'
 	});
+	
+	//Sachin 30-10-2020 - to allow selection of default flavor,shape,veg non veg
+	function getFlav(){
+		var options = $('#flav_ids option:selected');
+		var txt = $("#flav_ids option:selected");
+
+		// Next, translate that into an array of just the values
+		var values = $.map(options, e => $(e).val());
+		var textName= $.map(txt, e => $(e).text());
+		
+		var len=values.length;
+		
+		var flavHtml="";
+		
+		if(parseInt(len)==1 && parseInt(values[0])<1){
+			//alert("a")
+			flavHtml += '<option  selected value="'+values[0]+'">'
+			+ textName[0] +  '</option>';
+		}
+		else if(parseInt(len)==1&& parseInt(values[0])>0){
+			//alert("b")
+			flavHtml += '<option  selected value="'+values[0]+'">'
+			+ textName[0] +  '</option>';
+		}
+		else{
+			flavHtml += '<option disabled selected value="">Select Default Flavor</option>';
+		for(var x=0;x<len;x++){
+			if(parseInt(values[x])>0){
+				var defFlavId=${editProd.exInt3};
+			if(parseInt(values[x])==parseInt(defFlavId)){
+				flavHtml += '<option selected value="'+values[x]+'">'
+			+ textName[x] +  '</option>';
+			}else{
+				flavHtml += '<option value="'+values[x]+'">'
+				+ textName[x] +  '</option>';
+			}
+						
+			}//End of If
+		}//End of Loop
+		}//End of else
+		$('#def_flav').html(flavHtml);
+		$("#def_flav").trigger("chosen:updated");
+	}//End of Function getFlav()
+	
+	function getDefaultShape(){
+		var options = $('#shape_id option:selected');
+		var txt = $("#shape_id option:selected");
+
+		// Next, translate that into an array of just the values
+		var values = $.map(options, e => $(e).val());
+		var textName= $.map(txt, e => $(e).text());
+		
+		var len=values.length;
+		
+		var shapeHtml="";
+		
+		if(parseInt(len)==1 && parseInt(values[0])<1){
+			//alert("a")
+			shapeHtml += '<option  selected value="'+values[0]+'">'
+			+ textName[0] +  '</option>';
+		}
+		else if(parseInt(len)==1&& parseInt(values[0])>0){
+			//alert("b")
+			shapeHtml += '<option  selected value="'+values[0]+'">'
+			+ textName[0] +  '</option>';
+		}
+		else{
+			shapeHtml += '<option disabled selected value="">Select Default Shape</option>';
+		for(var x=0;x<len;x++){
+			if(parseInt(values[x])>0){
+				var defShapeId=${editProd.exInt1};
+				if(parseInt(values[x])==parseInt(defShapeId)){
+				shapeHtml += '<option selected value="'+values[x]+'">'
+			+ textName[x] +  '</option>';
+				}else{
+					shapeHtml += '<option value="'+values[x]+'">'
+					+ textName[x] +  '</option>';
+				}
+			}//End of If
+		}//End of Loop
+		}//End of else
+		$('#def_shape').html(shapeHtml);
+		$("#def_shape").trigger("chosen:updated");
+	}//End of Function getDefaultShape()
+	
+	function getDefaultvegNonVeg(){
+		var options = $('#is_veg option:selected');
+		var txt = $("#is_veg option:selected");
+
+		// Next, translate that into an array of just the values
+		var values = $.map(options, e => $(e).val());
+		var textName= $.map(txt, e => $(e).text());
+		
+		var len=values.length;
+		
+		var vegHtml="";
+		
+		if(parseInt(len)==1 && parseInt(values[0])<1){
+			//alert("a")
+			vegHtml += '<option  selected value="'+values[0]+'">'
+			+ textName[0] +  '</option>';
+		}
+		else if(parseInt(len)==1&& parseInt(values[0])>0){
+			//alert("b")
+			vegHtml += '<option  selected value="'+values[0]+'">'
+			+ textName[0] +  '</option>';
+		}
+		else{
+			vegHtml += '<option disabled selected value="">Select Default Veg Nonveg</option>';
+		for(var x=0;x<len;x++){
+			if(parseInt(values[x])>0){
+				var defVegId=${editProd.exInt2};
+				if(parseInt(values[x])==parseInt(defVegId)){
+				vegHtml += '<option selected value="'+values[x]+'">'
+			+ textName[x] +  '</option>';
+				}else{
+					vegHtml += '<option value="'+values[x]+'">'
+					+ textName[x] +  '</option>';
+				}
+			}//End of If
+		}//End of Loop
+		}//End of else
+		$('#def_vnv').html(vegHtml);
+		$("#def_vnv").trigger("chosen:updated");
+	}//End of Function getDefaultvegNonVeg()
+	
 	
 	 var loadFile = function(event) {
 		
@@ -1061,7 +1223,7 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 	}//end of if
 		else if(6==parseInt(data[i].filterTypeId)){
 			if(evenArr.includes(''+data[i].filterId)){
-			event_idshtml += '<option selected value="' + data[i].filterId + '">'
+				event_idshtml += '<option selected value="' + data[i].filterId + '">'
 			+ data[i].filterName + '</option>';
 			}else{
 				event_idshtml += '<option value="' + data[i].filterId + '">'
@@ -1212,33 +1374,7 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 			replace(/\n +/, "\n"); // Removes spaces after newlines
 			return;
 		}
-
-		function validateEmail(email) {
-
-			var eml = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-
-			if (eml.test($.trim(email)) == false) {
-
-				return false;
-
-			}
-
-			return true;
-
-		}
-		function validateMobile(mobile) {
-			var mob = /^[1-9]{1}[0-9]{9}$/;
-
-			if (mob.test($.trim(mobile)) == false) {
-
-				//alert("Please enter a valid email address .");
-				return false;
-
-			}
-			return true;
-
-		}
-
+		
 		function getSubCatPrefixData(){
 			var fd = new FormData();
 			subCatId=document.getElementById("sub_cat_id").value;
@@ -1569,6 +1705,33 @@ if(parseInt(rateType)==2 || parseInt(rateType)==1){
 													} else {
 														$("#error_basic_mrp").hide();
 													}
+												
+												
+												
+												//Sachin 30-10-2020
+												if (!$("#def_flav").val()) {
+														isError = true;	
+														$("#error_def_flav").show();														
+														$("#def_flav").focus();
+													} else {
+														$("#error_def_flav").hide()
+													}
+												
+												if (!$("#def_shape").val()) {
+													isError = true;	
+													$("#error_def_shape").show();														
+													$("#def_shape").focus();
+												} else {
+													$("#error_def_shape").hide()
+												}
+												
+												if (!$("#def_vnv").val()) {
+													isError = true;	
+													$("#error_def_vnv").show();														
+													$("#def_vnv").focus();
+												} else {
+													$("#error_def_vnv").hide()
+												}
 												
 												//alert("Is Error "+isError)
 												if (!isError) {

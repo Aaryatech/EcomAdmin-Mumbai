@@ -102,6 +102,10 @@ rel="stylesheet" type="text/css">
 <script src="${pageContext.request.contextPath}/resources/global_assets/js/demo_pages/form_dual_listboxes.js"></script>
 <!-- /theme JS files -->
 
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/global_assets/js/demo_pages/form_validation.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/global_assets/js/plugins/forms/validation/validate.min.js"></script>
 <script>
 // Export options - column selector
     

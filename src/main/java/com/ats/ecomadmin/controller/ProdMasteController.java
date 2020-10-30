@@ -263,9 +263,16 @@ public class ProdMasteController {
 				prod.setExFloat1(1);
 				prod.setExFloat2(1);
 				prod.setExFloat3(1);
-				prod.setExInt1(1);
-				prod.setExInt2(1);
-				prod.setExInt3(1);
+				try {
+					//Sachin 30-10-2020 to add default values of flavor,shape and veg nonveg filter's
+				prod.setExInt1(Integer.parseInt(request.getParameter("def_shape")));
+				prod.setExInt2(Integer.parseInt(request.getParameter("def_vnv")));
+				prod.setExInt3(Integer.parseInt(request.getParameter("def_flav")));
+			}catch (Exception e) {
+				prod.setExInt1(0);
+				prod.setExInt2(Integer.parseInt(request.getParameter("def_vnv")));
+				prod.setExInt3(Integer.parseInt(request.getParameter("def_flav")));
+			}
 
 				prod.setExVar1("v1");
 				prod.setExVar2("v2");
