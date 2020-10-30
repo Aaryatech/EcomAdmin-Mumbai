@@ -195,6 +195,8 @@ s .table caption+thead tr:first-child td, .table caption+thead tr:first-child th
 				$("#saveInsertProdConfForm")
 						.submit(
 								function(e) {
+									var table = $('#printtable2').DataTable();
+									table.search("").draw();
 									var isError = false;
 									var errMsg = "";
 									if (!$("#conf_name").val()) {
