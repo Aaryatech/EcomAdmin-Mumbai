@@ -191,7 +191,7 @@
 										<thead>
 											<tr>
 												<th>Sel All<input type="checkbox" name="seleAll"
-													id="seleAll"  onclick="selAllItems()" /></th>
+													id="seleAll1"  onclick="selAllItems()" /></th>
 												<th>Sr.No.</th>
 												<th>Franchise Name</th>
 												<th>Franchise Code</th>
@@ -249,18 +249,37 @@
 					});
 		}); */
 		
-		$(document).ready(function(){
-		    $('#seleAll').on('click',function(){
-		        if(this.checked){
-		            $('.chkcls').each(function(){
-		                this.checked = true;
-		            });
-		        }else{
-		             $('.chkcls').each(function(){
-		                this.checked = false;
-		            });
-		        }
-		    });
+		function selAllItems() {
+			
+			var checkBox = document.getElementById("seleAll1");
+	//		alert(checkBox.checked);
+
+			if (checkBox.checked == true) {
+
+				$(".chk")
+						.each(
+								function(counter) {
+
+									document.getElementsByClassName("chkcls")[counter].checked = true;
+
+								});
+
+			} else {
+
+				$(".chk")
+						.each(
+								function(counter) {
+
+									if (document
+											.getElementsByClassName("chkVal")[counter].value == 0) {
+										document.getElementsByClassName("chkcls")[counter].checked = false;
+
+									}
+								});
+
+			}
+
+		}
 
 </script>
 	<script>
