@@ -32,12 +32,14 @@ import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.GetFrConfigList;
 import com.ats.ecomadmin.model.GetFrForConfig;
+import com.ats.ecomadmin.model.GetFranchiesAndFrIds;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.ItemConfHeader;
 import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
 import com.ats.ecomadmin.model.offer.DeliveryBoy;
+import com.ats.ecomadmin.model.offer.FrDelvrBoyConfig;
 import com.ats.ecomadmin.model.offer.OfferDetail;
 
 @Controller
@@ -690,7 +692,7 @@ public class FranchiseConfigurationController {
 		}
 		return mav;
 	}
-	
+
 	@RequestMapping(value = "/getDelvrBoyInfoByMobNo", method = RequestMethod.GET)
 	@ResponseBody
 	public Info getCityInfoByCode(HttpServletRequest request, HttpServletResponse response) {
@@ -704,7 +706,8 @@ public class FranchiseConfigurationController {
 			map.add("delBoyId", delBoyId);
 			map.add("mobNo", mobNo);
 
-			DeliveryBoy res = Constants.getRestTemplate().postForObject(Constants.url + "getDeliveryBoyByMobNo", map, DeliveryBoy.class);
+			DeliveryBoy res = Constants.getRestTemplate().postForObject(Constants.url + "getDeliveryBoyByMobNo", map,
+					DeliveryBoy.class);
 
 			if (res != null) {
 				info.setError(false);
@@ -718,6 +721,188 @@ public class FranchiseConfigurationController {
 			e.printStackTrace();
 		}
 		return info;
+	}
+	/*---------------------------------------------------------------------------------------*/
+
+	// Created By :- Mahendra Singh
+	// Created On :- 29-10-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Franchise Cpnfigure with Delivery Boy
+	@RequestMapping(value = "/frDelveryBoyConfig", method = RequestMethod.GET)
+	public String frDelveryBoyConfig(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		HttpSession session = request.getSession();
+		model.addAttribute("title", "Configure Franchise And Delivery Boy");
+		String mav = new String();
+
+		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+		Info view = AccessControll.checkAccess("frDelveryBoyConfig", "frDelveryBoyConfig", "1", "0", "0", "0",
+				newModuleList);
+
+		if (view.isError() == true) {
+
+			mav = "accessDenied";
+
+		} else {
+			try {
+
+				mav = "franchisee/configFrDelvrBoy";
+
+				FrDelvrBoyConfig config = new FrDelvrBoyConfig();
+
+				model.addAttribute("config", config);
+				int compId = (int) session.getAttribute("companyId");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+				DeliveryBoy[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getDeliveryBoysList",
+						map, DeliveryBoy[].class);
+				List<DeliveryBoy> delvrBoyList = new ArrayList<DeliveryBoy>(Arrays.asList(catArr));
+				model.addAttribute("delvrBoyList", delvrBoyList);
+
+			} catch (Exception e) {
+				System.out.println("Execption in /configFranchise : " + e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		return mav;
+	}
+
+	@RequestMapping(value = "/getFranchiseListFrDlvrBoyConfig", method = RequestMethod.GET)
+	@ResponseBody
+	public GetFranchiesAndFrIds getFranchiseListFrDlvrBoyConfig(HttpServletRequest request,
+			HttpServletResponse response) {
+		List<Franchise> frList = new ArrayList<Franchise>();
+
+		GetFranchiesAndFrIds frAndIds = new GetFranchiesAndFrIds();
+		try {
+			HttpSession session = request.getSession();
+			int companyId = (int) session.getAttribute("companyId");
+
+			int delBoyId = Integer.parseInt(request.getParameter("delBoyId"));
+			System.out.println(delBoyId);
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+			map = new LinkedMultiValueMap<>();
+			map.add("compId", companyId);
+			map.add("delBoyId", delBoyId);
+			String frStrIds = Constants.getRestTemplate().postForObject(Constants.url + "getFrDelBoyIds", map,
+					String.class);			
+			frAndIds.setFrStrIds(frStrIds);
+
+			map = new LinkedMultiValueMap<>();
+			map.add("compId", companyId);
+
+			Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchises", map,
+					Franchise[].class);
+			frList = new ArrayList<Franchise>(Arrays.asList(frArr));
+
+			frAndIds.setFrList(frList);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return frAndIds;
+
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 20-10-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Insert Delivery Boy in database
+	@RequestMapping(value = "/saveFrDelvrBoyConfig", method = RequestMethod.POST)
+	public String saveFrDelvrBoyConfig(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			FrDelvrBoyConfig config = new FrDelvrBoyConfig();
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			String curDateTime = dateFormat.format(cal.getTime());
+
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
+			int compId = (int) session.getAttribute("companyId");
+
+			int delBoyId = Integer.parseInt(request.getParameter("delBoyId"));
+
+			int delBoyAssignId = Integer.parseInt(request.getParameter("assignId"));
+
+			String frIdsStr = new String();
+			String[] frIds = request.getParameterValues("chk");
+			if (frIds.length > 0) {
+				StringBuilder sb = new StringBuilder();
+				for (String s : frIds) {
+					sb.append(s).append(",");
+				}
+				frIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
+			}
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+
+			map = new LinkedMultiValueMap<String, Object>();
+			map.add("delBoyId", delBoyId);
+			map.add("compId", compId);
+			FrDelvrBoyConfig frConfig = Constants.getRestTemplate().postForObject(Constants.url + "getFrDelvryConfig",
+					map, FrDelvrBoyConfig.class);
+
+			if (frConfig != null) {
+				String savedFrIds = frConfig.getFrIds();				
+
+				map = new LinkedMultiValueMap<String, Object>();
+				map.add("delBoyId", delBoyId);
+				map.add("frIdsStr", savedFrIds + "," + frIdsStr);
+				Info info = Constants.getRestTemplate().postForObject(Constants.url + "editConfigFranchises", map,
+						Info.class);
+
+				if (!info.isError()) {
+					session.setAttribute("successMsg", "Franchise And Delivery Boy Configuration Update Successfully");
+				}
+
+			} else {
+
+				if (delBoyAssignId > 0)
+					config.setEditDttime(curDateTime);
+				else
+					config.setAddDttime(curDateTime);
+
+				config.setCompanyId(compId);
+				config.setDelBoyAssignId(delBoyAssignId);
+				config.setDelBoyId(delBoyId);
+				config.setDelStatus(1);
+
+				config.setExInt1(0);
+				config.setExInt2(0);
+				config.setExVar1("NA");
+				config.setExVar2("NA");
+				config.setFrIds(frIdsStr);
+				config.setIsActive(Integer.parseInt(request.getParameter("activeStat")));
+				config.setMakerUsrId(userObj.getUserId());
+				config.setIsAvailable(0);
+
+				FrDelvrBoyConfig newConfig = Constants.getRestTemplate()
+						.postForObject(Constants.url + "configFrDeliveryBoy", config, FrDelvrBoyConfig.class);
+
+				if (newConfig.getDelBoyAssignId() > 0) {
+					session.setAttribute("successMsg", "Franchise And Delivery Boy Configuration Saved Successfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Configure Franchise And Delivery Boy");
+				}
+
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+
+		if (btnVal == 0)
+			return "redirect:/frDelveryBoyConfig";
+		else
+			return "redirect:/frDelveryBoyConfig";
 	}
 
 }

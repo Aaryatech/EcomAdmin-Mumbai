@@ -63,6 +63,7 @@ public class Franchise {
 	private int exInt1;
 	private int exInt2;	
 	private int exInt3;
+	private int tempVar;
 
 	public int getFrId() {
 		return frId;
@@ -488,6 +489,14 @@ public class Franchise {
 		this.exInt3 = exInt3;
 	}
 
+	public int getTempVar() {
+		return tempVar;
+	}
+
+	public void setTempVar(int tempVar) {
+		this.tempVar = tempVar;
+	}
+
 	@Override
 	public String toString() {
 		return "Franchise [frId=" + frId + ", frCode=" + frCode + ", frName=" + frName + ", frAddress=" + frAddress
@@ -506,9 +515,7 @@ public class Franchise {
 				+ exFloat4 + ", exFloat5=" + exFloat5 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3="
 				+ exVar3 + ", exVar4=" + exVar4 + ", exVar5=" + exVar5 + ", exVar6=" + exVar6 + ", exVar7=" + exVar7
 				+ ", exDate1=" + exDate1 + ", exDate2=" + exDate2 + ", exInt1=" + exInt1 + ", exInt2=" + exInt2
-				+ ", exInt3=" + exInt3 + "]";
+				+ ", exInt3=" + exInt3 + ", tempVar=" + tempVar + "]";
 	}
-	
-	
-	
+
 }
