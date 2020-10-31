@@ -770,9 +770,8 @@ public class FranchiseConfigurationController {
 	}
 
 	@RequestMapping(value = "/getFranchiseListFrDlvrBoyConfig", method = RequestMethod.GET)
-	@ResponseBody
-	public GetFranchiesAndFrIds getFranchiseListFrDlvrBoyConfig(HttpServletRequest request,
-			HttpServletResponse response) {
+	public String getFranchiseListFrDlvrBoyConfig(HttpServletRequest request, HttpServletResponse response,
+			Model model) {
 		List<Franchise> frList = new ArrayList<Franchise>();
 
 		GetFranchiesAndFrIds frAndIds = new GetFranchiesAndFrIds();
@@ -787,24 +786,43 @@ public class FranchiseConfigurationController {
 
 			map = new LinkedMultiValueMap<>();
 			map.add("compId", companyId);
-			map.add("delBoyId", delBoyId);
-			String frStrIds = Constants.getRestTemplate().postForObject(Constants.url + "getFrDelBoyIds", map,
-					String.class);			
-			frAndIds.setFrStrIds(frStrIds);
-
-			map = new LinkedMultiValueMap<>();
-			map.add("compId", companyId);
 
 			Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchises", map,
 					Franchise[].class);
 			frList = new ArrayList<Franchise>(Arrays.asList(frArr));
+			System.out.println("frList------" + frList);
+			// frAndIds.setFrList(frList);
 
-			frAndIds.setFrList(frList);
-			
+			map.add("compId", companyId);
+			DeliveryBoy[] delvrBoyArr = Constants.getRestTemplate().postForObject(Constants.url + "getDeliveryBoysList",
+					map, DeliveryBoy[].class);
+			List<DeliveryBoy> delvrBoyList = new ArrayList<DeliveryBoy>(Arrays.asList(delvrBoyArr));
+			System.out.println("delvrBoyList------" + delvrBoyList);
+
+			model.addAttribute("delvrBoyList", delvrBoyList);
+			model.addAttribute("frList", frList);
+			model.addAttribute("delvrBoyId", delBoyId);
+
+			map = new LinkedMultiValueMap<>();
+			map.add("compId", companyId);
+			map.add("delBoyId", delBoyId);
+			FrDelvrBoyConfig frStrIds = Constants.getRestTemplate().postForObject(Constants.url + "getFrDelvryConfig",
+					map, FrDelvrBoyConfig.class);
+
+			// frAndIds.setFrStrIds(frStrIds);
+			if(frStrIds!=null) {
+				model.addAttribute("frStrIds", frStrIds.getFrIds());			
+				model.addAttribute("assignId", frStrIds.getDelBoyAssignId());
+			}
+			else {
+				//model.addAttribute("frStrIds", 0);			
+				model.addAttribute("assignId", 0);
+			}
+
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.getStackTrace();
 		}
-		return frAndIds;
+		return "franchisee/configFrDelvrBoy";
 
 	}
 
@@ -813,10 +831,13 @@ public class FranchiseConfigurationController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Insert Delivery Boy in database
-	@RequestMapping(value = "/saveFrDelvrBoyConfig", method = RequestMethod.POST)
-	public String saveFrDelvrBoyConfig(HttpServletRequest request, HttpServletResponse response) {
-
+	@RequestMapping(value = "/saveFrDelvrBoyConfig", method = RequestMethod.GET)
+	@ResponseBody
+	public Info saveFrDelvrBoyConfig(HttpServletRequest request, HttpServletResponse response) {
+		Info res = new Info();
 		try {
+			System.out.println("In Save Maping");
+			
 			FrDelvrBoyConfig config = new FrDelvrBoyConfig();
 
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -828,18 +849,12 @@ public class FranchiseConfigurationController {
 			int compId = (int) session.getAttribute("companyId");
 
 			int delBoyId = Integer.parseInt(request.getParameter("delBoyId"));
-
+			
 			int delBoyAssignId = Integer.parseInt(request.getParameter("assignId"));
-
-			String frIdsStr = new String();
-			String[] frIds = request.getParameterValues("chk");
-			if (frIds.length > 0) {
-				StringBuilder sb = new StringBuilder();
-				for (String s : frIds) {
-					sb.append(s).append(",");
-				}
-				frIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
-			}
+			
+			String frIds = request.getParameter("frIds");
+			frIds = frIds.substring(1, (frIds.length() - 1));
+			frIds = frIds.replace("\"", "");
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 
@@ -848,25 +863,27 @@ public class FranchiseConfigurationController {
 			map.add("compId", compId);
 			FrDelvrBoyConfig frConfig = Constants.getRestTemplate().postForObject(Constants.url + "getFrDelvryConfig",
 					map, FrDelvrBoyConfig.class);
-
+			
 			if (frConfig != null) {
-				String savedFrIds = frConfig.getFrIds();				
-
+				
 				map = new LinkedMultiValueMap<String, Object>();
+				
 				map.add("delBoyId", delBoyId);
-				map.add("frIdsStr", savedFrIds + "," + frIdsStr);
+				map.add("frIdsStr", frIds);
+				
 				Info info = Constants.getRestTemplate().postForObject(Constants.url + "editConfigFranchises", map,
 						Info.class);
 
 				if (!info.isError()) {
+					res.setError(false);
 					session.setAttribute("successMsg", "Franchise And Delivery Boy Configuration Update Successfully");
 				}
 
 			} else {
-
-				if (delBoyAssignId > 0)
+				
+				if (delBoyAssignId > 0)					
 					config.setEditDttime(curDateTime);
-				else
+				else					
 					config.setAddDttime(curDateTime);
 
 				config.setCompanyId(compId);
@@ -878,17 +895,20 @@ public class FranchiseConfigurationController {
 				config.setExInt2(0);
 				config.setExVar1("NA");
 				config.setExVar2("NA");
-				config.setFrIds(frIdsStr);
-				config.setIsActive(Integer.parseInt(request.getParameter("activeStat")));
+				config.setFrIds(frIds);
+				config.setIsActive(1);
 				config.setMakerUsrId(userObj.getUserId());
 				config.setIsAvailable(0);
 
 				FrDelvrBoyConfig newConfig = Constants.getRestTemplate()
 						.postForObject(Constants.url + "configFrDeliveryBoy", config, FrDelvrBoyConfig.class);
 
-				if (newConfig.getDelBoyAssignId() > 0) {
+				if (newConfig.getDelBoyAssignId() > 0) {					
+					res.setError(false);					
 					session.setAttribute("successMsg", "Franchise And Delivery Boy Configuration Saved Successfully");
+					
 				} else {
+					res.setError(true);
 					session.setAttribute("errorMsg", "Failed to Configure Franchise And Delivery Boy");
 				}
 
@@ -896,13 +916,7 @@ public class FranchiseConfigurationController {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-
-		int btnVal = Integer.parseInt(request.getParameter("btnType"));
-
-		if (btnVal == 0)
-			return "redirect:/frDelveryBoyConfig";
-		else
-			return "redirect:/frDelveryBoyConfig";
+		return res;
 	}
 
 }
