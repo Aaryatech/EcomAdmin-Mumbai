@@ -155,7 +155,7 @@
 	</script>
 	<script type="text/javascript">
 		function getImageData(prodId) {
-			alert("In ");
+			//alert("In ");
 			$('#loader3').show();
 			$
 					.getJSON(

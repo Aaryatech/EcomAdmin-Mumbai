@@ -4,17 +4,29 @@ import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
 public class Constants {
-	public static final String url = "http://localhost:8099/";
-	public static final String url1 = "http://107.180.88.121:8080/HrEsayWebApi/";
-	public static final String url2 = "http://115.124.111.55:8080/rusaaccessapitest/";
-	public
+	public static final String url = "http://localhost:8094/";
+    //public static final String url ="http://198.12.156.31:8080/EcomAPI/";
+		public
 	  static final String empDocSaveUrl ="/home/ubuntu/Downloads/apache-tomcat-9.0.24/webapps/uploads/";
 	public static String[] imageAndDocFileExtension = { "txt", "doc", "docx", "pdf", "xls", "xlsx","jpg", "jpeg", "gif", "png" }; 
 	public static String[] imageFileExtensions = {"jpg", "jpeg", "gif", "png" };
 	
 	
-	public static String REPORT_SAVE =  "/home/ubuntu/Report.pdf";//"/home/lenovo/Documents/pdf/Report.pdf";
-	public static final String ReportURL = "http://localhost:8080/docdemo/";
+	public static String REPORT_SAVE =  "/opt/apache-tomcat-8.5.39/webapps/OFFER_IMG_UP/Report.pdf";//"/home/lenovo/Documents/pdf/Report.pdf";
+	public static final String ReportURL = "http://198.12.156.31:8080/ecomAdmin/";
+	
+	public static final String UPLOAD_URL = "/opt/apache-tomcat-8.5.39/webapps/OFFER_IMG_UP/";
+	public static final Object IMAGE_URL = "http://198.12.156.31:8080/OFFER_IMG_UP/";
+	
+	public static final String PROD_IMG_UPLOAD_URL="/opt/apache-tomcat-8.5.39/webapps/PROD_IMG_UP/";
+	public static final String PROD_IMG_VIEW_URL = "http://198.12.156.31:8080/PROD_IMG_UP/";
+	
+//	public static final String PROD_IMG_UPLOAD_URL = "/home/ubuntu/Documents/apache-tomcat-8.51.38/webapps/PROD_IMG_UP/";
+//	public static final String PROD_IMG_VIEW_URL = "http://localhost:8080/PROD_IMG_UP/";
+//	
+	public static final String REPORT_PATH = "/opt/apache-tomcat-8.5.39/webapps/PROD_IMG_UP/report.pdf";
+
+
 	
 	// local
 
@@ -113,7 +125,7 @@ public class Constants {
 	 * public static String empLoanAgrDocSaveUrl;
 	 */
 	public static RestTemplate rest = new RestTemplate();
-	public static String kkpmUrl="http://35.200.218.166:8080/CATaskMngtApi/";
+	public static Object showDocSaveUrl="http://198.12.156.31:8080/OFFER_IMG_UP/";;
 	
 	public static RestTemplate getRestTemplate() {
 		rest = new RestTemplate();
