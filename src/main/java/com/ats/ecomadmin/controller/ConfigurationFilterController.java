@@ -32,6 +32,7 @@ import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
+import com.ats.ecomadmin.model.CategoryProduct;
 import com.ats.ecomadmin.model.ConfigHomePageProduct;
 import com.ats.ecomadmin.model.Designation;
 import com.ats.ecomadmin.model.FilterTypes;
@@ -52,6 +53,9 @@ import com.ats.ecomadmin.model.Tax;
 import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
+import com.ats.ecomadmin.model.offer.CateFilterConfig;
+import com.ats.ecomadmin.model.offer.FestiveEvent;
+import com.ats.ecomadmin.model.offer.GetConfiguredCatAndFilter;
 
 @Controller
 @Scope("session")
@@ -1185,4 +1189,481 @@ public class ConfigurationFilterController {
 		}
 		return mav;
 	}
+	
+	
+	/*-------------------------------------------------------------------------------------------*/
+		// Created By :- Mahendra Singh
+		// Created On :- 23-11-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Redirect to Configure Product And Festive Events
+		@RequestMapping(value = "/showConfigProductAndEvents", method = RequestMethod.GET)
+		public String showConfigProductAndEvents(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+			String mav = new String();
+			try {
+
+				HttpSession session = request.getSession();
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "1", "0", "0",
+						"0", newModuleList);
+
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					mav = "product/prdctEventList";
+
+					List<FestiveEvent> festiveEventList = new ArrayList<FestiveEvent>();
+
+					int compId = (int) session.getAttribute("companyId");
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("compId", compId);
+
+					FestiveEvent[] festiveEventArr = Constants.getRestTemplate()
+							.postForObject(Constants.url + "getFestiveEventAndProductsList", map, FestiveEvent[].class);
+					festiveEventList = new ArrayList<FestiveEvent>(Arrays.asList(festiveEventArr));
+					
+					for (int i = 0; i < festiveEventList.size(); i++) {
+
+						festiveEventList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(festiveEventList.get(i).getEventId())));
+					}
+
+					model.addAttribute("eventList", festiveEventList);
+					
+					model.addAttribute("title", "Configure Products And Festive Events");
+
+					Info add = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "0", "1", "0",
+							"0", newModuleList);
+					Info edit = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "0", "0",
+							"1", "0", newModuleList);
+					Info delete = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "0", "0",
+							"0", "1", newModuleList);
+
+					if (add.isError() == false) {
+						model.addAttribute("addAccess", 0);
+					}
+					if (edit.isError() == false) {
+						model.addAttribute("editAccess", 0);
+					}
+					if (delete.isError() == false) {
+						model.addAttribute("deleteAccess", 0);
+					}
+				}
+
+			} catch (Exception e) {
+				System.out.println("Execption in /showConfigProductAndEvents : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return mav;
+		}
+		
+		// Created By :- Mahendra Singh
+		// Created On :- 17-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Configure Products And Filter
+		@RequestMapping(value = "/prdctEventConfig", method = RequestMethod.GET)
+		public String prdctEventConfig(HttpServletRequest request, HttpServletResponse response, Model model) {
+			String mav = new String();
+			try {
+				HttpSession session = request.getSession();
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("prdctEventConfig", "showConfigProductAndEvents", "0", "1", "0",
+						"0", newModuleList);
+
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					FestiveEvent festiveEvent = new FestiveEvent();
+					model.addAttribute("festiveEvent", festiveEvent);
+					
+					int companyId = (int) session.getAttribute("companyId");
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("compId", companyId);
+
+					ProductMaster[] filterArr = Constants.getRestTemplate()
+							.postForObject(Constants.url + "getAllProducts", map, ProductMaster[].class);
+					productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
+					
+					Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+							Category[].class);
+					List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
+					
+					model.addAttribute("productList", productList);
+					model.addAttribute("catList", catList);
+					
+					mav = "product/configPrdctEvent";
+					
+					model.addAttribute("title", "Add Products And Festive Event Configuration");
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /prdctEventConfig : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return mav;
+
+		}
+		
+		// Created By :- Mahendra Singh
+		// Created On :- 17-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Configure Products And Filter
+		@RequestMapping(value = "/saveEventConfiguration", method = RequestMethod.POST)
+		public String saveEventConfiguration(HttpServletRequest request, HttpServletResponse response) {
+			String mav = new String();
+			try {
+				HttpSession session = request.getSession();
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("saveEventConfiguration", "showConfigProductAndEvents", "0", "1", "0",
+						"0", newModuleList);
+
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					Date date = new Date();
+					SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+					String productIdsStr = "";
+
+					int compId = (int) session.getAttribute("companyId");
+
+					String[] productIds = request.getParameterValues("productId");
+
+					if (productIds.length > 0) {
+						StringBuilder sb = new StringBuilder();
+						for (String s : productIds) {
+							sb.append(s).append(",");
+						}
+						productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
+					}
+					int eventId = Integer.parseInt(request.getParameter("eventId"));
+
+					FestiveEvent festiveEvent = new FestiveEvent();
+					
+					festiveEvent.setCompId(compId);
+					festiveEvent.setDelStatus(1);
+					festiveEvent.setDescription(request.getParameter("description"));
+					festiveEvent.setEventId(eventId);
+					festiveEvent.setEventName(request.getParameter("eventName"));
+					festiveEvent.setExInt1(0);
+					festiveEvent.setExInt2(0);
+					festiveEvent.setExInt3(0);
+					festiveEvent.setExVar1("NA");
+					festiveEvent.setExVar2("NA");
+					festiveEvent.setExVar3("NA");
+					festiveEvent.setFromDate(request.getParameter("fromDate"));
+					festiveEvent.setFromTime(request.getParameter("fromTime"));
+					festiveEvent.setIsActive(Integer.parseInt(request.getParameter("active_event")));
+					festiveEvent.setMakeTime(request.getParameter("eventName"));
+					festiveEvent.setProductIds(productIdsStr);
+					festiveEvent.setToTime(request.getParameter("toTime"));
+					festiveEvent.setToDate(request.getParameter("toDate"));
+					festiveEvent.setMakeTime(sf.format(date));
+
+					FestiveEvent res = Constants.getRestTemplate().postForObject(Constants.url + "saveFestiveEventAndProducts", festiveEvent,
+							FestiveEvent.class);
+
+					if (res.getEventId()>0) {
+						session.setAttribute("successMsg", "Product And Event Configure Successfully");
+					} else {
+						session.setAttribute("errorMsg", "Failed to Configure Product And Event");
+					}
+					mav = "redirect:/showConfigProductAndEvents";
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /saveProductConfiguration : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return mav;
+
+		}
+		
+		
+		// Created By :- Mahendra Singh
+		// Created On :- 23-11-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Update Event
+		@RequestMapping(value = "/editEvent", method = RequestMethod.GET)
+		public String editEvent(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+			String mav = new String();
+			try {
+				HttpSession session = request.getSession();
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("editEvent", "showConfigProductAndEvents", "0", "0", "1", "0", newModuleList);
+
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					mav = "product/configPrdctEvent";
+
+					String base64encodedString = request.getParameter("eventId");
+					String eventId = FormValidation.DecodeKey(base64encodedString);
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("eventId", eventId);
+
+					FestiveEvent festiveEvent = Constants.getRestTemplate().postForObject(Constants.url + "getFestiveEventConfigById", map, FestiveEvent.class);
+					model.addAttribute("festiveEvent", festiveEvent);
+					
+					List<Integer> prodctIdsIds = Stream.of(festiveEvent.getProductIds().split(",")).map(Integer::parseInt)
+							.collect(Collectors.toList());
+					
+					model.addAttribute("prodctIdsIds", prodctIdsIds);
+					
+					int companyId = (int) session.getAttribute("companyId");
+
+					map = new LinkedMultiValueMap<>();
+					map.add("compId", companyId);
+
+					ProductMaster[] filterArr = Constants.getRestTemplate()
+							.postForObject(Constants.url + "getAllProducts", map, ProductMaster[].class);
+					productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
+					
+					Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+							Category[].class);
+					List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
+					
+					model.addAttribute("productList", productList);
+					model.addAttribute("catList", catList);
+					
+					model.addAttribute("title", "Edit Products And Festive Event Configuration");
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /editEvent : " + e.getMessage());
+				e.printStackTrace();
+			}
+
+			return mav;
+		}
+		
+		// Created By :- Mahendra Singh
+		// Created On :- 23-11-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Delete Event
+		@RequestMapping(value = "/deleteEvent", method = RequestMethod.GET)
+		public String deleteEvent(HttpServletRequest request, HttpServletResponse response) {
+
+			String mav = new String();
+			HttpSession session = request.getSession();
+			try {
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("deleteEvent", "showConfigProductAndEvents", "0", "0", "0", "1",
+						newModuleList);
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					String base64encodedString = request.getParameter("eventId");
+					String eventId = FormValidation.DecodeKey(base64encodedString);
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("eventId", Integer.parseInt(eventId));
+
+					Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteFestiveEventById", map,
+							Info.class);
+
+					if (!res.isError()) {
+						session.setAttribute("successMsg", res.getMsg());
+					} else {
+						session.setAttribute("errorMsg", res.getMsg());
+					}
+
+					mav = "redirect:/showConfigProductAndEvents";
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /deleteEvent : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return mav;
+		}
+		
+		/*------------------------------------------------------------------------------*/
+	// Created By :- Mahendra Singh
+	// Created On :- 23-11-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect To Configure Category And Filter
+	@RequestMapping(value = "/configCateAndFilters", method = RequestMethod.GET)
+	public String showAddRelProConfg(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		HttpSession session = request.getSession();
+		try {
+
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("configCateAndFilters", "configCateAndFilters", "0", "1", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				mav = "product/addCateFltrConfig";
+				int compId = (int) session.getAttribute("companyId");
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+				
+				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+						Category[].class);
+				List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
+
+//				map = new LinkedMultiValueMap<>();
+//				map.add("compId", compId);				
+				
+				model.addAttribute("cateList", catList);	
+				
+				CateFilterConfig config = new CateFilterConfig();
+				
+				model.addAttribute("config", config);	
+				
+				model.addAttribute("title", "Add Category And Filter Configuration");
+
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /configCateAndFilters : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+	
+	
+	
+	@RequestMapping(value = "/getConfiguredFilters", method = RequestMethod.GET)
+	public @ResponseBody GetConfiguredCatAndFilter getConfiguredFiltersList(HttpServletRequest request, HttpServletResponse response){
+		GetConfiguredCatAndFilter config = new GetConfiguredCatAndFilter();
+		try {
+			
+			HttpSession session = request.getSession();
+			int companyId = (int) session.getAttribute("companyId");			
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", companyId);
+
+			FilterTypes[] filterTypeArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllFilterTypes", map, FilterTypes[].class);
+			List<FilterTypes> filterTypeList = new ArrayList<FilterTypes>(Arrays.asList(filterTypeArr));
+			
+			config.setFilterList(filterTypeList);
+				
+			map = new LinkedMultiValueMap<>();
+			map.add("cateId", Integer.parseInt(request.getParameter("cateId")));
+			map.add("compId", companyId);
+			
+			CateFilterConfig getFiltersIds = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getConfigureCateAndFilters", map, CateFilterConfig.class);			
+			config.setCatFilterConfig(getFiltersIds);
+			
+		}catch (Exception e) {
+			System.out.println("Execption in /getConfiguredFilters : " + e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return config;
+		
+	}
+	
+	
+	
+	
+	@RequestMapping(value = "/addCateAndFiltersConfig", method = RequestMethod.POST)
+	public String addCateAndFiltersConfig(HttpServletRequest request, HttpServletResponse response) {
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();			
+				Date date = new Date();
+				SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+				String filterIds = "";
+
+				int compId = (int) session.getAttribute("companyId");
+				
+				int cateId = Integer.parseInt(request.getParameter("cat_id"));
+				
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("cateId", cateId);
+				map.add("compId", compId);
+				
+				CateFilterConfig getConfigDetails = Constants.getRestTemplate().postForObject(Constants.url + "getConfigureCateAndFilters", map,
+						CateFilterConfig.class);
+				
+				System.err.println("Details----"+getConfigDetails);
+				
+				String[] productIds = request.getParameterValues("chk");
+
+				if (productIds.length > 0) {
+					StringBuilder sb = new StringBuilder();
+					for (String s : productIds) {
+						sb.append(s).append(",");
+					}
+					filterIds = sb.deleteCharAt(sb.length() - 1).toString();
+				}
+				
+				
+				if(getConfigDetails!=null) {
+					 map = new LinkedMultiValueMap<>();
+					 map.add("cateId", cateId);
+					 map.add("filterIds", filterIds);
+					 map.add("upDateTime", sf.format(date));
+					 map.add("compId", compId);
+					 Info res = Constants.getRestTemplate().postForObject(Constants.url + "updateFilterAndCatConfig", map,
+								Info.class);
+
+						if (!res.isError()) {
+							session.setAttribute("successMsg", res.getMsg());
+						} else {
+							session.setAttribute("errorMsg", res.getMsg());
+						}
+
+					 
+				}else {
+					CateFilterConfig config = new CateFilterConfig();
+					config.setCateFilterConfigId(Integer.parseInt(request.getParameter("filterConfigId")));
+					config.setCateId(cateId);
+					config.setCompId(compId);
+					config.setDelStatus(1);
+					config.setExInt1(0);
+					config.setExInt2(0);
+					config.setExVar1("NA");
+					config.setExVar2("NA");
+					config.setFilterIds(filterIds);
+					config.setIsActive(1);
+					config.setMakerDateTime(sf.format(date));
+					
+					CateFilterConfig res = Constants.getRestTemplate().postForObject(Constants.url + "saveCatAndFilter", config,
+							CateFilterConfig.class);
+
+					if (res.getCateFilterConfigId()>0) {
+						session.setAttribute("successMsg", "Category And Filters Configure Successfully");
+					} else {
+						session.setAttribute("errorMsg", "Failed to Configure Category And Filters");
+					}
+				}
+				
+				mav = "redirect:/configCateAndFilters";
+			
+		} catch (Exception e) {
+			System.out.println("Execption in /addCateAndFiltersConfig : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+
+	}
+	
 }
