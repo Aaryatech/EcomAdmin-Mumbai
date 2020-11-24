@@ -228,7 +228,7 @@
 												data-placholder="Select Gender">												
 												<option value="1" ${cust.custGender==1 ? 'selected' : '' }>Male</option>
 												<option value="2" ${cust.custGender==2 ? 'selected' : '' }>Female</option>
-												<option value="3" ${cust.custGender==3 ? 'selected' : '' }>Transgender</option>
+												<option value="3" ${cust.custGender==3 ? 'selected' : '' }>Other</option>
 												<%-- <c:forEach items="${desigList}" var="list" varStatus="count">
 													<c:choose>
 														<c:when test="${list.designationId==cust.designationId}">

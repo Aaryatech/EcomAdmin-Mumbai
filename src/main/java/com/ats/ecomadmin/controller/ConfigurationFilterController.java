@@ -1316,7 +1316,8 @@ public class ConfigurationFilterController {
 		// Modified On :- NA
 		// Description :- Configure Products And Filter
 		@RequestMapping(value = "/saveEventConfiguration", method = RequestMethod.POST)
-		public String saveEventConfiguration(HttpServletRequest request, HttpServletResponse response) {
+		public String saveEventConfiguration(HttpServletRequest request, HttpServletResponse response,	
+				@RequestParam("doc") MultipartFile doc) {
 			String mav = new String();
 			try {
 				HttpSession session = request.getSession();
@@ -1331,6 +1332,22 @@ public class ConfigurationFilterController {
 				} else {
 					Date date = new Date();
 					SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Info info= new Info();
+					String profileImage = null;
+					if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
+
+						profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
+
+						try {
+							// new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+							info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
+						} catch (Exception e) {
+						}
+
+					} else {
+						profileImage = request.getParameter("editImg");
+
+					}
 
 					String productIdsStr = "";
 
@@ -1348,6 +1365,8 @@ public class ConfigurationFilterController {
 					int eventId = Integer.parseInt(request.getParameter("eventId"));
 
 					FestiveEvent festiveEvent = new FestiveEvent();
+					String eventDates = request.getParameter("eventDates");
+					String[] splitDate = eventDates.split("to");
 					
 					festiveEvent.setCompId(compId);
 					festiveEvent.setDelStatus(1);
@@ -1358,15 +1377,15 @@ public class ConfigurationFilterController {
 					festiveEvent.setExInt2(0);
 					festiveEvent.setExInt3(0);
 					festiveEvent.setExVar1("NA");
-					festiveEvent.setExVar2("NA");
+					festiveEvent.setExVar2(profileImage);
 					festiveEvent.setExVar3("NA");
-					festiveEvent.setFromDate(request.getParameter("fromDate"));
+					festiveEvent.setFromDate(splitDate[0].trim());
+					festiveEvent.setToDate(splitDate[1].trim());
 					festiveEvent.setFromTime(request.getParameter("fromTime"));
+					festiveEvent.setToTime(request.getParameter("toTime"));
 					festiveEvent.setIsActive(Integer.parseInt(request.getParameter("active_event")));
 					festiveEvent.setMakeTime(request.getParameter("eventName"));
-					festiveEvent.setProductIds(productIdsStr);
-					festiveEvent.setToTime(request.getParameter("toTime"));
-					festiveEvent.setToDate(request.getParameter("toDate"));
+					festiveEvent.setProductIds(productIdsStr);		
 					festiveEvent.setMakeTime(sf.format(date));
 
 					FestiveEvent res = Constants.getRestTemplate().postForObject(Constants.url + "saveFestiveEventAndProducts", festiveEvent,
@@ -1438,6 +1457,7 @@ public class ConfigurationFilterController {
 					
 					model.addAttribute("productList", productList);
 					model.addAttribute("catList", catList);
+					model.addAttribute("imgPath", Constants.VIEW_URL);
 					
 					model.addAttribute("title", "Edit Products And Festive Event Configuration");
 				}

@@ -82,7 +82,7 @@
 
 								<form
 									action="${pageContext.request.contextPath}/saveEventConfiguration"
-									id="submitInsert" method="post">
+									id="submitInsert" method="post" enctype="multipart/form-data">
 									
 									<input type="hidden" value="${festiveEvent.eventId}" name="eventId" id="eventId">
 									<div class="form-group row">
@@ -145,39 +145,35 @@
 
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="fromDate">From Date<span
+											for="eventDates">Date<span
 											class="text-danger">*</span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" class="form-control datepickerclass"
-												autocomplete="off" value="${festiveEvent.fromDate}"
-												name="fromDate" id="fromDate"> <span
+										<c:choose>
+											<c:when test="${festiveEvent.eventId>0}">
+												<input type="text" class="form-control daterange-basic_new"
+												autocomplete="off" value="${festiveEvent.fromDate} to ${festiveEvent.toDate}"
+												name="eventDates" id="eventDates">
+											</c:when>
+											<c:otherwise>
+												<input type="text" class="form-control daterange-basic_new"
+												autocomplete="off" 
+												name="eventDates" id="eventDates">
+											</c:otherwise>
+										</c:choose>
+											 <span
 												class="validation-invalid-label text-danger"
-												id="error_fromDate" style="display: none;">This
+												id="error_eventDates" style="display: none;">This
 												field is required.</span>
 										</div>
-
-										<label class="col-form-label font-weight-bold col-lg-2"
-											for="city">To Date<span class="text-danger">* </span>:
-										</label>
-										<div class="col-lg-4">
-											<input type="text" class="form-control datepickerclass"
-												autocomplete="off" value="${festiveEvent.toDate}"
-												name="toDate" id="toDate"> <span
-												class="validation-invalid-label text-danger"
-												id="error_toDate" style="display: none;">This
-												field is required.</span>												
-										</div>
-									</div>
 									
-									<div class="form-group row">
 												<label class="col-form-label font-weight-bold col-lg-2"
-													for="fromTime">Time From<span class="text-danger">*
+													for="fromTime">Time<span class="text-danger">*
 												</span>:
 												</label>
-												<div class="col-lg-3">
+												<div class="col-lg-1">
 													<input class="form-control" type="time" name="fromTime"
-														id="fromTime" value="${festiveEvent.fromTime}">
+														id="fromTime" value="${festiveEvent.fromTime}" style="width: 117%;">
 														
 													<span
 												class="validation-invalid-label text-danger"
@@ -185,13 +181,13 @@
 												field is required.</span>	
 												</div>
 
-												<label class="col-form-label font-weight-bold col-lg-2"
-													for="toTime">To<span class="text-danger">*
+												<label class="col-form-label font-weight-bold col-lg-1"
+													for="toTime" style="margin-left: 2%; margin-right: -3%;">To<span class="text-danger">*
 												</span>:
 												</label>
-												<div class="col-lg-3">
+												<div class="col-lg-1">
 													<input class="form-control" type="time" name="toTime"
-														id="toTime" value="${festiveEvent.toTime}"><span
+														id="toTime" value="${festiveEvent.toTime}" style="width: 117%;"><span
 												class="validation-invalid-label text-danger"
 												id="error_toTime" style="display: none;">This
 												field is required.</span>
@@ -215,6 +211,24 @@
 												field is required.</span>
 										</div>
 									</div>
+									<div class="form-group row">
+										<label class="col-form-label col-lg-2" for="primary_img">
+											Image: </label>
+										<div class="col-lg-4">
+											<div class="input-group-btn  ">
+												<img id="output" width="150" src="${imgPath}${festiveEvent.exVar2}"/>
+												<input type="file" class="btn btn-primary" accept="image/*" name="doc" id="doc" 
+												accept=".jpg,.png,.gif,.jpeg,.bmp" onchange="loadFile(event)"><span
+													class="form-text text-muted">Only
+													.jpg,.png,.gif,.jpeg</span>
+													
+													 <input
+												type="hidden" class="form-control-uniform" name="editImg"
+												id="editImg" value="${festiveEvent.exVar2}">
+											</div>
+										</div>
+										
+										</div>
 
 
 									<div align="center" id="loader" style="display: none;">
@@ -375,107 +389,16 @@
 	
 	
 	
-		$("#searchbtn")
-				.click(
-						function() {
-							var optionVal = $(
-									"input[name='radioConfig']:checked").val();
-							var filterId = $("#filterId").val();
-							var filterTypeId = $("#filterTypeId").val();
-
-							$('#config_product td').remove();
-							$('#loader').show();
-							$
-									.getJSON(
-											'${getProductsByFilterIds}',
-											{
-												optionVal : optionVal,
-												filterId : filterId,
-												filterTypeId : filterTypeId,
-												ajax : 'true',
-											},
-											function(data) {
-												$('#loader').hide();
-												if (data == null) {
-													alert("No data found.")
-												}
-												document
-														.getElementById("submtbtn").disabled = false;
-												/* alert(JSON
-														.stringify(data.categoryList)); */
-												for (i = 0; i < data.categoryList.length; i++) {
-
-													var tr = $('<tr style="background:#03a9f4;"></tr>');
-													tr
-															.append($(
-																	'<td style="padding: 7px; line-height:0; border-top: 1px solid #ddd;"></td>')
-																	.html(
-																			'<input type="checkbox" name="catCheck'
-																					+ data.categoryList[i].catId
-																					+ '" id="catCheck'
-																					+ data.categoryList[i].catId
-																					+ '" value="'
-																					+ data.categoryList[i].catId
-																					+ '" onclick="selAllItems('
-																					+ data.categoryList[i].catId
-																					+ ')">'));
-
-													tr
-															.append($(
-																	'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
-																	.html(""));
-
-													tr
-															.append($(
-																	'<td  style="padding: 12px; line-height:0; border-top: 1px solid #ddd; color:#fff; font-weight: bold;" colspan=2></td>')
-																	.html(
-																			data.categoryList[i].catName));
-
-													$('#config_product tbody')
-															.append(tr);
-
-													for (j = 0; j < data.productList.length; j++) {
-
-														var tr1 = $('<tr></tr>');
-														tr1
-																.append($(
-																		'<td style="padding: 7px; line-height:0; border-top:0px;"></td>')
-																		.html(
-																				""));
-
-														if (data.categoryList[i].catId == data.productList[j].prodCatId) {
-
-															
-																tr1
-																		.append($(
-																				'<td style="padding: 7px; line-height:0; border-top: 1px solid #ddd;""></td>')
-																				.html(
-																						'<input type="checkbox" name="chk" id="chk" value="'+
-											data.productList[j].productId
-											+'" class="chkcls'+data.categoryList[i].catId+'">'));
-															
-
-															tr1
-																	.append($(
-																			'<td style="padding: 7px; line-height:0; border-top: 1px solid #ddd;""></td>')
-																			.html(
-																					data.productList[j].productName));
-
-															tr1
-																	.append($(
-																			'<td style="padding: 7px; line-height:0; border-top: 1px solid #ddd; display: none;"></td>')
-																			.html(
-																					'<input type="text" value="'+data.productList[j].checked+'" class="chkVal'+data.categoryList[i].catId+'">'));
-
-															$(
-																	'#config_product tbody')
-																	.append(tr1);
-														}
-													}
-												}
-
-											});
-						});
+	 var loadFile = function(event) {
+		 document.getElementById('output').style.display="none";
+		 try {
+			var image = document.getElementById('output');
+			image.src = URL.createObjectURL(event.target.files[0]);
+			document.getElementById('output').style="display:block"
+		 } catch(err) {
+			 console.log(err);
+			}
+		};
 
 		/* --------------------------------------------------------------------------- */
 		
@@ -559,6 +482,16 @@
 			selectYears : true,
 			locale : {
 				format : 'DD-MM-YYYY'
+			}
+		});
+		
+		$('.daterange-basic_new').daterangepicker({
+			applyClass : 'bg-slate-600',
+
+			cancelClass : 'btn-light',
+			locale : {
+				format : 'DD-MM-YYYY',
+				separator : ' to '
 			}
 		});
 		
