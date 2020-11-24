@@ -177,8 +177,7 @@
 														
 													<span
 												class="validation-invalid-label text-danger"
-												id="error_fromTime" style="display: none;">This
-												field is required.</span>	
+												id="error_fromTime" style="display: none; width: 136%;">required</span>	
 												</div>
 
 												<label class="col-form-label font-weight-bold col-lg-1"
@@ -189,8 +188,7 @@
 													<input class="form-control" type="time" name="toTime"
 														id="toTime" value="${festiveEvent.toTime}" style="width: 117%;"><span
 												class="validation-invalid-label text-danger"
-												id="error_toTime" style="display: none;">This
-												field is required.</span>
+												id="error_toTime" style="display: none; width: 136%;">required</span>
 												</div>
 
 											</div>
