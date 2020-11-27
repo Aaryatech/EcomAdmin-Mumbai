@@ -126,8 +126,8 @@
 										value="${config.cateFilterConfigId}">
 
 									<div class="form-group row">
-										<label class="col-form-label col-lg-2" for="product_id">
-											Select Product <span style="color: red">* </span>:
+										<label class="col-form-label col-lg-2" for="cat_id">
+											Select Category <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
 											<select
