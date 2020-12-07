@@ -475,4 +475,23 @@ public class CommonUtility {
 
 	}
 	
+	// #23 Mahendra
+	//Return last date of month.
+	public static String getLastDayOfMonth(int year, int month) throws Exception {
+		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date date = sdf.parse(year + "-" + (month < 10 ? ("0" + month) : month) + "-01");
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+
+		calendar.add(Calendar.MONTH, 1);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.add(Calendar.DATE, -1);
+
+		Date lastDayOfMonth = calendar.getTime();
+
+		return sdf.format(lastDayOfMonth);
+	}
+	
 }

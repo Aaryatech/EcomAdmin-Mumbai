@@ -34,8 +34,8 @@
 
 
 	<c:url value="/getFranchiseListForRep" var="getFranchiseListForRep" />
-	<c:url value="/getDateWiseillsReport" var="getDateWiseillsReport" />
-	<c:url value="/getDateWiseCustDtlReport" var="getDateWiseCustDtlReport" />
+		<c:url var="getCustPrchsRepBetDate" value="/getCustPrchsRepBetDate"></c:url>
+<c:url var="getCustPrchsReportDetail" value="/getCustPrchsReportDetail"></c:url>
 	
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
@@ -69,7 +69,8 @@
 							<div
 								class="card-header bg-blue text-white d-flex justify-content-between">
 								<span
-									class="font-size-sm text-uppercase font-weight-semibold card-title">Date Wise Bill Report</span>
+									class="font-size-sm text-uppercase font-weight-semibold card-title">Customer Wise Report
+										Purchase Report</span>
 							</div>
 
 
@@ -140,12 +141,11 @@
 								<thead>
 									<tr>
 										<th width="5%">SR. No.</th>
-										<th>Order Date.</th>
-										<th>No. Of Bills</th>										
-										<th>Total Amt.</th>
-										<th>COD</th>
-										<th>Card</th>
-										<th>E-Pay</th>
+										<th>Customer</th>
+										<th>Mobile No.</th>										
+										<th>Date Of Birth</th>
+										<th>Total Purchase</th>
+										<th>Franchise</th>
 										<th class="text-center">Actions</th>
 									</tr>
 								</thead>
@@ -156,8 +156,8 @@
 							<br>
 
 							<div class="text-center">
-								<button class="btn btn-primary" value="PDF" id="PDFButton"
-									onclick="genPdf()">PDF</button> 
+								  <button class="btn btn-primary" value="PDF" id="PDFButton"
+									onclick="genPdf()" >PDF</button><!-- disabled="disabled" -->
 
 								<input type="button" id="expExcel" class="btn btn-primary"
 									value="EXPORT TO Excel" onclick="exportToExcel();"
@@ -210,6 +210,7 @@
 								<th>Bill No.</th>
 								<th>Bill Date</th>
 								<th>Bill Amt.</th>
+								<th>Franchise</th>
 								<th>Payment Mode</th>
 								<th>Delivery Boy</th>
 							</tr>
@@ -326,7 +327,7 @@
 							dataTable.clear().draw();
 							$
 									.getJSON(
-											'${getDateWiseillsReport}',
+											'${getCustPrchsRepBetDate}',
 											{
 												dates : dates,
 												frId : JSON.stringify(frId),
@@ -352,12 +353,12 @@
 																		order) {
 
 																	var acStr = '<a href="javascript:void(0)" class="list-icons-item text-primary-600" data-popup="tooltip" title="" data-original-title="Order Detail" onclick="getOrderDetail(\''
-																			+ order.billDate
+																			+ order.custId
 																			+ '\')"><i class="fa fa-list"></i></a>'
 
 																	var tr1 = $('<tr></tr>');
 
-																	tr1
+																	/* tr1
 																			.append($(
 																					'<td></td>')
 																					.html(
@@ -367,13 +368,19 @@
 																			.append($(
 																					'<td></td>')
 																					.html(
-																							order.billDate));
+																							order.monthName));
 
 																	tr1
 																			.append($(
 																					'<td></td>')
 																					.html(
-																							order.totalBills));
+																							order.orderYear));
+																	tr1
+																	.append($(
+																			'<td></td>')
+																			.html(
+																					order.totalBills));
+																	
 																	tr1
 																			.append($(
 																					'<td></td>')
@@ -402,32 +409,31 @@
 																			.append($(
 																					'<td></td>')
 																					.html(
-																							acStr));
+																							acStr)); */
 
 																	dataTable.row.add(
-																			[key + 1,order.billDate, order.totalBills, order.totalAmt.toFixed(2), 
-																			order.cod, order.card, order.epay,
-																			acStr]).draw();
+																			[key + 1,order.custName, order.custMobileNo, order.dateOfBirth, order.grandTotal.toFixed(2), 
+																				 order.frName, acStr]).draw();
 																});
 											});
 						}
 						});
 		
 
-		function getOrderDetail(orderDate) {			
+		function getOrderDetail(custId) {	
+			
 			var frId = $("#frId").val();
-						
-			$('#order_dtl_table td').remove();
+			var dates = $("#dates").val();			
+			$('#order_dtl_table td').remove();			
 			
-			
-			if (orderDate != null) {
+			if (custId > 0) {
 
 				$
 						.getJSON(
-								'${getDateWiseCustDtlReport}',
+								'${getCustPrchsReportDetail}',
 								{
-									fromDate : orderDate,
-									toDate : orderDate,
+									dates : dates,
+									custId : custId,
 									frId : JSON.stringify(frId),
 									ajax : 'true'
 
@@ -461,6 +467,12 @@
 																'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
 																.html(
 																		value.grandTotal));
+												
+												tr
+												.append($(
+														'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
+														.html(
+																value.frName));
 												tr
 												.append($(
 														'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
@@ -492,18 +504,19 @@
 				document.getElementById("expExcel").disabled = true;
 	}
 		  
-	function genPdf(){	
+	function genPdf(){		
 		var frId = $("#frId").val();
 		var dates = $("#dates").val();
 		var res = dates.split("to");
 		var fromDate = res[0].trim();
 		var toDate = res[1].trim();
-		window.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getDateWiseBillPdf/"
-				+fromDate
-				+'/'
-				+toDate
-				+'/'
-				+frId);		
+		
+	window.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getCustWiseReportPdf/"
+			+frId
+			+'/'
+			+fromDate
+			+'/'
+			+toDate);		
 	} 
 		
 	</script>

@@ -34,8 +34,8 @@
 
 
 	<c:url value="/getFranchiseListForRep" var="getFranchiseListForRep" />
-	<c:url value="/getDateWiseillsReport" var="getDateWiseillsReport" />
-	<c:url value="/getDateWiseCustDtlReport" var="getDateWiseCustDtlReport" />
+		<c:url var="getMonthlyBillsReport" value="/getMonthlyBillsReport"></c:url>
+<c:url var="getDateWiseCustDtlReport" value="/getDateWiseCustDtlReport"></c:url>
 	
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
@@ -69,7 +69,7 @@
 							<div
 								class="card-header bg-blue text-white d-flex justify-content-between">
 								<span
-									class="font-size-sm text-uppercase font-weight-semibold card-title">Date Wise Bill Report</span>
+									class="font-size-sm text-uppercase font-weight-semibold card-title">Month Wise Bill Report</span>
 							</div>
 
 
@@ -140,8 +140,9 @@
 								<thead>
 									<tr>
 										<th width="5%">SR. No.</th>
-										<th>Order Date.</th>
-										<th>No. Of Bills</th>										
+										<th>Month</th>
+										<th>Year</th>										
+										<th>No. Of Bills</th>
 										<th>Total Amt.</th>
 										<th>COD</th>
 										<th>Card</th>
@@ -156,7 +157,7 @@
 							<br>
 
 							<div class="text-center">
-								<button class="btn btn-primary" value="PDF" id="PDFButton"
+								 <button class="btn btn-primary" value="PDF" id="PDFButton"
 									onclick="genPdf()">PDF</button> 
 
 								<input type="button" id="expExcel" class="btn btn-primary"
@@ -210,6 +211,7 @@
 								<th>Bill No.</th>
 								<th>Bill Date</th>
 								<th>Bill Amt.</th>
+								<th>Franchise</th>
 								<th>Payment Mode</th>
 								<th>Delivery Boy</th>
 							</tr>
@@ -326,7 +328,7 @@
 							dataTable.clear().draw();
 							$
 									.getJSON(
-											'${getDateWiseillsReport}',
+											'${getMonthlyBillsReport}',
 											{
 												dates : dates,
 												frId : JSON.stringify(frId),
@@ -357,7 +359,7 @@
 
 																	var tr1 = $('<tr></tr>');
 
-																	tr1
+																	/* tr1
 																			.append($(
 																					'<td></td>')
 																					.html(
@@ -367,13 +369,19 @@
 																			.append($(
 																					'<td></td>')
 																					.html(
-																							order.billDate));
+																							order.monthName));
 
 																	tr1
 																			.append($(
 																					'<td></td>')
 																					.html(
-																							order.totalBills));
+																							order.orderYear));
+																	tr1
+																	.append($(
+																			'<td></td>')
+																			.html(
+																					order.totalBills));
+																	
 																	tr1
 																			.append($(
 																					'<td></td>')
@@ -402,10 +410,10 @@
 																			.append($(
 																					'<td></td>')
 																					.html(
-																							acStr));
+																							acStr)); */
 
 																	dataTable.row.add(
-																			[key + 1,order.billDate, order.totalBills, order.totalAmt.toFixed(2), 
+																			[key + 1,order.monthName, order.orderYear, order.totalBills, order.totalAmt.toFixed(2), 
 																			order.cod, order.card, order.epay,
 																			acStr]).draw();
 																});
@@ -461,6 +469,12 @@
 																'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
 																.html(
 																		value.grandTotal));
+												
+												tr
+												.append($(
+														'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
+														.html(
+																value.frName));
 												tr
 												.append($(
 														'<td style="padding: 12px; line-height:0; border-top: 1px solid #ddd;""></td>')
@@ -493,12 +507,14 @@
 	}
 		  
 	function genPdf(){	
+		
 		var frId = $("#frId").val();
 		var dates = $("#dates").val();
 		var res = dates.split("to");
 		var fromDate = res[0].trim();
 		var toDate = res[1].trim();
-		window.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getDateWiseBillPdf/"
+		
+		window.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getMonthWiseBillPdf/"
 				+fromDate
 				+'/'
 				+toDate

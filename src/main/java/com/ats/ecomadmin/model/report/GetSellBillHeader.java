@@ -50,6 +50,7 @@ public class GetSellBillHeader {
 	private  int delBoyId;
 	private  String delvrBoyName;
 	private  String delvrBoyMobNo;
+	private String frName;
 	
 	public String getExtVar1() {
 		return extVar1;
@@ -408,6 +409,14 @@ public class GetSellBillHeader {
 		this.delvrBoyMobNo = delvrBoyMobNo;
 	}
 
+	public String getFrName() {
+		return frName;
+	}
+
+	public void setFrName(String frName) {
+		this.frName = frName;
+	}
+
 	@Override
 	public String toString() {
 		return "GetSellBillHeader [sellBillNo=" + sellBillNo + ", invoiceNo=" + invoiceNo + ", billDate=" + billDate
@@ -422,8 +431,9 @@ public class GetSellBillHeader {
 				+ ", extInt2=" + extInt2 + ", extInt3=" + extInt3 + ", extInt4=" + extInt4 + ", extFloat1=" + extFloat1
 				+ ", extFloat2=" + extFloat2 + ", extFloat3=" + extFloat3 + ", extFloat4=" + extFloat4 + ", extVar1="
 				+ extVar1 + ", extVar2=" + extVar2 + ", extVar3=" + extVar3 + ", extVar4=" + extVar4 + ", delBoyId="
-				+ delBoyId + ", delvrBoyName=" + delvrBoyName + ", delvrBoyMobNo=" + delvrBoyMobNo
-				+ ", sellBillDetailsList=" + sellBillDetailsList + "]";
+				+ delBoyId + ", delvrBoyName=" + delvrBoyName + ", delvrBoyMobNo=" + delvrBoyMobNo + ", frName="
+				+ frName + ", sellBillDetailsList=" + sellBillDetailsList + "]";
 	}
 
+	
 }
