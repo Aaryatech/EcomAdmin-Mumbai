@@ -77,13 +77,13 @@ public class ProdMasteController {
 
 			Info add = AccessControll.checkAccess("showProdList", "showProdList", "0", "1", "0", "0", newModuleList);
 
-			
 			if (add.isError() == true) {
 
 				model = new ModelAndView("accessDenied");
 
 			} else {
-				Info view = AccessControll.checkAccess("showProdList", "showProdList", "1", "0", "0", "0", newModuleList);
+				Info view = AccessControll.checkAccess("showProdList", "showProdList", "1", "0", "0", "0",
+						newModuleList);
 				if (view.isError() == false) {
 					model.addObject("viewAccess", 1);
 				}
@@ -170,10 +170,10 @@ public class ProdMasteController {
 	@RequestMapping(value = "/submitProductSave", method = RequestMethod.POST)
 	public String submitProductSave(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("primary_img") MultipartFile prodImgFile) {
-		String returnPage = null;
-		int savenext=0;
+		String returnPage = "redirect:/showProdList";;
+		int savenext = 0;
 		try {
-			//System.err.println("prodImgFile " + prodImgFile.getOriginalFilename());
+			// System.err.println("prodImgFile " + prodImgFile.getOriginalFilename());
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 			Info add = AccessControll.checkAccess("showProdList", "showProdList", "0", "1", "0", "0", newModuleList);
@@ -201,7 +201,7 @@ public class ProdMasteController {
 				String is_return_allow = request.getParameter("is_return_allow");
 				String return_per = request.getParameter("return_per");
 				String uom_id = request.getParameter("uom_id");
-				//String shape_id = request.getParameter("shape_id");
+				// String shape_id = request.getParameter("shape_id");
 				String shape_id[] = request.getParameterValues("shape_id");
 
 				String is_sameDay_del = request.getParameter("is_sameDay_del");
@@ -230,7 +230,7 @@ public class ProdMasteController {
 
 				String prep_time = request.getParameter("prep_time"); // time in Integer minutes
 
-				//String is_veg = request.getParameter("is_veg"); // 0 veg 1 non veg 2 both
+				// String is_veg = request.getParameter("is_veg"); // 0 veg 1 non veg 2 both
 
 				String rate_setting_type = request.getParameter("rate_setting_type");
 
@@ -264,24 +264,25 @@ public class ProdMasteController {
 				prod.setExFloat2(1);
 				prod.setExFloat3(1);
 				try {
-					//Sachin 30-10-2020 to add default values of flavor,shape and veg nonveg filter's
-				prod.setExInt1(Integer.parseInt(request.getParameter("def_shape")));
-				prod.setExInt2(Integer.parseInt(request.getParameter("def_vnv")));
-				prod.setExInt3(Integer.parseInt(request.getParameter("def_flav")));
-			}catch (Exception e) {
-				prod.setExInt1(0);
-				prod.setExInt2(Integer.parseInt(request.getParameter("def_vnv")));
-				prod.setExInt3(Integer.parseInt(request.getParameter("def_flav")));
-			}
+					// Sachin 30-10-2020 to add default values of flavor,shape and veg nonveg
+					// filter's
+					prod.setExInt1(Integer.parseInt(request.getParameter("def_shape")));
+					prod.setExInt2(Integer.parseInt(request.getParameter("def_vnv")));
+					prod.setExInt3(Integer.parseInt(request.getParameter("def_flav")));
+				} catch (Exception e) {
+					prod.setExInt1(0);
+					prod.setExInt2(Integer.parseInt(request.getParameter("def_vnv")));
+					prod.setExInt3(Integer.parseInt(request.getParameter("def_flav")));
+				}
 
 				prod.setExVar1("v1");
 				prod.setExVar2("v2");
 				prod.setExVar3("v3");
 				prod.setExVar4("v4");
-				String basicMrp=request.getParameter("basic_mrp");
+				String basicMrp = request.getParameter("basic_mrp");
 				try {
 					prod.setBasicMrp(Float.parseFloat(basicMrp));
-				}catch (Exception e) {
+				} catch (Exception e) {
 					prod.setBasicMrp(0);
 				}
 				String flavIds = getCommaSepStringFromStrArray(flav_ids);
@@ -301,7 +302,7 @@ public class ProdMasteController {
 
 				prod.setIsActive(1);
 
-				prod.setIsVeg(getCommaSepStringFromStrArray(is_veg));//change on 21-10-2020
+				prod.setIsVeg(getCommaSepStringFromStrArray(is_veg));// change on 21-10-2020
 				prod.setLayeringCream(Integer.parseInt(layering_cream_id));
 				prod.setMakerUserId(userObj.getUserId());
 				try {
@@ -395,7 +396,13 @@ public class ProdMasteController {
 					prod.setAvailInWeights(weightString);
 					prod.setRateSettingType(2);
 				} else {
-					prod.setAvailInWeights("0");
+					//prod.setAvailInWeights("0");
+					try {
+					String weightString = getCommaSepStringFromStrArray(weight_ids);
+					prod.setAvailInWeights(weightString);
+					}catch (Exception e) {
+						prod.setAvailInWeights("1");
+					}
 					prod.setRateSettingType(Integer.parseInt(rate_setting_type));
 				}
 
@@ -426,8 +433,6 @@ public class ProdMasteController {
 					// TODO: handle exception
 				}
 
-				
-				
 				prod.setShelfLife(Integer.parseInt(shelf_life));
 				prod.setShortName(short_name.trim());
 				prod.setSortId(Integer.parseInt(sort_no));
@@ -441,17 +446,20 @@ public class ProdMasteController {
 
 				Random random = new Random();
 				int randomInt = random.nextInt(100);
-				
-				String prime_image=request.getParameter("prime_image");
-				String fileName=prime_image;
+
+				String prime_image = request.getParameter("prime_image");
+				String fileName = prime_image;
 				if (!prodImgFile.getOriginalFilename().equalsIgnoreCase("")) {
-				String ext = prodImgFile.getOriginalFilename().split("\\.")[1];
-				fileName = CommonUtility.getCurrentTimeStamp() + "_" + randomInt + "." + ext;
+					String ext = prodImgFile.getOriginalFilename().split("\\.")[1];
+					fileName = CommonUtility.getCurrentTimeStamp() + "_" + randomInt + "." + ext;
 				}
 // new ImageUploadController().saveUploadedFiles(files.get(i), 1, fileName);
 				prod.setProdImagePrimary(fileName);
-
-				Info info = new ImageUploadController().saveProdImgeWithResize(prodImgFile, fileName, 450, 250);
+				try {//saveImgFiles //saveProdImgeWithResize
+					Info info = new ImageUploadController().saveImgFilesProdImg(prodImgFile,Constants.imageFileExtensions, fileName);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
 
 				ProductMaster res = Constants.getRestTemplate().postForObject(Constants.url + "saveProduct", prod,
 						ProductMaster.class);
@@ -463,14 +471,14 @@ public class ProdMasteController {
 
 			}
 			try {
-				String saveNextStr=request.getParameter("savenext");
-				if(saveNextStr.equalsIgnoreCase("1")) {
-					savenext=1;
+				String saveNextStr = request.getParameter("savenext");
+				if (saveNextStr.equalsIgnoreCase("1")) {
+					savenext = 1;
 				}
-			}catch (Exception e) {
-				savenext=0;
+			} catch (Exception e) {
+				savenext = 0;
 			}
-			if(savenext!=0) {
+			if (savenext != 0) {
 				returnPage = "redirect:/showAddProduct";
 			}
 		} catch (Exception e) {
@@ -543,22 +551,22 @@ public class ProdMasteController {
 
 			HttpSession session = request.getSession();
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info add = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "0", "1",
-					"0", "0", newModuleList);
+			Info add = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "0", "1", "0",
+					"0", newModuleList);
 
 			if (add.isError() == true) {
 
 				model = new ModelAndView("accessDenied");
 
 			} else {
-				
+
 				Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "1", "0",
 						"0", "0", newModuleList);
-				if(view.isError()==false) {
-					
+				if (view.isError() == false) {
+
 					model.addObject("viewAccess", 1);
 				}
-				
+
 				int compId = (int) session.getAttribute("companyId");
 
 				List<Category> catList = new ArrayList<>();
@@ -609,12 +617,14 @@ public class ProdMasteController {
 
 			} else {
 
-				Info add = AccessControll.checkAccess("showProdList", "showProdList", "0", "1", "0", "0", newModuleList);
+				Info add = AccessControll.checkAccess("showProdList", "showProdList", "0", "1", "0", "0",
+						newModuleList);
 
 				if (add.isError() == false) {
 					model.addObject("addAccess", 1);
 				}
-				Info edit = AccessControll.checkAccess("showProdList", "showProdList", "0", "0", "1", "0", newModuleList);
+				Info edit = AccessControll.checkAccess("showProdList", "showProdList", "0", "0", "1", "0",
+						newModuleList);
 
 				if (edit.isError() == false) {
 					model.addObject("editAccess", 1);
@@ -648,7 +658,7 @@ public class ProdMasteController {
 	// TempProdConfig
 	// Sachin 18-09-2020
 	List<MFilter> filterList = new ArrayList<MFilter>();
-	
+
 	List<MFilter> vegNonVegList = new ArrayList<MFilter>();// Sachin 22-10-2020
 	List<MFilter> shapeList = new ArrayList<MFilter>();// Sachin 22-10-2020
 	List<ProductMaster> prodList = null;
@@ -677,8 +687,8 @@ public class ProdMasteController {
 		map = new LinkedMultiValueMap<>();
 		map.add("compId", companyId);
 		map.add("catId", catId);
-		ProductMaster[] prodArray = Constants.getRestTemplate().postForObject(Constants.url + "getProdListByCatIdCompId",
-				map, ProductMaster[].class);
+		ProductMaster[] prodArray = Constants.getRestTemplate()
+				.postForObject(Constants.url + "getProdListByCatIdCompId", map, ProductMaster[].class);
 
 		prodList = new ArrayList<ProductMaster>(Arrays.asList(prodArray));
 		model.addObject("prodList", prodList);
@@ -789,7 +799,7 @@ public class ProdMasteController {
 										config.setProductName(prodList.get(i).getProductName());
 										config.setRateSetingType(prodList.get(i).getRateSettingType());
 
-										//config.setVegType(InprodList.get(i).getIsVeg());
+										// config.setVegType(InprodList.get(i).getIsVeg());
 
 										config.setWeight(Float.parseFloat(wtList.get(x)));
 										tempProdConfList.add(config);
@@ -844,7 +854,7 @@ public class ProdMasteController {
 									config.setProductName(prodList.get(i).getProductName());
 									config.setRateSetingType(prodList.get(i).getRateSettingType());
 
-									//config.setVegType(prodList.get(i).getIsVeg());
+									// config.setVegType(prodList.get(i).getIsVeg());
 
 									config.setWeight(1);
 									tempProdConfList.add(config);
@@ -866,11 +876,12 @@ public class ProdMasteController {
 		return model;
 
 	}
-	
-	//Sachin 22-10-2020 Prod confi by wt,veg type, shape,flavor
-	public  float roundUp(float d) {
+
+	// Sachin 22-10-2020 Prod confi by wt,veg type, shape,flavor
+	public float roundUp(float d) {
 		return BigDecimal.valueOf(d).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
 	}
+
 	@RequestMapping(value = { "/getProdConf" }, method = RequestMethod.POST)
 	public ModelAndView getProdConfNew(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView model = new ModelAndView("product/addProdConf");
@@ -890,20 +901,20 @@ public class ProdMasteController {
 		int companyId = (int) session.getAttribute("companyId");
 		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 
-		Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "1", "0",
-				"0", "0", newModuleList);
-		if(view.isError()==false) {
-			
+		Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "1", "0", "0",
+				"0", newModuleList);
+		if (view.isError() == false) {
+
 			model.addObject("viewAccess", 1);
 		}
-		
+
 		filterList = new ArrayList<MFilter>();
 
 		map = new LinkedMultiValueMap<>();
 		map.add("compId", companyId);
 		map.add("catId", catId);
-		ProductMaster[] prodArray = Constants.getRestTemplate().postForObject(Constants.url + "getProdListByCatIdCompId",
-				map, ProductMaster[].class);
+		ProductMaster[] prodArray = Constants.getRestTemplate()
+				.postForObject(Constants.url + "getProdListByCatIdCompId", map, ProductMaster[].class);
 
 		prodList = new ArrayList<ProductMaster>(Arrays.asList(prodArray));
 		model.addObject("prodList", prodList);
@@ -935,16 +946,14 @@ public class ProdMasteController {
 					map, MFilter[].class);
 			filterList = new ArrayList<MFilter>(Arrays.asList(filterArr));
 
-			
 			map = new LinkedMultiValueMap<>();
 			map.add("filterTypeId", 12);
 			map.add("compId", companyId);
 
-			MFilter[] vegNonVegTypeArray = Constants.getRestTemplate().postForObject(Constants.url + "getFiltersListByTypeId",
-					map, MFilter[].class);
+			MFilter[] vegNonVegTypeArray = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getFiltersListByTypeId", map, MFilter[].class);
 			vegNonVegList = new ArrayList<MFilter>(Arrays.asList(vegNonVegTypeArray));
-			
-			
+
 			map = new LinkedMultiValueMap<>();
 			map.add("filterTypeId", 1);
 			map.add("compId", companyId);
@@ -952,7 +961,6 @@ public class ProdMasteController {
 			MFilter[] shapeArray = Constants.getRestTemplate().postForObject(Constants.url + "getFiltersListByTypeId",
 					map, MFilter[].class);
 			shapeList = new ArrayList<MFilter>(Arrays.asList(shapeArray));
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -967,120 +975,63 @@ public class ProdMasteController {
 			tempProdConfList = new ArrayList<>();
 
 			for (int i = 0; i < prodList.size(); i++) {
-				ProductMaster prod=prodList.get(i);
-				
-				float basicMrp=0;//prod.getBasicMrp();
-				
-				//	System.err.println(" Work For  ONLY prod Id " +prod.getProductId());
+				ProductMaster prod = prodList.get(i);
+
+				float basicMrp = 0;// prod.getBasicMrp();
+
+				// System.err.println(" Work For ONLY prod Id " +prod.getProductId());
 				List<String> prodFlavIdList = Arrays.asList(prodList.get(i).getFlavourIds().split(",", -1));
 				List<MFilter> flavList = getFlavList(prodFlavIdList);
 
 				List<String> vegTypeStrList = Arrays.asList(prodList.get(i).getIsVeg().split(",", -1));
 				List<MFilter> vegTypeList = getSortedVegNonVegList(vegTypeStrList);
-				
+
 				List<String> shapeIdsStr = Arrays.asList(prodList.get(i).getShapeId().split(",", -1));
 				List<MFilter> shapeIdList = getSortedShapeList(shapeIdsStr);
-				
-				List<String> wtList=new ArrayList<String>();
+
+				List<String> wtList = new ArrayList<String>();
 				if (prod.getRateSettingType() == 2) {
 					wtList = Arrays.asList(prodList.get(i).getAvailInWeights().split(",", -1));
-				}else {
+				} else {
 					wtList.add("1");
 				}
-				
+
 				for (int w = 0; w < wtList.size(); w++) {
-					float weight=Float.parseFloat(wtList.get(w));
-					basicMrp=prod.getBasicMrp();
+					float weight = Float.parseFloat(wtList.get(w));
+					basicMrp = prod.getBasicMrp();
 
-					basicMrp=basicMrp*weight;
-							
-					for(int v=0;v<vegTypeList.size();v++) {
-						
-						float vegPrice=vegTypeList.get(v).getAddOnRs();
-						
-						if(vegTypeList.get(v).getAddOnType()==2) {
-							vegPrice=vegTypeList.get(v).getAddOnRs()*weight;
+					basicMrp = basicMrp * weight;
+
+					for (int v = 0; v < vegTypeList.size(); v++) {
+
+						float vegPrice = vegTypeList.get(v).getAddOnRs();
+
+						if (vegTypeList.get(v).getAddOnType() == 2) {
+							vegPrice = vegTypeList.get(v).getAddOnRs() * weight;
 						}
-						String shapeName="Shape NA";
-						
-						float shapePrice=0;
-						float flavorPrice=0;
-							if(!shapeIdList.isEmpty()) {
-								for(int s=0;s<shapeIdList.size();s++) {
+						String shapeName = "Shape NA";
 
-									shapePrice=shapeIdList.get(s).getAddOnRs();
-									
-									if(shapeIdList.get(s).getAddOnType()==2) {
-										shapePrice=shapeIdList.get(s).getAddOnRs()*weight;
-									}
-									String flvName="Flavor NA";
-									 flavorPrice=0;
-										if(!flavList.isEmpty()) {
-											for(int f=0;f<flavList.size();f++) {
-												
-												flavorPrice=flavList.get(f).getAddOnRs();
-												
-												if(flavList.get(f).getAddOnType()==2) {
-													flavorPrice=flavList.get(f).getAddOnRs()*weight;
-												}
-												
-												TempProdConfig config = new TempProdConfig();
-												UUID uuid = UUID.randomUUID();
-												config.setUuid(uuid.toString());
-												config.setCatId(prod.getProdCatId());
-												config.setCurTimeStamp(CommonUtility.getCurrentYMDDateTime());
-												config.setFlavorId(flavList.get(f).getFilterId());
-												config.setFlavorName(flavList.get(f).getFilterName());
-												config.setProductId(prod.getProductId());
-												config.setProductName(prod.getProductName());
-												config.setRateSetingType(prod.getRateSettingType());
-												config.setVegType(vegTypeList.get(v).getFilterId());
-												config.setWeight(Float.parseFloat(wtList.get(w)));
-												config.setVegNonVegName(vegTypeList.get(v).getFilterName());
-												config.setShapeId(shapeIdList.get(s).getFilterId());
-												config.setShapeName(shapeIdList.get(s).getFilterName());
-												config.setMrpAmt(roundUp(basicMrp+vegPrice+shapePrice+flavorPrice));
-												tempProdConfList.add(config);
-											}//end of flavList for F
-										}//end of if flavList not empty
-									else {
-										//flavor Empty
-										flvName="NA Flavor";
-										TempProdConfig config = new TempProdConfig();
-										UUID uuid = UUID.randomUUID();
-										config.setUuid(uuid.toString());
-										config.setCatId(prod.getProdCatId());
-										config.setCurTimeStamp(CommonUtility.getCurrentYMDDateTime());
-										config.setFlavorId(0);
-										config.setFlavorName(flvName);
-										config.setProductId(prod.getProductId());
-										config.setProductName(prod.getProductName());
-										config.setRateSetingType(prod.getRateSettingType());
-										config.setVegType(vegTypeList.get(v).getFilterId());
-										config.setWeight(Float.parseFloat(wtList.get(w)));
-										config.setVegNonVegName(vegTypeList.get(v).getFilterName());
-										config.setShapeId(shapeIdList.get(s).getFilterId());
-										config.setShapeName(shapeIdList.get(s).getFilterName());
-										
-										config.setMrpAmt(roundUp(basicMrp+vegPrice+shapePrice+flavorPrice));
+						float shapePrice = 0;
+						float flavorPrice = 0;
+						if (!shapeIdList.isEmpty()) {
+							for (int s = 0; s < shapeIdList.size(); s++) {
 
-										tempProdConfList.add(config);
-									}
-								}//end of shapeIdList for S
-							}// end of if !shapeIdList.isEmpty()
-						else {
-							shapeName="Na";
-							 flavorPrice=0;
-							 
-								if(!flavList.isEmpty()) {
-									for(int f=0;f<flavList.size();f++) {
-										
-										flavorPrice=flavList.get(f).getAddOnRs();
-										
-										if(flavList.get(f).getAddOnType()==2) {
-											flavorPrice=flavList.get(f).getAddOnRs()*weight;
+								shapePrice = shapeIdList.get(s).getAddOnRs();
+
+								if (shapeIdList.get(s).getAddOnType() == 2) {
+									shapePrice = shapeIdList.get(s).getAddOnRs() * weight;
+								}
+								String flvName = "Flavor NA";
+								flavorPrice = 0;
+								if (!flavList.isEmpty()) {
+									for (int f = 0; f < flavList.size(); f++) {
+
+										flavorPrice = flavList.get(f).getAddOnRs();
+
+										if (flavList.get(f).getAddOnType() == 2) {
+											flavorPrice = flavList.get(f).getAddOnRs() * weight;
 										}
-										
+
 										TempProdConfig config = new TempProdConfig();
 										UUID uuid = UUID.randomUUID();
 										config.setUuid(uuid.toString());
@@ -1094,18 +1045,75 @@ public class ProdMasteController {
 										config.setVegType(vegTypeList.get(v).getFilterId());
 										config.setWeight(Float.parseFloat(wtList.get(w)));
 										config.setVegNonVegName(vegTypeList.get(v).getFilterName());
-										config.setShapeId(0);
-										config.setShapeName(shapeName);
-										config.setMrpAmt(roundUp(basicMrp+vegPrice+shapePrice+flavorPrice));
-
+										config.setShapeId(shapeIdList.get(s).getFilterId());
+										config.setShapeName(shapeIdList.get(s).getFilterName());
+										config.setMrpAmt(roundUp(basicMrp + vegPrice + shapePrice + flavorPrice));
 										tempProdConfList.add(config);
-										
-									}//end of flavList for F
-									
-								}//end of if flavList not empty
-								
+									} // end of flavList for F
+								} // end of if flavList not empty
+								else {
+									// flavor Empty
+									flvName = "NA Flavor";
+									TempProdConfig config = new TempProdConfig();
+									UUID uuid = UUID.randomUUID();
+									config.setUuid(uuid.toString());
+									config.setCatId(prod.getProdCatId());
+									config.setCurTimeStamp(CommonUtility.getCurrentYMDDateTime());
+									config.setFlavorId(0);
+									config.setFlavorName(flvName);
+									config.setProductId(prod.getProductId());
+									config.setProductName(prod.getProductName());
+									config.setRateSetingType(prod.getRateSettingType());
+									config.setVegType(vegTypeList.get(v).getFilterId());
+									config.setWeight(Float.parseFloat(wtList.get(w)));
+									config.setVegNonVegName(vegTypeList.get(v).getFilterName());
+									config.setShapeId(shapeIdList.get(s).getFilterId());
+									config.setShapeName(shapeIdList.get(s).getFilterName());
+
+									config.setMrpAmt(roundUp(basicMrp + vegPrice + shapePrice + flavorPrice));
+
+									tempProdConfList.add(config);
+								}
+							} // end of shapeIdList for S
+						} // end of if !shapeIdList.isEmpty()
+						else {
+							shapeName = "Na";
+							flavorPrice = 0;
+
+							if (!flavList.isEmpty()) {
+								for (int f = 0; f < flavList.size(); f++) {
+
+									flavorPrice = flavList.get(f).getAddOnRs();
+
+									if (flavList.get(f).getAddOnType() == 2) {
+										flavorPrice = flavList.get(f).getAddOnRs() * weight;
+									}
+
+									TempProdConfig config = new TempProdConfig();
+									UUID uuid = UUID.randomUUID();
+									config.setUuid(uuid.toString());
+									config.setCatId(prod.getProdCatId());
+									config.setCurTimeStamp(CommonUtility.getCurrentYMDDateTime());
+									config.setFlavorId(flavList.get(f).getFilterId());
+									config.setFlavorName(flavList.get(f).getFilterName());
+									config.setProductId(prod.getProductId());
+									config.setProductName(prod.getProductName());
+									config.setRateSetingType(prod.getRateSettingType());
+									config.setVegType(vegTypeList.get(v).getFilterId());
+									config.setWeight(Float.parseFloat(wtList.get(w)));
+									config.setVegNonVegName(vegTypeList.get(v).getFilterName());
+									config.setShapeId(0);
+									config.setShapeName(shapeName);
+									config.setMrpAmt(roundUp(basicMrp + vegPrice + shapePrice + flavorPrice));
+
+									tempProdConfList.add(config);
+
+								} // end of flavList for F
+
+							} // end of if flavList not empty
+
 							else {
-								//Flavor List Empty
+								// Flavor List Empty
 								TempProdConfig config = new TempProdConfig();
 								UUID uuid = UUID.randomUUID();
 								config.setUuid(uuid.toString());
@@ -1121,18 +1129,18 @@ public class ProdMasteController {
 								config.setVegNonVegName(vegTypeList.get(v).getFilterName());
 								config.setShapeId(0);
 								config.setShapeName("NA S");
-								config.setMrpAmt(roundUp(basicMrp+vegPrice+shapePrice+flavorPrice));
+								config.setMrpAmt(roundUp(basicMrp + vegPrice + shapePrice + flavorPrice));
 
 								tempProdConfList.add(config);
 							}
-						}//end of shape "Na"
-					}//end of vegTypeList For V
-									
-				}//end of wtList For W
-				
+						} // end of shape "Na"
+					} // end of vegTypeList For V
+
+				} // end of wtList For W
+
 			}
-				//upto
-				System.err.println("tempProdConfList " +tempProdConfList.toString());
+			// upto
+			System.err.println("tempProdConfList " + tempProdConfList.toString());
 			model.addObject("tempProdConfList", tempProdConfList);
 			model.addObject("catId", catId);
 		} catch (Exception e) {
@@ -1141,7 +1149,8 @@ public class ProdMasteController {
 		return model;
 
 	}
-		//Sachin 22-10-2020
+
+	// Sachin 22-10-2020
 	public List<MFilter> getSortedVegNonVegList(List<String> vegNonVegIds) {
 		List<MFilter> sortedVegNonVegList = new ArrayList<MFilter>();
 
@@ -1163,31 +1172,30 @@ public class ProdMasteController {
 
 		return sortedVegNonVegList;
 	}
-	
-	//Sachin 22-10-2020
-		public List<MFilter> getSortedShapeList(List<String> shapeIds) {
-			List<MFilter> sortedShapeList = new ArrayList<MFilter>();
 
-			try {
-				for (int a = 0; a < shapeIds.size(); a++) {
-					for (int i = 0; i < shapeList.size(); i++) {
-						Integer isSame = null;
-						isSame = Integer.compare(Integer.parseInt(shapeIds.get(a)), shapeList.get(i).getFilterId());
-						if (isSame.equals(0)) {
-							sortedShapeList.add(shapeList.get(i));
-							break;
-						}
+	// Sachin 22-10-2020
+	public List<MFilter> getSortedShapeList(List<String> shapeIds) {
+		List<MFilter> sortedShapeList = new ArrayList<MFilter>();
+
+		try {
+			for (int a = 0; a < shapeIds.size(); a++) {
+				for (int i = 0; i < shapeList.size(); i++) {
+					Integer isSame = null;
+					isSame = Integer.compare(Integer.parseInt(shapeIds.get(a)), shapeList.get(i).getFilterId());
+					if (isSame.equals(0)) {
+						sortedShapeList.add(shapeList.get(i));
+						break;
 					}
 				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 
-			return sortedShapeList;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		
-	
+
+		return sortedShapeList;
+	}
+
 	public List<MFilter> getFlavList(List<String> flavIds) {
 		List<MFilter> flavList = new ArrayList<MFilter>();
 
@@ -1364,9 +1372,9 @@ public class ProdMasteController {
 							confDetail.setSpRateAmt3(spRateAmt3);
 							confDetail.setSpRateAmt4(spRateAmt4);
 							confDetail.setUpdtDttime(CommonUtility.getCurrentYMDDateTime());
-							
-							confDetail.setExInt1(tempConf.getShapeId()); //Set Ex Int1 as shape Id 23-10-2020
-							
+
+							confDetail.setExInt1(tempConf.getShapeId()); // Set Ex Int1 as shape Id 23-10-2020
+
 							confDetailList.add(confDetail);
 
 						} // End of Else
@@ -1380,16 +1388,16 @@ public class ProdMasteController {
 				}
 			} // End Of tempProdConfList For Loop I
 			confHeader.setItemConfDetList(confDetailList);
-if(!confDetailList.isEmpty()) {
-			ItemConfHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveProdConfHD", confHeader,
-					ItemConfHeader.class);
+			if (!confDetailList.isEmpty()) {
+				ItemConfHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveProdConfHD",
+						confHeader, ItemConfHeader.class);
 
-			if (res.getConfigHeaderId() > 0)
-				session.setAttribute("successMsg", "Product Configuration Saved Sucessfully");
-			else
-				session.setAttribute("errorMsg", "Failed to Save Product Configuration");
+				if (res.getConfigHeaderId() > 0)
+					session.setAttribute("successMsg", "Product Configuration Saved Sucessfully");
+				else
+					session.setAttribute("errorMsg", "Failed to Save Product Configuration");
 
-}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -1902,7 +1910,7 @@ if(!confDetailList.isEmpty()) {
 
 			ItemConfHeader res = Constants.getRestTemplate().postForObject(Constants.url + "saveUpdateProdConfHD",
 					traveller, ItemConfHeader.class);
-System.err.println("saveUpdateProdConf " +res.toString());
+			System.err.println("saveUpdateProdConf " + res.toString());
 			if (res.getConfigHeaderId() > 0)
 				session.setAttribute("successMsg", "Product Configuration Saved Sucessfully");
 			else
@@ -2108,8 +2116,9 @@ System.err.println("saveUpdateProdConf " +res.toString());
 						String ext = files.get(i).getOriginalFilename().split("\\.")[1];
 						String fileName = CommonUtility.getCurrentTimeStamp() + "_" + randomInt + "." + ext;
 						// new ImageUploadController().saveUploadedFiles(files.get(i), 1, fileName);
-
-						info = new ImageUploadController().saveProdImgeWithResize(files.get(i), fileName, 450, 250);
+//dsds
+						info=new ImageUploadController().saveImgFilesProdImg(files.get(i),Constants.imageFileExtensions, fileName);
+						//info = new ImageUploadController().saveProdImgeWithResize(files.get(i), fileName, 450, 250);
 
 						if (filesList.isEmpty()) {
 

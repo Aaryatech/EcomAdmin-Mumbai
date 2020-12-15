@@ -96,8 +96,7 @@
 										<div class="col-lg-2">
 										 	<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data
-												placeholder="Select Category" id="cat_id" name="cat_id"
+												 data-placeholder="Select Category" id="cat_id" name="cat_id"
 												onchange="setSubCatList()">
 												<option selected disabled value="">Select Category</option>
 												<c:forEach items="${catList}" var="catList"
@@ -681,10 +680,14 @@
 													class="btn btn-primary"
 													id="11" >Apply</button>
 										</div><div class="col-lg-1"></div>
+									
+									
+									</div>
+									<div class="form-group row">
 									<label class="col-form-label col-lg-2" for="weight_ids">
 											Available In Weights <span style="color: red">* </span>:
 										</label>
-										<div class="col-lg-4">
+										<div class="col-lg-10">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
@@ -693,7 +696,6 @@
 											</select> <span class="validation-invalid-label" id="error_weight_ids"
 												style="display: none;">This field is required.</span>
 										</div>
-									
 									</div>
 									</div>
 									<div class="form-group row">
@@ -910,7 +912,7 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 				+ '</option>';
 				weightHtml += '</option>'; */
 		for(var i=0.5;i<=parseFloat(maxWt);i=i+0.5){
-			weightHtml += '<option value="'+i+'">'
+			weightHtml += '<option selected value="'+i+'">'
 			+ i +  ' Kg</option>';
 		}
 		$('#weight_ids').html(weightHtml);

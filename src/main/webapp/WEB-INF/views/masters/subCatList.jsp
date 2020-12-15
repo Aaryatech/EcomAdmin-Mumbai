@@ -88,7 +88,7 @@
  									<td>${subCatList.subCatCode}</td>
  									<td>${subCatList.subCatPrefix}</td>
  									<td><img id="output" height="50"
-												width="60" src="${imgPath}${subCat.imageName}" /></td>
+												width="60" src="${imgPath}${subCatList.imageName}" /></td>
  									<td class="text-center"><c:if test="${editAccess==0}">
 											<div class="list-icons">
 												<a

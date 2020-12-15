@@ -2088,9 +2088,9 @@ public class MasterController {
 					map.add("compId", companyId);
 					frIdCnt = Constants.getRestTemplate().postForObject(Constants.url + "getFrCnt", map, Integer.class);
 
-					frIdCnt = frIdCnt + 1;
-
-					String getFrCode = coPrefix + "00" + frIdCnt;
+					//frIdCnt = frIdCnt + 1;
+					String no = String.format("%04d", (frIdCnt + 1));
+					String getFrCode = coPrefix + no;
 
 					franchise.setFrCode(getFrCode);
 

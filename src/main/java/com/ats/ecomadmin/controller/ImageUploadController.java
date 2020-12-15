@@ -32,21 +32,19 @@ public class ImageUploadController {
 
 			path = Paths.get(Constants.UPLOAD_URL + imageName);
 
-
 		}
 
 		Files.write(path, bytes);
 
 	}
-	
-	public static Info saveImgFiles(MultipartFile file, String[] allowExt, String imageName)
-			throws IOException {
+
+	public static Info saveImgFiles(MultipartFile file, String[] allowExt, String imageName) throws IOException {
 
 		Info info = new Info();
 		try {
 			String extension = FilenameUtils.getExtension(file.getOriginalFilename());
 			String[] filetypes = file.getOriginalFilename().split("\\.");
-			if (ArrayUtils.contains(allowExt, extension.toLowerCase()) && filetypes.length==2) {
+			if (ArrayUtils.contains(allowExt, extension.toLowerCase()) && filetypes.length == 2) {
 				Path path = Paths.get(Constants.UPLOAD_URL + imageName);
 
 				byte[] bytes = file.getBytes();
@@ -68,7 +66,36 @@ public class ImageUploadController {
 		return info;
 	}
 
+	
+	public static Info saveImgFilesProdImg(MultipartFile file, String[] allowExt, String imageName) throws IOException {
 
+		Info info = new Info();
+		try {
+			String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+			String[] filetypes = file.getOriginalFilename().split("\\.");
+			if (ArrayUtils.contains(allowExt, extension.toLowerCase()) && filetypes.length == 2) {
+				Path path = Paths.get(Constants.PROD_IMG_UPLOAD_URL + imageName);
+
+				byte[] bytes = file.getBytes();
+
+				path = Paths.get(Constants.PROD_IMG_UPLOAD_URL + imageName);
+
+				Files.write(path, bytes);
+				info.setError(false);
+				info.setMsg("prod Image Upload Successfully ");
+			} else {
+				info.setError(true);
+				info.setMsg("Error While Uploading prod Image");
+			}
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("Error While Uploading prod Image");
+			e.printStackTrace();
+		}
+		return info;
+	}
+
+	
 	public Info saveUploadedImgeWithResize(MultipartFile file, String imageName, int width, int hieght)
 			throws IOException {
 
@@ -80,7 +107,6 @@ public class ImageUploadController {
 			Path path = Paths.get(Constants.UPLOAD_URL + imageName);
 
 			byte[] bytes = file.getBytes();
-
 
 			Files.write(path, bytes);
 			Image img = null;
@@ -107,15 +133,12 @@ public class ImageUploadController {
 		return info;
 
 	}
-	
-	//Sachin 
-	//28-09-2020 
+
+	// Sachin
+	// 28-09-2020
 	// to Upload Product Image
-	public Info saveProdImgeWithResize(MultipartFile file, String imageName, int width, int hieght)
-			throws IOException {
-
+	public Info saveProdImgeWithResize(MultipartFile file, String imageName, int width, int hieght) {
 		Info info = new Info();
-
 		try {
 			String extension = FilenameUtils.getExtension(file.getOriginalFilename());
 
@@ -123,31 +146,35 @@ public class ImageUploadController {
 
 			byte[] bytes = file.getBytes();
 
-
 			Files.write(path, bytes);
 			Image img = null;
 			BufferedImage tempPNG = null;
 
 			File newFilePNG = null;
+			try {
+				System.err.println(" image " + Constants.PROD_IMG_UPLOAD_URL + " name " + imageName);
+				img = ImageIO.read(new File(Constants.PROD_IMG_UPLOAD_URL + imageName));
+			} catch (Exception e) {
+				try {
+					tempPNG = resizeImage(img, width, hieght);
 
-			img = ImageIO.read(new File(Constants.PROD_IMG_UPLOAD_URL + imageName));
-			tempPNG = resizeImage(img, width, hieght);
+					newFilePNG = new File(Constants.PROD_IMG_UPLOAD_URL + imageName);
 
-			newFilePNG = new File(Constants.PROD_IMG_UPLOAD_URL + imageName);
+					ImageIO.write(tempPNG, extension, newFilePNG);
 
-			ImageIO.write(tempPNG, extension, newFilePNG);
+					info.setError(false);
+					info.setMsg("Upload Successfully ");
+				} catch (Exception e1) {
 
-			info.setError(false);
-			info.setMsg("Upload Successfully ");
-
+				}
+			}
+			
 		} catch (Exception e) {
-
 			e.printStackTrace();
 			info.setError(true);
 			info.setMsg("Error While Uploading Image");
 		}
 		return info;
-
 	}
 
 	public static BufferedImage resizeImage(final Image image, int width, int height) {

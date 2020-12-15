@@ -4,7 +4,7 @@
  	<meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>HR Management</title>
+<title>Monginis</title>
 <link rel="shortcut icon" href="${pageContext.request.contextPath}/resources/global_assets/images/companylogo.png" type="image/x-icon" /> 
 <!-- Global stylesheets -->
 <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
