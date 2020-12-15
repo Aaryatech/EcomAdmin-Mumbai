@@ -39,7 +39,7 @@ import com.ats.ecomadmin.model.acrights.CreatedRoleList;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
 import com.ats.ecomadmin.model.acrights.SubModuleJson;
 
-@Controller
+@Controller 
 @Scope("session")
 public class AccessRightController {
 
