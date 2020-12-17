@@ -79,7 +79,7 @@ public class ConfigHomePageProduct {
 	
 	private String productImages; //comma sep image names
 	
-	private int isVeg; //0 Veg 1 non Veg 2 Both 14-09-2020
+	private String isVeg; //0 Veg 1 non Veg 2 Both 14-09-2020
 	private int prepTime; //Cake Preparation time in minutes 14-09-2020
 	private int rateSettingType; //0apply_rate_per_UOM/1apply_rate_per_KG/2apply_rate_as_per _filter		
 	
@@ -110,10 +110,10 @@ public class ConfigHomePageProduct {
 	private int hpStatusDetailId;
 	private int sortNo;
 
-	public int getIsVeg() {
+	public String getIsVeg() {
 		return isVeg;
 	}
-	public void setIsVeg(int isVeg) {
+	public void setIsVeg(String isVeg) {
 		this.isVeg = isVeg;
 	}
 	public int getPrepTime() {
