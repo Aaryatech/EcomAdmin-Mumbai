@@ -33,6 +33,7 @@ import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.CategoryProduct;
+import com.ats.ecomadmin.model.CompanyTestomonials;
 import com.ats.ecomadmin.model.ConfigHomePageProduct;
 import com.ats.ecomadmin.model.Designation;
 import com.ats.ecomadmin.model.FilterTypes;
@@ -595,7 +596,7 @@ public class ConfigurationFilterController {
 			ConfigHomePageProduct[] filterArr = Constants.getRestTemplate()
 					.postForObject(Constants.url + "getProductStatusConfigList", map, ConfigHomePageProduct[].class);
 			List<ConfigHomePageProduct> list = new ArrayList<ConfigHomePageProduct>(Arrays.asList(filterArr));
-						
+
 			catPrdct.setProductList(list);
 
 			List<Category> catList = new ArrayList<>();
@@ -732,10 +733,10 @@ public class ConfigurationFilterController {
 			System.out.println("Execption in /saveProductConfiguration : " + e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		int btnVal = Integer.parseInt(request.getParameter("btnType"));
-		
-		if(btnVal==0)
+
+		if (btnVal == 0)
 			return "redirect:/showHomePagePrdctConfig";
 		else
 			return "redirect:/configHomePageProduct";
@@ -834,7 +835,6 @@ public class ConfigurationFilterController {
 				mav = "accessDenied";
 
 			} else {
-				session.setAttribute("compId", 1);
 
 				int compId = (int) session.getAttribute("companyId");
 				mav = "product/testimonialList";
@@ -855,8 +855,8 @@ public class ConfigurationFilterController {
 
 				model.addAttribute("title", "Home Page Testimonial List");
 
-				Info add = AccessControll.checkAccess("showHomePageTestimonial", "showUomList", "0", "1", "0", "0",
-						newModuleList);
+				Info add = AccessControll.checkAccess("showHomePageTestimonial", "showHomePageTestimonial", "0", "1",
+						"0", "0", newModuleList);
 				Info edit = AccessControll.checkAccess("showHomePageTestimonial", "showHomePageTestimonial", "0", "0",
 						"1", "0", newModuleList);
 				Info delete = AccessControll.checkAccess("showHomePageTestimonial", "showHomePageTestimonial", "0", "0",
@@ -952,7 +952,7 @@ public class ConfigurationFilterController {
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 			String profileImage = null;
-			
+
 			Info info = new Info();
 
 			int companyId = (int) session.getAttribute("companyId");
@@ -964,7 +964,7 @@ public class ConfigurationFilterController {
 				profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
 
 				try {
-				//	new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					// new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
 					info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
 				} catch (Exception e) {
 				}
@@ -974,81 +974,80 @@ public class ConfigurationFilterController {
 				profileImage = request.getParameter("editImg");
 
 			}
-			
+
 			int testimonialId = Integer.parseInt(request.getParameter("testimonialId"));
-			
+
 			if (info.isError()) {
 				session.setAttribute("errorMsg", "Invalid Image Formate");
-				if(testimonialId>0) {
-					mav = "redirect:/editTestimonial?testimonialId=" + FormValidation.Encrypt(String.valueOf(testimonialId)); 
-				}else{
+				if (testimonialId > 0) {
+					mav = "redirect:/editTestimonial?testimonialId="
+							+ FormValidation.Encrypt(String.valueOf(testimonialId));
+				} else {
 					mav = "redirect:/newTestimonial";
 				}
-				 
+
 			} else {
 
-			HomePageTestimonial testimonial = new HomePageTestimonial();
+				HomePageTestimonial testimonial = new HomePageTestimonial();
 
-			
+				if (testimonialId > 0) {
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+					map.add("testimonialId", testimonialId);
+					HomePageTestimonial res = Constants.getRestTemplate()
+							.postForObject(Constants.url + "getTestimonialsById", map, HomePageTestimonial.class);
 
-			if (testimonialId > 0) {
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("testimonialId", testimonialId);
-				HomePageTestimonial res = Constants.getRestTemplate()
-						.postForObject(Constants.url + "getTestimonialsById", map, HomePageTestimonial.class);
-
-				testimonial.setInsertDateTime(res.getInsertDateTime());
-				testimonial.setInsertUserId(res.getInsertUserId());
-			}
-
-			String frIdsStr = "";
-			String[] frIds = request.getParameterValues("frIds");
-			if (frIds.length > 0) {
-				StringBuilder sb = new StringBuilder();
-				for (String s : frIds) {
-					sb.append(s).append(",");
+					testimonial.setInsertDateTime(res.getInsertDateTime());
+					testimonial.setInsertUserId(res.getInsertUserId());
 				}
-				frIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
 
-			}
+				String frIdsStr = "";
+				String[] frIds = request.getParameterValues("frIds");
+				if (frIds.length > 0) {
+					StringBuilder sb = new StringBuilder();
+					for (String s : frIds) {
+						sb.append(s).append(",");
+					}
+					frIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
 
-			testimonial.setTestimonialsId(testimonialId);
-			testimonial.setCaptionName(request.getParameter("caption"));
-			testimonial.setName(request.getParameter("testimonial_name"));
-			testimonial.setMessages(request.getParameter("messages"));
-			testimonial.setDesignation(Integer.parseInt(request.getParameter("designation")));
-			testimonial.setFrIds(frIdsStr);
-			testimonial.setImages(profileImage);
+				}
 
-			if (testimonialId == 0) {
-				testimonial.setInsertDateTime(sf.format(date));
-				testimonial.setInsertUserId(userObj.getUserId());
-			} else {
-				testimonial.setUpdateDateTime(sf.format(date));
-				testimonial.setUpdateUserId(userObj.getUserId());
-			}
+				testimonial.setTestimonialsId(testimonialId);
+				testimonial.setCaptionName(request.getParameter("caption"));
+				testimonial.setName(request.getParameter("testimonial_name"));
+				testimonial.setMessages(request.getParameter("messages"));
+				testimonial.setDesignation(Integer.parseInt(request.getParameter("designation")));
+				testimonial.setFrIds(frIdsStr);
+				testimonial.setImages(profileImage);
 
-			testimonial.setSortNo(Integer.parseInt(request.getParameter("sortNo")));
-			testimonial.setIsActive(Integer.parseInt(request.getParameter("isActive")));
-			testimonial.setCompanyId(companyId);
-			testimonial.setDelStatus(1);
-			testimonial.setExInt1(0);
-			testimonial.setExInt2(0);
-			testimonial.setExVar1("NA");
-			testimonial.setExVar2("NA");
+				if (testimonialId == 0) {
+					testimonial.setInsertDateTime(sf.format(date));
+					testimonial.setInsertUserId(userObj.getUserId());
+				} else {
+					testimonial.setUpdateDateTime(sf.format(date));
+					testimonial.setUpdateUserId(userObj.getUserId());
+				}
 
-			HomePageTestimonial res = Constants.getRestTemplate().postForObject(Constants.url + "saveTestimonial",
-					testimonial, HomePageTestimonial.class);
+				testimonial.setSortNo(Integer.parseInt(request.getParameter("sortNo")));
+				testimonial.setIsActive(Integer.parseInt(request.getParameter("isActive")));
+				testimonial.setCompanyId(companyId);
+				testimonial.setDelStatus(1);
+				testimonial.setExInt1(0);
+				testimonial.setExInt2(0);
+				testimonial.setExVar1("NA");
+				testimonial.setExVar2("NA");
 
-			if (res.getTestimonialsId() > 0) {
-				if (testimonialId == 0)
-					session.setAttribute("successMsg", "Home Page Testimonial Saved Sucessfully");
-				else
-					session.setAttribute("successMsg", "Home Page Testimonial Update Sucessfully");
-			} else {
-				session.setAttribute("errorMsg", "Failed to Save Home Page Testimonial");
-			}		
-			
+				HomePageTestimonial res = Constants.getRestTemplate().postForObject(Constants.url + "saveTestimonial",
+						testimonial, HomePageTestimonial.class);
+
+				if (res.getTestimonialsId() > 0) {
+					if (testimonialId == 0)
+						session.setAttribute("successMsg", "Home Page Testimonial Saved Sucessfully");
+					else
+						session.setAttribute("successMsg", "Home Page Testimonial Update Sucessfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Save Home Page Testimonial");
+				}
+
 				int btnVal = Integer.parseInt(request.getParameter("btnType"));
 
 				if (btnVal == 0)
@@ -1189,330 +1188,331 @@ public class ConfigurationFilterController {
 		}
 		return mav;
 	}
-	
-	
+
 	/*-------------------------------------------------------------------------------------------*/
-		// Created By :- Mahendra Singh
-		// Created On :- 23-11-2020
-		// Modified By :- NA
-		// Modified On :- NA
-		// Description :- Redirect to Configure Product And Festive Events
-		@RequestMapping(value = "/showConfigProductAndEvents", method = RequestMethod.GET)
-		public String showConfigProductAndEvents(HttpServletRequest request, HttpServletResponse response, Model model) {
+	// Created By :- Mahendra Singh
+	// Created On :- 23-11-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect to Configure Product And Festive Events
+	@RequestMapping(value = "/showConfigProductAndEvents", method = RequestMethod.GET)
+	public String showConfigProductAndEvents(HttpServletRequest request, HttpServletResponse response, Model model) {
 
-			String mav = new String();
-			try {
+		String mav = new String();
+		try {
 
-				HttpSession session = request.getSession();
-				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-				Info view = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "1", "0", "0",
-						"0", newModuleList);
-
-				if (view.isError() == true) {
-
-					mav = "accessDenied";
-
-				} else {
-					mav = "product/prdctEventList";
-
-					List<FestiveEvent> festiveEventList = new ArrayList<FestiveEvent>();
-
-					int compId = (int) session.getAttribute("companyId");
-
-					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-					map.add("compId", compId);
-
-					FestiveEvent[] festiveEventArr = Constants.getRestTemplate()
-							.postForObject(Constants.url + "getFestiveEventAndProductsList", map, FestiveEvent[].class);
-					festiveEventList = new ArrayList<FestiveEvent>(Arrays.asList(festiveEventArr));
-					
-					for (int i = 0; i < festiveEventList.size(); i++) {
-
-						festiveEventList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(festiveEventList.get(i).getEventId())));
-					}
-
-					model.addAttribute("eventList", festiveEventList);
-					
-					model.addAttribute("title", "Configure Products And Festive Events");
-
-					Info add = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "0", "1", "0",
-							"0", newModuleList);
-					Info edit = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "0", "0",
-							"1", "0", newModuleList);
-					Info delete = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "0", "0",
-							"0", "1", newModuleList);
-
-					if (add.isError() == false) {
-						model.addAttribute("addAccess", 0);
-					}
-					if (edit.isError() == false) {
-						model.addAttribute("editAccess", 0);
-					}
-					if (delete.isError() == false) {
-						model.addAttribute("deleteAccess", 0);
-					}
-				}
-
-			} catch (Exception e) {
-				System.out.println("Execption in /showConfigProductAndEvents : " + e.getMessage());
-				e.printStackTrace();
-			}
-			return mav;
-		}
-		
-		// Created By :- Mahendra Singh
-		// Created On :- 17-09-2020
-		// Modified By :- NA
-		// Modified On :- NA
-		// Description :- Configure Products And Filter
-		@RequestMapping(value = "/prdctEventConfig", method = RequestMethod.GET)
-		public String prdctEventConfig(HttpServletRequest request, HttpServletResponse response, Model model) {
-			String mav = new String();
-			try {
-				HttpSession session = request.getSession();
-				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-				Info view = AccessControll.checkAccess("prdctEventConfig", "showConfigProductAndEvents", "0", "1", "0",
-						"0", newModuleList);
-
-				if (view.isError() == true) {
-
-					mav = "accessDenied";
-
-				} else {
-					FestiveEvent festiveEvent = new FestiveEvent();
-					model.addAttribute("festiveEvent", festiveEvent);
-					
-					int companyId = (int) session.getAttribute("companyId");
-
-					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-					map.add("compId", companyId);
-
-					ProductMaster[] filterArr = Constants.getRestTemplate()
-							.postForObject(Constants.url + "getAllProducts", map, ProductMaster[].class);
-					productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
-					
-					Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
-							Category[].class);
-					List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
-					
-					model.addAttribute("productList", productList);
-					model.addAttribute("catList", catList);
-					
-					mav = "product/configPrdctEvent";
-					
-					model.addAttribute("title", "Add Products And Festive Event Configuration");
-				}
-			} catch (Exception e) {
-				System.out.println("Execption in /prdctEventConfig : " + e.getMessage());
-				e.printStackTrace();
-			}
-			return mav;
-
-		}
-		
-		// Created By :- Mahendra Singh
-		// Created On :- 17-09-2020
-		// Modified By :- NA
-		// Modified On :- NA
-		// Description :- Configure Products And Filter
-		@RequestMapping(value = "/saveEventConfiguration", method = RequestMethod.POST)
-		public String saveEventConfiguration(HttpServletRequest request, HttpServletResponse response,	
-				@RequestParam("doc") MultipartFile doc) {
-			String mav = new String();
-			try {
-				HttpSession session = request.getSession();
-				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-				Info view = AccessControll.checkAccess("saveEventConfiguration", "showConfigProductAndEvents", "0", "1", "0",
-						"0", newModuleList);
-
-				if (view.isError() == true) {
-
-					mav = "accessDenied";
-
-				} else {
-					Date date = new Date();
-					SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					Info info= new Info();
-					String profileImage = null;
-					if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
-
-						profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
-
-						try {
-							// new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
-							info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
-						} catch (Exception e) {
-						}
-
-					} else {
-						profileImage = request.getParameter("editImg");
-
-					}
-
-					String productIdsStr = "";
-
-					int compId = (int) session.getAttribute("companyId");
-
-					String[] productIds = request.getParameterValues("productId");
-
-					if (productIds.length > 0) {
-						StringBuilder sb = new StringBuilder();
-						for (String s : productIds) {
-							sb.append(s).append(",");
-						}
-						productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
-					}
-					int eventId = Integer.parseInt(request.getParameter("eventId"));
-
-					FestiveEvent festiveEvent = new FestiveEvent();
-					String eventDates = request.getParameter("eventDates");
-					String[] splitDate = eventDates.split("to");
-					
-					festiveEvent.setCompId(compId);
-					festiveEvent.setDelStatus(1);
-					festiveEvent.setDescription(request.getParameter("description"));
-					festiveEvent.setEventId(eventId);
-					festiveEvent.setEventName(request.getParameter("eventName"));
-					festiveEvent.setExInt1(0);
-					festiveEvent.setExInt2(0);
-					festiveEvent.setExInt3(0);
-					festiveEvent.setExVar1("NA");
-					festiveEvent.setExVar2(profileImage);
-					festiveEvent.setExVar3("NA");
-					festiveEvent.setFromDate(splitDate[0].trim());
-					festiveEvent.setToDate(splitDate[1].trim());
-					festiveEvent.setFromTime(request.getParameter("fromTime"));
-					festiveEvent.setToTime(request.getParameter("toTime"));
-					festiveEvent.setIsActive(Integer.parseInt(request.getParameter("active_event")));
-					festiveEvent.setMakeTime(request.getParameter("eventName"));
-					festiveEvent.setProductIds(productIdsStr);		
-					festiveEvent.setMakeTime(sf.format(date));
-
-					FestiveEvent res = Constants.getRestTemplate().postForObject(Constants.url + "saveFestiveEventAndProducts", festiveEvent,
-							FestiveEvent.class);
-
-					if (res.getEventId()>0) {
-						session.setAttribute("successMsg", "Product And Event Configure Successfully");
-					} else {
-						session.setAttribute("errorMsg", "Failed to Configure Product And Event");
-					}
-					mav = "redirect:/showConfigProductAndEvents";
-				}
-			} catch (Exception e) {
-				System.out.println("Execption in /saveProductConfiguration : " + e.getMessage());
-				e.printStackTrace();
-			}
-			return mav;
-
-		}
-		
-		
-		// Created By :- Mahendra Singh
-		// Created On :- 23-11-2020
-		// Modified By :- NA
-		// Modified On :- NA
-		// Description :- Update Event
-		@RequestMapping(value = "/editEvent", method = RequestMethod.GET)
-		public String editEvent(HttpServletRequest request, HttpServletResponse response, Model model) {
-
-			String mav = new String();
-			try {
-				HttpSession session = request.getSession();
-				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-				Info view = AccessControll.checkAccess("editEvent", "showConfigProductAndEvents", "0", "0", "1", "0", newModuleList);
-
-				if (view.isError() == true) {
-
-					mav = "accessDenied";
-
-				} else {
-					mav = "product/configPrdctEvent";
-
-					String base64encodedString = request.getParameter("eventId");
-					String eventId = FormValidation.DecodeKey(base64encodedString);
-
-					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-					map.add("eventId", eventId);
-
-					FestiveEvent festiveEvent = Constants.getRestTemplate().postForObject(Constants.url + "getFestiveEventConfigById", map, FestiveEvent.class);
-					model.addAttribute("festiveEvent", festiveEvent);
-					
-					List<Integer> prodctIdsIds = Stream.of(festiveEvent.getProductIds().split(",")).map(Integer::parseInt)
-							.collect(Collectors.toList());
-					
-					model.addAttribute("prodctIdsIds", prodctIdsIds);
-					
-					int companyId = (int) session.getAttribute("companyId");
-
-					map = new LinkedMultiValueMap<>();
-					map.add("compId", companyId);
-
-					ProductMaster[] filterArr = Constants.getRestTemplate()
-							.postForObject(Constants.url + "getAllProducts", map, ProductMaster[].class);
-					productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
-					
-					Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
-							Category[].class);
-					List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
-					
-					model.addAttribute("productList", productList);
-					model.addAttribute("catList", catList);
-					model.addAttribute("imgPath", Constants.VIEW_URL);
-					
-					model.addAttribute("title", "Edit Products And Festive Event Configuration");
-				}
-			} catch (Exception e) {
-				System.out.println("Execption in /editEvent : " + e.getMessage());
-				e.printStackTrace();
-			}
-
-			return mav;
-		}
-		
-		// Created By :- Mahendra Singh
-		// Created On :- 23-11-2020
-		// Modified By :- NA
-		// Modified On :- NA
-		// Description :- Delete Event
-		@RequestMapping(value = "/deleteEvent", method = RequestMethod.GET)
-		public String deleteEvent(HttpServletRequest request, HttpServletResponse response) {
-
-			String mav = new String();
 			HttpSession session = request.getSession();
-			try {
-				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-				Info view = AccessControll.checkAccess("deleteEvent", "showConfigProductAndEvents", "0", "0", "0", "1",
-						newModuleList);
-				if (view.isError() == true) {
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "1", "0",
+					"0", "0", newModuleList);
 
-					mav = "accessDenied";
+			if (view.isError() == true) {
 
-				} else {
-					String base64encodedString = request.getParameter("eventId");
-					String eventId = FormValidation.DecodeKey(base64encodedString);
+				mav = "accessDenied";
 
-					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-					map.add("eventId", Integer.parseInt(eventId));
+			} else {
+				mav = "product/prdctEventList";
 
-					Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteFestiveEventById", map,
-							Info.class);
+				List<FestiveEvent> festiveEventList = new ArrayList<FestiveEvent>();
 
-					if (!res.isError()) {
-						session.setAttribute("successMsg", res.getMsg());
-					} else {
-						session.setAttribute("errorMsg", res.getMsg());
+				int compId = (int) session.getAttribute("companyId");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", compId);
+
+				FestiveEvent[] festiveEventArr = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getFestiveEventAndProductsList", map, FestiveEvent[].class);
+				festiveEventList = new ArrayList<FestiveEvent>(Arrays.asList(festiveEventArr));
+
+				for (int i = 0; i < festiveEventList.size(); i++) {
+
+					festiveEventList.get(i)
+							.setExVar1(FormValidation.Encrypt(String.valueOf(festiveEventList.get(i).getEventId())));
+				}
+
+				model.addAttribute("eventList", festiveEventList);
+
+				model.addAttribute("title", "Configure Products And Festive Events");
+
+				Info add = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "0",
+						"1", "0", "0", newModuleList);
+				Info edit = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "0",
+						"0", "1", "0", newModuleList);
+				Info delete = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents",
+						"0", "0", "0", "1", newModuleList);
+
+				if (add.isError() == false) {
+					model.addAttribute("addAccess", 0);
+				}
+				if (edit.isError() == false) {
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					model.addAttribute("deleteAccess", 0);
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /showConfigProductAndEvents : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Configure Products And Filter
+	@RequestMapping(value = "/prdctEventConfig", method = RequestMethod.GET)
+	public String prdctEventConfig(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("prdctEventConfig", "showConfigProductAndEvents", "0", "1", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				FestiveEvent festiveEvent = new FestiveEvent();
+				model.addAttribute("festiveEvent", festiveEvent);
+
+				int companyId = (int) session.getAttribute("companyId");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);
+
+				ProductMaster[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllProducts",
+						map, ProductMaster[].class);
+				productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
+
+				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+						Category[].class);
+				List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
+
+				model.addAttribute("productList", productList);
+				model.addAttribute("catList", catList);
+
+				mav = "product/configPrdctEvent";
+
+				model.addAttribute("title", "Add Products And Festive Event Configuration");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /prdctEventConfig : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 17-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Configure Products And Filter
+	@RequestMapping(value = "/saveEventConfiguration", method = RequestMethod.POST)
+	public String saveEventConfiguration(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam("doc") MultipartFile doc) {
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("saveEventConfiguration", "showConfigProductAndEvents", "0", "1",
+					"0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				Date date = new Date();
+				SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Info info = new Info();
+				String profileImage = null;
+				if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
+
+					profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
+
+					try {
+						// new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+						info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
+					} catch (Exception e) {
 					}
 
-					mav = "redirect:/showConfigProductAndEvents";
+				} else {
+					profileImage = request.getParameter("editImg");
+
 				}
-			} catch (Exception e) {
-				System.out.println("Execption in /deleteEvent : " + e.getMessage());
-				e.printStackTrace();
+
+				String productIdsStr = "";
+
+				int compId = (int) session.getAttribute("companyId");
+
+				String[] productIds = request.getParameterValues("productId");
+
+				if (productIds.length > 0) {
+					StringBuilder sb = new StringBuilder();
+					for (String s : productIds) {
+						sb.append(s).append(",");
+					}
+					productIdsStr = sb.deleteCharAt(sb.length() - 1).toString();
+				}
+				int eventId = Integer.parseInt(request.getParameter("eventId"));
+
+				FestiveEvent festiveEvent = new FestiveEvent();
+				String eventDates = request.getParameter("eventDates");
+				String[] splitDate = eventDates.split("to");
+
+				festiveEvent.setCompId(compId);
+				festiveEvent.setDelStatus(1);
+				festiveEvent.setDescription(request.getParameter("description"));
+				festiveEvent.setEventId(eventId);
+				festiveEvent.setEventName(request.getParameter("eventName"));
+				festiveEvent.setExInt1(0);
+				festiveEvent.setExInt2(0);
+				festiveEvent.setExInt3(0);
+				festiveEvent.setExVar1("NA");
+				festiveEvent.setExVar2(profileImage);
+				festiveEvent.setExVar3("NA");
+				festiveEvent.setFromDate(splitDate[0].trim());
+				festiveEvent.setToDate(splitDate[1].trim());
+				festiveEvent.setFromTime(request.getParameter("fromTime"));
+				festiveEvent.setToTime(request.getParameter("toTime"));
+				festiveEvent.setIsActive(Integer.parseInt(request.getParameter("active_event")));
+				festiveEvent.setMakeTime(request.getParameter("eventName"));
+				festiveEvent.setProductIds(productIdsStr);
+				festiveEvent.setMakeTime(sf.format(date));
+
+				FestiveEvent res = Constants.getRestTemplate()
+						.postForObject(Constants.url + "saveFestiveEventAndProducts", festiveEvent, FestiveEvent.class);
+
+				if (res.getEventId() > 0) {
+					session.setAttribute("successMsg", "Product And Event Configure Successfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Configure Product And Event");
+				}
+				mav = "redirect:/showConfigProductAndEvents";
 			}
-			return mav;
+		} catch (Exception e) {
+			System.out.println("Execption in /saveProductConfiguration : " + e.getMessage());
+			e.printStackTrace();
 		}
-		
-		/*------------------------------------------------------------------------------*/
+		return mav;
+
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 23-11-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Update Event
+	@RequestMapping(value = "/editEvent", method = RequestMethod.GET)
+	public String editEvent(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("editEvent", "showConfigProductAndEvents", "0", "0", "1", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "product/configPrdctEvent";
+
+				String base64encodedString = request.getParameter("eventId");
+				String eventId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("eventId", eventId);
+
+				FestiveEvent festiveEvent = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getFestiveEventConfigById", map, FestiveEvent.class);
+				model.addAttribute("festiveEvent", festiveEvent);
+
+				List<Integer> prodctIdsIds = Stream.of(festiveEvent.getProductIds().split(",")).map(Integer::parseInt)
+						.collect(Collectors.toList());
+
+				model.addAttribute("prodctIdsIds", prodctIdsIds);
+
+				int companyId = (int) session.getAttribute("companyId");
+
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);
+
+				ProductMaster[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllProducts",
+						map, ProductMaster[].class);
+				productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
+
+				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+						Category[].class);
+				List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
+
+				model.addAttribute("productList", productList);
+				model.addAttribute("catList", catList);
+				model.addAttribute("imgPath", Constants.VIEW_URL);
+
+				model.addAttribute("title", "Edit Products And Festive Event Configuration");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /editEvent : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 23-11-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Delete Event
+	@RequestMapping(value = "/deleteEvent", method = RequestMethod.GET)
+	public String deleteEvent(HttpServletRequest request, HttpServletResponse response) {
+
+		String mav = new String();
+		HttpSession session = request.getSession();
+		try {
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteEvent", "showConfigProductAndEvents", "0", "0", "0", "1",
+					newModuleList);
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				String base64encodedString = request.getParameter("eventId");
+				String eventId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("eventId", Integer.parseInt(eventId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteFestiveEventById", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+
+				mav = "redirect:/showConfigProductAndEvents";
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteEvent : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	/*------------------------------------------------------------------------------*/
 	// Created By :- Mahendra Singh
 	// Created On :- 23-11-2020
 	// Modified By :- NA
@@ -1538,20 +1538,20 @@ public class ConfigurationFilterController {
 				int compId = (int) session.getAttribute("companyId");
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
-				
+
 				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
 						Category[].class);
 				List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
 
 //				map = new LinkedMultiValueMap<>();
 //				map.add("compId", compId);				
-				
-				model.addAttribute("cateList", catList);	
-				
+
+				model.addAttribute("cateList", catList);
+
 				CateFilterConfig config = new CateFilterConfig();
-				
-				model.addAttribute("config", config);	
-				
+
+				model.addAttribute("config", config);
+
 				model.addAttribute("title", "Add Category And Filter Configuration");
 
 			}
@@ -1562,122 +1562,116 @@ public class ConfigurationFilterController {
 
 		return mav;
 	}
-	
-	
-	
+
 	@RequestMapping(value = "/getConfiguredFilters", method = RequestMethod.GET)
-	public @ResponseBody GetConfiguredCatAndFilter getConfiguredFiltersList(HttpServletRequest request, HttpServletResponse response){
+	public @ResponseBody GetConfiguredCatAndFilter getConfiguredFiltersList(HttpServletRequest request,
+			HttpServletResponse response) {
 		GetConfiguredCatAndFilter config = new GetConfiguredCatAndFilter();
 		try {
-			
+
 			HttpSession session = request.getSession();
-			int companyId = (int) session.getAttribute("companyId");			
+			int companyId = (int) session.getAttribute("companyId");
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("compId", companyId);
 
-			FilterTypes[] filterTypeArr = Constants.getRestTemplate()
-					.postForObject(Constants.url + "getAllFilterTypes", map, FilterTypes[].class);
+			FilterTypes[] filterTypeArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFilterTypes",
+					map, FilterTypes[].class);
 			List<FilterTypes> filterTypeList = new ArrayList<FilterTypes>(Arrays.asList(filterTypeArr));
-			
+
 			config.setFilterList(filterTypeList);
-				
+
 			map = new LinkedMultiValueMap<>();
 			map.add("cateId", Integer.parseInt(request.getParameter("cateId")));
 			map.add("compId", companyId);
-			
+
 			CateFilterConfig getFiltersIds = Constants.getRestTemplate()
-					.postForObject(Constants.url + "getConfigureCateAndFilters", map, CateFilterConfig.class);			
+					.postForObject(Constants.url + "getConfigureCateAndFilters", map, CateFilterConfig.class);
 			config.setCatFilterConfig(getFiltersIds);
-			
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			System.out.println("Execption in /getConfiguredFilters : " + e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 		return config;
-		
+
 	}
-	
-	
-	
-	
+
 	@RequestMapping(value = "/addCateAndFiltersConfig", method = RequestMethod.POST)
 	public String addCateAndFiltersConfig(HttpServletRequest request, HttpServletResponse response) {
 		String mav = new String();
 		try {
-			HttpSession session = request.getSession();			
-				Date date = new Date();
-				SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			HttpSession session = request.getSession();
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-				String filterIds = "";
+			String filterIds = "";
 
-				int compId = (int) session.getAttribute("companyId");
-				
-				int cateId = Integer.parseInt(request.getParameter("cat_id"));
-				
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			int compId = (int) session.getAttribute("companyId");
+
+			int cateId = Integer.parseInt(request.getParameter("cat_id"));
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("cateId", cateId);
+			map.add("compId", compId);
+
+			CateFilterConfig getConfigDetails = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getConfigureCateAndFilters", map, CateFilterConfig.class);
+
+			System.err.println("Details----" + getConfigDetails);
+
+			String[] productIds = request.getParameterValues("chk");
+
+			if (productIds.length > 0) {
+				StringBuilder sb = new StringBuilder();
+				for (String s : productIds) {
+					sb.append(s).append(",");
+				}
+				filterIds = sb.deleteCharAt(sb.length() - 1).toString();
+			}
+
+			if (getConfigDetails != null) {
+				map = new LinkedMultiValueMap<>();
 				map.add("cateId", cateId);
+				map.add("filterIds", filterIds);
+				map.add("upDateTime", sf.format(date));
 				map.add("compId", compId);
-				
-				CateFilterConfig getConfigDetails = Constants.getRestTemplate().postForObject(Constants.url + "getConfigureCateAndFilters", map,
-						CateFilterConfig.class);
-				
-				System.err.println("Details----"+getConfigDetails);
-				
-				String[] productIds = request.getParameterValues("chk");
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "updateFilterAndCatConfig", map,
+						Info.class);
 
-				if (productIds.length > 0) {
-					StringBuilder sb = new StringBuilder();
-					for (String s : productIds) {
-						sb.append(s).append(",");
-					}
-					filterIds = sb.deleteCharAt(sb.length() - 1).toString();
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
 				}
-				
-				
-				if(getConfigDetails!=null) {
-					 map = new LinkedMultiValueMap<>();
-					 map.add("cateId", cateId);
-					 map.add("filterIds", filterIds);
-					 map.add("upDateTime", sf.format(date));
-					 map.add("compId", compId);
-					 Info res = Constants.getRestTemplate().postForObject(Constants.url + "updateFilterAndCatConfig", map,
-								Info.class);
 
-						if (!res.isError()) {
-							session.setAttribute("successMsg", res.getMsg());
-						} else {
-							session.setAttribute("errorMsg", res.getMsg());
-						}
+			} else {
+				CateFilterConfig config = new CateFilterConfig();
+				config.setCateFilterConfigId(Integer.parseInt(request.getParameter("filterConfigId")));
+				config.setCateId(cateId);
+				config.setCompId(compId);
+				config.setDelStatus(1);
+				config.setExInt1(0);
+				config.setExInt2(0);
+				config.setExVar1("NA");
+				config.setExVar2("NA");
+				config.setFilterIds(filterIds);
+				config.setIsActive(1);
+				config.setMakerDateTime(sf.format(date));
 
-					 
-				}else {
-					CateFilterConfig config = new CateFilterConfig();
-					config.setCateFilterConfigId(Integer.parseInt(request.getParameter("filterConfigId")));
-					config.setCateId(cateId);
-					config.setCompId(compId);
-					config.setDelStatus(1);
-					config.setExInt1(0);
-					config.setExInt2(0);
-					config.setExVar1("NA");
-					config.setExVar2("NA");
-					config.setFilterIds(filterIds);
-					config.setIsActive(1);
-					config.setMakerDateTime(sf.format(date));
-					
-					CateFilterConfig res = Constants.getRestTemplate().postForObject(Constants.url + "saveCatAndFilter", config,
-							CateFilterConfig.class);
+				CateFilterConfig res = Constants.getRestTemplate().postForObject(Constants.url + "saveCatAndFilter",
+						config, CateFilterConfig.class);
 
-					if (res.getCateFilterConfigId()>0) {
-						session.setAttribute("successMsg", "Category And Filters Configure Successfully");
-					} else {
-						session.setAttribute("errorMsg", "Failed to Configure Category And Filters");
-					}
+				if (res.getCateFilterConfigId() > 0) {
+					session.setAttribute("successMsg", "Category And Filters Configure Successfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Configure Category And Filters");
 				}
-				
-				mav = "redirect:/configCateAndFilters";
-			
+			}
+
+			mav = "redirect:/configCateAndFilters";
+
 		} catch (Exception e) {
 			System.out.println("Execption in /addCateAndFiltersConfig : " + e.getMessage());
 			e.printStackTrace();
@@ -1685,5 +1679,246 @@ public class ConfigurationFilterController {
 		return mav;
 
 	}
+
+	/*-------------------------------------------------------------------------------*/
+
+	// Created By :- Mahendra Singh
+	// Created On :- 18-12-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Show Comp Testimonial List
+	@RequestMapping(value = "/showCompTestimonial", method = RequestMethod.GET)
+	public String showCompTestimonial(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		List<CompanyTestomonials> testimonialList = new ArrayList<CompanyTestomonials>();
+		try {
+
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("showCompTestimonial", "showCompTestimonial", "1", "0", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+
+				int compId = (int) session.getAttribute("companyId");
+				mav = "product/compTestimonial";
+
+				CompanyTestomonials[] hmPgTestmonlArr = Constants.getRestTemplate()
+						.getForObject(Constants.url + "getCompanyTestomonialsList", CompanyTestomonials[].class);
+				testimonialList = new ArrayList<CompanyTestomonials>(Arrays.asList(hmPgTestmonlArr));
+
+				for (int i = 0; i < testimonialList.size(); i++) {
+
+					testimonialList.get(i)
+							.setExVar1(FormValidation.Encrypt(String.valueOf(testimonialList.get(i).getId())));
+				}
+				model.addAttribute("testimonialList", testimonialList);
+
+				model.addAttribute("title", "Company Testimonial List");
+
+				Info add = AccessControll.checkAccess("showCompTestimonial", "showCompTestimonial", "0", "1", "0", "0",
+						newModuleList);
+				Info edit = AccessControll.checkAccess("showCompTestimonial", "showCompTestimonial", "0", "0", "1", "0",
+						newModuleList);
+				Info delete = AccessControll.checkAccess("showCompTestimonial", "showCompTestimonial", "0", "0", "0",
+						"1", newModuleList);
+
+				if (add.isError() == false) {
+					model.addAttribute("addAccess", 0);
+				}
+				if (edit.isError() == false) {
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					model.addAttribute("deleteAccess", 0);
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /showCompTestimonial : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 18-12-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect to Add Company Testimonial JSP Page
+	@RequestMapping(value = "/newCompTestimonial", method = RequestMethod.GET)
+	public String newCompTestimonial(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("newCompTestimonial", "showCompTestimonial", "0", "1", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "product/addCompTestimonial";
+
+				CompanyTestomonials testimonial = new CompanyTestomonials();
+				
+				model.addAttribute("testimonial", testimonial);
+				
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+
+				model.addAttribute("title", "Add Company Testimonial");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /newCompTestimonial : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
 	
+	// Created By :- Mahendra Singh
+		// Created On :- 23-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Add Company Testimonial
+		@RequestMapping(value = "/insertCompTestimonial", method = RequestMethod.POST)
+		public String insertCompTestimonial(HttpServletRequest request, HttpServletResponse response,
+				@RequestParam("doc") MultipartFile doc) {
+			String mav = new String();
+			try {
+				HttpSession session = request.getSession();
+				User userObj = (User) session.getAttribute("userObj");
+
+				Date date = new Date();
+				SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+				String profileImage = null;
+
+				Info info = new Info();
+				
+				if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
+
+					System.err.println("In If ");
+
+					profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
+
+					try {
+						// new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+						info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
+					} catch (Exception e) {
+					}
+
+				} else {
+					System.err.println("In else ");
+					profileImage = request.getParameter("editImg");
+
+				}
+
+				int testimonialId = Integer.parseInt(request.getParameter("testimonialId"));
+
+				if (info.isError()) {
+					session.setAttribute("errorMsg", "Invalid Image Formate");
+					if (testimonialId > 0) {
+						mav = "redirect:/editCompTestimonial?testimonialId="
+								+ FormValidation.Encrypt(String.valueOf(testimonialId));
+					} else {
+						mav = "redirect:/newCompTestimonial";
+					}
+
+				} else {
+
+					CompanyTestomonials cmp = new CompanyTestomonials();
+
+					cmp.setId(testimonialId);
+					cmp.setName(request.getParameter("testimonial_name"));
+					cmp.setMessage(request.getParameter("messages"));
+					cmp.setDesignation(request.getParameter("designation"));
+					cmp.setPhoto(profileImage);
+					cmp.setIsActive(Integer.parseInt(request.getParameter("isActive")));
+					cmp.setDelStatus(1);
+					cmp.setExInt1(0);
+					cmp.setExInt2(0);
+					cmp.setExVar1("NA");
+					cmp.setExVar2("NA");
+
+					CompanyTestomonials res = Constants.getRestTemplate().postForObject(Constants.url + "saveCompanyTestimonial",
+							cmp, CompanyTestomonials.class);
+
+					if (res.getId() > 0) {
+						if (testimonialId == 0)
+							session.setAttribute("successMsg", "Company Testimonial Saved Sucessfully");
+						else
+							session.setAttribute("successMsg", "Company Testimonial Update Sucessfully");
+					} else {
+						session.setAttribute("errorMsg", "Failed to Save Company Testimonial");
+					}
+
+					int btnVal = Integer.parseInt(request.getParameter("btnType"));
+
+					if (btnVal == 0)
+						return "redirect:/showCompTestimonial";
+					else
+						return "redirect:/newCompTestimonial";
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /insertCompTestimonial : " + e.getMessage());
+				e.printStackTrace();
+			}
+
+			return mav;
+		}
+		
+		// Created By :- Mahendra Singh
+		// Created On :- 23-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Redirect to Edit Company Testimonial
+		@RequestMapping(value = "/editCompTestimonial", method = RequestMethod.GET)
+		public String editCompTestimonial(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+			String mav = new String();
+			try {
+				HttpSession session = request.getSession();
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("editCompTestimonial", "showCompTestimonial", "0", "1", "0", "0",
+						newModuleList);
+
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					mav = "product/addCompTestimonial";					
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+					String base64encodedString = request.getParameter("testimonialId");
+					String testimonialId = FormValidation.DecodeKey(base64encodedString);
+
+					map.add("testimonialId", testimonialId);
+
+					CompanyTestomonials res = Constants.getRestTemplate()
+							.postForObject(Constants.url + "getCompanyTestomonialsyId", map, CompanyTestomonials.class);
+
+					model.addAttribute("testimonial", res);
+
+					model.addAttribute("imgPath", Constants.showDocSaveUrl);
+					model.addAttribute("title", "Edit Company Testimonial");
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /editCompTestimonial : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return mav;
+		}
+
+
 }
