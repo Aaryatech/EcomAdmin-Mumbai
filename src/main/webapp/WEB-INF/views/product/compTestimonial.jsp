@@ -63,8 +63,9 @@
 									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add Company Testimonial</a></span>
 						</c:if>
 					</div>
-
-					<div class="form-group row"></div>
+					
+					<div class="card-body">
+					
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 					<table class="table datatable-header-basic">
@@ -106,6 +107,17 @@
 							</c:forEach>
 						</tbody>
 					</table>
+
+
+						<div class="text-center">
+							<a
+								href="${pageContext.request.contextPath}/getCompTestimonialJson"
+								class="list-icons-item priv" title="Create JSON"> <i>Click
+									here to generate Company Testimonial JSON</i>
+							</a>
+
+						</div>
+					</div>
 				</div>
 				<!-- /colReorder integration -->
 

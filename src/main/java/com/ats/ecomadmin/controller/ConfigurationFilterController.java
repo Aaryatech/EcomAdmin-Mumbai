@@ -1769,9 +1769,9 @@ public class ConfigurationFilterController {
 				mav = "product/addCompTestimonial";
 
 				CompanyTestomonials testimonial = new CompanyTestomonials();
-				
+
 				model.addAttribute("testimonial", testimonial);
-				
+
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 
 				model.addAttribute("title", "Add Company Testimonial");
@@ -1783,142 +1783,211 @@ public class ConfigurationFilterController {
 
 		return mav;
 	}
-	
+
 	// Created By :- Mahendra Singh
-		// Created On :- 23-09-2020
-		// Modified By :- NA
-		// Modified On :- NA
-		// Description :- Add Company Testimonial
-		@RequestMapping(value = "/insertCompTestimonial", method = RequestMethod.POST)
-		public String insertCompTestimonial(HttpServletRequest request, HttpServletResponse response,
-				@RequestParam("doc") MultipartFile doc) {
-			String mav = new String();
-			try {
-				HttpSession session = request.getSession();
-				User userObj = (User) session.getAttribute("userObj");
+	// Created On :- 23-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Add Company Testimonial
+	@RequestMapping(value = "/insertCompTestimonial", method = RequestMethod.POST)
+	public String insertCompTestimonial(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam("doc") MultipartFile doc) {
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			User userObj = (User) session.getAttribute("userObj");
 
-				Date date = new Date();
-				SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-				String profileImage = null;
+			String profileImage = null;
 
-				Info info = new Info();
-				
-				if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
+			Info info = new Info();
 
-					System.err.println("In If ");
+			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
-					profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
+				System.err.println("In If ");
 
-					try {
-						// new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
-						info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
-					} catch (Exception e) {
-					}
+				profileImage = sf.format(date) + "_" + doc.getOriginalFilename();
 
-				} else {
-					System.err.println("In else ");
-					profileImage = request.getParameter("editImg");
-
+				try {
+					// new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, profileImage);
+				} catch (Exception e) {
 				}
 
-				int testimonialId = Integer.parseInt(request.getParameter("testimonialId"));
+			} else {
+				System.err.println("In else ");
+				profileImage = request.getParameter("editImg");
 
-				if (info.isError()) {
-					session.setAttribute("errorMsg", "Invalid Image Formate");
-					if (testimonialId > 0) {
-						mav = "redirect:/editCompTestimonial?testimonialId="
-								+ FormValidation.Encrypt(String.valueOf(testimonialId));
-					} else {
-						mav = "redirect:/newCompTestimonial";
-					}
+			}
 
+			int testimonialId = Integer.parseInt(request.getParameter("testimonialId"));
+
+			if (info.isError()) {
+				session.setAttribute("errorMsg", "Invalid Image Formate");
+				if (testimonialId > 0) {
+					mav = "redirect:/editCompTestimonial?testimonialId="
+							+ FormValidation.Encrypt(String.valueOf(testimonialId));
 				} else {
+					mav = "redirect:/newCompTestimonial";
+				}
 
-					CompanyTestomonials cmp = new CompanyTestomonials();
+			} else {
 
-					cmp.setId(testimonialId);
-					cmp.setName(request.getParameter("testimonial_name"));
-					cmp.setMessage(request.getParameter("messages"));
-					cmp.setDesignation(request.getParameter("designation"));
-					cmp.setPhoto(profileImage);
-					cmp.setIsActive(Integer.parseInt(request.getParameter("isActive")));
-					cmp.setDelStatus(1);
-					cmp.setExInt1(0);
-					cmp.setExInt2(0);
-					cmp.setExVar1("NA");
-					cmp.setExVar2("NA");
+				CompanyTestomonials cmp = new CompanyTestomonials();
 
-					CompanyTestomonials res = Constants.getRestTemplate().postForObject(Constants.url + "saveCompanyTestimonial",
-							cmp, CompanyTestomonials.class);
+				cmp.setId(testimonialId);
+				cmp.setName(request.getParameter("testimonial_name"));
+				cmp.setMessage(request.getParameter("messages"));
+				cmp.setDesignation(request.getParameter("designation"));
+				cmp.setPhoto(profileImage);
+				cmp.setIsActive(Integer.parseInt(request.getParameter("isActive")));
+				cmp.setDelStatus(1);
+				cmp.setExInt1(0);
+				cmp.setExInt2(0);
+				cmp.setExVar1("NA");
+				cmp.setExVar2("NA");
 
-					if (res.getId() > 0) {
-						if (testimonialId == 0)
-							session.setAttribute("successMsg", "Company Testimonial Saved Sucessfully");
-						else
-							session.setAttribute("successMsg", "Company Testimonial Update Sucessfully");
-					} else {
-						session.setAttribute("errorMsg", "Failed to Save Company Testimonial");
-					}
+				CompanyTestomonials res = Constants.getRestTemplate()
+						.postForObject(Constants.url + "saveCompanyTestimonial", cmp, CompanyTestomonials.class);
 
-					int btnVal = Integer.parseInt(request.getParameter("btnType"));
-
-					if (btnVal == 0)
-						return "redirect:/showCompTestimonial";
+				if (res.getId() > 0) {
+					if (testimonialId == 0)
+						session.setAttribute("successMsg", "Company Testimonial Saved Sucessfully");
 					else
-						return "redirect:/newCompTestimonial";
-				}
-			} catch (Exception e) {
-				System.out.println("Execption in /insertCompTestimonial : " + e.getMessage());
-				e.printStackTrace();
-			}
-
-			return mav;
-		}
-		
-		// Created By :- Mahendra Singh
-		// Created On :- 23-09-2020
-		// Modified By :- NA
-		// Modified On :- NA
-		// Description :- Redirect to Edit Company Testimonial
-		@RequestMapping(value = "/editCompTestimonial", method = RequestMethod.GET)
-		public String editCompTestimonial(HttpServletRequest request, HttpServletResponse response, Model model) {
-
-			String mav = new String();
-			try {
-				HttpSession session = request.getSession();
-				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-				Info view = AccessControll.checkAccess("editCompTestimonial", "showCompTestimonial", "0", "1", "0", "0",
-						newModuleList);
-
-				if (view.isError() == true) {
-
-					mav = "accessDenied";
-
+						session.setAttribute("successMsg", "Company Testimonial Update Sucessfully");
 				} else {
-					mav = "product/addCompTestimonial";					
-
-					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-
-					String base64encodedString = request.getParameter("testimonialId");
-					String testimonialId = FormValidation.DecodeKey(base64encodedString);
-
-					map.add("testimonialId", testimonialId);
-
-					CompanyTestomonials res = Constants.getRestTemplate()
-							.postForObject(Constants.url + "getCompanyTestomonialsyId", map, CompanyTestomonials.class);
-
-					model.addAttribute("testimonial", res);
-
-					model.addAttribute("imgPath", Constants.showDocSaveUrl);
-					model.addAttribute("title", "Edit Company Testimonial");
+					session.setAttribute("errorMsg", "Failed to Save Company Testimonial");
 				}
-			} catch (Exception e) {
-				System.out.println("Execption in /editCompTestimonial : " + e.getMessage());
-				e.printStackTrace();
+
+				int btnVal = Integer.parseInt(request.getParameter("btnType"));
+
+				if (btnVal == 0)
+					return "redirect:/showCompTestimonial";
+				else
+					return "redirect:/newCompTestimonial";
 			}
-			return mav;
+		} catch (Exception e) {
+			System.out.println("Execption in /insertCompTestimonial : " + e.getMessage());
+			e.printStackTrace();
 		}
 
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 23-09-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Redirect to Edit Company Testimonial
+	@RequestMapping(value = "/editCompTestimonial", method = RequestMethod.GET)
+	public String editCompTestimonial(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("editCompTestimonial", "showCompTestimonial", "0", "1", "0", "0",
+					newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "product/addCompTestimonial";
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+				String base64encodedString = request.getParameter("testimonialId");
+				String testimonialId = FormValidation.DecodeKey(base64encodedString);
+
+				map.add("testimonialId", testimonialId);
+
+				CompanyTestomonials res = Constants.getRestTemplate()
+						.postForObject(Constants.url + "getCompanyTestomonialsyId", map, CompanyTestomonials.class);
+
+				model.addAttribute("testimonial", res);
+
+				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+				model.addAttribute("title", "Edit Company Testimonial");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /editCompTestimonial : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 23-11-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Delete Company Testimonial
+	@RequestMapping(value = "/deleteCompTestimonial", method = RequestMethod.GET)
+	public String deleteCompTestimonial(HttpServletRequest request, HttpServletResponse response) {
+
+		String mav = new String();
+		HttpSession session = request.getSession();
+		try {
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteCompTestimonial", "showCompTestimonial", "0", "0", "0", "1",
+					newModuleList);
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				String base64encodedString = request.getParameter("testimonialId");
+				String testimonialId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("id", Integer.parseInt(testimonialId));
+
+				Info res = Constants.getRestTemplate().postForObject(Constants.url + "deleteCompanyTestimonial", map,
+						Info.class);
+
+				if (!res.isError()) {
+					session.setAttribute("successMsg", res.getMsg());
+				} else {
+					session.setAttribute("errorMsg", res.getMsg());
+				}
+
+				mav = "redirect:/showCompTestimonial";
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteCompTestimonial : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 18-12-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Create Json Company Testimonial
+	@RequestMapping(value = "/getCompTestimonialJson", method = RequestMethod.GET)
+	public String getCompTestimonialJson(HttpServletRequest request, HttpServletResponse response, Model model) {
+		
+		try {
+			HttpSession session = request.getSession();
+
+			Info res = Constants.getRestTemplate()
+					.getForObject(Constants.url + "generateCompTestimonialJson", Info.class);
+			
+			if (!res.isError()) {
+				session.setAttribute("successMsg", res.getMsg());
+			} else {
+				session.setAttribute("errorMsg", res.getMsg());
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /getCompTestimonialJson : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/showCompTestimonial";
+	}
 
 }
