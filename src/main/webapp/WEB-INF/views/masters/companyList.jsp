@@ -89,7 +89,7 @@
 									<td>${compList.exVar4}</td>
 									<td>${compList.compWebsite}</td>
  									 
-									<td>${compList.companyType==1 ? 'Child' : 'Parent'}</td>
+									<td>${compList.companyType==1 ? 'Parent' : 'Child'}</td>
 									<td class="text-center"><c:if test="${editAccess==0}">
 											<div class="list-icons">
 												<a

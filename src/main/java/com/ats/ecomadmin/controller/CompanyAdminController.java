@@ -277,7 +277,7 @@ public class CompanyAdminController {
 					comp.setExFloat1(0);
 					comp.setExFloat2(0);
 					comp.setExFloat3(0);
-					comp.setCompanyType(0);
+					comp.setCompanyType(Integer.parseInt(request.getParameter("isParent")));
 					comp.setParentCompId(0);
 
 					if (companyId > 0) {

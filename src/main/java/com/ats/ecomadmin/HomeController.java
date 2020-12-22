@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ats.ecomadmin.commons.Constants;
+import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.Uom;
@@ -131,9 +134,21 @@ public class HomeController {
 
 						session.setAttribute("userId", userObj.getUserId());
 						session.setAttribute("userObj", userObj);
+						
 						session.setAttribute("companyId", userObj.getCompanyId());
-
 						session.setAttribute("company", comp);
+						
+						map.add("parentCompanyId", userObj.getCompanyId());
+						CompMaster[] compArr = Constants.getRestTemplate().postForObject(Constants.url + "getCompanyListByParentCoId", map,
+								CompMaster[].class);
+						List<CompMaster> compList = new ArrayList<CompMaster>(Arrays.asList(compArr));
+						comp.setCompanyName(comp.getCompanyName()+"(P)");
+						compList.add(0, comp);
+						
+						session.setAttribute("sessCompList", compList);
+						model.addAttribute("compList", compList);						
+						
+						session.setAttribute("compType",  comp.getCompanyType());
 
 					} else {
 						// Login Failed
@@ -333,6 +348,34 @@ public class HomeController {
 
 	}
 	
-	
+	@RequestMapping(value = "/setCompanyInSess", method = RequestMethod.POST)
+	@ResponseBody
+	public Info setCompanyInSess(HttpServletRequest request, HttpServletResponse response) {
+		Info info = new Info();
+		HttpSession session = request.getSession();
+		try {
+			int companyId = 0;
+			try {
+				companyId = Integer.parseInt(request.getParameter("companyId"));
+			} catch (Exception e) {
+				companyId = 0;
+				e.printStackTrace();
+			}
+			if(companyId>0) {
+				session.removeAttribute("companyId");
+				if(session.getAttribute("companyId") == null) {
+					session.setAttribute("companyId", companyId);	
+					info.setError(false);
+					info.setMsg("Session Company Id = "+session.getAttribute("companyId"));
+				}else {
+					info.setError(true);
+					info.setMsg("Company Id not found!");
+				}										
+			}
+		}catch (Exception e) {
+			e.getMessage();
+		}
+		return info;
+	}
 
 }

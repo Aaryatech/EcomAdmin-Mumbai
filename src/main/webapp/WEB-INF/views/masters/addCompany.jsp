@@ -288,6 +288,49 @@
 												id="error_gstCode" style="display: none;">This field
 												is required.</span>
 										</div>
+										
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="bankName">Is Parent Co. <span class="text-danger">*
+										</span>:
+										</label>
+										<div class="col-lg-4">
+											<c:choose>
+												<c:when test="${comp.companyId>0}">
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input" checked value="1"
+															name="isParent" id="isParent_y"
+															${comp.companyType ==1 ? 'checked' : ''}>
+															Yes
+														</label>
+													</div>
+
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="isParent" id="isParent_n"
+															${comp.companyType==0 ? 'checked' : ''}>
+															No
+														</label>
+													</div>
+												</c:when>
+												<c:otherwise>
+													<div class="form-check form-check-inline">
+														<label class="form-check-label"> <input
+															type="radio" class="form-check-input"  value="1"
+															name="isParent" id="isParent_y"> Yes
+														</label>
+													</div>
+
+													<div class="form-check form-check-inline">
+														<label class="form-check-label "> <input
+															type="radio" class="form-check-input" value="0"
+															name="isParent" id="isParent_n" checked> No
+														</label>
+													</div>
+												</c:otherwise>
+											</c:choose>
+										</div>
 									</div>
 
 									<div class="form-group row">
