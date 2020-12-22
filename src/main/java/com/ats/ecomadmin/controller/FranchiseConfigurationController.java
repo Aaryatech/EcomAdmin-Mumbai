@@ -39,6 +39,8 @@ import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
 import com.ats.ecomadmin.model.offer.DeliveryBoy;
+import com.ats.ecomadmin.model.offer.FrCharges;
+import com.ats.ecomadmin.model.offer.FrChargesBean;
 import com.ats.ecomadmin.model.offer.FrDelvrBoyConfig;
 import com.ats.ecomadmin.model.offer.OfferDetail;
 
@@ -810,12 +812,11 @@ public class FranchiseConfigurationController {
 					map, FrDelvrBoyConfig.class);
 
 			// frAndIds.setFrStrIds(frStrIds);
-			if(frStrIds!=null) {
-				model.addAttribute("frStrIds", frStrIds.getFrIds());			
+			if (frStrIds != null) {
+				model.addAttribute("frStrIds", frStrIds.getFrIds());
 				model.addAttribute("assignId", frStrIds.getDelBoyAssignId());
-			}
-			else {
-				//model.addAttribute("frStrIds", 0);			
+			} else {
+				// model.addAttribute("frStrIds", 0);
 				model.addAttribute("assignId", 0);
 			}
 
@@ -837,7 +838,7 @@ public class FranchiseConfigurationController {
 		Info res = new Info();
 		try {
 			System.out.println("In Save Maping");
-			
+
 			FrDelvrBoyConfig config = new FrDelvrBoyConfig();
 
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -849,9 +850,9 @@ public class FranchiseConfigurationController {
 			int compId = (int) session.getAttribute("companyId");
 
 			int delBoyId = Integer.parseInt(request.getParameter("delBoyId"));
-			
+
 			int delBoyAssignId = Integer.parseInt(request.getParameter("assignId"));
-			
+
 			String frIds = request.getParameter("frIds");
 			frIds = frIds.substring(1, (frIds.length() - 1));
 			frIds = frIds.replace("\"", "");
@@ -863,14 +864,14 @@ public class FranchiseConfigurationController {
 			map.add("compId", compId);
 			FrDelvrBoyConfig frConfig = Constants.getRestTemplate().postForObject(Constants.url + "getFrDelvryConfig",
 					map, FrDelvrBoyConfig.class);
-			
+
 			if (frConfig != null) {
-				
+
 				map = new LinkedMultiValueMap<String, Object>();
-				
+
 				map.add("delBoyId", delBoyId);
 				map.add("frIdsStr", frIds);
-				
+
 				Info info = Constants.getRestTemplate().postForObject(Constants.url + "editConfigFranchises", map,
 						Info.class);
 
@@ -880,10 +881,10 @@ public class FranchiseConfigurationController {
 				}
 
 			} else {
-				
-				if (delBoyAssignId > 0)					
+
+				if (delBoyAssignId > 0)
 					config.setEditDttime(curDateTime);
-				else					
+				else
 					config.setAddDttime(curDateTime);
 
 				config.setCompanyId(compId);
@@ -903,10 +904,10 @@ public class FranchiseConfigurationController {
 				FrDelvrBoyConfig newConfig = Constants.getRestTemplate()
 						.postForObject(Constants.url + "configFrDeliveryBoy", config, FrDelvrBoyConfig.class);
 
-				if (newConfig.getDelBoyAssignId() > 0) {					
-					res.setError(false);					
+				if (newConfig.getDelBoyAssignId() > 0) {
+					res.setError(false);
 					session.setAttribute("successMsg", "Franchise And Delivery Boy Configuration Saved Successfully");
-					
+
 				} else {
 					res.setError(true);
 					session.setAttribute("errorMsg", "Failed to Configure Franchise And Delivery Boy");
@@ -918,5 +919,94 @@ public class FranchiseConfigurationController {
 		}
 		return res;
 	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 22-12-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Insert Franchise Charges
+	@RequestMapping(value = "/addFrAdditionalChrgs", method = RequestMethod.POST)
+	public String addFrAdditionalChrgs(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			HttpSession session = request.getSession();
+
+			int chargeId = Integer.parseInt(request.getParameter("charge_id"));
+			String dates = request.getParameter("dates");
+			String string = dates;
+			String[] parts = string.split("to");
+			String part1 = parts[0];
+			String part2 = parts[1];
+
+			FrCharges charges = new FrCharges();
+
+			charges.setChargeId(chargeId);
+			charges.setExtraChg(Float.parseFloat(request.getParameter("extra")));
+			charges.setFrId(Integer.parseInt(request.getParameter("fr_id")));
+			charges.setFromDate(part1);
+			charges.setHandlingChg(Float.parseFloat(request.getParameter("handling")));
+			charges.setPackingChg(Float.parseFloat(request.getParameter("packing")));
+			charges.setRoundOffAmt(Float.parseFloat(request.getParameter("round_off")));
+			charges.setSurchargeFee(Float.parseFloat(request.getParameter("surcharge")));
+			charges.setToDate(part2);
+
+			charges.setExFloat1(0);
+			charges.setExFloat2(0);
+			charges.setExFloat3(0);
+
+			charges.setExInt1(0);
+			charges.setExInt2(0);
+			charges.setExInt3(0);
+
+			charges.setExVar1("NA");
+			charges.setExVar2("NA");
+			charges.setExVar3("NA");
+
+			FrCharges res = Constants.getRestTemplate().postForObject(Constants.url + "saveFrCharges", charges,
+					FrCharges.class);
+
+			if (res.getChargeId() > 0) {
+				if (chargeId == 0)
+					session.setAttribute("successMsg", "Additional Charges Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Additional Charges  Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Additional Charges ");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /addFrAdditionalChrgs : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return "redirect:/showFranchises";
+
+	}
+	
+	 @RequestMapping(value = "/getFrDetailById", method = RequestMethod.GET)
+		@ResponseBody
+		public FrChargesBean getFrDetailById(HttpServletRequest request, HttpServletResponse response) {
+			FrChargesBean frCharges = new FrChargesBean();
+			try {
+				String frId = request.getParameter("frId");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("frId", Integer.parseInt(frId));
+
+				Franchise franchise = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseById", map,
+						Franchise.class);
+				frCharges.setFranchise(franchise);
+
+				map.add("frId", Integer.parseInt(frId));
+				FrCharges charges = Constants.getRestTemplate().postForObject(Constants.url + "getFrChargesByFrId", map,
+						FrCharges.class);
+				frCharges.setFrCharges(charges);
+
+			} catch (Exception e) {
+				System.out.println("Execption in /getFrDetailById : " + e.getMessage());
+				e.printStackTrace();
+			}
+
+			return frCharges;
+		}
 
 }

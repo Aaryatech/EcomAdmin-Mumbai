@@ -24,7 +24,7 @@
 </head>
 
 <body class="sidebar-xs">
-
+<c:url var="getFrDetailById" value="getFrDetailById"/>
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -87,6 +87,12 @@
 									<td>${frList.fdaLicenseDateExp}</td>
 									<td>${frList.isActive==1 ? 'Active' : 'In-Active'}</td>									
 									<td class="text-center"><c:if test="${editAccess==0}">
+									<div class="list-icons">
+											<a href="#" onclick="getFrDetail(${frList.frId})"
+												class="list-icons-item" title="Add Additional Chages">
+												<i class="fas fa-plus"></i>
+											</a>&nbsp;
+										</div>
 											<div class="list-icons">
 												<a
 													href="${pageContext.request.contextPath}/newFranchise/${frList.frId}"
@@ -154,6 +160,276 @@
 										}
 									});
 						});
+	</script>
+	<!-- Large modal -->
+	<div id="modal_large" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header bg-blue"
+					style="padding: 10px 12px 0px 10px;">
+					<h5 class="modal-title">Additional Charges</h5>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<form
+					action="${pageContext.request.contextPath}/addFrAdditionalChrgs"
+					id="submitInsert" method="post">
+					<div class="modal-body">
+						<!-- <h6 class="font-weight-semibold">Text in a modal</h6> -->
+
+						<div class="form-group row">
+							<label class="col-form-label font-weight-bold col-lg-2"
+								for="kmeter">Franchise<span class="text-danger"></span>:
+							</label>
+							<div class="col-lg-4">
+								<input type="text" class="form-control" name="fr_name"
+									id="fr_name" readonly="readonly">
+							</div>
+
+							<label class="col-form-label font-weight-bold col-lg-2"
+								for="cust_name"> <span class="text-danger">*
+							</span>:
+							</label>
+							<div class="col-lg-4">
+								<input type="hidden" class="form-control" name="fr_id" id="fr_id"
+									 readonly="readonly">
+							</div>
+
+						</div>
+
+						<hr>
+
+						<h6 class="font-weight-semibold">Additional Charges</h6>
+						
+						<input type="hidden" class="form-control" name="charge_id" id="charge_id"
+							 value="${charges.chargeId}">
+
+						<div class="form-group row">
+							<label class="col-form-label font-weight-bold col-lg-2"
+								for="dates">Date<span class="text-danger">*</span>:
+							</label>
+							<div class="col-lg-4">
+								<input type="text" class="form-control daterange-basic_new"
+									name="dates" id="dates" autocomplete="off">
+							</div>
+
+							<label class="col-form-label font-weight-bold col-lg-2"
+								for="surcharge">Surcharge Fees<span class="text-danger">*
+							</span>:
+							</label>
+							<div class="col-lg-4">
+								<input type="text" class="form-control maxlength-badge-position" maxlength="5" name="surcharge"
+									id="surcharge" value="${charges.surchargeFee}" autocomplete="off"> <span
+									class="validation-invalid-label text-danger" 
+									id="error_surcharge" style="display: none;">This field
+									is required.</span>
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<label class="col-form-label font-weight-bold col-lg-2"
+								for="packing">Packing Charges<span class="text-danger">*</span>:
+							</label>
+							<div class="col-lg-4">
+								<input type="text" class="form-control maxlength-badge-position" maxlength="5" " name="packing"
+									id="packing" value="${charges.packingChg}" autocomplete="off"> <span
+									class="validation-invalid-label text-danger" id="error_packing"
+									style="display: none;">This field is required.</span>
+							</div>
+
+							<label class="col-form-label font-weight-bold col-lg-2"
+								for="handling">Handling Charges<span class="text-danger">*
+							</span>:
+							</label>
+							<div class="col-lg-4">
+								<input type="text" class="form-control maxlength-badge-position" maxlength="5" " name="handling"
+									id="handling" value="${charges.handlingChg}" autocomplete="off"><span
+									class="validation-invalid-label text-danger"
+									id="error_handling" style="display: none;">This field is
+									required.</span>
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<label class="col-form-label font-weight-bold col-lg-2"
+								for="extra">Extra Charges<span class="text-danger">*</span>:
+							</label>
+							<div class="col-lg-4">
+								<input type="text" class="form-control maxlength-badge-position" maxlength="5" " name="extra" id="extra"
+									value="${charges.extraChg}" autocomplete="off"><span
+									class="validation-invalid-label text-danger" id="error_extra"
+									style="display: none;">This field is required.</span>
+							</div>
+
+							<label class="col-form-label font-weight-bold col-lg-2"
+								for="round_off">Round Off Amt.<span class="text-danger">*
+							</span>:
+							</label>
+							<div class="col-lg-4">
+								<input type="text" class="form-control maxlength-badge-position" maxlength="5" " name="round_off"
+									id="round_off" value="${charges.roundOffAmt}" autocomplete="off"><span
+									class="validation-invalid-label text-danger"
+									id="error_round_off" style="display: none;">This field
+									is required.</span>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">						
+						<button type="submit" class="btn bg-primary">Save<i class="icon-paperplane ml-2"></i></button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+	<!-- /large modal -->
+	<script>
+	function getFrDetail(frId) {
+
+		$.getJSON('${getFrDetailById}', {
+			frId : frId,
+			ajax : 'true',
+		}, function(data) {
+		//	alert(JSON.stringify(data))
+		
+			if(data!=null){
+				document.getElementById("fr_name").value=data.franchise.frName+"-"+data.franchise.frCode;
+				document.getElementById("fr_id").value=data.franchise.frId;
+				
+				if(data.frCharges!=null){
+					document.getElementById("dates").value=data.frCharges.fromDate+" to "+data.frCharges.toDate;
+					document.getElementById("charge_id").value=data.frCharges.chargeId;
+					document.getElementById("surcharge").value=data.frCharges.surchargeFee;
+					document.getElementById("packing").value=data.frCharges.packingChg;
+					document.getElementById("handling").value=data.frCharges.handlingChg;
+					document.getElementById("extra").value=data.frCharges.extraChg;
+					document.getElementById("round_off").value=data.frCharges.roundOffAmt;
+				}
+				$("#modal_large").modal('show');
+			}
+			
+		});
+
+	}
+	
+	$('#modal_large').on('hidden.bs.modal', function () {
+		var today = new Date();
+		var dd = String(today.getDate()).padStart(2, '0');
+		var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+		var yyyy = today.getFullYear();
+
+		today = mm + '-' + dd + '-' + yyyy;
+		
+		document.getElementById("dates").value=today+" to "+today;
+		document.getElementById("charge_id").value=0.0;
+		document.getElementById("surcharge").value=0.0;
+		document.getElementById("packing").value=0.0;
+		document.getElementById("handling").value=0.0;
+		document.getElementById("extra").value=0.0;
+		document.getElementById("round_off").value=0.0;
+	}); 
+	
+	$('.daterange-basic_new').daterangepicker({
+		applyClass : 'bg-slate-600',
+
+		cancelClass : 'btn-light',
+		locale : {
+			format : 'DD-MM-YYYY',
+			separator : ' to '
+		}
+	});
+
+	$(document).ready(function($) {
+
+		$("#submitInsert").submit(function(e) {
+			var isError = false;
+			var errMsg = "";
+
+			if (!$("#surcharge").val()) {
+				isError = true;
+				$("#error_surcharge").show()
+			} else {
+				$("#error_surcharge").hide()
+			}
+
+			if ($("#packing").val() == "") {
+				isError = true;
+				$("#error_packing").show()
+			} else {
+				$("#error_packing").hide()
+			}
+
+			if (!$("#handling").val()) {
+				isError = true;
+				$("#error_handling").show()
+			} else {
+				$("#error_handling").hide()
+			}
+
+			if (!$("#extra").val()) {
+				isError = true;
+				$("#error_extra").show()
+			} else {
+				$("#error_extra").hide()
+			}
+
+			if (!$("#round_off").val()) {
+				isError = true;
+				$("#error_round_off").show()
+			} else {
+				$("#error_round_off").hide()
+			}
+
+			if (!isError) {
+				var x = true;
+				if (x == true) {
+					document.getElementById("submtbtn").disabled = true;
+					return true;
+				}
+			}
+
+			return false;
+
+		});
+	});
+
+	
+	$('.maxlength-options').maxlength({
+		alwaysShow : true,
+		threshold : 10,
+		warningClass : 'text-success form-text',
+		limitReachedClass : 'text-danger form-text',
+		separator : ' of ',
+		preText : 'You have ',
+		postText : ' chars remaining.',
+		validate : true
+	});
+
+	$('.maxlength-badge-position').maxlength({
+		alwaysShow : true,
+		placement : 'top'
+	});
+	
+
+	$('#surcharge').on('input', function() {
+			 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+		})
+		
+	$('#packing').on('input', function() {
+	 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+	})
+	
+	$('#handling').on('input', function() {
+	 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+	})
+	
+	$('#extra').on('input', function() {
+	 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+	})
+	
+	$('#round_off').on('input', function() {
+	 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+	})
 	</script>
 </body>
 </html>

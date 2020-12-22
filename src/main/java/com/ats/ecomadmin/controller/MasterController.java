@@ -54,6 +54,7 @@ import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.UserTypeMaster;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
+import com.ats.ecomadmin.model.offer.FrCharges;
 
 @Controller
 @Scope("session")
@@ -2002,7 +2003,10 @@ public class MasterController {
 				model.addAttribute("frList", frList);
 
 				model.addAttribute("title", "Franchise List");
-
+				
+				FrCharges charges = new FrCharges();
+				model.addAttribute("charges", charges);
+				
 				Info add = AccessControll.checkAccess("showFranchises", "showFranchises", "0", "1", "0", "0",
 						newModuleList);
 				Info edit = AccessControll.checkAccess("showFranchises", "showFranchises", "0", "0", "1", "0",
