@@ -929,7 +929,9 @@ public class FranchiseConfigurationController {
 	public String addFrAdditionalChrgs(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			HttpSession session = request.getSession();
-
+			
+			int compId = (int) session.getAttribute("companyId");
+				
 			int chargeId = Integer.parseInt(request.getParameter("charge_id"));
 			String dates = request.getParameter("dates");
 			String string = dates;
@@ -953,7 +955,7 @@ public class FranchiseConfigurationController {
 			charges.setExFloat2(0);
 			charges.setExFloat3(0);
 
-			charges.setExInt1(0);
+			charges.setExInt1(compId);
 			charges.setExInt2(0);
 			charges.setExInt3(0);
 
@@ -981,32 +983,158 @@ public class FranchiseConfigurationController {
 		return "redirect:/showFranchises";
 
 	}
-	
-	 @RequestMapping(value = "/getFrDetailById", method = RequestMethod.GET)
-		@ResponseBody
-		public FrChargesBean getFrDetailById(HttpServletRequest request, HttpServletResponse response) {
-			FrChargesBean frCharges = new FrChargesBean();
+
+	@RequestMapping(value = "/getFrDetailById", method = RequestMethod.GET)
+	@ResponseBody
+	public FrChargesBean getFrDetailById(HttpServletRequest request, HttpServletResponse response) {
+		FrChargesBean frCharges = new FrChargesBean();
+		try {
+			String frId = request.getParameter("frId");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("frId", Integer.parseInt(frId));
+
+			Franchise franchise = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseById", map,
+					Franchise.class);
+			frCharges.setFranchise(franchise);
+
+			map.add("frId", Integer.parseInt(frId));
+			FrCharges charges = Constants.getRestTemplate().postForObject(Constants.url + "getFrChargesByFrId", map,
+					FrCharges.class);
+			frCharges.setFrCharges(charges);
+
+		} catch (Exception e) {
+			System.out.println("Execption in /getFrDetailById : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return frCharges;
+	}
+
+	@RequestMapping(value = "/addMultiFranchiseCharges", method = RequestMethod.GET)
+	public String addMultiFranchiseCharges(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		HttpSession session = request.getSession();
+		model.addAttribute("title", "Add Franchise Charges");
+		String mav = new String();
+
+		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+		Info view = AccessControll.checkAccess("addMultiFranchiseCharges", "addMultiFranchiseCharges", "1", "0", "0",
+				"0", newModuleList);
+
+		if (view.isError() == true) {
+
+			mav = "accessDenied";
+
+		} else {
 			try {
-				String frId = request.getParameter("frId");
+
+				mav = "franchisee/addMultiFrChrgs";
+
+				int compId = (int) session.getAttribute("companyId");
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("frId", Integer.parseInt(frId));
 
-				Franchise franchise = Constants.getRestTemplate().postForObject(Constants.url + "getFranchiseById", map,
-						Franchise.class);
-				frCharges.setFranchise(franchise);
+				map.add("compId", compId);
 
-				map.add("frId", Integer.parseInt(frId));
-				FrCharges charges = Constants.getRestTemplate().postForObject(Constants.url + "getFrChargesByFrId", map,
-						FrCharges.class);
-				frCharges.setFrCharges(charges);
-
+				Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchises", map,
+						Franchise[].class);
+				List<Franchise> frList = new ArrayList<Franchise>(Arrays.asList(frArr));
+				model.addAttribute("frList", frList);
+				
+				FrCharges charges = new FrCharges();
+				model.addAttribute("charges", charges);
+				
 			} catch (Exception e) {
-				System.out.println("Execption in /getFrDetailById : " + e.getMessage());
+				System.out.println("Execption in /addMultiFranchiseCharges : " + e.getMessage());
 				e.printStackTrace();
 			}
-
-			return frCharges;
 		}
+		return mav;
+	}
+
+	// Created By :- Mahendra Singh
+	// Created On :- 22-12-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- saveMutiFrCharges
+	@RequestMapping(value = "/saveMutiFrCharges", method = RequestMethod.POST)
+	public String saveMutiFrCharges(HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = request.getSession();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		String curDateTime = dateFormat.format(cal.getTime());
+		User userObj = (User) session.getAttribute("userObj");
+
+		try {
+			int compId = (int) session.getAttribute("companyId");
+			
+			StringBuilder sb = new StringBuilder();
+			String[] frId = request.getParameterValues("frId");
+			for (int i = 0; i < frId.length; i++) {
+				sb = sb.append(frId[i] + ",");
+			}
+
+			String frIds = sb.toString();
+
+			frIds = frIds.substring(0, frIds.length() - 1);
+			System.out.println("Fr Ids-----"+frIds);
+
+			int chargeId = Integer.parseInt(request.getParameter("charge_id"));
+			String dates = request.getParameter("dates");
+			String string = dates;
+			String[] parts = string.split("to");
+			String part1 = parts[0];
+			String part2 = parts[1];
+
+			FrCharges charges = new FrCharges();
+
+			charges.setChargeId(chargeId);
+			charges.setExtraChg(Float.parseFloat(request.getParameter("extra")));
+			charges.setFrId(0);
+			charges.setFromDate(part1);
+			charges.setHandlingChg(Float.parseFloat(request.getParameter("handling")));
+			charges.setPackingChg(Float.parseFloat(request.getParameter("packing")));
+			charges.setRoundOffAmt(Float.parseFloat(request.getParameter("round_off")));
+			charges.setSurchargeFee(Float.parseFloat(request.getParameter("surcharge")));
+			charges.setToDate(part2);
+
+			charges.setExFloat1(0);
+			charges.setExFloat2(0);
+			charges.setExFloat3(0);
+
+			charges.setExInt1(compId);
+			charges.setExInt2(0);
+			charges.setExInt3(0);
+
+			charges.setExVar1(frIds);
+			charges.setExVar2("NA");
+			charges.setExVar3("NA");
+			System.out.println(charges);
+			FrCharges res = Constants.getRestTemplate().postForObject(Constants.url + "saveMultiFrCharges", charges,
+					FrCharges.class);
+
+			if (res.getChargeId() > 0) {
+				if (chargeId == 0)
+					session.setAttribute("successMsg", "Additional Charges Saved Sucessfully");
+				else
+					session.setAttribute("successMsg", "Additional Charges  Update Sucessfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to Save Additional Charges ");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /saveMutiFrCharges : " + e.getMessage());
+			e.printStackTrace();
+		}
+		
+		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+
+		if (btnVal == 0)
+			return "redirect:/addMultiFranchiseCharges";
+		else
+			return "redirect:/addMultiFranchiseCharges";
+
+	}
 
 }
