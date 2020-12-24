@@ -615,6 +615,43 @@
 
 
 												</div>
+												
+												<div class="form-group row">
+
+													<label class="col-form-label font-weight-bold col-lg-3">Minimum Discount
+														Amt <span class="text-danger">* </span>:
+													</label>
+													<div class="col-lg-3">
+
+														<c:choose>
+
+															<c:when test="${offer.offerType==1}">
+																<input type="text" class="form-control"
+																	style="width: 50%" id="billWiseDiscMin"
+																	name="billWiseDiscMin"
+																	value="${offerDetailList[0].exFloat1}">
+															</c:when>
+
+															<c:otherwise>
+																<input type="text" class="form-control"
+																	style="width: 50%" id="billWiseDiscMin"
+																	name="billWiseDiscMin" value="0">
+															</c:otherwise>
+
+														</c:choose>
+
+
+
+													</div>
+
+													
+													<div class="col-lg-2">
+
+													</div>
+
+
+
+												</div>
 
 
 												<div class="form-group row">

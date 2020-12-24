@@ -299,9 +299,10 @@ public class OfferController {
 			int type = Integer.parseInt(request.getParameter("offerTypeWise"));
 			String coupon = request.getParameter("billWiseCoupon");
 
-			float disc = 0, limit = 0;
+			float disc = 0, limit = 0,minDisc=0;
 			try {
 				disc = Float.parseFloat(request.getParameter("billWiseDisc"));
+				minDisc = Float.parseFloat(request.getParameter("billWiseDiscMin"));
 				limit = Float.parseFloat(request.getParameter("billWiseLimit"));
 			} catch (Exception e) {
 			}
@@ -327,7 +328,7 @@ public class OfferController {
 				}
 
 				OfferDetail detail = new OfferDetail(billWiseOfferDetailId, offerId, subType, 0, 1, disc, limit, coupon,
-						0, 0, 1, 1, noOfTimes, 0, 0, 0, "", "", "", "", 0, 0, 0, 0);
+						0, 0, 1, 1, noOfTimes, 0, 0, 0, "", "", "", "", minDisc, 0, 0, 0);
 				detailList.add(detail);
 
 			} /*
