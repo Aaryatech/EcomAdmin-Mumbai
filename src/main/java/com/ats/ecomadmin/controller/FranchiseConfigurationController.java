@@ -1037,7 +1037,7 @@ public class FranchiseConfigurationController {
 
 				map.add("compId", compId);
 
-				Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchises", map,
+				Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchiseByCompIdWithCharges", map,
 						Franchise[].class);
 				List<Franchise> frList = new ArrayList<Franchise>(Arrays.asList(frArr));
 				model.addAttribute("frList", frList);
@@ -1055,8 +1055,8 @@ public class FranchiseConfigurationController {
 
 	// Created By :- Mahendra Singh
 	// Created On :- 22-12-2020
-	// Modified By :- NA
-	// Modified On :- NA
+	// Modified By :- Akhilesh
+	// Modified On :- 23-12-2020
 	// Descriprion :- saveMutiFrCharges
 	@RequestMapping(value = "/saveMutiFrCharges", method = RequestMethod.POST)
 	public String saveMutiFrCharges(HttpServletRequest request, HttpServletResponse response) {
@@ -1065,17 +1065,64 @@ public class FranchiseConfigurationController {
 		Calendar cal = Calendar.getInstance();
 		String curDateTime = dateFormat.format(cal.getTime());
 		User userObj = (User) session.getAttribute("userObj");
-
+		List<FrCharges> frChargesList=new ArrayList<>();
+		
 		try {
+			
+			String dates = request.getParameter("datesH");
+			String string = dates;
+			String[] parts = string.split("to");
+			
+			String part1 = parts[0];
+			String part2 = parts[1];
+			System.err.println(parts[0]+parts[1]);
 			int compId = (int) session.getAttribute("companyId");
 			
 			StringBuilder sb = new StringBuilder();
 			String[] frId = request.getParameterValues("frId");
+			//System.err.println("Before For");
 			for (int i = 0; i < frId.length; i++) {
-				sb = sb.append(frId[i] + ",");
+				
+				//System.err.println(frId[0]+","+frId[1]+","+frId[2]);
+			
+					FrCharges frCharge=new FrCharges();
+					frCharge.setFrId(Integer.parseInt(frId[i]));
+					frCharge.setExInt1(compId);
+					frCharge.setFromDate(part1);
+					frCharge.setToDate(part2);
+					frCharge.setChargeId(Integer.parseInt(request.getParameter("exVar2"+frId[i])));
+					//System.err.println("0000000000000"+frCharge.getChargeId());
+					frCharge.setSurchargeFee(Float.parseFloat(request.getParameter("exVar3"+frId[i])));
+					frCharge.setPackingChg(Float.parseFloat(request.getParameter("exVar4"+frId[i])));
+					frCharge.setHandlingChg(Float.parseFloat(request.getParameter("exVar5"+frId[i])));
+					frCharge.setExtraChg(Float.parseFloat(request.getParameter("exVar6"+frId[i])));
+					frCharge.setRoundOffAmt(Float.parseFloat(request.getParameter("exVar7"+frId[i])));
+					
+					frChargesList.add(frCharge);
+					
+				
+				
+				//System.err.println("frids-->"+frId[i]);
+				//System.err.println("exVar3"+frId[i]);
+				//System.err.println(request.getParameter("exVar3"+frId[i]));
+				//sb = sb.append(frId[i] + ",");
 			}
 
-			String frIds = sb.toString();
+			System.err.println("Frcharge List--->"+frChargesList);
+			
+			
+			FrCharges[] rs=Constants.getRestTemplate().postForObject(Constants.url+"saveMultipleFrCharges", frChargesList, FrCharges[].class);
+			List<FrCharges> resp=new ArrayList<>(Arrays.asList(rs));
+			
+			if (resp.size() > 0) {
+			
+					session.setAttribute("successMsg", "Additional Charges Saved Sucessfully");
+			}else {
+					session.setAttribute("error", "Additional Charges  Unable To save");
+			} 
+			
+			
+			/*String frIds = sb.toString();
 
 			frIds = frIds.substring(0, frIds.length() - 1);
 			System.out.println("Fr Ids-----"+frIds);
@@ -1121,19 +1168,19 @@ public class FranchiseConfigurationController {
 					session.setAttribute("successMsg", "Additional Charges  Update Sucessfully");
 			} else {
 				session.setAttribute("errorMsg", "Failed to Save Additional Charges ");
-			}
+			}*/
 
 		} catch (Exception e) {
-			System.out.println("Execption in /saveMutiFrCharges : " + e.getMessage());
+			System.out.println("Execption in /saveMultiFrCharges : " + e.getMessage());
 			e.printStackTrace();
 		}
 		
-		int btnVal = Integer.parseInt(request.getParameter("btnType"));
+		//int btnVal = Integer.parseInt(request.getParameter("btnType"));
 
-		if (btnVal == 0)
+		//if (btnVal == 0)
 			return "redirect:/addMultiFranchiseCharges";
-		else
-			return "redirect:/addMultiFranchiseCharges";
+		//else
+			//return "redirect:/addMultiFranchiseCharges";
 
 	}
 

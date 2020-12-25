@@ -4,7 +4,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <style type="text/css">
+tr.highlight {
+		    background-color: grey !important;
+		}
 .daterangepicker {
 	width: 100%;
 }
@@ -23,7 +27,7 @@
 
 </head>
 
-<body class="sidebar-xs">
+<body class="sidebar-xs" >
 	<c:url value="/getConfigByCatId" var="getConfigByCatId"></c:url>
 
 	<!-- Main navbar -->
@@ -56,7 +60,7 @@
 
 							<div
 								class="card-header bg-blue text-white d-flex justify-content-between">
-								<span
+								<span 
 									class="font-size-sm text-uppercase font-weight-semibold card-title">${title}</span>
 							
 								<%-- <span class="font-size-sm text-uppercase font-weight-semibold"><a
@@ -138,7 +142,7 @@
 											for="extra">Extra Charges<span class="text-danger">*</span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text"
+											<input type="text" 
 												class="form-control maxlength-badge-position" maxlength="5"
 												" name="extra" id="extra" value="${charges.extraChg}"
 												autocomplete="off"><span
@@ -169,24 +173,37 @@
 									<!--Table-->
 									<table class="table ddatatable-header-basic" id="printtable1">
 										<thead>
-											<tr>
+											<tr >
 												<th>Sel All<input type="checkbox" name="selAll"
 													id="selAll" /></th>
 												<th>Sr.No.</th>
-												<th>Franchise Code</th>
 												<th>Franchise Name</th>
+												<th>Surcharge_Fee</th>
+												<th>Packing_ch.</th>
+												<th>Handling ch.</th>
+												<th>Extra ch.</th>
+												<th>Round Off Amt</th>
+												
+							
 
 											</tr>
 										</thead>
 										<tbody>
 											<c:forEach items="${frList}" var="frList" varStatus="count">
 
-												<tr>
-													<td><input type="checkbox" id="frId${frList.frId}"
-														value="${frList.frId}" name="frId" class="select_all"></td>
+												<tr id="tr_tb${frList.frId}" >
+												
+													<td><input type="checkbox" id="frId${frList.frId}" value="${frList.frId}" name="frId" class="select_all">
+													<input type="hidden" id="exVar2${frList.frId}" name="exVar2${frList.frId}" value="${frList.exVar2}"></td>
 													<td>${count.index+1})</td>
-													<td>${frList.frCode}</td>
-													<td>${frList.frName}</td>
+													<td  id="name${frList.frId}" >${frList.frName}</td>
+													<td ><input  type="text" id="exVar3${frList.frId}" name="exVar3${frList.frId}" value="${frList.exVar3}" ></td>
+													<td ><input  type="text" id="exVar4${frList.frId}" name="exVar4${frList.frId}" value="${frList.exVar4}" ></td>
+													<td ><input  type="text" id="exVar5${frList.frId}" name="exVar5${frList.frId}" value="${frList.exVar5}" ></td>
+													<td ><input  type="text" id="exVar6${frList.frId}" name="exVar6${frList.frId}" value="${frList.exVar6}" ></td>
+													<td ><input  type="text" id="exVar7${frList.frId}" name="exVar7${frList.frId}" value="${frList.exVar7}" ></td>
+													
+													
 												</tr>
 											</c:forEach>
 										</tbody>
@@ -199,13 +216,12 @@
 										<!-- <button type="submit" class="btn btn-primary" id="submtbtn">
 											Submit <i class="icon-paperplane ml-2"></i>
 										</button> -->
-										<button type="submit" class="btn btn-primary" id="submtbtn"
-											onclick="pressBtn(0)">
-											Save <i class="icon-paperplane ml-2"></i>
-										</button>
-
-										<button type="submit" class="btn btn-primary" id="submtbtn1"
-											onclick="pressBtn(1)">
+										<button type="button" class="btn btn-primary" onclick="Apply()" >
+											Apply <i class="icon-paperplane ml-2"></i>
+									 </button> 
+										<button type="button" style="display: none;" id="popUpbtn"  data-toggle="modal" data-target="#modal_full"></button>
+										<button type="button" class="btn btn-primary"
+											onclick="pressBtn()" >
 											Save & Next<i class="icon-paperplane ml-2"></i>
 										</button>
 
@@ -214,6 +230,68 @@
 							</div>
 						</div>
 						<!-- /a legend -->
+					</div>
+				</div>
+			
+					<div id="modal_full" class="modal fade" tabindex="-1">
+					<div class="modal-dialog modal-full">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Full width modal</h5>
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+							</div>
+
+							<div class="modal-body">
+							<form
+									action="${pageContext.request.contextPath}/saveMutiFrCharges"
+									id="submitInsert1" method="post">
+									      
+									<input  type="hidden" id="surchargeH" name="surchargeH">
+									<input  type="hidden" id="packingH" name="packingH">
+									<input  type="hidden" id="handlingH" name="handlingH">
+									<input  type="hidden" id="extraH" name="extraH">
+									<input  type="hidden" id="round_offH" name="round_offH">
+									<input type="hidden" id="datesH" name="datesH">
+									
+									
+									
+							<table class="table ddatatable-header-basic" id="printtable2">
+							<thead>
+								<tr >
+												<th>Sel All<input type="checkbox" name="selAll2"
+													id="selAll2" /></th>
+												<th>Sr.No.</th>
+												<th>Franchise Name</th>
+												<th>Surcharge_Fee</th>
+												<th>Packing_ch.</th>
+												<th>Handling ch.</th>
+												<th>Extra ch.</th>
+												<th>Round Off Amt</th>
+												
+							
+
+								</tr>
+							
+							</thead>
+							<tbody>
+							
+							
+							</tbody>
+							
+							</table>
+						</form>
+							
+							
+							
+							
+							
+							</div>
+
+							<div class="modal-footer">
+								<button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+								<button  type="submit" class="btn btn-primary" id="submtbtn1" onclick="submitForm()" >Save changes</button>
+							</div>
+						</div>
 					</div>
 				</div>
 
@@ -231,8 +309,80 @@
 	<!-- /page content -->
 
 	<script>
-		function pressBtn(btnVal) {
-			$("#btnType").val(btnVal)
+		function pressBtn() {
+			//alert("press");
+			var a=document.getElementById("surcharge").value;
+			var b=document.getElementById("packing").value;
+			var c=document.getElementById("handling").value;
+			var d=document.getElementById("extra").value;
+			var e=document.getElementById("round_off").value;
+			var f=document.getElementById("dates").value;
+			//alert(f);
+			      
+		document.getElementById("surchargeH").value=a;
+		document.getElementById("packingH").value=b;
+		document.getElementById("handlingH").value=c;
+		document.getElementById("extraH").value=d;
+		document.getElementById("round_offH").value=e;
+		document.getElementById("datesH").value=f;
+			
+			 var dataTable = $('#printtable2').DataTable();
+			 dataTable.clear().draw();
+			
+			 var unique = array.filter(onlyUnique);
+			 //alert(unique);
+			for(var fl=0;fl<unique.length;fl++){
+				//alert(unique[fl]);
+				var name="name"+unique[fl];
+			   	var exvar3="exVar3"+unique[fl];
+		    	var exvar4="exVar4"+unique[fl];
+		    	var exvar5="exVar5"+unique[fl];
+		    	var exvar6="exVar6"+unique[fl];
+		    	var exvar7="exVar7"+unique[fl];
+		    	var tr_tb="tr_tb"+unique[fl];
+		    	var exvar2 ="exVar2"+unique[fl];
+		    	alert(exvar2);
+		     //document.body.append(checkbox.value + ' ');
+		     var name=  document.getElementById(""+name).innerHTML;
+		 var sur=  document.getElementById(""+exvar3).value;
+		   var pack =document.getElementById(""+exvar4).value;
+		   var hand =document.getElementById(""+exvar5).value;
+		  var extra = document.getElementById(""+exvar6).value;
+		  var round=  document.getElementById(""+exvar7).value;
+		  var exvar2=document.getElementById(""+exvar2).value;
+		 // alert(name);
+		
+		  var sel ='<td><input type="checkbox" id="frId'+unique[fl]+'" value="'+unique[fl]+'" name="frId" class="select_all"><input type="hidden" id="exVar2'+unique[fl]+'" name="exVar2'+unique[fl]+'" value="'+exvar2+'" ></td>';
+		  var sr = '\''+ fl +'\'';
+		  var fName= '<td ><input type="text" id="name'+unique[fl]+'" name="name'+unique[fl]+'" value="'+name+'" ></td>';
+		  var sCharge= '<td><input type="text" id="exVar3'+unique[fl]+'" name="exVar3'+unique[fl]+'" value="'+sur+'"></td>';
+		  var packCh= '<td ><input type="text" id="exVar4'+unique[fl]+'" name="exVar4'+unique[fl]+'" value="'+pack+'"></td>';
+		  var handCh= '<td  ><input type="text" id="exVar5'+unique[fl]+'" name="exVar5'+unique[fl]+'" value="'+hand+'"></td>';
+		  var extraCh= '<td  ><input type="text" id="exVar6'+unique[fl]+'" name="exVar6'+unique[fl]+'" value="'+extra+'"></td>';
+		  var roundCh= '<td  ><input type="text" id="exVar7'+unique[fl]+'" name="exVar7'+unique[fl]+'" value="'+round+'"></td>';
+		 /*  var str = '<a href="javascript:void(0)" class="list-icons-item text-primary-600" data-popup="tooltip" title="" data-original-title="Edit" onclick="callEdit('
+		  + v.totalAmt
+		  + ','
+		  + i
+		  + ')"><i class="icon-pencil7"></i></a>&nbsp;&nbsp;<a href="javascript:void(0)"   class="list-icons-item text-danger-600 bootbox_custom" data-uuid="5" data-original-title="Delete" onclick="callDelete('
+		  + v.totalAmt
+		  + ','
+		  + i
+		  + ')"><i class="icon-trash"></i></a>' */
+		  dataTable.row.add(
+		  [sel,sr,fName,sCharge,packCh,handCh,extraCh,roundCh]).draw();
+	
+				
+				
+				
+				
+			}
+			
+			
+			
+			
+			document.getElementById("popUpbtn").click();
+			
 		}
 		$(document).ready(
 
@@ -244,7 +394,26 @@
 										.prop('checked', this.checked);
 
 							});
-				});
+				}
+				
+		
+		
+		);
+		$(document).ready(
+
+				function() {
+
+					$("#selAll2").click(
+							function() {
+								$('#printtable2 tbody input[type="checkbox"]')
+										.prop('checked', this.checked);
+
+							});
+				}
+				
+		
+		
+		);
 
 		$("#configId").change(function() {
 			if ($("#configId").val() == 0 || !$("#configId").val()) {
@@ -300,7 +469,7 @@
 												var isError = false;
 												var errMsg = "";
 
-												var checked = $("#submitInsert input:checked").length > 0;
+												var checked = $("#submitInsert1 input:checked").length > 0;
 
 												var count = $('#printtable1 tr').length;
 												//alert(checked);
@@ -312,7 +481,7 @@
 													isError = false;
 												}
 
-												if (!$("#surcharge").val()) {
+											/* 	if (!$("#surcharge").val()) {
 													isError = true;
 													$("#error_surcharge").show()
 												} else {
@@ -331,7 +500,7 @@
 													$("#error_handling").show()
 												} else {
 													$("#error_handling").hide()
-												}
+												} 
 
 												if (!$("#extra").val()) {
 													isError = true;
@@ -345,7 +514,7 @@
 													$("#error_round_off").show()
 												} else {
 													$("#error_round_off").hide()
-												}
+												} */
 
 												if (!isError) {
 													var x = false;
@@ -436,6 +605,86 @@
 			separator : ' to '
 		}
 	});
+	
+	 var i = 0;
+	 var arr = [];	
+	 
+	 
+	 
+	 var i = 0;
+	 var array = Array();
+
+	 function add_element_to_array(val){
+		 array[i]=val;
+		 i++;
+	 }
+	 
+	 function onlyUnique(value, index, self) {
+		  return self.indexOf(value) === index;
+		}
+	 
+	 
+	 
+	 function display_array()
+	 {
+		 var unique = array.filter(onlyUnique);
+	    var e = "<hr/>";   
+	     
+	    for (var y=0; y<unique.length; y++)
+	    {
+	      e += "Element "+unique[y]+",";
+	    }
+	   alert(e);
+	 }
+	
+	function Apply(){
+		//alert("In Apply");
+	
+		
+		var a = document.getElementById("surcharge").value;
+		var b = document.getElementById("packing").value;
+		var c =document.getElementById("handling").value;
+		var d =document.getElementById("extra").value;
+		var e =document.getElementById("round_off").value;
+		var x = document.getElementsByName("frId");
+		//alert(a);
+		for (var checkbox of x) {
+			
+		    if (checkbox.checked){
+		    	add_element_to_array(checkbox.value);
+		    	//alert(checkbox.value);
+		    	var exvar2="exVar2"+checkbox.value;
+		    	var exvar3="exVar3"+checkbox.value;
+		    	var exvar4="exVar4"+checkbox.value;
+		    	var exvar5="exVar5"+checkbox.value;
+		    	var exvar6="exVar6"+checkbox.value;
+		    	var exvar7="exVar7"+checkbox.value;
+		    	var tr_tb="tr_tb"+checkbox.value;
+		    	
+		    	//alert(exvar3);
+		     //document.body.append(checkbox.value + ' ');
+		   document.getElementById(""+exvar3).value=a;
+		   document.getElementById(""+exvar4).value=b;
+		   document.getElementById(""+exvar5).value=c;
+		   document.getElementById(""+exvar6).value=d;
+		   document.getElementById(""+exvar7).value=e;
+		  
+	  	 var element = document.getElementById(""+tr_tb);
+		  element.classList.add("highlight");
+		 
+		
+		    }
+		  }
+		
+	}
+	
+	function submitForm(){
+		      
+	$("#submitInsert1").submit();
+	}
+
+	
+	
 	</script>
 </body>
 </html>
