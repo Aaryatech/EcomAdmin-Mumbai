@@ -101,7 +101,9 @@ public class ConfigurationFilterController {
 				List<Category> catList = new ArrayList<>();
 
 				map = new LinkedMultiValueMap<>();
-				map.add("compId", compId);
+				//map.add("compId", compId);
+				map.add("compId", 1);//21-12-2020
+				
 				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
 						Category[].class);
 				catList = new ArrayList<Category>(Arrays.asList(catArr));
@@ -204,8 +206,8 @@ public class ConfigurationFilterController {
 			catPrdct.setProductList(productList);
 
 			map = new LinkedMultiValueMap<>();
-			map.add("compId", companyId);
-
+			//map.add("compId", companyId);
+			map.add("compId", 1);//21-12-2020
 			Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
 					Category[].class);
 			List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
@@ -396,8 +398,8 @@ public class ConfigurationFilterController {
 			catPrdct.setProductList(productList);
 
 			map = new LinkedMultiValueMap<>();
-			map.add("compId", companyId);
-
+			//map.add("compId", companyId);
+			map.add("compId", 1);//21-12-2020
 			Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
 					Category[].class);
 			List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
@@ -602,7 +604,8 @@ public class ConfigurationFilterController {
 			List<Category> catList = new ArrayList<>();
 
 			map = new LinkedMultiValueMap<>();
-			map.add("compId", compId);
+			//map.add("compId", compId);
+			map.add("compId", 1);//21-12-2020
 			Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
 					Category[].class);
 			catList = new ArrayList<Category>(Arrays.asList(catArr));
@@ -1289,7 +1292,8 @@ public class ConfigurationFilterController {
 				ProductMaster[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllProducts",
 						map, ProductMaster[].class);
 				productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
-
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", 1);//21-12-2020
 				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
 						Category[].class);
 				List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
@@ -1450,7 +1454,8 @@ public class ConfigurationFilterController {
 				ProductMaster[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllProducts",
 						map, ProductMaster[].class);
 				productList = new ArrayList<ProductMaster>(Arrays.asList(filterArr));
-
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", 1);
 				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
 						Category[].class);
 				List<Category> catList = new ArrayList<Category>(Arrays.asList(catArr));
@@ -1537,7 +1542,7 @@ public class ConfigurationFilterController {
 				mav = "product/addCateFltrConfig";
 				int compId = (int) session.getAttribute("companyId");
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("compId", compId);
+				map.add("compId", 1);
 
 				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
 						Category[].class);

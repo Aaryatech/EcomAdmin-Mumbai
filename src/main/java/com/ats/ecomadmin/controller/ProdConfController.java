@@ -70,7 +70,7 @@ public class ProdConfController {
 				List<Category> catList = new ArrayList<>();
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-				map.add("compId", compId);
+				map.add("compId", 1);
 
 				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
 						Category[].class);
@@ -150,7 +150,7 @@ public class ProdConfController {
 		model.addObject("prodList", prodList);
 
 		map = new LinkedMultiValueMap<>();
-		map.add("compId", companyId);
+		map.add("compId", 1);
 		List<Category> catList = new ArrayList<>();
 
 		Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
@@ -397,7 +397,7 @@ public class ProdConfController {
 		model.addObject("prodList", prodList);
 
 		map = new LinkedMultiValueMap<>();
-		map.add("compId", companyId);
+		map.add("compId", 1);
 		List<Category> catList = new ArrayList<>();
 
 		Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
@@ -507,8 +507,8 @@ public class ProdConfController {
 						if(vegTypeList.get(v).getAddOnType()==2) {
 							vegPrice=vegTypeList.get(v).getAddOnRs()*weight;
 						}
-						String shapeName="Shape NA";
-						
+						//String shapeName="Shape NA";
+						String shapeName="";
 						float shapePrice=0;
 						float flavorPrice=0;
 							if(!shapeIdList.isEmpty()) {
@@ -519,7 +519,8 @@ public class ProdConfController {
 									if(shapeIdList.get(s).getAddOnType()==2) {
 										shapePrice=shapeIdList.get(s).getAddOnRs()*weight;
 									}
-									String flvName="Flavor NA";
+									//String flvName="Flavor NA";
+									String flvName="";
 									 flavorPrice=0;
 										if(!flavList.isEmpty()) {
 											for(int f=0;f<flavList.size();f++) {
@@ -551,7 +552,8 @@ public class ProdConfController {
 										}//end of if flavList not empty
 									else {
 										//flavor Empty
-										flvName="NA Flavor";
+										//flvName="NA Flavor";
+										flvName="";
 										TempProdConfig config = new TempProdConfig();
 										UUID uuid = UUID.randomUUID();
 										config.setUuid(uuid.toString());
@@ -575,7 +577,8 @@ public class ProdConfController {
 								}//end of shapeIdList for S
 							}// end of if !shapeIdList.isEmpty()
 						else {
-							shapeName="Na";
+							//shapeName="Na";
+							shapeName="";
 							 flavorPrice=0;
 							 
 								if(!flavList.isEmpty()) {
@@ -618,7 +621,7 @@ public class ProdConfController {
 								config.setCatId(prod.getProdCatId());
 								config.setCurTimeStamp(CommonUtility.getCurrentYMDDateTime());
 								config.setFlavorId(0);
-								config.setFlavorName("NA F");
+								config.setFlavorName(" ");
 								config.setProductId(prod.getProductId());
 								config.setProductName(prod.getProductName());
 								config.setRateSetingType(prod.getRateSettingType());
@@ -626,7 +629,7 @@ public class ProdConfController {
 								config.setWeight(Float.parseFloat(wtList.get(w)));
 								config.setVegNonVegName(vegTypeList.get(v).getFilterName());
 								config.setShapeId(0);
-								config.setShapeName("NA S");
+								config.setShapeName(" ");
 								config.setMrpAmt(roundUp(basicMrp+vegPrice+shapePrice+flavorPrice));
 
 								tempProdConfList.add(config);

@@ -417,13 +417,17 @@ public class AccessRightController {
 
 		ModelAndView model = new ModelAndView("acc_right/assignRole");
 //ass_role_test/assignRole
+		HttpSession session = request.getSession();
 		try {
 			model.addObject("title", "Assign Role");
 
 			accessRightModuleList = Constants.getRestTemplate().getForObject(Constants.url + "getAllModuleAndSubModule",
 					AccessRightModuleList.class);
+			int companyId = (int) session.getAttribute("companyId");
 
-			GetUser[] empArray = Constants.getRestTemplate().getForObject(Constants.url + "/getUserListForAssignRole",
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", companyId);
+			GetUser[] empArray = Constants.getRestTemplate().postForObject(Constants.url + "/getUserListForAssignRole",map,
 					GetUser[].class);
 			List<GetUser> empList = new ArrayList<>(Arrays.asList(empArray));
 
