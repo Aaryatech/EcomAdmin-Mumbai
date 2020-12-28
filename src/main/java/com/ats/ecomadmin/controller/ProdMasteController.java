@@ -908,7 +908,7 @@ public class ProdMasteController {
 		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 
 		Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "1", "0", "0",
-				"0", newModuleList);
+		 		"0", newModuleList);
 		if (view.isError() == false) {
 
 			model.addObject("viewAccess", 1);
