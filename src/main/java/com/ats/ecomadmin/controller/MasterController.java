@@ -4649,4 +4649,25 @@ public class MasterController {
 		}
 		return mav;
 	}
+	
+	
+	// Created By :- Mahendra Singh
+	// Created On :- 26-12-2020
+	// Modified By :- NA
+	// Modified On :- NA
+	// Description :- Delete Selected Citys
+	@RequestMapping(value = "/deleteSelCitys", method = RequestMethod.GET)
+	public @ResponseBody Info deleteSelCitys(HttpServletRequest request, HttpServletResponse response) {
+		try {
+				String cityIds = null;
+				String[] cityIdArr = request.getParameterValues("cityIds");
+				
+				System.out.println(cityIdArr.toString());
+		}catch (Exception e) {
+			System.out.println("Execption in /deleteSelCitys : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
+
+	}
 }
