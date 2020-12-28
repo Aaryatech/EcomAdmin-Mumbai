@@ -4710,22 +4710,79 @@ public class MasterController {
 	
 	
 	// Created By :- Mahendra Singh
-	// Created On :- 26-12-2020
-	// Modified By :- NA
-	// Modified On :- NA
-	// Description :- Delete Selected Citys
-	@RequestMapping(value = "/deleteSelCitys", method = RequestMethod.GET)
-	public @ResponseBody Info deleteSelCitys(HttpServletRequest request, HttpServletResponse response) {
-		try {
-				String cityIds = null;
-				String[] cityIdArr = request.getParameterValues("cityIds");
+		// Created On :- 26-12-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Delete Selected Citys
+		@RequestMapping(value = "/deleteSelCitys", method = RequestMethod.GET)
+		public @ResponseBody Info deleteSelCitys(HttpServletRequest request, HttpServletResponse response) {
+			System.err.println("in deleteSelCitys ");
+			Info info=new Info();
+			List<Integer> cityIds=new ArrayList<>();
+			String a = "";
+			MultiValueMap<String, Object> map =new LinkedMultiValueMap<>();
+			try {
 				
-				System.out.println(cityIdArr.toString());
-		}catch (Exception e) {
-			System.out.println("Execption in /deleteSelCitys : " + e.getMessage());
-			e.printStackTrace();
-		}
-		return null;
+					map.add("tableName", "mn_city");
+					map.add("columnName", "del_status");
+					map.add("value",0);
+					map.add("id", "city_id");
+					
+				
+				
+					String cityIdArr = request.getParameter("cityIds");
+				
+						a = cityIdArr.substring(1, cityIdArr.length() - 1);
+						a = cityIdArr.replaceAll("\"", "");
+				
+					/*	for(String s : sep) {
+							cityIds.add(Integer.parseInt(s));
+						}
+						System.err.println("Ids-->"+"\n"+  a);*/
+						map.add("comparisionId", a.toString());	
+				System.err.println("citi Id String-->"+a.toString());
+					//map.add("cityIds", cityIds);
+					info=Constants.getRestTemplate().postForObject(Constants.url+"multiDelete", map, Info.class);
+					if(info.isError()) {
+						info.setError(true);
+						info.setMsg("Unable To Delete Cities");
+					}else {
+						info.setError(true);
+						info.setMsg("Cities Deleted");
+					}
+					System.err.println(cityIds);
+			}catch (Exception e) {
+				info.setError(true);
+				info.setMsg("Unable To Delete Cities Exception Occuered");
+				System.out.println("Execption in /deleteSelCitys : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return info;
 
-	}
+		}
+		
+		
+		public String getCommaSepStringFromStrArray(String[] strArray) {
+
+			String commaSepString = new String();
+
+			try {
+
+				StringBuilder sb = new StringBuilder();
+
+				for (int j = 0; j < strArray.length; j++) {
+					sb = sb.append(strArray[j] + ",");
+				}
+
+				commaSepString = sb.toString();
+				commaSepString = commaSepString.substring(0, commaSepString.length() - 1);
+
+			} catch (Exception e) {
+
+				commaSepString = new String();
+			}
+
+			return commaSepString;
+
+		}
 }
