@@ -365,6 +365,155 @@ public class MasterController {
 		}
 		return mav;
 	}
+	
+	
+	List<Tax> taxPrintList = new ArrayList<Tax>();
+	List<Long> taxIds = new ArrayList<Long>();
+	@RequestMapping(value = "/getTaxIds", method = RequestMethod.GET)
+	public @ResponseBody List<Tax> getTaxIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));			
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+		
+			
+			int compId = (int) session.getAttribute("companyId");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			Tax[] taxArr = Constants.getRestTemplate().postForObject(Constants.url + "getTaxes", map, Tax[].class);
+			taxPrintList = new ArrayList<Tax>(Arrays.asList(taxArr));
+
+			
+			taxIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			System.out.println(taxIds+" --- "+val);
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+//			rowData.add("Sr No");
+			for (int i = 0; i < taxIds.size(); i++) {
+				if(taxIds.get(i)==1)
+				rowData.add("Sr No");
+				
+				if(taxIds.get(i)==2)
+				rowData.add("Tax");
+				
+				if(taxIds.get(i)==3)
+				rowData.add("HSN Code");
+				
+				if(taxIds.get(i)==4)
+				rowData.add("SGST%");
+				
+				if(taxIds.get(i)==5)
+				rowData.add("CGST%");
+				
+				if(taxIds.get(i)==6)
+				rowData.add("IGST%");
+				
+				if(taxIds.get(i)==7)
+				rowData.add("CESS%");
+				
+				if(taxIds.get(i)==8)
+				rowData.add("Total Tax%");
+				
+				if(taxIds.get(i)==9)
+				rowData.add("Active");
+			}
+			
+			expoExcel.setRowData(rowData);			
+			exportToExcelList.add(expoExcel);
+			
+			int srno = 1;
+			for (int i = 0; i < taxPrintList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+//				rowData.add(" "+srno);
+				for (int j = 0; j < taxIds.size(); j++) {
+					if(taxIds.get(j)==1)
+					rowData.add(" "+srno);
+					
+					if(taxIds.get(j)==2)						
+					rowData.add(" " + taxPrintList.get(i).getTaxName());
+					
+					if(taxIds.get(j)==3)
+					rowData.add(" " + taxPrintList.get(i).getHsnCode());
+					
+					if(taxIds.get(j)==4)
+					rowData.add(" " + taxPrintList.get(i).getSgstPer());
+					
+					if(taxIds.get(j)==5)
+					rowData.add(" " + taxPrintList.get(i).getCgstPer());
+					
+					if(taxIds.get(j)==6)
+					rowData.add(" " + taxPrintList.get(i).getIgstPer());
+					
+					if(taxIds.get(j)==7)
+					rowData.add(" " + taxPrintList.get(i).getCessPer());
+				
+					if(taxIds.get(j)==8)
+					rowData.add(" " + taxPrintList.get(i).getTotalTaxPer());
+					
+					if(taxIds.get(j)==9)
+					rowData.add(taxPrintList.get(i).getIsActive() == 1 ? "Active" : "In-Active");
+					
+					srno = srno + 1;
+				}
+				
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "Tax");
+			session.setAttribute("reportNameNew", "Tax List");
+			session.setAttribute("searchByNew", " NA");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Tax Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return taxPrintList;
+	}
+	
+	@RequestMapping(value = "pdf/getTaxListPdf", method = RequestMethod.GET)
+	public ModelAndView getTaxListPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/taxListPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+			System.out.println("taxIds Found-----------"+taxIds);
+			
+				model.addObject("taxList", taxPrintList);
+				model.addObject("taxIds", taxIds);
+				model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
+	}
 
 	// Created By :- Mahendra Singh
 	// Created On :- 12-09-2020
