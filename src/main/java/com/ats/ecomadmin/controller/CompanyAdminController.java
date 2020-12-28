@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.CommonUtility;
@@ -35,6 +36,7 @@ import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.Customer;
 import com.ats.ecomadmin.model.CustomerAddDetail;
 import com.ats.ecomadmin.model.CustomerDetailInfo;
+import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.GetCustomerInfo;
 import com.ats.ecomadmin.model.GetRouteList;
@@ -1586,7 +1588,7 @@ public class CompanyAdminController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- sub Cat List
-
+	List<SubCategory> subCatList = new ArrayList<SubCategory>();
 	@RequestMapping(value = "/showSubCatList", method = RequestMethod.GET)
 	public String showSubCatList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -1594,7 +1596,7 @@ public class CompanyAdminController {
 
 		try {
 			HttpSession session = request.getSession();
-			List<SubCategory> subCatList = new ArrayList<SubCategory>();
+			
 			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 			Info view = AccessControll.checkAccess("showSubCatList", "showSubCatList", "1", "0", "0", "0",
 					newModuleList);
@@ -1622,6 +1624,48 @@ public class CompanyAdminController {
 				model.addAttribute("subCatList", subCatList);
 				model.addAttribute("title", "Sub Category List");
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+					rowData.add("Sr No");				
+					rowData.add("Sub Category");
+					rowData.add("Category");
+					rowData.add("Code");
+					rowData.add("Prefix");
+				
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < subCatList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					
+					rowData.add(" "+srno);					
+					rowData.add(" " + subCatList.get(i).getSubCatName());
+					rowData.add(" " + subCatList.get(i).getExVar4());		
+					rowData.add(" " + subCatList.get(i).getSubCatCode());			
+					rowData.add(" " + subCatList.get(i).getSubCatPrefix());	
+					
+					srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "SubCategory");
+				session.setAttribute("reportNameNew", "Sub Category List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Sub Category Excel");
+				
 				Info add = AccessControll.checkAccess("showSubCatList", "showSubCatList", "0", "1", "0", "0",
 						newModuleList);
 				Info edit = AccessControll.checkAccess("showSubCatList", "showSubCatList", "0", "0", "1", "0",
@@ -1639,17 +1683,34 @@ public class CompanyAdminController {
 				if (delete.isError() == false) { //
 					System.out.println(" delete Accessable ");
 					model.addAttribute("deleteAccess", 0);
-
 				}
-
 			}
 
 		} catch (Exception e) {
-			System.out.println("Execption in /Customer : " + e.getMessage());
+			System.out.println("Execption in /showSubCatList : " + e.getMessage());
 			e.printStackTrace();
 		}
 
 		return mav;
+	}
+	
+	@RequestMapping(value = "pdf/getSubCategoryPdf", method = RequestMethod.GET)
+	public ModelAndView getProductConfigPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/subCategoryPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+			System.out.println("proIds Found-----------"+subCatList);
+			
+				model.addObject("subCatList", subCatList);
+				model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
 	}
 
 	/*--------------------------------------------------------------------------------*/

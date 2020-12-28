@@ -9,7 +9,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Spliterator;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +37,8 @@ import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
+import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.GetItemConfHead;
 import com.ats.ecomadmin.model.GetProdList;
 import com.ats.ecomadmin.model.GetSubCatPrefix;
@@ -1462,6 +1468,7 @@ public class ProdMasteController {
 	 * Product Config Header Based on CatId //Devloped By(Devloper Name): Sachin
 	 * //Updated By(Devloper Name): Sachin
 	 ******************************/
+	List<GetItemConfHead> confHeadList = new ArrayList<GetItemConfHead>();
 	@RequestMapping(value = "/getViewProdConfigHeader", method = RequestMethod.POST)
 	public ModelAndView getViewProdConfigHeader(HttpServletRequest request, HttpServletResponse response) {
 
@@ -1514,9 +1521,48 @@ public class ProdMasteController {
 
 				GetItemConfHead[] confHeadArray = Constants.getRestTemplate()
 						.postForObject(Constants.url + "getProdConfList", map, GetItemConfHead[].class);
-				List<GetItemConfHead> confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));
+				 confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));
 
 				model.addObject("confHeadList", confHeadList);
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+					rowData.add("Sr No");				
+					rowData.add("Configuration Name");
+					rowData.add("Category");
+					rowData.add("Active");
+				
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < confHeadList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					rowData.add(" "+srno);
+					
+						rowData.add(" " + confHeadList.get(i).getConfigName());
+						rowData.add(" " + confHeadList.get(i).getCatName());				
+						rowData.add(confHeadList.get(i).getIsActive() == 1 ? "Yes" : "NO");					
+						srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "ProductConfiguration");
+				session.setAttribute("reportNameNew", "Product Configuration List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "ProductConfiguration Excel");
+				
 
 			}
 
@@ -1524,6 +1570,26 @@ public class ProdMasteController {
 			e.printStackTrace();
 		}
 		return model;
+	}
+	
+	
+	@RequestMapping(value = "pdf/getProductConfigPdf", method = RequestMethod.GET)
+	public ModelAndView getProductConfigPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/productConfigPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+			System.out.println("proIds Found-----------"+confHeadList);
+			
+				model.addObject("confHeadList", confHeadList);
+				model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
 	}
 
 	/*****************************
@@ -2216,5 +2282,146 @@ public class ProdMasteController {
 		}
 		return imgList;
 	}
+	
+	List<GetProdList> prodListPrint = new ArrayList<GetProdList>();
+	List<Long> proIds = new ArrayList<Long>();
+	@RequestMapping(value = "/getElementIds", method = RequestMethod.GET)
+	public @ResponseBody List<GetProdList> getElementIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));			
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+		
+			
+			int compId = (int) session.getAttribute("companyId");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			GetProdList[] prodArr = Constants.getRestTemplate().postForObject(Constants.url + "getProdList", map,
+					GetProdList[].class);
+			prodListPrint = new ArrayList<GetProdList>(Arrays.asList(prodArr));
+			
+			proIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			System.out.println(proIds+" --- "+val);
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			rowData.add("Sr No");
+			for (int i = 0; i < proIds.size(); i++) {
+				
+				if(proIds.get(i)==1)
+				rowData.add("Product Code");
+				
+				if(proIds.get(i)==2)
+				rowData.add("Name");
+				
+				if(proIds.get(i)==3)
+				rowData.add("Category");
+				
+				if(proIds.get(i)==4)
+				rowData.add("Sub Category");
+				
+				if(proIds.get(i)==5)
+				rowData.add("UOM");
+				
+				if(proIds.get(i)==6)
+				rowData.add("Book Before");
+				
+				if(proIds.get(i)==7)
+				rowData.add("Status");
+				
+				if(proIds.get(i)==8)
+				rowData.add("Active");
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < prodListPrint.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				rowData.add(" "+srno);
+				for (int j = 0; j < proIds.size(); j++) {
+				
+					if(proIds.get(j)==1)
+					rowData.add(" " + prodListPrint.get(i).getProductCode());
+					
+					if(proIds.get(j)==2)
+					rowData.add(" " + prodListPrint.get(i).getProductName());
+					
+					if(proIds.get(j)==3)
+					rowData.add(" " + prodListPrint.get(i).getCatName());
+					
+					if(proIds.get(j)==4)
+					rowData.add(" " + prodListPrint.get(i).getSubCatName());
+					
+					if(proIds.get(j)==5)
+					rowData.add(" " + prodListPrint.get(i).getUomShowName());
+					
+					if(proIds.get(j)==6)
+					rowData.add(" " + prodListPrint.get(i).getBookBefore());
+				
+					if(proIds.get(j)==7)
+					rowData.add(" " + prodListPrint.get(i).getProdStatus());
+					
+					if(proIds.get(j)==8)
+					rowData.add(prodListPrint.get(i).getIsActive() == 1 ? "Yes" : "NO");
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "Products");
+			session.setAttribute("reportNameNew", "Products List");
+			session.setAttribute("searchByNew", " NA");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Products Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return prodListPrint;
+	}
+	
+	@RequestMapping(value = "pdf/getProductListPdf", method = RequestMethod.GET)
+	public String getProductListPdf(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+			System.out.println("proIds Found-----------"+proIds);
+			
+				model.addAttribute("prodList", prodListPrint);
+				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("proIds", proIds);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "pdfs/productListPdf";
+		
+	}
+	
 
 }

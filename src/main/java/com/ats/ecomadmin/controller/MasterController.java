@@ -1058,6 +1058,7 @@ public class MasterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Show All Users Types
+	List<Category> catList = new ArrayList<>();
 	@RequestMapping(value = "/showCategoryList", method = RequestMethod.GET)
 	public String categoryList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -1079,7 +1080,7 @@ public class MasterController {
 
 				mav = "masters/categoryList";
 
-				List<Category> catList = new ArrayList<>();
+				
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
@@ -1097,6 +1098,45 @@ public class MasterController {
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 				model.addAttribute("title", "Category List");
 				// model.addAttribute("imageUrl", Constants.showDocSaveUrl);
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+					rowData.add("Sr No");				
+					rowData.add("Category");
+					rowData.add("Prefix");
+					rowData.add("Active");
+				
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < catList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					rowData.add(" "+srno);
+					
+						rowData.add(" " + catList.get(i).getCatName());
+						rowData.add(" " + catList.get(i).getCatPrefix());				
+						rowData.add(catList.get(i).getIsActive() == 1 ? "Yes" : "NO");					
+						srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "Category");
+				session.setAttribute("reportNameNew", "Category List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Category Excel");
+				
 				Info add = AccessControll.checkAccess("showCategoryList", "showCategoryList", "0", "1", "0", "0",
 						newModuleList);
 				Info edit = AccessControll.checkAccess("showCategoryList", "showCategoryList", "0", "0", "1", "0",
@@ -1119,6 +1159,24 @@ public class MasterController {
 			e.printStackTrace();
 		}
 		return mav;
+	}
+	@RequestMapping(value = "pdf/getCategoryPdf", method = RequestMethod.GET)
+	public ModelAndView getProductConfigPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/categoryPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+			System.out.println("proIds Found-----------"+catList);
+			
+				model.addObject("catList", catList);
+				model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
 	}
 
 	// Created By :- Mahendra Singh
