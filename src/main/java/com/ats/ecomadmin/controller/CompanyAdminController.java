@@ -1695,7 +1695,7 @@ public class CompanyAdminController {
 	}
 	
 	@RequestMapping(value = "pdf/getSubCategoryPdf", method = RequestMethod.GET)
-	public ModelAndView getProductConfigPdf(HttpServletRequest request,
+	public ModelAndView getSubCategoryPdf(HttpServletRequest request,
 			HttpServletResponse response) {
 		ModelAndView model = new ModelAndView("pdfs/subCategoryPdf");
 		try {

@@ -43,6 +43,7 @@ import com.ats.ecomadmin.model.DeliveryInstruction;
 import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.Franchise;
+import com.ats.ecomadmin.model.GetProdList;
 import com.ats.ecomadmin.model.GrievencesInstruction;
 import com.ats.ecomadmin.model.GrievencesTypeInstructn;
 import com.ats.ecomadmin.model.Info;
@@ -65,11 +66,11 @@ public class MasterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Show UOM List
+	List<Uom> uomList = new ArrayList<Uom>();
 	@RequestMapping(value = "/showUomList", method = RequestMethod.GET)
 	public String showUomList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
-		String mav = new String();
-		List<Uom> uomList = new ArrayList<Uom>();
+		String mav = new String();		
 		try {
 
 			HttpSession session = request.getSession();
@@ -103,6 +104,42 @@ public class MasterController {
 				Info edit = AccessControll.checkAccess("showUomList", "showUomList", "0", "0", "1", "0", newModuleList);
 				Info delete = AccessControll.checkAccess("showUomList", "showUomList", "0", "0", "0", "1",
 						newModuleList);
+				
+				// export To Excel
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+				rowData.add("Sr No");
+				rowData.add("UOM");
+				rowData.add("Status");
+
+				expoExcel.setRowData(rowData);
+				int srno = 1;
+				exportToExcelList.add(expoExcel);
+				for (int i = 0; i < uomList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+
+					rowData.add(" " + srno);
+					rowData.add(" " + uomList.get(i).getUomName());
+					rowData.add(uomList.get(i).getIsActive() == 1 ? "Active" : "In-Active");
+					
+					srno=srno+1;
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "UOM");
+				session.setAttribute("reportNameNew", "UOM List");
+				 session.setAttribute("searchByNew", "NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "UOM Excel");
 
 				if (add.isError() == false) {
 					model.addAttribute("addAccess", 0);
@@ -120,7 +157,25 @@ public class MasterController {
 			e.printStackTrace();
 		}
 		return mav;
+	}	
+	
+	@RequestMapping(value = "pdf/getUomPdf", method = RequestMethod.GET)
+	public ModelAndView getUomPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/uomPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+			model.addObject("uomList", uomList);
+			model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
 	}
+
 
 	// Created By :- Mahendra Singh
 	// Created On :- 11-09-2020
@@ -1309,8 +1364,9 @@ public class MasterController {
 		}
 		return mav;
 	}
+	
 	@RequestMapping(value = "pdf/getCategoryPdf", method = RequestMethod.GET)
-	public ModelAndView getProductConfigPdf(HttpServletRequest request,
+	public ModelAndView getCategoryPdf(HttpServletRequest request,
 			HttpServletResponse response) {
 		ModelAndView model = new ModelAndView("pdfs/categoryPdf");
 		try {
@@ -1847,6 +1903,7 @@ public class MasterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Show Filter
+	List<MFilter> filterList = new ArrayList<MFilter>();
 	@RequestMapping(value = "/showFilter/{filterTypeId}", method = RequestMethod.GET)
 	public String showFilter(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable("filterTypeId") int filterTypeId, Model model) {
@@ -1869,7 +1926,7 @@ public class MasterController {
 
 				mav = "masters/filterList";
 
-				List<MFilter> filterList = new ArrayList<MFilter>();
+				
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 
@@ -1920,6 +1977,122 @@ public class MasterController {
 			e.printStackTrace();
 		}
 		return mav;
+	}
+	
+	
+	List<Long> filtersIds = new ArrayList<Long>();
+	String filterCol = null;
+	@RequestMapping(value = "/getFilterTypeIds", method = RequestMethod.GET)
+	public @ResponseBody List<MFilter> getFilterTypeIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));	
+			filterCol  = request.getParameter("filterCol");	
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+		
+			
+			int compId = (int) session.getAttribute("companyId");
+
+			filtersIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			System.out.println(filtersIds+" --- "+val);
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			
+			for (int i = 0; i < filtersIds.size(); i++) {
+				
+				if(filtersIds.get(i)==1)
+				rowData.add("Sr No");
+				
+				if(filtersIds.get(i)==2)
+				rowData.add(filterCol+" Name");
+				
+				if(filtersIds.get(i)==3)
+				rowData.add("Status");
+				
+				if(filtersIds.get(i)==4)
+				rowData.add("Is Cost Effect");
+				
+				if(filtersIds.get(i)==5)
+				rowData.add("Is Used Filter");
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < filterList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				
+				for (int j = 0; j < filtersIds.size(); j++) {
+					
+					if(filtersIds.get(j)==1)
+					rowData.add(" "+srno);
+					
+					if(filtersIds.get(j)==2)
+					rowData.add(" " + filterList.get(i).getFilterName());
+					
+					if(filtersIds.get(j)==3)
+						rowData.add(filterList.get(i).getIsActive() == 1 ? "Active" : "In-Active");
+					
+					if(filtersIds.get(j)==4)
+					rowData.add(filterList.get(i).getCostAffect() == 1 ? "Yes" : "NO");
+					
+					if(filtersIds.get(j)==5)
+					rowData.add(filterList.get(i).getUsedForFilter() == 1 ? "Yes" : "NO");				
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", filterCol+"List");
+			session.setAttribute("reportNameNew", filterCol+" List");
+			session.setAttribute("searchByNew", " NA");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", filterCol+" List Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return filterList;
+	}
+	
+	@RequestMapping(value = "pdf/getFilterTypeListPdf", method = RequestMethod.GET)
+	public ModelAndView getFilterTypeListPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/filterTypesPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");			
+			
+			model.addObject("filterList", filterList);
+			model.addObject("filtersIds", filtersIds);
+			model.addObject("filterCol", filterCol);
+			model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
 	}
 
 	// Created By :- Mahendra Singh

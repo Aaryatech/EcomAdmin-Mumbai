@@ -1477,6 +1477,7 @@ public class ProdMasteController {
 	 * Product Config Header Based on CatId //Devloped By(Devloper Name): Sachin
 	 * //Updated By(Devloper Name): Sachin
 	 ******************************/
+	List<GetItemConfHead> confHeadList = new ArrayList<GetItemConfHead>();
 	@RequestMapping(value = "/getViewProdConfigHeader", method = RequestMethod.POST)
 	public ModelAndView getViewProdConfigHeader(HttpServletRequest request, HttpServletResponse response) {
 
@@ -1529,16 +1530,71 @@ public class ProdMasteController {
 
 				GetItemConfHead[] confHeadArray = Constants.getRestTemplate()
 						.postForObject(Constants.url + "getProdConfList", map, GetItemConfHead[].class);
-				List<GetItemConfHead> confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));
+				confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));
 
 				model.addObject("confHeadList", confHeadList);
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+				rowData.add("Sr No");													
+				rowData.add("Configuration Name");		
+				rowData.add("Category");	
+				rowData.add("Active");
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < confHeadList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					
+					rowData.add(" "+srno);
+					rowData.add(" " + confHeadList.get(i).getConfigName());	
+					rowData.add(" " + confHeadList.get(i).getCatName());						
+					rowData.add(confHeadList.get(i).getIsActive() == 1 ? "Active" : "In-Active");
+					
+					srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "ProductsConfig");
+				session.setAttribute("reportNameNew", "Configure Products List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Configure Products Excel");
+				
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return model;
+	}
+	
+	@RequestMapping(value = "pdf/getProductConfigPdf", method = RequestMethod.GET)
+	public ModelAndView getProductConfigPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/productConfigPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");			
+			
+			model.addObject("confHeadList", confHeadList);
+			model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
 	}
 
 	/*****************************
