@@ -27,15 +27,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.CategoryProduct;
+import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.CompanyTestomonials;
 import com.ats.ecomadmin.model.ConfigHomePageProduct;
 import com.ats.ecomadmin.model.Designation;
+import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.GetCatProduct;
@@ -1198,6 +1201,7 @@ public class ConfigurationFilterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Redirect to Configure Product And Festive Events
+	List<FestiveEvent> festiveEventList = new ArrayList<FestiveEvent>();
 	@RequestMapping(value = "/showConfigProductAndEvents", method = RequestMethod.GET)
 	public String showConfigProductAndEvents(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -1215,8 +1219,6 @@ public class ConfigurationFilterController {
 
 			} else {
 				mav = "product/prdctEventList";
-
-				List<FestiveEvent> festiveEventList = new ArrayList<FestiveEvent>();
 
 				int compId = (int) session.getAttribute("companyId");
 
@@ -1261,7 +1263,121 @@ public class ConfigurationFilterController {
 		}
 		return mav;
 	}
+	
+	List<Long> configEvntIds = new ArrayList<Long>();
+	@RequestMapping(value = "/getConfigPrdctAndEvent", method = RequestMethod.GET)
+	public @ResponseBody List<FestiveEvent> getFilterTypeIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));
 
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+		
+			
+			int compId = (int) session.getAttribute("companyId");
+
+			configEvntIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			System.out.println(configEvntIds+" --- "+val);
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			
+			for (int i = 0; i < configEvntIds.size(); i++) {
+				
+				if(configEvntIds.get(i)==1)
+				rowData.add("Sr No");
+				
+				if(configEvntIds.get(i)==2)
+				rowData.add("Event Name");
+				
+				if(configEvntIds.get(i)==3)
+				rowData.add("Period");
+				
+				if(configEvntIds.get(i)==4)
+				rowData.add("Time");
+				
+				if(configEvntIds.get(i)==5)
+				rowData.add("Active");
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < festiveEventList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				
+				for (int j = 0; j < configEvntIds.size(); j++) {
+					
+					if(configEvntIds.get(j)==1)
+					rowData.add(" "+srno);
+					
+					if(configEvntIds.get(j)==2)
+					rowData.add(" " + festiveEventList.get(i).getEventName());
+					
+					if(configEvntIds.get(j)==3)
+						rowData.add(festiveEventList.get(i).getFromDate()+" to "+festiveEventList.get(i).getToDate());
+					
+					if(configEvntIds.get(j)==4)
+					rowData.add(festiveEventList.get(i).getFromTime()+" to "+festiveEventList.get(i).getToTime());
+					
+					if(configEvntIds.get(j)==5)
+					rowData.add(festiveEventList.get(i).getIsActive() == 1 ? "Yes" : "NO");				
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "ConfigProductFestivEventList");
+			session.setAttribute("reportNameNew", " Configure Product Festive Event List");
+			session.setAttribute("searchByNew", " NA");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Configure Product Festive Event List Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return festiveEventList;
+	}
+
+
+	@RequestMapping(value = "pdf/getConfigEvntPrdctPdf", method = RequestMethod.GET)
+	public ModelAndView getConfigEvntPrdctPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/festiveEvntPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");			
+			
+			model.addObject("festiveEventList", festiveEventList);
+			model.addObject("configEvntIds", configEvntIds);
+			model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
+	}
+	
 	// Created By :- Mahendra Singh
 	// Created On :- 17-09-2020
 	// Modified By :- NA

@@ -66,15 +66,13 @@
 
 					<div class="form-group row"></div>
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
-
+					<div class="card-body">
 					<table class="table datatable-header-basic">
 						<thead>
 							<tr>
 								<th width="5%">SR. No.</th>
 								<th>Product Name</th>
-								<th>Related Product</th>
-							 
-							 
+								<th>Related Product</th>		
 								<th class="text-center">Actions</th>
 							</tr>
 						</thead>
@@ -106,6 +104,19 @@
 							</c:forEach>
 						</tbody>
 					</table>
+					
+					<div class="text-center">
+							<button type="button" class="btn btn-primary" id="submtbtn"
+								onclick="exportToExcel()">
+								Excel <i class="far fa-file-excel"></i>
+							</button> 
+
+							<button type="button" class="btn btn-primary" id="submtbtn1"  onclick="genPdf()">
+								Pdf<i class="fas fa-file-pdf"></i>
+							</button>
+						
+						</div>
+						</div>	
 				</div>
 				<!-- /colReorder integration -->
 
@@ -154,6 +165,16 @@
 										}
 									});
 						});
+		
+		function exportToExcel() {
+			window.open("${pageContext.request.contextPath}/exportToExcelNew");
+			document.getElementById("expExcel").disabled = true;
+		}
+
+		function genPdf() {
+			window
+					.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getRelatedPrdctConfigPdf");
+		}
 	</script>
 </body>
 </html>

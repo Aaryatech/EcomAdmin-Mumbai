@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.CommonUtility;
@@ -28,6 +29,7 @@ import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.CategoryProduct;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.GetRelatedProductConfig;
 import com.ats.ecomadmin.model.GetRequreProduct;
 import com.ats.ecomadmin.model.Info;
@@ -294,7 +296,7 @@ public class ProductConfigurationController {
 	// Modified On :- NA
 	// Descriprion :- showRelProConfgList
 
-
+	ArrayList<GetRelatedProductConfig> relProList = new ArrayList<GetRelatedProductConfig>();
 	@RequestMapping(value = "/showRelProConfgList", method = RequestMethod.GET)
 	public String showRelProConfgList(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String mav = new String();
@@ -319,7 +321,7 @@ public class ProductConfigurationController {
 						.postForObject(Constants.url + "getRelProConfigByCompId", map, GetRelatedProductConfig[].class);
 				ArrayList<GetRelatedProductConfig> catProList = new ArrayList<GetRelatedProductConfig>(
 						Arrays.asList(userArr1));
-
+				relProList = catProList;
 				for (int i = 0; i < catProList.size(); i++) {
 
 					catProList.get(i)
@@ -330,6 +332,41 @@ public class ProductConfigurationController {
 				}
 				model.addAttribute("configList", catProList);
 
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+					rowData.add("Sr No.");				
+					rowData.add("Product Name");
+					rowData.add("Related Product");
+				
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < catProList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					rowData.add(" "+srno);
+					
+						rowData.add(" " + catProList.get(i).getPrimaryItem());
+						rowData.add(" " + catProList.get(i).getProdList());					
+						srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "RelatedProductConfig");
+				session.setAttribute("reportNameNew", "Related Product Configuration");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Related Product Configuration Excel");
 
 				Info add = AccessControll.checkAccess("showRelProConfgList", "showRelProConfgList", "0", "1", "0", "0",
 						newModuleList);
@@ -360,6 +397,26 @@ public class ProductConfigurationController {
 
 		return mav;
 	}
+	
+	@RequestMapping(value = "pdf/getRelatedPrdctConfigPdf", method = RequestMethod.GET)
+	public ModelAndView getCategoryPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/relPrdctConfigPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+			System.out.println("proIds Found-----------"+relProList);
+			
+				model.addObject("relProList", relProList);
+				model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
+	}
+
 	
 	
 	/*--------------------------------------------------------------------------------*/
