@@ -2659,7 +2659,7 @@ public class CompanyAdminController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- showRouteTypeList
-
+	List<RouteType> routeList = new ArrayList<RouteType>();
 	@RequestMapping(value = "/showRouteTypeList", method = RequestMethod.GET)
 	public String showRouteTypeList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -2685,7 +2685,7 @@ public class CompanyAdminController {
 
 				RouteType[] routeArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllRouteType",
 						RouteType[].class);
-				List<RouteType> routeList = new ArrayList<RouteType>(Arrays.asList(routeArr));
+				routeList = new ArrayList<RouteType>(Arrays.asList(routeArr));
 
 				for (int i = 0; i < routeList.size(); i++) {
 
@@ -2693,6 +2693,44 @@ public class CompanyAdminController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouteTypeId())));
 				}
 				model.addAttribute("routeTypeList", routeList);
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+				rowData.add("Sr No.");													
+				rowData.add("Name");		
+				rowData.add("Km Range");	
+				rowData.add("Sort No.");
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < routeList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					
+					rowData.add(" "+srno);
+					rowData.add(" " + routeList.get(i).getRouteTypeName());	
+					rowData.add(" " + routeList.get(i).getRouteRangeInKm());						
+					rowData.add(" " + routeList.get(i).getSortNo());					
+					srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "RouteTypeList");
+				session.setAttribute("reportNameNew", "Route Type List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Route Type Excel");
+				
 				Info add = AccessControll.checkAccess("showRouteTypeList", "showRouteTypeList", "0", "1", "0", "0",
 						newModuleList);
 				Info edit = AccessControll.checkAccess("showRouteTypeList", "showRouteTypeList", "0", "0", "1", "0",

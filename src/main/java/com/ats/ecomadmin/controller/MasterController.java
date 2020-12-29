@@ -3260,6 +3260,7 @@ public class MasterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Show Cities
+	List<City> cityList = new ArrayList<City>();
 	@RequestMapping(value = "/showCities", method = RequestMethod.GET)
 	public String showCities(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -3284,7 +3285,7 @@ public class MasterController {
 
 				City[] cityArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCities", map,
 						City[].class);
-				List<City> cityList = new ArrayList<City>(Arrays.asList(cityArr));
+				cityList = new ArrayList<City>(Arrays.asList(cityArr));
 
 				for (int i = 0; i < cityList.size(); i++) {
 
@@ -3294,6 +3295,44 @@ public class MasterController {
 				model.addAttribute("cityList", cityList);
 
 				model.addAttribute("title", "City List");
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+				rowData.add("Sr No.");													
+				rowData.add("City Code");		
+				rowData.add("City Name");	
+				rowData.add("Status");
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < cityList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					
+					rowData.add(" "+srno);
+					rowData.add(" " + cityList.get(i).getCityCode());	
+					rowData.add(" " + cityList.get(i).getCityName());						
+					rowData.add(cityList.get(i).getIsActive() == 1 ? "Active" : "In-Active");					
+					srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "City");
+				session.setAttribute("reportNameNew", "City List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "City List Excel");
+				
 
 				Info add = AccessControll.checkAccess("showCities", "showCities", "0", "1", "0", "0", newModuleList);
 				Info edit = AccessControll.checkAccess("showCities", "showCities", "0", "0", "1", "0", newModuleList);
@@ -3315,6 +3354,23 @@ public class MasterController {
 		}
 
 		return mav;
+	}
+	
+	@RequestMapping(value = "pdf/getCityListPdf", method = RequestMethod.GET)
+	public ModelAndView getProductConfigPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/cityPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");			
+			
+			model.addObject("cityList", cityList);
+			model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
 	}
 
 	// Created By :- Mahendra Singh
