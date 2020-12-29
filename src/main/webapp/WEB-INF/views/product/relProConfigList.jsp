@@ -24,7 +24,7 @@
 </head>
 
 <body class="sidebar-xs">
-
+<c:url value="deleteSelMultiRelatedProd" var="deleteSelMultiRelatedProd"></c:url>
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -67,10 +67,10 @@
 					<div class="form-group row"></div>
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 					<div class="card-body">
-					<table class="table datatable-header-basic">
+					<table class="table datatable-header-basic" id="printtable">
 						<thead>
 							<tr>
-								<th width="5%">SR. No.</th>
+								<th width="5%">SR. No.&nbsp; <input type="checkbox" name="selAll" id="selAll"/></th>
 								<th>Product Name</th>
 								<th>Related Product</th>		
 								<th class="text-center">Actions</th>
@@ -79,7 +79,8 @@
 						<tbody>
 							<c:forEach items="${configList}" var="configList" varStatus="count">
 								<tr>
-									<td>${count.index+1}</td>
+									<td>${count.index+1}   &nbsp;
+									<input type="checkbox" id="${configList.relatedProductId}" value="${configList.relatedProductId}" name="cityId" class="chkcls"></td>
 									<td>${configList.primaryItem}</td>
 									<td>${configList.prodList}</td>
 								 
@@ -104,8 +105,15 @@
 							</c:forEach>
 						</tbody>
 					</table>
+					<span class="validation-invalid-label" id="error_chks"
+										style="display: none;">Select Check Box.</span>
 					
 					<div class="text-center">
+					
+					<button type="submit" class="btn btn-primary" id="submtbtn"
+								onclick="deletSelctd()">
+								Delete <i class="far fa-trash-alt"></i>
+							</button>
 							<button type="button" class="btn btn-primary" id="submtbtn"
 								onclick="exportToExcel()">
 								Excel <i class="far fa-file-excel"></i>
@@ -136,6 +144,17 @@
 
 
 	<script type="text/javascript">
+	$(document).ready(
+
+			function() {
+
+				$("#selAll").click(
+						function() {
+							$('#printtable tbody input[type="checkbox"]')
+									.prop('checked', this.checked);
+
+						});
+			});
 		//Custom bootbox dialog
 		$('.bootbox_custom')
 				.on(
@@ -175,6 +194,78 @@
 			window
 					.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getRelatedPrdctConfigPdf");
 		}
+	</script><script >
+	function deletSelctd(){	
+		var isError = false;
+		var checked = $("#printtable input:checked").length > 0;
+		var count = $('#printtable tr').length;
+		
+		if (!checked || count <= 1) {
+			$("#error_chks").show()
+			isError = true;
+		} else {
+			$("#error_chks").hide()
+			isError = false;
+		}
+		
+		if(!isError){
+			
+
+			var x = false;
+			bootbox
+					.confirm({
+						title : 'Confirm ',
+						message : 'Are you sure you want to Submit ?',
+						buttons : {
+							confirm : {
+								label : 'Yes',
+								className : 'btn-success'
+							},
+							cancel : {
+								label : 'Cancel',
+								className : 'btn-danger'
+							}
+						},
+						callback : function(
+								result) {
+							if (result) {
+								$(
+										".btn")
+										.attr(
+												"disabled",
+												true);								
+										var prodIds = [];
+										$(".chkcls:checkbox:checked").each(function() {
+											prodIds.push($(this).val());
+										});
+										
+										alert(prodIds)
+																
+								$
+								.getJSON(
+										'${deleteSelMultiRelatedProd}',
+										{
+											prodIds : JSON.stringify(prodIds),
+											ajax : 'true'
+										},
+										function(data) {
+											//alert(data.error);
+									 if(!data.error){
+												window.location.reload();
+											}else{
+												window.location.reload();
+											} 
+											
+										});
+							}
+						}
+					});
+			//end ajax send this to php page
+			return false;
+		}//end of if !isError
+	}
+	
+	
 	</script>
 </body>
 </html>

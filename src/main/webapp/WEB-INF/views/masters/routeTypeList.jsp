@@ -35,7 +35,7 @@
 		<!-- Main sidebar -->
 		<jsp:include page="/WEB-INF/views/include/left.jsp"></jsp:include>
 		<!-- /main sidebar -->
-
+	<c:url var="deleteSelRoutesType" value="deleteSelRoutesType"></c:url>
 
 		<!-- Main content -->
 		<div class="content-wrapper">
@@ -48,7 +48,7 @@
 			<div class="content">
 				<!-- ColReorder integration -->
 				<div class="card">
-
+					<div class="card-body">
 					<div
 						class="card-header bg-blue text-white d-flex justify-content-between">
 						<span
@@ -68,10 +68,10 @@
 					<div class="form-group row"></div>
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
-					<table class="table datatable-header-basic">
+					<table class="table datatable-header-basic" id="printtable">
 						<thead>
 							<tr>
-								<th width="10%">Sr. No.</th>
+								<th width="10%">Sr. No.&nbsp; <input type="checkbox" name="selAll" id="selAll"/></th>
 								<th>Name</th>
 								<th>Km Range</th>
  								<th>Sort No.</th>
@@ -81,7 +81,8 @@
 						<tbody>
 							<c:forEach items="${routeTypeList}" var="routeList" varStatus="count">
 								<tr>
-									<td>${count.index+1}</td>
+									<td>${count.index+1}   &nbsp;
+									<input type="checkbox" id="${routeList.routeTypeId}" value="${routeList.routeTypeId}" name="routeId" class="chkcls"></td>
 									<td>${routeList.routeTypeName}</td>
 									<td>${routeList.routeRangeInKm}</td>
 									<td>${routeList.sortNo}</td>
@@ -107,20 +108,30 @@
 							</c:forEach>
 						</tbody>
 					</table>
-					<div class="text-center">							
+					<span class="validation-invalid-label" id="error_chks"
+										style="display: none;">Select Check Box.</span>
 
-							<button type="button" class="btn btn-primary" id="submtbtn"
-								onclick="exportToExcel()">
+						<div class="text-center">
+							<button type="submit" class="btn btn-primary" id="submtbtn"
+								onclick="deletSelctd()">
+								Delete <i class="far fa-trash-alt"></i>
+							</button>
+
+							<button type="button" class="btn btn-primary" id="submtbtn1"
+								onclick="pressBtn(1)">
 								Excel <i class="far fa-file-excel"></i>
-							</button> 
+							</button>
 
-							<button type="button" class="btn btn-primary" id="submtbtn1"  onclick="genPdf()">
-								Pdf<i class="fas fa-file-pdf"></i>
+							<button type="button" class="btn btn-primary" id="submtbtn1"
+								onclick="pressBtn(1)">
+								Pdf <i class="fas fa-file-pdf"></i>
 							</button>
 						
-						</div>	
+						</div>
+					</div>
 				</div>
 				<!-- /colReorder integration -->
+				
 
 			</div>
 			<!-- /content area -->
@@ -138,6 +149,17 @@
 
 
 	<script type="text/javascript">
+	$(document).ready(
+
+			function() {
+
+				$("#selAll").click(
+						function() {
+							$('#printtable tbody input[type="checkbox"]')
+									.prop('checked', this.checked);
+
+						});
+			});
 		//Custom bootbox dialog
 		$('.bootbox_custom')
 				.on(
@@ -167,6 +189,77 @@
 										}
 									});
 						});
+	</script>
+	<script>
+	function deletSelctd(){	
+		var isError = false;
+		var checked = $("#printtable input:checked").length > 0;
+		var count = $('#printtable tr').length;
+		
+		if (!checked || count <= 1) {
+			$("#error_chks").show()
+			isError = true;
+		} else {
+			$("#error_chks").hide()
+			isError = false;
+		}
+		
+		if(!isError){
+			
+
+			var x = false;
+			bootbox
+					.confirm({
+						title : 'Confirm ',
+						message : 'Are you sure you want to Submit ?',
+						buttons : {
+							confirm : {
+								label : 'Yes',
+								className : 'btn-success'
+							},
+							cancel : {
+								label : 'Cancel',
+								className : 'btn-danger'
+							}
+						},
+						callback : function(
+								result) {
+							if (result) {
+								$(
+										".btn")
+										.attr(
+												"disabled",
+												true);								
+										var routrTypeIds = [];
+										$(".chkcls:checkbox:checked").each(function() {
+											routrTypeIds.push($(this).val());
+										});
+										
+										alert(routrTypeIds)
+																
+								$
+								.getJSON(
+										'${deleteSelRoutesType}',
+										{
+											routrTypeIds : JSON.stringify(routrTypeIds),
+											ajax : 'true'
+										},
+										function(data) {
+											//alert(data.error);
+									 if(!data.error){
+												window.location.reload();
+											}else{
+												window.location.reload();
+											} 
+											
+										}); 
+							}
+						}
+					});
+			//end ajax send this to php page
+			return false;
+		}//end of if !isError
+	}
 	</script>
 </body>
 </html>

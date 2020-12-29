@@ -24,6 +24,7 @@
 </head>
 
 <body class="sidebar-xs">
+<c:url value="deleteSelMultiTax" var="deleteSelMultiTax"></c:url>
 <c:url value="/getTaxIds" var="getTaxIds"/>
 
 	<!-- Main navbar -->
@@ -49,7 +50,7 @@
 			<div class="content">
 				<!-- ColReorder integration -->
 				<div class="card">
-
+						<div class="card-body">
 					<div
 						class="card-header bg-blue text-white d-flex justify-content-between">
 						<span
@@ -67,11 +68,13 @@
 
 					<div class="form-group row"></div>
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
-					<div class="card-body">
-					<table class="table datatable-header-basic" id="printtable2">
+
+					<table class="table datatable-header-basic" id="printtable">
+			
+					
 						<thead>
 							<tr>
-								<th width="10%">Sr. No.</th>
+								<th width="10%">Sr. No. &nbsp; <input type="checkbox" name="selAll" id="selAll"/></th>
 								<th>Tax</th>
 								<th>HSN Code</th>
 								<th>SGST%</th>
@@ -86,7 +89,8 @@
 						<tbody>
 							<c:forEach items="${taxList}" var="taxList" varStatus="count">
 								<tr>
-									<td>${count.index+1}</td>
+									<td>${count.index+1}   &nbsp;
+									<input type="checkbox" id="${taxList.taxId}" value="${taxList.taxId}" name="cityId" class="chkcls"></td>
 									<td>${taxList.taxName}</td>
 									<td>${taxList.hsnCode}</td>
 									<td>${taxList.sgstPer}</td>
@@ -115,20 +119,26 @@
 							</c:forEach>
 						</tbody>
 					</table>
-					<div class="text-center">
-							<!-- <button type="submit" class="btn btn-primary" id="submtbtn"
+					<span class="validation-invalid-label" id="error_chks"
+										style="display: none;">Select Check Box.</span>
+										<div class="text-center">
+							<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd()">
 								Delete <i class="far fa-trash-alt"></i>
-							</button> -->
+							</button>
 
 							<button type="button" class="btn btn-primary" id="submtbtn1"
 							data-toggle="modal" data-target="#modal_theme_primary" onclick="getHeaders()">
 								Pdf/Excel <i class="fas fa-file-pdf"></i>
 							</button>
 						
-						</div>	
+						</div>
+						
+					</div>
+						
 				</div>
 				</div>
+				
 				<!-- /colReorder integration -->
 
 			</div>
@@ -142,11 +152,22 @@
 		</div>
 		<!-- /main content -->
 
-	</div>
+
 	<!-- /page content -->
 
 
 	<script type="text/javascript">
+	$(document).ready(
+
+			function() {
+
+				$("#selAll").click(
+						function() {
+							$('#printtable tbody input[type="checkbox"]')
+									.prop('checked', this.checked);
+
+						});
+			});
 		//Custom bootbox dialog
 		$('.bootbox_custom')
 				.on(
@@ -176,6 +197,79 @@
 										}
 									});
 						});
+	</script>
+	<script >
+	function deletSelctd(){	
+		var isError = false;
+		var checked = $("#printtable input:checked").length > 0;
+		var count = $('#printtable tr').length;
+		
+		if (!checked || count <= 1) {
+			$("#error_chks").show()
+			isError = true;
+		} else {
+			$("#error_chks").hide()
+			isError = false;
+		}
+		
+		if(!isError){
+			
+
+			var x = false;
+			bootbox
+					.confirm({
+						title : 'Confirm ',
+						message : 'Are you sure you want to Submit ?',
+						buttons : {
+							confirm : {
+								label : 'Yes',
+								className : 'btn-success'
+							},
+							cancel : {
+								label : 'Cancel',
+								className : 'btn-danger'
+							}
+						},
+						callback : function(
+								result) {
+							if (result) {
+								$(
+										".btn")
+										.attr(
+												"disabled",
+												true);								
+										var taxIds = [];
+										$(".chkcls:checkbox:checked").each(function() {
+											taxIds.push($(this).val());
+										});
+										
+										alert(taxIds)
+																
+								$
+								.getJSON(
+										'${deleteSelMultiTax}',
+										{
+											taxIds : JSON.stringify(taxIds),
+											ajax : 'true'
+										},
+										function(data) {
+											//alert(data.error);
+									 if(!data.error){
+												window.location.reload();
+											}else{
+												window.location.reload();
+											} 
+											
+										});
+							}
+						}
+					});
+			//end ajax send this to php page
+			return false;
+		}//end of if !isError
+	}
+	
+	
 	</script>
 	 <!-- Primary modal -->
 				<div id="modal_theme_primary" class="modal fade" tabindex="-1">

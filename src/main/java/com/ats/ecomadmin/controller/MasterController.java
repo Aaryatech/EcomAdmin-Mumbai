@@ -5087,7 +5087,7 @@ public class MasterController {
 	}
 	
 	
-	// Created By :- Mahendra Singh
+	/*// Created By :- Mahendra Singh
 		// Created On :- 26-12-2020
 		// Modified By :- NA
 		// Modified On :- NA
@@ -5113,10 +5113,10 @@ public class MasterController {
 						a = cityIdArr.substring(1, cityIdArr.length() - 1);
 						a = cityIdArr.replaceAll("\"", "");
 				
-					/*	for(String s : sep) {
+						for(String s : sep) {
 							cityIds.add(Integer.parseInt(s));
 						}
-						System.err.println("Ids-->"+"\n"+  a);*/
+						System.err.println("Ids-->"+"\n"+  a);
 						map.add("comparisionId", a.toString());	
 				System.err.println("citi Id String-->"+a.toString());
 					//map.add("cityIds", cityIds);
@@ -5138,7 +5138,7 @@ public class MasterController {
 			return info;
 
 		}
-		
+		*/
 		
 		public String getCommaSepStringFromStrArray(String[] strArray) {
 
