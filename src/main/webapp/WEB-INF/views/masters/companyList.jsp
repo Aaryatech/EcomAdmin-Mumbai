@@ -24,7 +24,7 @@
 </head>
 
 <body class="sidebar-xs">
-
+<c:url value="deleteSelMultiCompany" var="deleteSelMultiCompany"></c:url>
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -48,7 +48,7 @@
 			<div class="content">
 				<!-- ColReorder integration -->
 				<div class="card">
-
+						<div class="card-body">
 					<div
 						class="card-header bg-blue text-white d-flex justify-content-between">
 						<span
@@ -67,10 +67,10 @@
 					<div class="form-group row"></div>
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
-					<table class="table datatable-header-basic">
+					<table class="table datatable-header-basic" id="printtable">
 						<thead>
 							<tr>
-								<th width="10%">Sr. No.</th>
+								<th width="10%">Sr. No.&nbsp; <input type="checkbox" name="selAll" id="selAll"/></th>
 								<th>Company Name</th>
 								<th>Address</th>
 								<th>City</th>
@@ -83,7 +83,8 @@
 						<tbody>
 							<c:forEach items="${compList}" var="compList" varStatus="count">
 								<tr>
-									<td>${count.index+1}</td>
+									<td>${count.index+1}   &nbsp;
+									<input type="checkbox" id="city${compList.companyId}" value="${compList.companyId}" name="cityId" class="chkcls"></td>
 									<td>${compList.companyName}</td>
 									<td>${compList.compAddress}</td>
 									<td>${compList.exVar4}</td>
@@ -110,6 +111,16 @@
 							</c:forEach>
 						</tbody>
 					</table>
+					<span class="validation-invalid-label" id="error_chks"
+										style="display: none;">Select Check Box.</span>
+
+						<div class="text-center">
+							<button type="submit" class="btn btn-primary" id="submtbtn"
+								onclick="deletSelctd()">
+								Delete <i class="far fa-trash-alt"></i>
+							</button>
+						</div>
+					</div>
 				</div>
 				<!-- /colReorder integration -->
 
@@ -129,6 +140,17 @@
 
 
 	<script type="text/javascript">
+	$(document).ready(
+
+			function() {
+
+				$("#selAll").click(
+						function() {
+							$('#printtable tbody input[type="checkbox"]')
+									.prop('checked', this.checked);
+
+						});
+			});
 		//Custom bootbox dialog
 		$('.bootbox_custom')
 				.on(
@@ -158,6 +180,78 @@
 										}
 									});
 						});
+	</script>
+	<script>
+	function deletSelctd(){	
+		var isError = false;
+		var checked = $("#printtable input:checked").length > 0;
+		var count = $('#printtable tr').length;
+		
+		if (!checked || count <= 1) {
+			$("#error_chks").show()
+			isError = true;
+		} else {
+			$("#error_chks").hide()
+			isError = false;
+		}
+		
+		if(!isError){
+			
+
+			var x = false;
+			bootbox
+					.confirm({
+						title : 'Confirm ',
+						message : 'Are you sure you want to Submit ?',
+						buttons : {
+							confirm : {
+								label : 'Yes',
+								className : 'btn-success'
+							},
+							cancel : {
+								label : 'Cancel',
+								className : 'btn-danger'
+							}
+						},
+						callback : function(
+								result) {
+							if (result) {
+								$(
+										".btn")
+										.attr(
+												"disabled",
+												true);								
+										var compIds = [];
+										$(".chkcls:checkbox:checked").each(function() {
+											compIds.push($(this).val());
+										});
+										
+										alert(compIds)
+																
+								$
+								.getJSON(
+										'${deleteSelMultiCompany}',
+										{
+											compIds : JSON.stringify(compIds),
+											ajax : 'true'
+										},
+										function(data) {
+											if(!data.error){
+												window.location.reload();
+											}else{
+												window.location.reload();
+											}
+											
+										});
+							}
+						}
+					});
+			//end ajax send this to php page
+			return false;
+		}//end of if !isError
+	}
+	
+	
 	</script>
 </body>
 </html>

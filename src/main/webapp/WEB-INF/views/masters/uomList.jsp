@@ -67,9 +67,8 @@
 					<div class="form-group row"></div>
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
+					
 					<table class="table datatable-header-basic" id="printtable">
-					<div class="card-body">
-					<table class="table datatable-header-basic">
 						<thead>
 							<tr>
 								<th width="10%">Sr. No.&nbsp; <input type="checkbox" name="selAll" id="selAll"/></th>

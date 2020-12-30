@@ -223,18 +223,18 @@ $('.bootbox_custom')
 										.attr(
 												"disabled",
 												true);								
-										var cityIds = [];
+										var griTypeIds = [];
 										$(".chkcls:checkbox:checked").each(function() {
-											cityIds.push($(this).val());
+											griTypeIds.push($(this).val());
 										});
 										
-										alert(cityIds)
+										alert(griTypeIds)
 																
 								$
 								.getJSON(
 										'${deleteSelMultiGrievancesIns}',
 										{
-											cityIds : JSON.stringify(cityIds),
+											griTypeIds : JSON.stringify(griTypeIds),
 											ajax : 'true'
 										},
 										function(data) {

@@ -558,33 +558,33 @@ public class MultiDeleteController {
 							// Modified By :- NA
 							// Modified On :- NA
 							// Description :- Delete Selected Multiple Filter
-							@RequestMapping(value = "/deleteSelMultiFilter1", method = RequestMethod.GET)
+							@RequestMapping(value = "/deleteSelMultiFilter", method = RequestMethod.POST)
 							public @ResponseBody Info deleteSelMultiFilter(HttpServletRequest request, HttpServletResponse response) {
-								System.err.println("in deleteSelMultiUOM ");
+								System.err.println("in deleteSelMultiFilter ");
 								Info info = new Info();
 								MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-								/*try {*/
-								//	System.err.println(request.getParameter("filterIds"));
-									//System.err.println(request.getParameter("filterTypeId"));
+								try {
+									System.err.println(request.getParameter("cityIds"));
+									System.err.println(request.getParameter("type"));
 								
-								//int filterTypeId=Integer.parseInt(request.getParameter("filterTypeId"));
-								//System.err.println(filterTypeId+filterIds);
-									//System.err.println("Filter Type==>"+filterTypeId);
-									//map.add("tableName", "m_filter");
-									//map.add("columnName", "del_status");
-									//map.add("value", 0);
-									//map.add("id", "filter_id");
-									//map.add("filterTypeId", filterTypeId);
+								int filterTypeId=Integer.parseInt(request.getParameter("type"));
+								System.err.println(filterTypeId+filterTypeId);
+									System.err.println("Filter Type==>"+filterTypeId);
+									map.add("tableName", "m_filter");
+									map.add("columnName", "del_status");
+									map.add("value", 0);
+									map.add("id", "filter_id");
+									map.add("filterTypeId", filterTypeId);
 
-									//String routeTypedArr = request.getParameter("filterIds");
+									String routeTypedArr = request.getParameter("cityIds");
 
-									//routeTypedArr = routeTypedArr.substring(1, routeTypedArr.length() - 1);
-									//routeTypedArr = routeTypedArr.replaceAll("\"", "");
+									routeTypedArr = routeTypedArr.substring(1, routeTypedArr.length() - 1);
+									routeTypedArr = routeTypedArr.replaceAll("\"", "");
 
-									//System.out.println(routeTypedArr);
-									//map.add("cityIdArr", routeTypedArr);
-								//	info = Constants.getRestTemplate().postForObject(Constants.url + "multiDeleteForFilter", map, Info.class);
-								/*	if (info.isError()) {
+									System.out.println(routeTypedArr);
+									map.add("cityIdArr", routeTypedArr);
+									info = Constants.getRestTemplate().postForObject(Constants.url + "multiDeleteForFilter", map, Info.class);
+									if (info.isError()) {
 										info.setError(true);
 										info.setMsg("Unable To Delete Filter");
 									} else {
@@ -597,15 +597,17 @@ public class MultiDeleteController {
 									info.setMsg("Unable To Delete Filter Exception Occuered");
 									System.out.println("Execption in /deleteSelMultiFilter : " + e.getMessage());
 									e.printStackTrace();
-								}*/
+								}
 								return info;
 
 							}
 		
 		
-							@RequestMapping(value = "/filterDelete", method = RequestMethod.GET)
+							@RequestMapping(value = "/filterDelete", method = RequestMethod.POST)
 							public void filterDelete(HttpServletRequest request, HttpServletResponse response) {
 								System.err.println("In Filter Delete");
+								System.err.println(request.getParameter("cityIds"));
+								System.err.println(request.getParameter("type"));
 							}
 							
 		
@@ -791,6 +793,9 @@ public class MultiDeleteController {
 								return info;
 
 							}
+							
+							
+							
 							// Created By :- Akhilesh
 							// Created On :- 29-12-2020
 							// Modified By :- NA
@@ -803,10 +808,10 @@ public class MultiDeleteController {
 								MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 								try {
 
-									map.add("tableName", "mn_grievences_type_instructn");
+									map.add("tableName", "mn_grievences_instruction");
 									map.add("columnName", "del_status");
 									map.add("value", 0);
-									map.add("id", "grev_type_id");
+									map.add("id", "grievance_id");
 
 									String routeTypedArr = request.getParameter("griTypeIds");
 
@@ -834,6 +839,369 @@ public class MultiDeleteController {
 
 							}
 	
+							
+							
+							
+							// Created By :- Akhilesh
+							// Created On :- 29-12-2020
+							// Modified By :- NA
+							// Modified On :- NA
+							// Description :- Delete Selected Languages
+							@RequestMapping(value = "/deleteSelMultiLanguages", method = RequestMethod.GET)
+							public @ResponseBody Info deleteSelMultiLanguages(HttpServletRequest request, HttpServletResponse response) {
+								System.err.println("in deleteSelMultiLanguages ");
+								Info info = new Info();
+								MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+								try {
+
+									map.add("tableName", "mn_language");
+									map.add("columnName", "del_status");
+									map.add("value", 0);
+									map.add("id", "lang_id");
+
+									String routeTypedArr = request.getParameter("langIds");
+
+									routeTypedArr = routeTypedArr.substring(1, routeTypedArr.length() - 1);
+									routeTypedArr = routeTypedArr.replaceAll("\"", "");
+
+									System.out.println(routeTypedArr);
+									map.add("cityIdArr", routeTypedArr);
+									info = Constants.getRestTemplate().postForObject(Constants.url + "multiDelete", map, Info.class);
+									if (info.isError()) {
+										info.setError(true);
+										info.setMsg("Unable To Delete Languages");
+									} else {
+										info.setError(true);
+										info.setMsg("Languages Deleted");
+									}
+									
+								} catch (Exception e) {
+									info.setError(true);
+									info.setMsg("Unable To Delete Languages  Exception Occuered");
+									System.out.println("Execption in /deleteSelMultiLanguages : " + e.getMessage());
+									e.printStackTrace();
+								}
+								return info;
+
+							}
+							
+							
+							
+							// Created By :- Akhilesh
+							// Created On :- 29-12-2020
+							// Modified By :- NA
+							// Modified On :- NA
+							// Description :- Delete Selected Customer
+							@RequestMapping(value = "/deleteSelMultiCustomer", method = RequestMethod.GET)
+							public @ResponseBody Info deleteSelMultiCustomer(HttpServletRequest request, HttpServletResponse response) {
+								System.err.println("in deleteSelMultiCustomer ");
+								Info info = new Info();
+								MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+								try {
+
+									map.add("tableName", "m_customer");
+									map.add("columnName", "del_status");
+									map.add("value", 0);
+									map.add("id", "cust_id");
+
+									String routeTypedArr = request.getParameter("custIds");
+
+									routeTypedArr = routeTypedArr.substring(1, routeTypedArr.length() - 1);
+									routeTypedArr = routeTypedArr.replaceAll("\"", "");
+
+									System.out.println(routeTypedArr);
+									map.add("cityIdArr", routeTypedArr);
+									info = Constants.getRestTemplate().postForObject(Constants.url + "multiDelete", map, Info.class);
+									if (info.isError()) {
+										info.setError(true);
+										info.setMsg("Unable To Delete Customer");
+									} else {
+										info.setError(true);
+										info.setMsg("Customer Deleted");
+									}
+									
+								} catch (Exception e) {
+									info.setError(true);
+									info.setMsg("Unable To Delete Customer  Exception Occuered");
+									System.out.println("Execption in /deleteSelMultiCustomer : " + e.getMessage());
+									e.printStackTrace();
+								}
+								return info;
+
+							}
+							
+							
+							
+							
+							
+							// Created By :- Akhilesh
+							// Created On :- 30-12-2020
+							// Modified By :- NA
+							// Modified On :- NA
+							// Description :- Delete Selected Companies
+							@RequestMapping(value = "/deleteSelMultiCompany", method = RequestMethod.GET)
+							public @ResponseBody Info deleteSelMultiCompany(HttpServletRequest request, HttpServletResponse response) {
+								System.err.println("in deleteSelMultiCompany ");
+								Info info = new Info();
+								MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+								try {
+
+									map.add("tableName", "m_company");
+									map.add("columnName", "del_status");
+									map.add("value", 0);
+									map.add("id", "company_id");
+
+									String routeTypedArr = request.getParameter("compIds");
+
+									routeTypedArr = routeTypedArr.substring(1, routeTypedArr.length() - 1);
+									routeTypedArr = routeTypedArr.replaceAll("\"", "");
+
+									System.out.println(routeTypedArr);
+									map.add("cityIdArr", routeTypedArr);
+									info = Constants.getRestTemplate().postForObject(Constants.url + "multiDelete", map, Info.class);
+									if (info.isError()) {
+										info.setError(true);
+										info.setMsg("Unable To Delete Companies");
+									} else {
+										info.setError(true);
+										info.setMsg("Companies Deleted");
+									}
+									
+								} catch (Exception e) {
+									info.setError(true);
+									info.setMsg("Unable To Companies Customer  Exception Occuered");
+									System.out.println("Execption in /deleteSelMultiCompany : " + e.getMessage());
+									e.printStackTrace();
+								}
+								return info;
+
+							}	
+							
+							
+							
+							// Created By :- Akhilesh
+							// Created On :- 30-12-2020
+							// Modified By :- NA
+							// Modified On :- NA
+							// Description :- Delete Selected Companie Testimonoals
+							@RequestMapping(value = "/deleteSelMultiCompanyTestomonials", method = RequestMethod.GET)
+							public @ResponseBody Info deleteSelMultiCompanyTestomonials(HttpServletRequest request, HttpServletResponse response) {
+								System.err.println("in deleteSelMultiCompanyTestomonials ");
+								Info info = new Info();
+								MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+								try {
+
+									map.add("tableName", "company_testimonials");
+									map.add("columnName", "del_status");
+									map.add("value", 0);
+									map.add("id", "id");
+
+									String routeTypedArr = request.getParameter("compIds");
+
+									routeTypedArr = routeTypedArr.substring(1, routeTypedArr.length() - 1);
+									routeTypedArr = routeTypedArr.replaceAll("\"", "");
+
+									System.out.println(routeTypedArr);
+									map.add("cityIdArr", routeTypedArr);
+									info = Constants.getRestTemplate().postForObject(Constants.url + "multiDelete", map, Info.class);
+									if (info.isError()) {
+										info.setError(true);
+										info.setMsg("Unable To Delete CompanyTestomonials");
+									} else {
+										info.setError(true);
+										info.setMsg("CompanyTestomonials Deleted");
+									}
+									
+								} catch (Exception e) {
+									info.setError(true);
+									info.setMsg("Unable To Companies CompanyTestomonials  Exception Occuered");
+									System.out.println("Execption in /deleteSelMultiCompanyTestomonials : " + e.getMessage());
+									e.printStackTrace();
+								}
+								return info;
+
+							}	
+							
+							// Created By :- Akhilesh
+							// Created On :- 30-12-2020
+							// Modified By :- NA
+							// Modified On :- NA
+							// Description :- Delete Selected Del Charges
+							@RequestMapping(value = "/deleteSelMultiDelCharges", method = RequestMethod.GET)
+							public @ResponseBody Info deleteSelMultiDelCharges(HttpServletRequest request, HttpServletResponse response) {
+								System.err.println("in deleteSelMultiDelCharges ");
+								Info info = new Info();
+								MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+								try {
+
+									map.add("tableName", "mn_delivery_charges");
+									map.add("columnName", "del_status");
+									map.add("value", 1);
+									map.add("id", "ch_id");
+
+									String routeTypedArr = request.getParameter("chIds");
+
+									routeTypedArr = routeTypedArr.substring(1, routeTypedArr.length() - 1);
+									routeTypedArr = routeTypedArr.replaceAll("\"", "");
+
+									System.out.println(routeTypedArr);
+									map.add("cityIdArr", routeTypedArr);
+									info = Constants.getRestTemplate().postForObject(Constants.url + "multiDelete", map, Info.class);
+									if (info.isError()) {
+										info.setError(true);
+										info.setMsg("Unable To Delete Delivery Charges");
+									} else {
+										info.setError(true);
+										info.setMsg("Delivery Charges Deleted");
+									}
+									
+								} catch (Exception e) {
+									info.setError(true);
+									info.setMsg("Unable To Companies Delivery Charges  Exception Occuered");
+									System.out.println("Execption in /deleteSelMultiDelCharges : " + e.getMessage());
+									e.printStackTrace();
+								}
+								return info;
+
+							}	
+							
+							
+							
+							// Created By :- Akhilesh
+							// Created On :- 30-12-2020
+							// Modified By :- NA
+							// Modified On :- NA
+							// Description :- Delete Selected Banner
+							@RequestMapping(value = "/deleteSelMultiBanner", method = RequestMethod.GET)
+							public @ResponseBody Info deleteSelMultiBanner(HttpServletRequest request, HttpServletResponse response) {
+								System.err.println("in deleteSelMultiBanner ");
+								Info info = new Info();
+								MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+								try {
+
+									map.add("tableName", "banner_home_page");
+									map.add("columnName", "del_status");
+									map.add("value", 0);
+									map.add("id", "banner_id");
+
+									String routeTypedArr = request.getParameter("bannerIds");
+
+									routeTypedArr = routeTypedArr.substring(1, routeTypedArr.length() - 1);
+									routeTypedArr = routeTypedArr.replaceAll("\"", "");
+
+									System.out.println(routeTypedArr);
+									map.add("cityIdArr", routeTypedArr);
+									info = Constants.getRestTemplate().postForObject(Constants.url + "multiDelete", map, Info.class);
+									if (info.isError()) {
+										info.setError(true);
+										info.setMsg("Unable To Delete Banner");
+									} else {
+										info.setError(true);
+										info.setMsg("Banner Deleted");
+									}
+									
+								} catch (Exception e) {
+									info.setError(true);
+									info.setMsg("Unable To Delete Banner  Exception Occuered");
+									System.out.println("Execption in /deleteSelMultiBanner : " + e.getMessage());
+									e.printStackTrace();
+								}
+								return info;
+
+							}	
+							
+							
+							
+							
+							// Created By :- Akhilesh
+							// Created On :- 30-12-2020
+							// Modified By :- NA
+							// Modified On :- NA
+							// Description :- Delete Selected Homepage Testimonoals
+							@RequestMapping(value = "/deleteSelMultiTestimonials", method = RequestMethod.GET)
+							public @ResponseBody Info deleteSelMultiTestimonials(HttpServletRequest request, HttpServletResponse response) {
+								System.err.println("in deleteSelMultiTestimonials ");
+								Info info = new Info();
+								MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+								try {
+
+									map.add("tableName", "home_page_testimonials");
+									map.add("columnName", "del_status");
+									map.add("value", 0);
+									map.add("id", "testimonials_id");
+
+									String routeTypedArr = request.getParameter("testIds");
+
+									routeTypedArr = routeTypedArr.substring(1, routeTypedArr.length() - 1);
+									routeTypedArr = routeTypedArr.replaceAll("\"", "");
+
+									System.out.println(routeTypedArr);
+									map.add("cityIdArr", routeTypedArr);
+									info = Constants.getRestTemplate().postForObject(Constants.url + "multiDelete", map, Info.class);
+									if (info.isError()) {
+										info.setError(true);
+										info.setMsg("Unable To Delete Testimonoals");
+									} else {
+										info.setError(true);
+										info.setMsg("Testimonoals Deleted");
+									}
+									
+								} catch (Exception e) {
+									info.setError(true);
+									info.setMsg("Unable To Delete Testimonoals  Exception Occuered");
+									System.out.println("Execption in /deleteSelMultiTestimonials : " + e.getMessage());
+									e.printStackTrace();
+								}
+								return info;
+
+							}
+							
+							
+							
+							// Created By :- Akhilesh
+							// Created On :- 30-12-2020
+							// Modified By :- NA
+							// Modified On :- NA
+							// Description :- Delete Selected Delivery Instruction  
+							@RequestMapping(value = "/deleteSelMultiDelIns", method = RequestMethod.GET)
+							public @ResponseBody Info deleteSelMultiDelIns(HttpServletRequest request, HttpServletResponse response) {
+								System.err.println("in deleteSelMultiDelIns ");
+								Info info = new Info();
+								MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+								try {
+
+									map.add("tableName", "mn_delivery_instruction");
+									map.add("columnName", "del_status");
+									map.add("value", 0);
+									map.add("id", "instru_id");
+
+									String routeTypedArr = request.getParameter("insIds");
+
+									routeTypedArr = routeTypedArr.substring(1, routeTypedArr.length() - 1);
+									routeTypedArr = routeTypedArr.replaceAll("\"", "");
+
+									System.out.println(routeTypedArr);
+									map.add("cityIdArr", routeTypedArr);
+									info = Constants.getRestTemplate().postForObject(Constants.url + "multiDelete", map, Info.class);
+									if (info.isError()) {
+										info.setError(true);
+										info.setMsg("Unable To Delete Delivery Instruction");
+									} else {
+										info.setError(true);
+										info.setMsg("Delivery Instruction Deleted");
+									}
+									
+								} catch (Exception e) {
+									info.setError(true);
+									info.setMsg("Unable To Delete Delivery Instruction  Exception Occuered");
+									System.out.println("Execption in /deleteSelMultiDelIns : " + e.getMessage());
+									e.printStackTrace();
+								}
+								return info;
+
+							}
+							
+							
 	
 
 }

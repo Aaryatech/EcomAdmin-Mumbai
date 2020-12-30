@@ -26,6 +26,7 @@
 <body class="sidebar-xs">
 <c:url  value="/getFilterTypeIds" var="getFilterTypeIds"/>
 <c:url value="filterDelete" var="filterDelete"></c:url>
+<script src="${pageContext.request.contextPath}/resources/assets/commanjs/checkAll.js"></script>
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -116,7 +117,7 @@
 										style="display: none;">Select Check Box.</span>
 					<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submtbtn"
-								onclick="deletSelctd()">
+								onclick="deletSelctd(${filterTypeId})">
 								Delete <i class="far fa-trash-alt"></i>
 							</button>
 
@@ -202,7 +203,7 @@
 									<thead>
 										<tr>
 											<th width="15">Sr.No.
-											<input type="checkbox" name="selAll" id="selAll"/>
+											<input type="checkbox" name="selAll2" id="selAll2" class="selAllTab"/>
 											</th>
 											<th>Headers</th>
 										</tr>
@@ -290,77 +291,92 @@
 				</script>
 				
 				<script >
-	function deletSelctd(){	
-		//alert("Hiiiii")
-		var isError = false;
-		var checked = $("#printtable2 input:checked").length > 0;
-		var count = $('#printtable2 tr').length;
-		
-		if (!checked || count <= 1) {
-			$("#error_chks").show()
-			isError = true;
-		} else {
-			$("#error_chks").hide()
-			isError = false;
-		}
-		
-		if(!isError){
-			
+				function deletSelctd(val){	
+					
+					var Ftype=val;
+					alert(Ftype)
+					var isError = false;
+					var checked = $("#printtable2 input:checked").length > 0;
+					var count = $('#printtable2 tr').length;
+					
+					if (!checked || count <= 1) {
+						$("#error_chks").show()
+						isError = true;
+					} else {
+						$("#error_chks").hide()
+						isError = false;
+					}
+					
+					if(!isError){
+						
 
-			var x = false;
-			bootbox
-					.confirm({
-						title : 'Confirm ',
-						message : 'Are you sure you want to Submit ?',
-						buttons : {
-							confirm : {
-								label : 'Yes',
-								className : 'btn-success'
-							},
-							cancel : {
-								label : 'Cancel',
-								className : 'btn-danger'
-							}
-						},
-						callback : function(
-								result) {
-							if (result) {
-								$(
-										".btn")
-										.attr(
-												"disabled",
-												true);								
-										var taxIds = [];
-										$(".chkcls:checkbox:checked").each(function() {
-											taxIds.push($(this).val());
-										});
-										
-										alert(taxIds)
-																
-								$
-								.getJSON(
-										'${filterDelete}',
-										{
-											taxIds : JSON.stringify(taxIds),
-											ajax : 'true'
+						var x = false;
+						bootbox
+								.confirm({
+									title : 'Confirm ',
+									message : 'Are you sure you want to Submit ?',
+									buttons : {
+										confirm : {
+											label : 'Yes',
+											className : 'btn-success'
 										},
-										function(data) {
-											//alert(data.error);
-									 if(!data.error){
-												window.location.reload();
-											}else{
-												window.location.reload();
-											} 
-											
-										});
-							}
-						}
-					});
-			//end ajax send this to php page
-			return false;
-		}//end of if !isError
-	}
-	
+										cancel : {
+											label : 'Cancel',
+											className : 'btn-danger'
+										}
+									},
+									callback : function(
+											result) {
+										if (result) {
+											$(
+													".btn")
+													.attr(
+															"disabled",
+															true);								
+													var cityIds = [];
+													$(".chkcls:checkbox:checked").each(function() {
+														cityIds.push($(this).val());
+													});
+													/*  var fd =new FormData();
+													fd.append("cityIds",JSON.stringify(cityIds)) */
+													alert(cityIds)
+																			
+											/* $
+											.getJSON(
+													'${filterDelete}',
+													{
+														cityIds : JSON.stringify(cityIds),
+														ajax : 'true'
+													},
+													function(data) {
+														if(!data.error){
+															window.location.reload();
+														}else{
+															window.location.reload();
+														}
+														
+													}); */
+													$.ajax({
+											            type: 'post',
+											            url: '${pageContext.request.contextPath}/deleteSelMultiFilter',
+											          	 data :{ cityIds: JSON.stringify(cityIds), type : Ftype},
+											            success: function(data1) {
+															alert(data1);
+													 			if(!data1.error){
+																window.location.reload();
+															}else{
+																window.location.reload();
+															} 
+															
+														},
+											});
+										}
+									}
+								});
+						//end ajax send this to php page
+						return false;
+					}//end of if !isError
+				}
 	
 	</script>
 </body>

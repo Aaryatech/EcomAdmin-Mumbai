@@ -90,7 +90,7 @@
 							<c:forEach items="${eventList}" var="event" varStatus="count">
 								<tr>
 								<td>${count.index+1}   &nbsp;
-									<input type="checkbox" id="${event.eventId}" value="${event.eventId}" name="cityId" class="chkcls"></td>
+									<input type="checkbox" id="${event.eventId}" value="${event.eventId}"  name="cityId" class="chkcls"></td>
 					<td width="20%;">${event.eventName}</td>
 					<td>${event.fromDate} to ${event.toDate}</td>		
 					<td>${event.fromTime} - ${event.toTime}</td>				
@@ -338,10 +338,11 @@
 				<script >
 				function deletSelctd(){	
 					var isError = false;
-					var checked = $("#printtable2 input:checked").length > 0;
+					var checked = $('#printtable2 tbody input[type="checkbox"]').length > 0;
 					var count = $('#printtable2 tr').length;
-					//alert(checked)
-					//alert(count)
+					
+					alert(checked)
+					alert(count)
 					if (!checked || count <= 1) {
 						$("#error_chks").show()
 						isError = true;

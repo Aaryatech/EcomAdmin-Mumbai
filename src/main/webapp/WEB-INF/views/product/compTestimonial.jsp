@@ -24,7 +24,7 @@
 </head>
 
 <body class="sidebar-xs">
-
+<c:url value="deleteSelMultiCompanyTestomonials" var="deleteSelMultiCompanyTestomonials" ></c:url>
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -68,10 +68,10 @@
 					
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
-					<table class="table datatable-header-basic">
+					<table class="table datatable-header-basic"  id="printtable">
 						<thead>
 							<tr>
-								<th width="5%">SR. No.</th>
+								<th width="5%">SR. No.&nbsp; <input type="checkbox" name="selAll" id="selAll"/></th>
 								<th>Name</th>
 								<th>Designation</th>
 								<th>Message</th>
@@ -82,7 +82,8 @@
 						<tbody>
 							<c:forEach items="${testimonialList}" var="list" varStatus="count">
 								<tr>
-									<td>${count.index+1}</td>
+									<td>${count.index+1}   &nbsp;
+									<input type="checkbox" id="city${list.id}" value="${list.id}" name="cityId" class="chkcls"></td>
 									<td>${list.name}</td>
 									<td>${list.message}</td>
 									<td>${list.designation}</td>
@@ -107,9 +108,14 @@
 							</c:forEach>
 						</tbody>
 					</table>
+					<span class="validation-invalid-label" id="error_chks"
+										style="display: none;">Select Check Box.</span>
 
-
-						<div class="text-center">
+							<div class="text-center">
+							<button type="submit" class="btn btn-primary" id="submtbtn"
+								onclick="deletSelctd()">
+								Delete <i class="far fa-trash-alt"></i>
+							</button>
 							<a
 								href="${pageContext.request.contextPath}/getCompTestimonialJson"
 								class="list-icons-item priv" title="Create JSON"> <i>Click
@@ -137,6 +143,17 @@
 
 
 	<script type="text/javascript">
+	$(document).ready(
+
+			function() {
+
+				$("#selAll").click(
+						function() {
+							$('#printtable tbody input[type="checkbox"]')
+									.prop('checked', this.checked);
+
+						});
+			});
 		//Custom bootbox dialog
 		$('.bootbox_custom')
 				.on(
@@ -166,6 +183,79 @@
 										}
 									});
 						});
+	</script>
+	
+	<script>
+	function deletSelctd(){	
+		var isError = false;
+		var checked = $("#printtable input:checked").length > 0;
+		var count = $('#printtable tr').length;
+		
+		if (!checked || count <= 1) {
+			$("#error_chks").show()
+			isError = true;
+		} else {
+			$("#error_chks").hide()
+			isError = false;
+		}
+		
+		if(!isError){
+			
+
+			var x = false;
+			bootbox
+					.confirm({
+						title : 'Confirm ',
+						message : 'Are you sure you want to Submit ?',
+						buttons : {
+							confirm : {
+								label : 'Yes',
+								className : 'btn-success'
+							},
+							cancel : {
+								label : 'Cancel',
+								className : 'btn-danger'
+							}
+						},
+						callback : function(
+								result) {
+							if (result) {
+								$(
+										".btn")
+										.attr(
+												"disabled",
+												true);								
+										var compIds = [];
+										$(".chkcls:checkbox:checked").each(function() {
+											compIds.push($(this).val());
+										});
+										
+										alert(compIds)
+																
+								$
+								.getJSON(
+										'${deleteSelMultiCompanyTestomonials}',
+										{
+											compIds : JSON.stringify(compIds),
+											ajax : 'true'
+										},
+										function(data) {
+											if(!data.error){
+												window.location.reload();
+											}else{
+												window.location.reload();
+											}
+											
+										});
+							}
+						}
+					});
+			//end ajax send this to php page
+			return false;
+		}//end of if !isError
+	}
+	
+
 	</script>
 </body>
 </html>

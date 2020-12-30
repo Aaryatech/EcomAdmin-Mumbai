@@ -190,8 +190,8 @@
 	<script >
 	function deletSelctd(){	
 		var isError = false;
-		var checked = $("#printtable input:checked").length > 0;
-		var count = $('#printtable tr').length;
+		var checked = $('#printtable2 tbody input[type="checkbox"]').length > 0;
+		var count = $('#printtable2 tr').length;
 		
 		if (!checked || count <= 1) {
 			$("#error_chks").show()
