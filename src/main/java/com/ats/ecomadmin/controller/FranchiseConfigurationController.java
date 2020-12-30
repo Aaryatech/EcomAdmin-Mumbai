@@ -22,12 +22,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.City;
+import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.GetFrConfigList;
@@ -223,7 +226,7 @@ public class FranchiseConfigurationController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- configFranchiseList
-
+	List<GetFrConfigList> frConfigPrintList = new ArrayList<GetFrConfigList>();
 	@RequestMapping(value = "/configFranchiseList", method = RequestMethod.GET)
 	public String configFranchiseList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -331,6 +334,9 @@ public class FranchiseConfigurationController {
 					frConfigList = new ArrayList<GetFrConfigList>(Arrays.asList(confArr));
 
 				}
+				
+				frConfigPrintList = frConfigList;
+				
 				model.addAttribute("frConfigList", frConfigList);
 
 				Info delete = AccessControll.checkAccess("configFranchiseList", "configFranchiseList", "0", "0", "0",
@@ -347,6 +353,126 @@ public class FranchiseConfigurationController {
 		}
 		return mav;
 	}
+	
+	
+	
+	List<Long> frConfigIds = new ArrayList<Long>();
+	@RequestMapping(value = "/getConfigFranchisePrintIds", method = RequestMethod.GET)
+	public @ResponseBody List<GetFrConfigList> getTaxIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));			
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+		
+			
+			int compId = (int) session.getAttribute("companyId");
+
+			frConfigIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+			
+			for (int i = 0; i <frConfigIds.size(); i++) {
+				if(frConfigIds.get(i)==2)
+					rowData.add("Sr No");
+				
+				if(frConfigIds.get(i)==3)
+				rowData.add("Code");
+				
+				if(frConfigIds.get(i)==4)
+				rowData.add("Franchise");
+				
+				if(frConfigIds.get(i)==5)
+				rowData.add("City");
+				
+				if(frConfigIds.get(i)==6)
+				rowData.add("Route");
+				
+				if(frConfigIds.get(i)==7)
+				rowData.add("Configuration Name");				
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < frConfigPrintList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				
+				for (int j = 0; j < frConfigIds.size(); j++) {
+					if(frConfigIds.get(j)==2)
+						rowData.add(" "+srno);
+					
+					if(frConfigIds.get(j)==3)
+					rowData.add(" " + frConfigPrintList.get(i).getFrCode());
+					
+					if(frConfigIds.get(j)==4)
+					rowData.add(" " + frConfigPrintList.get(i).getFrName());
+					
+					if(frConfigIds.get(j)==5)
+					rowData.add(" " + frConfigPrintList.get(i).getFrCity());
+					
+					if(frConfigIds.get(j)==6)
+					rowData.add(" " + frConfigPrintList.get(i).getRoute());
+					
+					if(frConfigIds.get(j)==7)
+					rowData.add(" " + frConfigPrintList.get(i).getConfigName());
+				
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "ConfigurationFranchise");
+			session.setAttribute("reportNameNew", "Configuration Franchise List");
+			session.setAttribute("searchByNew", " NA");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Configuration Franchise Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return frConfigPrintList;
+	}
+	
+@RequestMapping(value = "pdf/getConfigFrListPdf", method = RequestMethod.GET)
+	public ModelAndView getSubCategoryPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/frConfigPrintPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+				model.addObject("frConfigPrintList", frConfigPrintList);
+				model.addObject("frConfigIds", frConfigIds);
+				model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
+	}
+
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -442,11 +568,11 @@ public class FranchiseConfigurationController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Show Delivery Boy List
+	List<DeliveryBoy> delBoyList = new ArrayList<DeliveryBoy>();
 	@RequestMapping(value = "/showDeliveryList", method = RequestMethod.GET)
 	public String showUomList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String mav = new String();
-		List<DeliveryBoy> delBoyList = new ArrayList<DeliveryBoy>();
 		try {
 
 			HttpSession session = request.getSession();
@@ -478,6 +604,47 @@ public class FranchiseConfigurationController {
 				model.addAttribute("delBoyList", delBoyList);
 
 				model.addAttribute("title", "Delivery Boy List");
+				
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+					rowData.add("Sr No.");
+					rowData.add("Name");
+					rowData.add("Moile No.");
+					rowData.add("Joining Date");
+					rowData.add("Status");
+
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < delBoyList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					rowData.add(" "+srno);					
+					rowData.add(" " + delBoyList.get(i).getFirstName()+" "+delBoyList.get(i).getLastName());
+					rowData.add(" " + delBoyList.get(i).getMobileNo());
+					rowData.add(" " + delBoyList.get(i).getJoiningDate());
+					rowData.add(delBoyList.get(i).getIsActive() == 1 ? "Active" : "In-Active");						
+					
+					srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "DeliverBoy");
+				session.setAttribute("reportNameNew", "Deliver Boy List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Deliver Boy Excel");
 
 				Info add = AccessControll.checkAccess("showDeliveryList", "showDeliveryList", "0", "1", "0", "0",
 						newModuleList);
@@ -502,6 +669,23 @@ public class FranchiseConfigurationController {
 			e.printStackTrace();
 		}
 		return mav;
+	}
+	
+	@RequestMapping(value = "pdf/getDeliveBoyPdf", method = RequestMethod.GET)
+	public ModelAndView getDeliveBoyPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/delvrBoyPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+				model.addObject("delBoyList", delBoyList);
+				model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
 	}
 
 	// Created By :- Mahendra Singh
