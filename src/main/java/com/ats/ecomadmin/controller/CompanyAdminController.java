@@ -2490,6 +2490,145 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	List<GetRouteList> routeListPrint = new ArrayList<GetRouteList>();
+	List<Long> routeIds = new ArrayList<Long>();
+	@RequestMapping(value = "/getRouteIds", method = RequestMethod.GET)
+	public @ResponseBody List<GetRouteList> getRouteIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));			
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+		
+			
+			int compId = (int) session.getAttribute("companyId");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			GetRouteList[] routeArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllRouteByCompId", map, GetRouteList[].class);
+			routeListPrint = new ArrayList<GetRouteList>(Arrays.asList(routeArr));
+			
+			routeIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			
+			for (int i = 0; i < routeIds.size(); i++) {		
+				
+				if(routeIds.get(i)==1)
+				rowData.add("Sr No.");
+				
+				if(routeIds.get(i)==2)
+				rowData.add("Name");
+				
+				if(routeIds.get(i)==3)
+				rowData.add("Code");
+				
+				if(routeIds.get(i)==4)
+				rowData.add("Type");
+				
+				if(routeIds.get(i)==5)
+				rowData.add("Delivery");
+				
+				if(routeIds.get(i)==6)
+				rowData.add("Km.");
+				
+				if(routeIds.get(i)==7)
+				rowData.add("Franchise");
+				
+				if(routeIds.get(i)==8)
+				rowData.add("Sort No.");
+				
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < routeListPrint.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				
+				for (int j = 0; j < routeIds.size(); j++) {
+				
+					if(routeIds.get(j)==1)
+						rowData.add(" "+srno);
+					
+					if(routeIds.get(j)==2)
+						rowData.add(" " + routeListPrint.get(i).getRouteName());
+					
+					if(routeIds.get(j)==3)
+					rowData.add(" " + routeListPrint.get(i).getRouteCode());
+					
+					if(routeIds.get(j)==4)
+					rowData.add(" " + routeListPrint.get(i).getRouteTypeName());
+					
+					if(routeIds.get(j)==5)
+					rowData.add(" " + routeListPrint.get(i).getDeliveryName());
+					
+					if(routeIds.get(j)==6)
+					rowData.add(" " + routeListPrint.get(i).getRouteKm());
+				
+					if(routeIds.get(j)==7)
+					rowData.add(" " + routeListPrint.get(i).getFrName());
+					
+					if(routeIds.get(j)==8)
+					rowData.add(" " + routeListPrint.get(i).getSortNo());
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "RouteList");
+			session.setAttribute("reportNameNew", "Route List");
+			session.setAttribute("searchByNew", " NA");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Route List Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return routeListPrint;
+	}
+	
+	@RequestMapping(value = "pdf/getRouteListPdf", method = RequestMethod.GET)
+	public String getRouteListPdf(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");			
+		
+				model.addAttribute("routeListPrint", routeListPrint);
+				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("routeIds", routeIds);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "pdfs/routeListPdf";
+		
+	}
+	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -2760,6 +2899,23 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	@RequestMapping(value = "pdf/getRouteTpyePdf", method = RequestMethod.GET)
+	public ModelAndView getRouteTpyePdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/routeTypePdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+						
+			model.addObject("routeList", routeList);
+			model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
+	}
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -2965,7 +3121,7 @@ public class CompanyAdminController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- route Delivery list
-
+	List<RouteDelivery> routeDelList = new ArrayList<RouteDelivery>();
 	@RequestMapping(value = "/showRouteDelList", method = RequestMethod.GET)
 	public String showRouteDelList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -2992,13 +3148,52 @@ public class CompanyAdminController {
 				RouteDelivery[] routeArr = Constants.getRestTemplate()
 						.getForObject(Constants.url + "getAllRouteDelivery", RouteDelivery[].class);
 				List<RouteDelivery> routeList = new ArrayList<RouteDelivery>(Arrays.asList(routeArr));
-
+				routeDelList = routeList;
 				for (int i = 0; i < routeList.size(); i++) {
 
 					routeList.get(i)
 							.setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouidDelveryId())));
 				}
 				model.addAttribute("routeDelList", routeList);
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+					rowData.add("Sr No");				
+					rowData.add("Delivery Name");
+					rowData.add("Time Slot");
+					rowData.add("Sort No.");
+				
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < routeList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					rowData.add(" "+srno);
+					
+						rowData.add(" " + routeList.get(i).getDeliveryName());
+						rowData.add(" " + routeList.get(i).getTimeSlots());				
+						rowData.add(" " + routeList.get(i).getSortNo());					
+						srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "RouteDeliveryList");
+				session.setAttribute("reportNameNew", "Route Delivery List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Route Delivery List Excel");
+				
 				Info add = AccessControll.checkAccess("showRouteDelList", "showRouteDelList", "0", "1", "0", "0",
 						newModuleList);
 				Info edit = AccessControll.checkAccess("showRouteDelList", "showRouteDelList", "0", "0", "1", "0",
@@ -3028,6 +3223,26 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	@RequestMapping(value = "pdf/getRouteDelvrPdf", method = RequestMethod.GET)
+	public ModelAndView getRouteDelvrPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/routeDelvrPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+			System.out.println("proIds Found-----------"+routeDelList);
+			
+				model.addObject("routeDelList", routeDelList);
+				model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
+	}
+
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil

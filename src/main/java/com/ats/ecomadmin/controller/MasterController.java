@@ -5163,4 +5163,291 @@ public class MasterController {
 			return commaSepString;
 
 		}
+		
+		List<Franchise> printFrList =new ArrayList<Franchise>();
+		List<Long> printFrIds = new ArrayList<Long>();
+		@RequestMapping(value = "/getFranchisePrintIds", method = RequestMethod.GET)
+		@ResponseBody
+		public List<Franchise> getFranchisePrintIds(HttpServletRequest request, HttpServletResponse response) {
+
+			Info info = new Info();
+			try {
+				int val = Integer.parseInt(request.getParameter("val"));			
+				String selctId = request.getParameter("elemntIds");
+
+				selctId = selctId.substring(1, selctId.length() - 1);
+				selctId = selctId.replaceAll("\"", "");
+				
+				printFrIds =  Stream.of(selctId.split(","))
+				        .map(Long::parseLong)
+				        .collect(Collectors.toList());
+				
+				HttpSession session = request.getSession();
+				int companyId = (int) session.getAttribute("companyId");
+				
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("compId", companyId);
+
+				Franchise[] frArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFranchisesExlPdf", map,
+						Franchise[].class);
+				printFrList = new ArrayList<Franchise>(Arrays.asList(frArr));
+
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+				
+				for (int i = 0; i < printFrIds.size(); i++) {
+					
+					if(printFrIds.get(i)==1)
+						rowData.add("Sr No");
+					
+					if(printFrIds.get(i)==2)
+						rowData.add("Code");
+					
+					if(printFrIds.get(i)==3)
+					rowData.add("Franchise");
+					
+					if(printFrIds.get(i)==4)
+					rowData.add("Opening Date");
+					
+					if(printFrIds.get(i)==5)
+					rowData.add("Owner's DOB");
+					
+					if(printFrIds.get(i)==6)
+					rowData.add("Email");
+					
+					if(printFrIds.get(i)==7)
+					rowData.add("Contact");
+					
+					if(printFrIds.get(i)==8)
+					rowData.add("Address");
+					
+					if(printFrIds.get(i)==9)
+					rowData.add("City");
+					
+					if(printFrIds.get(i)==10)
+						rowData.add("Pincode");
+					
+					if(printFrIds.get(i)==11)
+						rowData.add("Status");
+					
+					if(printFrIds.get(i)==12)
+						rowData.add("Rating");
+					
+					if(printFrIds.get(i)==13)
+						rowData.add("FDA No.");
+					
+					if(printFrIds.get(i)==14)
+						rowData.add("FDA Lic.Expiry");
+					
+					if(printFrIds.get(i)==15)
+						rowData.add("GST Type");
+					
+					if(printFrIds.get(i)==16)
+						rowData.add("GST No.");
+					
+					if(printFrIds.get(i)==17)
+						rowData.add("Longitude");
+					
+					if(printFrIds.get(i)==18)
+						rowData.add("Latitude");
+					
+					if(printFrIds.get(i)==19)
+						rowData.add("Served Pincodes");
+					
+					if(printFrIds.get(i)==20)
+						rowData.add("Km. Cover");
+					
+					if(printFrIds.get(i)==21)
+						rowData.add("Bank");
+					
+					if(printFrIds.get(i)==22)
+						rowData.add("Branch");
+					
+					if(printFrIds.get(i)==23)
+						rowData.add("IFSC");
+					
+					if(printFrIds.get(i)==24)
+						rowData.add("A/C No.");
+
+					if(printFrIds.get(i)==25)
+						rowData.add("Payment Gateway");
+					
+					if(printFrIds.get(i)==26)
+						rowData.add("Parent P/G");
+					
+					if(printFrIds.get(i)==27)
+						rowData.add("PAN");
+					
+					if(printFrIds.get(i)==28)
+						rowData.add("Charges B/w Date");
+					
+					if(printFrIds.get(i)==29)
+						rowData.add("Surcharge Fees");
+					
+					if(printFrIds.get(i)==30)
+						rowData.add("Packing Chg");
+					
+					if(printFrIds.get(i)==31)
+						rowData.add("Handling Chg");
+					
+					if(printFrIds.get(i)==32)
+						rowData.add("Extra Chg");
+					
+					if(printFrIds.get(i)==33)
+						rowData.add("Round Off Amt");					
+				}
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < printFrList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					
+					for (int j = 0; j < printFrIds.size(); j++) {
+					
+						if(printFrIds.get(j)==1) 
+							rowData.add(" "+srno);
+						
+						if(printFrIds.get(j)==2)
+						rowData.add(" " + printFrList.get(i).getFrCode());
+						
+						if(printFrIds.get(j)==3)
+						rowData.add(" " + printFrList.get(i).getFrName());
+						
+						if(printFrIds.get(j)==4)
+						rowData.add(" " + printFrList.get(i).getOpeningDate());
+						
+						if(printFrIds.get(j)==5)
+						rowData.add(" " + printFrList.get(i).getOwnersBirthDay());
+						
+						if(printFrIds.get(j)==6)
+						rowData.add(" " + printFrList.get(i).getFrEmailId());
+						
+						if(printFrIds.get(j)==7)
+						rowData.add(" " + printFrList.get(i).getFrContactNo());
+						
+						if(printFrIds.get(j)==8)
+							rowData.add(" " + printFrList.get(i).getFrAddress());
+					
+						if(printFrIds.get(j)==9)
+						rowData.add(" " + printFrList.get(i).getCity());
+						
+						if(printFrIds.get(j)==10)
+							rowData.add(" " + printFrList.get(i).getPincode());
+						
+						if(printFrIds.get(j)==11)
+						rowData.add(printFrList.get(i).getIsActive() == 1 ? "Yes" : "NO");
+						
+						if(printFrIds.get(j)==12)
+							rowData.add(" " + printFrList.get(i).getFrRating());
+						
+						if(printFrIds.get(j)==13)
+							rowData.add(" " + printFrList.get(i).getFdaNumber());
+						
+						if(printFrIds.get(j)==14)
+							rowData.add(" " + printFrList.get(i).getFdaLicenseDateExp());
+						
+						if(printFrIds.get(j)==15)
+							rowData.add(printFrList.get(i).getGstType().equals("1")? "Regular": printFrList.get(i).getGstType().equals("2")? "Composite" : "Non-Register");
+						
+						if(printFrIds.get(j)==16)
+							rowData.add(" " + printFrList.get(i).getGstNumber());
+						
+						if(printFrIds.get(j)==17)
+							rowData.add(" " + printFrList.get(i).getShopsLogitude());
+						
+						if(printFrIds.get(j)==18)
+							rowData.add(" " + printFrList.get(i).getShopsLatitude());
+						
+						if(printFrIds.get(j)==19)
+							rowData.add(" " + printFrList.get(i).getPincodeWeServed());
+						
+						if(printFrIds.get(j)==20)
+							rowData.add(" " + printFrList.get(i).getNoOfKmAreaCover());
+						
+						if(printFrIds.get(j)==21)
+							rowData.add(" " + printFrList.get(i).getCoBankName());
+						
+						if(printFrIds.get(j)==22)
+							rowData.add(" " + printFrList.get(i).getCoBankBranchName());
+						
+						if(printFrIds.get(j)==23)
+							rowData.add(" " + printFrList.get(i).getCoBankIfscCode());
+						
+						if(printFrIds.get(j)==24)
+							rowData.add(" " + printFrList.get(i).getCoBankAccNo());
+						
+						if(printFrIds.get(j)==25)
+							rowData.add(" " + printFrList.get(i).getPaymentGetwayLink());
+						
+						if(printFrIds.get(j)==26)
+							rowData.add(" " + printFrList.get(i).getPaymentGetwayLinkSameAsParent());
+						
+						if(printFrIds.get(j)==27)
+							rowData.add(" " + printFrList.get(i).getPanNo());
+						
+						if(printFrIds.get(j)==28)
+							rowData.add(printFrList.get(i).getExVar6()!=null ? printFrList.get(i).getExVar6()+" to "+printFrList.get(i).getExVar7():"");
+						
+						if(printFrIds.get(j)==29)
+							rowData.add(" " + printFrList.get(i).getExFloat1());
+						
+						if(printFrIds.get(j)==30)
+							rowData.add(" " + printFrList.get(i).getExFloat2());
+						
+						if(printFrIds.get(j)==31)
+							rowData.add(" " + printFrList.get(i).getExFloat3());
+						
+						if(printFrIds.get(j)==32)
+							rowData.add(" " + printFrList.get(i).getExFloat4());
+						
+						if(printFrIds.get(j)==33)
+							rowData.add(" " + printFrList.get(i).getExFloat5());	
+						
+					}
+					srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "Franchise");
+				session.setAttribute("reportNameNew", "Franchise List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Franchise Excel");
+				
+				
+				
+			}catch (Exception e) {
+				// TODO: handle exception
+			}
+			return printFrList;
+		}
+		
+		@RequestMapping(value = "pdf/getFranchiseIdsListPdf", method = RequestMethod.GET)
+		public ModelAndView getFranchiseIdsListPdf(HttpServletRequest request,
+				HttpServletResponse response) {
+			ModelAndView model = new ModelAndView("pdfs/franchiseListPdf");
+			try {
+				HttpSession session = request.getSession();
+				CompMaster company = (CompMaster) session.getAttribute("company");
+				
+					model.addObject("printFrList", printFrList);
+					model.addObject("printFrIds", printFrIds);
+					model.addObject("company", company.getCompanyName());
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			return model;
+			
+		}
 }

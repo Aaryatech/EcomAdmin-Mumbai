@@ -26,6 +26,7 @@
 <body class="sidebar-xs">
 <c:url var="getFrDetailById" value="getFrDetailById"/>
 <c:url value="deleteSelMultiFranchises" var="deleteSelMultiFranchises"></c:url>
+<c:url value="getFranchisePrintIds" var="getFranchisePrintIds"/>
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -71,7 +72,7 @@
 					<table class="table datatable-header-basic" id="printtable">
 						<thead>
 							<tr>
-								<th width="10%">Sr. No. &nbsp; <input type="checkbox" name="selAll" id="selAll"/></th>
+								<th width="10%">Sr. No. &nbsp; <input type="checkbox" name="selAll" id="selAll" class="selAllTab"></th>
 								<th>Franchise</th>
 								<th>Contact No.</th>
 								<th>FDA Lic. Expiry Date</th>
@@ -124,18 +125,55 @@
 							</button>
 
 							<button type="button" class="btn btn-primary" id="submtbtn1"
-								onclick="pressBtn(1)">
-								Excel <i class="far fa-file-excel"></i>
-							</button>
-
-							<button type="button" class="btn btn-primary" id="submtbtn1"
-								onclick="pressBtn(1)">
-								Pdf <i class="fas fa-file-pdf"></i>
+							data-toggle="modal" data-target="#modal_theme_primary" onclick="getHeaders()">
+								Pdf/Excel <i class="fas fa-file-pdf"></i>
 							</button>
 						
 						</div>
 					</div>
 				</div>
+				<table class="table datatable-header-basic" id="printtable2" style="display: none;">
+						<thead>
+							<tr>
+								<th width="10%">Sr. No</th>
+								<th>Code</th>
+								<th>Franchise</th>
+								<th>Opening Date</th>
+								<th>Owner's DOB</th>
+								<th>Email</th>
+								<th>Contact</th>
+								<th>Address</th>
+								<th>City</th>
+								<th>Pincode</th>
+								<th>Status</th>
+								<th>Rating</th>
+								<th>FDA No.</th>
+								<th>FDA Lic.Expiry</th>
+								<th>GST Type</th>
+								<th>GST No.</th>
+								<th>Longitude</th>
+								<th>Latitude</th>
+								<th>Served Pincodes</th>
+								<th>Km. Cover</th>
+								<th>Bank</th>
+								<th>Branch</th>
+								<th>IFSC</th>
+								<th>A/C No.</th>
+								<th>Payment Gateway</th>
+								<th>Parent P/G</th>
+								<th>PAN</th>
+								<th>Charges B/w Date</th>
+								<th>Surcharge Fees</th>
+								<th>Packing Chg</th>
+								<th>Handling Chg</th>
+								<th>Extra Chg</th>
+								<th>Round Off Amt</th>					
+							</tr>
+						</thead>
+						<tbody>
+						
+						</tbody>
+					</table>					
 				<!-- /colReorder integration -->
 
 			</div>
@@ -151,7 +189,7 @@
 
 	</div>
 	<!-- /page content -->
-
+<script src="${pageContext.request.contextPath}/resources/assets/commanjs/checkAll.js"></script>
 
 	<script type="text/javascript">
 		//Custom bootbox dialog
@@ -527,17 +565,120 @@
 	
 	
 	///////////////////////////////////////////
-	$(document).ready(
-
-			function() {
-
-				$("#selAll").click(
-						function() {
-							$('#printtable tbody input[type="checkbox"]')
-									.prop('checked', this.checked);
-
-						});
-			});
 	</script>
+	
+	</script>
+	 <!-- Primary modal -->
+				<div id="modal_theme_primary" class="modal fade" tabindex="-1">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header bg-primary">
+								<h6 class="modal-title">Select Header</h6>
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+							</div>
+				
+							<div class="modal-body">
+								<table class="table table-bordered table-hover table-striped"
+										width="100%" id="modelTable">
+									<thead>
+										<tr>
+											<th width="15">Sr.No.
+											<input type="checkbox" name="selAll" id="selAllChk"/>
+											</th>
+											<th>Headers</th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+								<span class="validation-invalid-label" id="error_modelchks"
+										style="display: none;">Select Check Box.</span>
+							</div>
+
+							<div class="modal-footer">
+								<button type="button" class="btn bg-primary" id="expExcel" onclick="getIdsReport(1)">Excel</button>
+								<button type="button" class="btn bg-primary" onclick="getIdsReport(2)">Pdf</button>
+							</div>
+						</div>
+					</div>
+				</div>
+	<script>
+				function getHeaders(){
+					$('#modelTable td').remove();
+				var thArray = [];
+	
+				$('#printtable2 > thead > tr > th').each(function(){
+				    thArray.push($(this).text())
+				})
+				//console.log(thArray[0]);
+					
+				var seq = 0;
+					for (var i = 0; i < thArray.length; i++) {
+						seq=i+1;					
+						var tr1 = $('<tr></tr>');
+						tr1.append($('<td style="padding: 7px; line-height:0; border-top:0px;"></td>').html('<input type="checkbox" class="chkcls" name="chkcls'
+								+ seq
+								+ '" id="catCheck'
+								+ seq
+								+ '" value="'
+								+ seq
+								+ '">') );
+						tr1.append($('<td style="padding: 7px; line-height:0; border-top:0px;"></td>').html(innerHTML=thArray[i]));
+						$('#modelTable tbody').append(tr1);
+					}
+				}
+				
+				$(document).ready(
+
+						function() {
+
+							$("#selAllChk").click(
+									function() {
+										$('#modelTable tbody input[type="checkbox"]')
+												.prop('checked', this.checked);
+
+									});
+						});
+				
+				  function getIdsReport(val) {
+					  var isError = false;
+						var checked = $("#modal_theme_primary input:checked").length > 0;
+					
+						if (!checked) {
+							$("#error_modelchks").show()
+							isError = true;
+						} else {
+							$("#error_modelchks").hide()
+							isError = false;
+						}
+
+						if(!isError){
+					  var elemntIds = [];										
+								
+								$(".chkcls:checkbox:checked").each(function() {
+									elemntIds.push($(this).val());
+								}); 
+														
+						$
+						.getJSON(
+								'${getFranchisePrintIds}',
+								{
+									elemntIds : JSON.stringify(elemntIds),
+									val : val,
+									ajax : 'true'
+								},
+								function(data) {
+									if(data!=null){
+										$("#modal_theme_primary").modal('hide');
+										if(val==1){
+											window.open("${pageContext.request.contextPath}/exportToExcelNew");
+											document.getElementById("expExcel").disabled = true;
+										}else{
+											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getFranchiseIdsListPdf');
+										}
+									}
+								});
+						}
+					}		
+				</script>
 </body>
 </html>
