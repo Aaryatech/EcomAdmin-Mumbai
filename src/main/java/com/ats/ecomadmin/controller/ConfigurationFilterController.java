@@ -1808,11 +1808,12 @@ public class ConfigurationFilterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Show Comp Testimonial List
+	List<CompanyTestomonials> testimonialList = new ArrayList<CompanyTestomonials>();
 	@RequestMapping(value = "/showCompTestimonial", method = RequestMethod.GET)
 	public String showCompTestimonial(HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		String mav = new String();
-		List<CompanyTestomonials> testimonialList = new ArrayList<CompanyTestomonials>();
+		
 		try {
 
 			HttpSession session = request.getSession();
@@ -1841,6 +1842,48 @@ public class ConfigurationFilterController {
 				model.addAttribute("testimonialList", testimonialList);
 
 				model.addAttribute("title", "Company Testimonial List");
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+					rowData.add("Sr No.");				
+					rowData.add("Name");
+					rowData.add("Designation");
+					rowData.add("Message");
+					rowData.add("Status");
+				
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < testimonialList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					
+					rowData.add(" "+srno);					
+					rowData.add(" " + testimonialList.get(i).getName());
+					rowData.add(" " + testimonialList.get(i).getDesignation());	
+					rowData.add(" " + testimonialList.get(i).getMessage());				
+					rowData.add(testimonialList.get(i).getIsActive() == 1 ? "Active" : "In-Active");	
+					
+					srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "CompanyTestimonial");
+				session.setAttribute("reportNameNew", "Company Testimonial List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Company Testimonial Excel");
+				
 
 				Info add = AccessControll.checkAccess("showCompTestimonial", "showCompTestimonial", "0", "1", "0", "0",
 						newModuleList);
@@ -1865,6 +1908,24 @@ public class ConfigurationFilterController {
 			e.printStackTrace();
 		}
 		return mav;
+	}
+	
+	@RequestMapping(value = "pdf/getCompTestimonlListPdf", method = RequestMethod.GET)
+	public ModelAndView getCompTestimonlListPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/compTestimnlPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+			
+				model.addObject("testimonialList", testimonialList);
+				model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
 	}
 
 	// Created By :- Mahendra Singh

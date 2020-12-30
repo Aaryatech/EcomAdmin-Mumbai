@@ -1983,7 +1983,7 @@ public class CompanyAdminController {
 				ExportToExcel expoExcel = new ExportToExcel();
 				List<String> rowData = new ArrayList<String>();
 
-					rowData.add("Sr No");				
+					rowData.add("Sr No.");				
 					rowData.add("Sub Category");
 					rowData.add("Category");
 					rowData.add("Code");
@@ -2054,8 +2054,6 @@ public class CompanyAdminController {
 		try {
 			HttpSession session = request.getSession();
 			CompMaster company = (CompMaster) session.getAttribute("company");
-			
-			System.out.println("proIds Found-----------"+subCatList);
 			
 				model.addObject("subCatList", subCatList);
 				model.addObject("company", company.getCompanyName());
