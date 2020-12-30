@@ -2998,6 +2998,7 @@ public class MasterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Show Language List
+	List<Language> langPrintList = new ArrayList<Language>();
 	@RequestMapping(value = "/showLanguage", method = RequestMethod.GET)
 	public String addBasicMaster(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -3031,6 +3032,44 @@ public class MasterController {
 				model.addAttribute("langList", langList);
 
 				model.addAttribute("title", "Language List");
+				langPrintList = langList;
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+					rowData.add("Sr No.");				
+					rowData.add("Code");
+					rowData.add("Language");
+					rowData.add("Status");
+				
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < langList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					rowData.add(" " + srno);
+
+					rowData.add(" " + langList.get(i).getLangCode());
+					rowData.add(" " + langList.get(i).getLangName());
+					rowData.add(langList.get(i).getIsActive() == 1 ? "Active" : "In-Active");
+					srno = srno + 1;
+
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "LanguageList");
+				session.setAttribute("reportNameNew", "Language List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Language List Excel");
 
 				Info add = AccessControll.checkAccess("showLanguage", "showLanguage", "0", "1", "0", "0",
 						newModuleList);
@@ -3055,6 +3094,23 @@ public class MasterController {
 		}
 
 		return mav;
+	}
+	
+	
+	@RequestMapping(value = "pdf/getLanguageListPdf", method = RequestMethod.GET)
+	public String getLanguageListPdf(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+				model.addAttribute("langPrintList", langPrintList);
+				model.addAttribute("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "pdfs/languageListPdf";
+		
 	}
 
 	// Created By :- Mahendra Singh

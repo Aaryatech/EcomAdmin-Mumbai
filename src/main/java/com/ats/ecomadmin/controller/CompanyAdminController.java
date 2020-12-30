@@ -733,7 +733,7 @@ public class CompanyAdminController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :-Customer List
-
+	List<GetCustomerInfo> custPrintList = new ArrayList<GetCustomerInfo>();
 	@RequestMapping(value = "/showCustomers", method = RequestMethod.GET)
 	public String showCustomers(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -753,12 +753,16 @@ public class CompanyAdminController {
 
 				mav = "masters/customerList";
 
+				int compId = (int) session.getAttribute("companyId");
+
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				
 
 				GetCustomerInfo[] userArr = Constants.getRestTemplate()
 						.getForObject(Constants.url + "getAllCustomerDetailInfo", GetCustomerInfo[].class);
 				List<GetCustomerInfo> userList = new ArrayList<GetCustomerInfo>(Arrays.asList(userArr));
-
+					
+				
 				for (int i = 0; i < userList.size(); i++) {
 
 					userList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(userList.get(i).getCustId())));
@@ -766,6 +770,8 @@ public class CompanyAdminController {
 				model.addAttribute("custList", userList);
 				model.addAttribute("title", "Customer List");
 
+				custPrintList = userList; 
+				
 				Info add = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "1", "0", "0",
 						newModuleList);
 				Info edit = AccessControll.checkAccess("showCustomers", "showCustomers", "0", "0", "1", "0",
@@ -795,7 +801,126 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	
+	List<Long> custIds = new ArrayList<Long>();
+	@RequestMapping(value = "/getCustomerPrintIds", method = RequestMethod.GET)
+	public @ResponseBody List<GetCustomerInfo> getElementIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));			
+			String selctId = request.getParameter("elemntIds");
 
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+		
+			
+			int compId = (int) session.getAttribute("companyId");
+			
+			custIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+		
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			
+			for (int i = 0; i < custIds.size(); i++) {
+				
+				if(custIds.get(i)==1)
+					rowData.add("Sr No");
+				
+				if(custIds.get(i)==2)
+				rowData.add("Customer Name");
+				
+				if(custIds.get(i)==3)
+				rowData.add("Moile No.");
+				
+				if(custIds.get(i)==4)
+				rowData.add("Company");
+				
+				if(custIds.get(i)==5)
+				rowData.add("City");
+				
+				if(custIds.get(i)==6)
+				rowData.add("Date Of Birth");
+				
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < custPrintList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+
+				for (int j = 0; j < custIds.size(); j++) {
+				
+					if(custIds.get(j)==1)
+						rowData.add(" "+srno);
+					
+					if(custIds.get(j)==2)
+					rowData.add(" " + custPrintList.get(i).getCustName());
+					
+					if(custIds.get(j)==3)
+					rowData.add(" " + custPrintList.get(i).getCustMobileNo());
+					
+					if(custIds.get(j)==4)
+					rowData.add(" " + custPrintList.get(i).getCompanyName());
+					
+					if(custIds.get(j)==5)
+					rowData.add(" " + custPrintList.get(i).getCityName());
+					
+					if(custIds.get(j)==6)
+					rowData.add(" " + custPrintList.get(i).getDateOfBirth());
+				
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "CustomerList");
+			session.setAttribute("reportNameNew", "Customer List");
+			session.setAttribute("searchByNew", " NA");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Customer List Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return custPrintList;
+	}
+	
+	@RequestMapping(value = "pdf/getCustomerListPdf", method = RequestMethod.GET)
+	public String getCustomerListPdf(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		try {
+			System.out.println("custPrintList------------"+custPrintList);
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+				model.addAttribute("custPrintList", custPrintList);
+				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("custIds", custIds);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "pdfs/custListPdf";
+		
+	}
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 15-09-2020
