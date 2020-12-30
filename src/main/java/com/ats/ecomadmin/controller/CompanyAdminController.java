@@ -369,6 +369,7 @@ public class CompanyAdminController {
 
 					userList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(userList.get(i).getCompanyId())));
 				}
+						
 				model.addAttribute("compList", userList);
 				model.addAttribute("title", "Company List");
 
@@ -400,6 +401,233 @@ public class CompanyAdminController {
 		}
 
 		return mav;
+	}
+
+	List<CompMaster> printCompList = new ArrayList<CompMaster>();
+	List<Long> compIds = new ArrayList<Long>();
+	@RequestMapping(value = "/getCompanyPrintIds", method = RequestMethod.GET)
+	public @ResponseBody List<CompMaster> getCompanyPrintIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));			
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+			
+			int compId = (int) session.getAttribute("companyId");
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+			CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCompany",
+					CompMaster[].class);
+			printCompList = new ArrayList<CompMaster>(Arrays.asList(userArr));
+
+			compIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			
+			for (int i = 0; i < compIds.size(); i++) {
+				
+				if(compIds.get(i)==1)
+				rowData.add("Sr No.");
+				
+				if(compIds.get(i)==2)
+				rowData.add("Company Name");
+				
+				if(compIds.get(i)==3)
+				rowData.add("Prefix");
+				
+				if(compIds.get(i)==4)
+				rowData.add("Opening Date");
+				
+				if(compIds.get(i)==5)
+				rowData.add("Contact");
+				
+				if(compIds.get(i)==6)
+				rowData.add("Email");
+				
+				if(compIds.get(i)==7)
+				rowData.add("Address");
+				
+				if(compIds.get(i)==8)
+				rowData.add("City");
+				
+				if(compIds.get(i)==9)
+					rowData.add("Website");
+				
+				if(compIds.get(i)==10)
+					rowData.add("Is Parent");
+				
+				if(compIds.get(i)==11)
+					rowData.add("GST Type");
+				
+				if(compIds.get(i)==12)
+					rowData.add("GST No.");
+				
+				if(compIds.get(i)==13)
+					rowData.add("GST Code");
+				
+				if(compIds.get(i)==14)
+					rowData.add("Bank");
+				
+				if(compIds.get(i)==15)
+					rowData.add("Branch");
+				
+				if(compIds.get(i)==16)
+					rowData.add("IFSC Code");
+				
+				if(compIds.get(i)==17)
+					rowData.add("A/c No.");
+				
+				if(compIds.get(i)==18)
+					rowData.add("CIN No.");
+				
+				if(compIds.get(i)==19)
+					rowData.add("FDA No.");
+				
+				if(compIds.get(i)==20)
+					rowData.add("FDA Declaration");
+				
+				if(compIds.get(i)==21)
+					rowData.add("PAN");
+				
+				if(compIds.get(i)==22)
+					rowData.add("Payment Gateway Applicable");				
+				
+				if(compIds.get(i)==23)
+					rowData.add("Payment Link");
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < printCompList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				
+				for (int j = 0; j < compIds.size(); j++) {
+				
+					if(compIds.get(j)==1)
+						rowData.add(" "+srno);
+					
+					if(compIds.get(j)==2)
+					rowData.add(" " + printCompList.get(i).getCompanyName());
+					
+					if(compIds.get(j)==3)
+					rowData.add(" " + printCompList.get(i).getCompanyPrefix());
+					
+					if(compIds.get(j)==4)
+					rowData.add(" " + printCompList.get(i).getCompOpeningDate());
+					
+					if(compIds.get(j)==5)
+					rowData.add(" " + printCompList.get(i).getCompContactNo());
+					
+					if(compIds.get(j)==6)
+					rowData.add(" " + printCompList.get(i).getCompEmailAddress());
+					
+					if(compIds.get(j)==7)
+					rowData.add(" " + printCompList.get(i).getCompAddress());
+				
+					if(compIds.get(j)==8)
+					rowData.add(" " + printCompList.get(i).getExVar4());
+					
+					if(compIds.get(j)==9)
+					rowData.add(printCompList.get(i).getCompWebsite());
+					
+					if(compIds.get(j)==10)
+						rowData.add(printCompList.get(i).getCompanyType() == 1 ? "Yes" : "No");
+					
+					if(compIds.get(j)==11)
+						rowData.add(printCompList.get(i).getCompGstType() == 1 ? "Regular" : printCompList.get(i).getCompGstType() == 2 ? "Composite" : "Non-Register");
+					
+					if(compIds.get(j)==12)
+						rowData.add(printCompList.get(i).getCompGstNo());
+					
+					if(compIds.get(j)==13)
+						rowData.add(printCompList.get(i).getCompStateGstCode());
+					
+					if(compIds.get(j)==14)
+						rowData.add(printCompList.get(i).getCompBankName());
+					
+					if(compIds.get(j)==15)
+						rowData.add(printCompList.get(i).getCompBankBranchName());
+					
+					if(compIds.get(j)==16)
+						rowData.add(printCompList.get(i).getCompBankIfsc());
+					
+					if(compIds.get(j)==17)
+						rowData.add(printCompList.get(i).getCompBankAccNo());
+					
+					if(compIds.get(j)==18)
+						rowData.add(printCompList.get(i).getCompCinNo());
+					
+					if(compIds.get(j)==19)
+						rowData.add(printCompList.get(i).getCompFdaNo());
+					
+					if(compIds.get(j)==20)
+						rowData.add(printCompList.get(i).getCompFdaDeclarText());
+					
+					if(compIds.get(j)==21)
+						rowData.add(printCompList.get(i).getCompPanNo());
+					
+					if(compIds.get(j)==22)
+						rowData.add(printCompList.get(i).getPaymentGatewayApplicable()==1 ? "Yes" : "No");
+					
+					if(compIds.get(j)==23)
+						rowData.add(printCompList.get(i).getPaymentGatewayLink());
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "Company List");
+			session.setAttribute("reportNameNew", "Company List");
+			session.setAttribute("searchByNew", "All Company");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Company Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return printCompList;
+	}
+	
+@RequestMapping(value = "pdf/getCompanyListPdf", method = RequestMethod.GET)
+	public ModelAndView getCompanyListPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/companyListPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+			
+				model.addObject("printCompList", printCompList);
+				model.addObject("compIds", compIds);
+				model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
 	}
 
 	/*--------------------------------------------------------------------------------*/

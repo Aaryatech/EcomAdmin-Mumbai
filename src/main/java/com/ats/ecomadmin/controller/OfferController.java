@@ -658,12 +658,12 @@ public class OfferController {
 									.map(Integer::parseInt).collect(Collectors.toList());
 							String ids = " ";
 							for (int k = 0; k < applicableIds.size(); k++) {
-								 ids +=applicableIds.get(k) == 1 ? " Monday"
-										: applicableIds.get(k) == 2 ? " Tuesday"
-												: applicableIds.get(k) == 3 ? " Wednesday"
-														: applicableIds.get(k) == 4 ? " Thursday"
-																: applicableIds.get(k) == 5 ? " Friday"
-																		: applicableIds.get(k) == 5 ? " Saturday" : " Sunday";
+								 ids +=applicableIds.get(k) == 2 ? " Monday"
+										: applicableIds.get(k) == 3 ? " Tuesday"
+												: applicableIds.get(k) == 4 ? " Wednesday"
+														: applicableIds.get(k) == 5 ? " Thursday"
+																: applicableIds.get(k) == 6 ? " Friday"
+																		: applicableIds.get(k) == 7 ? " Saturday" : " Sunday";
 
 								
 							}
