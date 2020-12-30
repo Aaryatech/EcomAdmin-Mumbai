@@ -269,7 +269,15 @@
 		}//end of if !isError
 	}
 	
-	
+	function exportToExcel() {
+		window.open("${pageContext.request.contextPath}/exportToExcelNew");
+		document.getElementById("expExcel").disabled = true;
+	}
+
+	function genPdf() {
+		window
+				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getCityListPdf");
+	}
 	</script>
 </body>
 </html>

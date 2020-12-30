@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.tomcat.util.bcel.classfile.Constant;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
+import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.offer.GetConfigureOfferList;
@@ -548,7 +551,7 @@ public class OfferController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- showOfferList
-
+	List<OfferHeader> offerPrintList = new ArrayList<OfferHeader>();
 	@RequestMapping(value = "/showOfferList", method = RequestMethod.GET)
 	public ModelAndView showOfferList(HttpServletRequest request, HttpServletResponse response) {
 
@@ -563,11 +566,156 @@ public class OfferController {
 		OfferHeader[] arr = Constants.getRestTemplate().postForObject(Constants.url + "getAllOfferHeaderListByCompId",
 				map, OfferHeader[].class);
 		List<OfferHeader> offerList = new ArrayList<OfferHeader>(Arrays.asList(arr));
-
+		
 		model.addObject("offerList", offerList);
-
+		
+		offerPrintList = offerList;
+			
 		return model;
 	}
+	
+	
+	
+	List<Long> offerIds = new ArrayList<Long>();
+	@RequestMapping(value = "/getOfferPrintIds", method = RequestMethod.GET)
+	public @ResponseBody List<OfferHeader> getOfferPrintIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));			
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+		
+			
+			int compId = (int) session.getAttribute("companyId");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			
+			offerIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			
+			for (int i = 0; i < offerIds.size(); i++) {
+				
+				if(offerIds.get(i)==1)
+					rowData.add("Sr No");
+				
+				if(offerIds.get(i)==2)
+				rowData.add("Offer Name");
+				
+				if(offerIds.get(i)==3)
+				rowData.add("Type");
+				
+				if(offerIds.get(i)==4)
+				rowData.add("Day/Date");
+				
+				if(offerIds.get(i)==5)
+				rowData.add("Duration");
+				
+				if(offerIds.get(i)==6)
+				rowData.add("Offer On");
+				
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < offerPrintList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				
+				for (int j = 0; j < offerIds.size(); j++) {
+				
+					if(offerIds.get(j)==1)
+						rowData.add(" "+srno);
+					
+					if(offerIds.get(j)==2)
+					rowData.add(" " + offerPrintList.get(i).getOfferName());
+					
+					if(offerIds.get(j)==3)
+					rowData.add(offerPrintList.get(i).getType()==1 ? "POS" : "Online");
+					
+					if(offerIds.get(j)==4)
+					rowData.add(offerPrintList.get(i).getFrequencyType()==1? "Day" : "Date");
+					
+					if(offerIds.get(j)==5)
+						if(offerPrintList.get(i).getFrequencyType()==1) {
+							List<Integer> applicableIds = Stream.of(offerPrintList.get(i).getFrequency().split(","))
+									.map(Integer::parseInt).collect(Collectors.toList());
+							String ids = " ";
+							for (int k = 0; k < applicableIds.size(); k++) {
+								 ids +=applicableIds.get(k) == 1 ? " Monday"
+										: applicableIds.get(k) == 2 ? " Tuesday"
+												: applicableIds.get(k) == 3 ? " Wednesday"
+														: applicableIds.get(k) == 4 ? " Thursday"
+																: applicableIds.get(k) == 5 ? " Friday"
+																		: applicableIds.get(k) == 5 ? " Saturday" : " Sunday";
+
+								
+							}
+							rowData.add(ids);
+						}else {
+							rowData.add(CommonUtility.convertToDMY(offerPrintList.get(i).getFromDate())+" "+ CommonUtility.convertToDMY(offerPrintList.get(i).getToDate()));
+						}
+					
+					if(offerIds.get(j)==6)
+					rowData.add(offerPrintList.get(i).getOfferType()==1 ? "Bill" : "Item");				
+					
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "Offer");
+			session.setAttribute("reportNameNew", "Offer List");
+			session.setAttribute("searchByNew", " NA");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Offer List Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return offerPrintList;
+	}
+	
+	@RequestMapping(value = "pdf/getOfferListPdf", method = RequestMethod.GET)
+	public String getOfferListPdf(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+				model.addAttribute("offerPrintList", offerPrintList);
+				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("offerIds", offerIds);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "pdfs/offerListPdf";
+		
+	}
+	
 
 	// ------DELETE OFFER HEADER------------
 	

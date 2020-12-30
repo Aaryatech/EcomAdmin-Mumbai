@@ -4130,6 +4130,7 @@ public class MasterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Show Grievance Type List
+	List<GrievencesTypeInstructn> grievList = new ArrayList<GrievencesTypeInstructn>();
 	@RequestMapping(value = "/showGrievencesTypeIntructn", method = RequestMethod.GET)
 	public String GrievencesTypeInstructn(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String mav = new String();
@@ -4154,7 +4155,7 @@ public class MasterController {
 
 				GrievencesTypeInstructn[] grievArr = Constants.getRestTemplate()
 						.postForObject(Constants.url + "getAllGrievTypeInstruct", map, GrievencesTypeInstructn[].class);
-				List<GrievencesTypeInstructn> grievList = new ArrayList<GrievencesTypeInstructn>(
+				grievList = new ArrayList<GrievencesTypeInstructn>(
 						Arrays.asList(grievArr));
 
 				for (int i = 0; i < grievList.size(); i++) {
@@ -4165,6 +4166,43 @@ public class MasterController {
 				model.addAttribute("grievList", grievList);
 				model.addAttribute("title", "Grievances Type Instruction List");
 
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+					rowData.add("Sr No");				
+					rowData.add("Instriction Caption");
+					rowData.add("Active");
+				
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < grievList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					rowData.add(" "+srno);
+					
+						rowData.add(" " + grievList.get(i).getCaption());			
+						rowData.add(grievList.get(i).getIsActive() == 1 ? "Active" : "In-Active");					
+						srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "GrievanceTypeInstctnList");
+				session.setAttribute("reportNameNew", "Grievance Type Instruction List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Grievance Type Instruction Excel");
+				
+				
 				Info add = AccessControll.checkAccess("showGrievencesTypeIntructn", "showGrievencesTypeIntructn", "0",
 						"1", "0", "0", newModuleList);
 				Info edit = AccessControll.checkAccess("showGrievencesTypeIntructn", "showGrievencesTypeIntructn", "0",
@@ -4189,6 +4227,22 @@ public class MasterController {
 		}
 
 		return mav;
+	}
+	
+	@RequestMapping(value = "pdf/getGrievInstListPdf", method = RequestMethod.GET)
+	public String getGrievInstListPdf(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+				model.addAttribute("grievList", grievList);
+				model.addAttribute("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "pdfs/grievInstListPdf";
+		
 	}
 
 	// Created By :- Mahendra Singh
