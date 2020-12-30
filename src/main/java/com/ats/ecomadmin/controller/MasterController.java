@@ -4455,6 +4455,7 @@ public class MasterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Show Grievances
+	List<GrievencesInstruction> grievPrintList = new ArrayList<GrievencesInstruction>();
 	@RequestMapping(value = "/showGrievences", method = RequestMethod.GET)
 	public String showGrievences(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -4487,9 +4488,51 @@ public class MasterController {
 					grievList.get(i)
 							.setExVar1(FormValidation.Encrypt(String.valueOf(grievList.get(i).getGrievanceId())));
 				}
+
 				model.addAttribute("grievList", grievList);
 				model.addAttribute("title", "Grievances Instruction List");
+				
+				grievPrintList = grievList;
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+					rowData.add("Sr No.");				
+					rowData.add("Grievance Caption");
+					rowData.add("Grievance Type");
+					rowData.add("Status");
+				
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < grievList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					rowData.add(" "+srno);
+					
+						rowData.add(" " + grievList.get(i).getCaption());	
+						rowData.add(" " + grievList.get(i).getExVar3());	
+						rowData.add(grievList.get(i).getIsActive() == 1 ? "Active" : "In-Active");					
+						srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "GrievancesInstructionList");
+				session.setAttribute("reportNameNew", "Grievances Instruction List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Grievances Instruction List Excel");
+				
+				
 				Info add = AccessControll.checkAccess("showGrievences", "showGrievences", "0", "1", "0", "0",
 						newModuleList);
 				Info edit = AccessControll.checkAccess("showGrievences", "showGrievences", "0", "0", "1", "0",
@@ -4515,6 +4558,22 @@ public class MasterController {
 		return mav;
 	}
 
+	@RequestMapping(value = "pdf/getGrievListPdf", method = RequestMethod.GET)
+	public String getGrievListPdf(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+				model.addAttribute("grievPrintList", grievPrintList);
+				model.addAttribute("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "pdfs/grievListPdf";
+		
+	}
+	
 	// Created By :- Mahendra Singh
 	// Created On :- 16-09-2020
 	// Modified By :- NA
