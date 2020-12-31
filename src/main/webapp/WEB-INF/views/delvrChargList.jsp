@@ -114,6 +114,15 @@
 								onclick="deletSelctd()">
 								Delete <i class="far fa-trash-alt"></i>
 							</button>
+							
+							<button type="button" class="btn btn-primary" id="submtbtn"
+								onclick="exportToExcel()">
+								Excel <i class="far fa-file-excel"></i>
+							</button> 
+
+							<button type="button" class="btn btn-primary" id="submtbtn1"  onclick="genPdf()">
+								Pdf<i class="fas fa-file-pdf"></i>
+							</button>
 							</div>
 					</div>
 				</div>
@@ -304,6 +313,15 @@
 		}//end of if !isError
 	}
 
+	function exportToExcel() {
+		window.open("${pageContext.request.contextPath}/exportToExcelNew");
+		document.getElementById("expExcel").disabled = true;
+	}
+
+	function genPdf() {
+		window
+				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getDelvrChrgListPdf");
+	}
 	</script>
 </body>
 </html>
