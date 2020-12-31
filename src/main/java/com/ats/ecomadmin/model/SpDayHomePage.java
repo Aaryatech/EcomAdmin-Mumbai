@@ -25,6 +25,9 @@ public class SpDayHomePage {
 	private int exInt2;
 	private String exVar1;
 	private String exVar2;
+	
+	private String franchises;//For Excel Pdf 31-12-2020
+	private String filterName;//For Excel Pdf 31-12-2020
 
 	public int getSpDayId() {
 		return spDayId;
@@ -210,6 +213,22 @@ public class SpDayHomePage {
 		this.exVar2 = exVar2;
 	}
 
+	public String getFranchises() {
+		return franchises;
+	}
+
+	public void setFranchises(String franchises) {
+		this.franchises = franchises;
+	}
+
+	public String getFilterName() {
+		return filterName;
+	}
+
+	public void setFilterName(String filterName) {
+		this.filterName = filterName;
+	}
+
 	@Override
 	public String toString() {
 		return "SpDayHomePage [spDayId=" + spDayId + ", spdayName=" + spdayName + ", spdayCaptionHomePage="
@@ -219,7 +238,9 @@ public class SpDayHomePage {
 				+ ", frIds=" + frIds + ", tagIds=" + tagIds + ", captionOnProductPage=" + captionOnProductPage
 				+ ", insertDateTime=" + insertDateTime + ", updateDateTime=" + updateDateTime + ", insertUserId="
 				+ insertUserId + ", updateUserId=" + updateUserId + ", exInt1=" + exInt1 + ", exInt2=" + exInt2
-				+ ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
+				+ ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", franchises=" + franchises + ", filterName="
+				+ filterName + "]";
 	}
+
 	
 }

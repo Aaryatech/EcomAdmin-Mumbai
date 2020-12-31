@@ -2559,7 +2559,6 @@ public class CompanyAdminController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Descriprion :- Banner List
-
 	@RequestMapping(value = "/showBannerList", method = RequestMethod.GET)
 	public String showBannerList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -2587,7 +2586,7 @@ public class CompanyAdminController {
 				BannerPage[] subCatArray = Constants.getRestTemplate()
 						.postForObject(Constants.url + "getAllBannerByCompId", map, BannerPage[].class);
 				subCatList = new ArrayList<BannerPage>(Arrays.asList(subCatArray));
-
+				
 				for (int i = 0; i < subCatList.size(); i++) {
 					subCatList.get(i)
 							.setExVar1(FormValidation.Encrypt(String.valueOf(subCatList.get(i).getBannerId())));
@@ -2626,6 +2625,139 @@ public class CompanyAdminController {
 
 		return mav;
 	}
+	
+	List<BannerPage> bannerPrintList = new ArrayList<BannerPage>();
+	List<Long> bannerIds = new ArrayList<Long>();
+	@RequestMapping(value = "/getBannerPrintIds", method = RequestMethod.GET)
+	public @ResponseBody List<BannerPage> getBannerPrintIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));			
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+		
+			
+			int compId = (int) session.getAttribute("companyId");
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			BannerPage[] bnrArray = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllBannerDtl", map, BannerPage[].class);
+			bannerPrintList = new ArrayList<BannerPage>(Arrays.asList(bnrArray));
+			
+			
+			bannerIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			
+			for (int i = 0; i < bannerIds.size(); i++) {
+				
+				if(bannerIds.get(i)==1)
+					rowData.add("Sr No");
+				
+				if(bannerIds.get(i)==2)
+				rowData.add("Event Name");
+				
+				if(bannerIds.get(i)==3)
+				rowData.add("Sort No.");
+				
+				if(bannerIds.get(i)==4)
+				rowData.add("Caption on Product Page");
+				
+				if(bannerIds.get(i)==5)
+				rowData.add("Status");
+				
+				if(bannerIds.get(i)==6)
+				rowData.add("Franchise");
+				
+				if(bannerIds.get(i)==7)
+				rowData.add("Tags");
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < bannerPrintList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				
+				for (int j = 0; j < bannerIds.size(); j++) {
+				
+					if(bannerIds.get(j)==1)
+						rowData.add(" "+srno);
+					
+					if(bannerIds.get(j)==2)
+					rowData.add(" " + bannerPrintList.get(i).getBannerEventName());
+					
+					if(bannerIds.get(j)==3)
+					rowData.add(" " + bannerPrintList.get(i).getSortNo());
+					
+					if(bannerIds.get(j)==4)
+					rowData.add(" " + bannerPrintList.get(i).getCaptionOnproductPage());
+					
+					if(bannerIds.get(j)==5)
+						rowData.add(bannerPrintList.get(i).getIsActive() == 1 ? "Active"  : "In-Active");
+					
+					if(bannerIds.get(j)==6)
+					rowData.add(" " + bannerPrintList.get(i).getExVar2());
+				
+					if(bannerIds.get(j)==7)
+					rowData.add(" " + bannerPrintList.get(i).getExVar3());
+					
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+			}
+			
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "BannerList");
+			session.setAttribute("reportNameNew", "Banner List");
+			session.setAttribute("searchByNew", "All");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Banner List Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bannerPrintList;
+	}
+	
+	@RequestMapping(value = "pdf/getBannerListPdf", method = RequestMethod.GET)
+	public String getProductListPdf(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+				model.addAttribute("bannerPrintList", bannerPrintList);
+				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("bannerIds", bannerIds);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "pdfs/bannerListPdf";
+		
+	}
+	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil

@@ -4920,6 +4920,150 @@ public class MasterController {
 
 		return mav;
 	}
+	
+	List<SpDayHomePage> spPageListPrint = new ArrayList<SpDayHomePage>();
+	List<Long> spIds = new ArrayList<Long>();
+	@RequestMapping(value = "/getSpHomePagePrint", method = RequestMethod.GET)
+	public @ResponseBody List<SpDayHomePage> getElementIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));			
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+		
+			
+			int compId = (int) session.getAttribute("companyId");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			SpDayHomePage[] grievArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllSpDayHomePagesExl", map, SpDayHomePage[].class);
+			spPageListPrint = new ArrayList<SpDayHomePage>(Arrays.asList(grievArr));
+			
+			spIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			
+			for (int i = 0; i < spIds.size(); i++) {
+				
+				if(spIds.get(i)==1)
+				rowData.add("Sr No");
+				
+				if(spIds.get(i)==2)
+				rowData.add("SP Day Name");
+				
+				if(spIds.get(i)==3)
+				rowData.add("SP Day Caption");
+				
+				if(spIds.get(i)==4)
+				rowData.add("Franchise");
+				
+				if(spIds.get(i)==5)
+				rowData.add("Tags");
+				
+				if(spIds.get(i)==6)
+				rowData.add("Dates");
+				
+				if(spIds.get(i)==7)
+				rowData.add("Time");
+				
+				if(spIds.get(i)==8)
+				rowData.add("Sort No.");
+				
+				if(spIds.get(i)==9)
+				rowData.add("Active");
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < spPageListPrint.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+			
+				for (int j = 0; j < spIds.size(); j++) {
+				
+					if(spIds.get(j)==1)
+					rowData.add(" "+srno);
+					
+					if(spIds.get(j)==2)
+					rowData.add(" " + spPageListPrint.get(i).getSpdayName());
+					
+					if(spIds.get(j)==3)
+					rowData.add(" " + spPageListPrint.get(i).getSpdayCaptionHomePage());
+					
+					if(spIds.get(j)==4)
+					rowData.add(" " + spPageListPrint.get(i).getFranchises());
+					
+					if(spIds.get(j)==5)
+					rowData.add(" " + spPageListPrint.get(i).getFilterName());
+					
+					if(spIds.get(j)==6)
+					rowData.add(" " + spPageListPrint.get(i).getFromDate()+" to "+spPageListPrint.get(i).getFromDate());
+					
+					if(spIds.get(j)==7)
+					rowData.add(" " + spPageListPrint.get(i).getFromTime()+" to "+spPageListPrint.get(i).getToTime());
+				
+					if(spIds.get(j)==8)
+					rowData.add(" " + spPageListPrint.get(i).getSortNo());
+					
+					if(spIds.get(j)==9)
+					rowData.add(spPageListPrint.get(i).getIsActive() == 1 ? "Active" : "In-Active");
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "SpDayHomePageList");
+			session.setAttribute("reportNameNew", "Sp Day Home Page List");
+			session.setAttribute("searchByNew", " NA");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Sp Day Home Page List Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return spPageListPrint;
+	}
+	
+	@RequestMapping(value = "pdf/getSpHomePageListPdf", method = RequestMethod.GET)
+	public String getSpHomePageListPdf(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+				model.addAttribute("spPageListPrint", spPageListPrint);
+				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("spIds", spIds);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "pdfs/spPageListPdf";
+		
+	}
+	
 
 	// Created By :- Mahendra Singh
 	// Created On :- 16-09-2020
