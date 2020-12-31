@@ -536,7 +536,7 @@ public class MasterController {
 			session.setAttribute("exportExcelListNew", exportToExcelList);
 			session.setAttribute("excelNameNew", "Tax");
 			session.setAttribute("reportNameNew", "Tax List");
-			session.setAttribute("searchByNew", " NA");
+			session.setAttribute("searchByNew", " All");
 			session.setAttribute("mergeUpto1", "$A$1:$L$1");
 			session.setAttribute("mergeUpto2", "$A$2:$L$2");
 
@@ -3922,6 +3922,7 @@ public class MasterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Show Deliver Instruction
+	List<DeliveryInstruction> delvList = new ArrayList<DeliveryInstruction>();
 	@RequestMapping(value = "/showDeliveryInstructn", method = RequestMethod.GET)
 	public String showDeliveryInstructions(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -3947,14 +3948,54 @@ public class MasterController {
 
 				DeliveryInstruction[] delvArr = Constants.getRestTemplate()
 						.postForObject(Constants.url + "getAllDeliveryInstructions", map, DeliveryInstruction[].class);
-				List<DeliveryInstruction> delvList = new ArrayList<DeliveryInstruction>(Arrays.asList(delvArr));
-
+				delvList = new ArrayList<DeliveryInstruction>(Arrays.asList(delvArr));
+				
 				for (int i = 0; i < delvList.size(); i++) {
 
 					delvList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(delvList.get(i).getInstruId())));
 				}
 				model.addAttribute("delvList", delvList);
 				model.addAttribute("title", "Delivery Instruction List");
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+					rowData.add("Sr No.");				
+					rowData.add("Instruction Caption");
+					rowData.add("Description");
+					rowData.add("Status");
+				
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < delvList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					
+					rowData.add(" "+srno);					
+					rowData.add(" " + delvList.get(i).getInstructnCaption());
+					rowData.add(" " + delvList.get(i).getDescription());			
+					rowData.add(delvList.get(i).getIsActive()==1 ? "Active" : "In-Active");	
+					
+					srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "DeliveryInstruction");
+				session.setAttribute("reportNameNew", "Delivery Instruction List");
+				session.setAttribute("searchByNew", " All");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Delivery Instruction Excel");
+				
 
 				Info add = AccessControll.checkAccess("showDeliveryInstructn", "showDeliveryInstructn", "0", "1", "0",
 						"0", newModuleList);
@@ -3985,7 +4026,24 @@ public class MasterController {
 
 		return mav;
 	}
-
+	
+	@RequestMapping(value = "pdf/getDlvrInstListPdf", method = RequestMethod.GET)
+	public ModelAndView getSubCategoryPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/dlvrInstrtnPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+				model.addObject("delvList", delvList);
+				model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
+	}
+	
 	// Created By :- Mahendra Singh
 	// Created On :- 16-09-2020
 	// Modified By :- NA

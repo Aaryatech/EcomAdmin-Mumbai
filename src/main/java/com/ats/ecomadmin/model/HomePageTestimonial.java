@@ -21,6 +21,8 @@ public class HomePageTestimonial {
 	private int exInt2;
 	private String exVar1;
 	private String exVar2;
+	private String franchise;
+	private String desiName;
 
 	public int getTestimonialsId() {
 		return testimonialsId;
@@ -173,6 +175,21 @@ public class HomePageTestimonial {
 	public void setExVar2(String exVar2) {
 		this.exVar2 = exVar2;
 	}
+	public String getFranchise() {
+		return franchise;
+	}
+
+	public void setFranchise(String franchise) {
+		this.franchise = franchise;
+	}
+
+	public String getDesiName() {
+		return desiName;
+	}
+
+	public void setDesiName(String desiName) {
+		this.desiName = desiName;
+	}
 
 	@Override
 	public String toString() {
@@ -181,8 +198,8 @@ public class HomePageTestimonial {
 				+ ", designation=" + designation + ", sortNo=" + sortNo + ", isActive=" + isActive + ", delStatus="
 				+ delStatus + ", insertDateTime=" + insertDateTime + ", updateDateTime=" + updateDateTime
 				+ ", insertUserId=" + insertUserId + ", updateUserId=" + updateUserId + ", exInt1=" + exInt1
-				+ ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
+				+ ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", franchise=" + franchise
+				+ ", desiName=" + desiName + "]";
 	}
-	
 	
 }

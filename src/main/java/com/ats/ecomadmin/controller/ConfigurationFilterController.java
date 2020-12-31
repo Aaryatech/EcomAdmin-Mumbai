@@ -491,6 +491,7 @@ public class ConfigurationFilterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :-Show Home Page Product Config List
+	List<ProductHomPage> homePageList = new ArrayList<ProductHomPage>();
 	@RequestMapping(value = "/showHomePagePrdctConfig", method = RequestMethod.GET)
 	public String showHomePagePrdctConfig(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -507,7 +508,7 @@ public class ConfigurationFilterController {
 			map.add("compId", compId);
 			ProductHomPage[] homePageArr = Constants.getRestTemplate()
 					.postForObject(Constants.url + "getHomePageConfigProductList", map, ProductHomPage[].class);
-			List<ProductHomPage> homePageList = new ArrayList<ProductHomPage>(Arrays.asList(homePageArr));
+			homePageList = new ArrayList<ProductHomPage>(Arrays.asList(homePageArr));
 
 			for (int i = 0; i < homePageList.size(); i++) {
 
@@ -517,12 +518,67 @@ public class ConfigurationFilterController {
 			model.addAttribute("homePageList", homePageList);
 
 			model.addAttribute("title", "Home Page Product Configure List");
+			
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+				rowData.add("Sr No.");				
+				rowData.add("Type");
+				rowData.add("Status");
+			
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < homePageList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				
+				rowData.add(" "+srno);					
+				rowData.add(" " + homePageList.get(i).getExVar2());
+				rowData.add(homePageList.get(i).getIsActive()==1 ? "Active" : "In-Active");		
+				
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "HomePageConfigList");
+			session.setAttribute("reportNameNew", "Home Page Config List");
+			session.setAttribute("searchByNew", " NA");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Home Page Config List Excel");
 
 		} catch (Exception e) {
 			System.out.println("Execption in /showHomePagePrdctConfig : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return mav;
+	}
+	
+	@RequestMapping(value = "pdf/printHmPgConfigPdf", method = RequestMethod.GET)
+	public ModelAndView getSubCategoryPdf(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView model = new ModelAndView("pdfs/homePgConfigPdf");
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+				model.addObject("homePageList", homePageList);
+				model.addObject("company", company.getCompanyName());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
 	}
 
 	// Created By :- Mahendra Singh
@@ -824,6 +880,7 @@ public class ConfigurationFilterController {
 	// Modified By :- NA
 	// Modified On :- NA
 	// Description :- Show UOM List
+	List<HomePageTestimonial> testmnlListPrint = new ArrayList<HomePageTestimonial>();
 	@RequestMapping(value = "/showHomePageTestimonial", method = RequestMethod.GET)
 	public String showUomList(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -849,9 +906,10 @@ public class ConfigurationFilterController {
 				map.add("compId", compId);
 
 				HomePageTestimonial[] hmPgTestmonlArr = Constants.getRestTemplate()
-						.postForObject(Constants.url + "getTestimonials", map, HomePageTestimonial[].class);
-				testimonialList = new ArrayList<HomePageTestimonial>(Arrays.asList(hmPgTestmonlArr));
-
+						.postForObject(Constants.url + "getHomePgTestmnlExlPdf", map, HomePageTestimonial[].class);
+				testimonialList = new ArrayList<HomePageTestimonial>(Arrays.asList(hmPgTestmonlArr)); /* /getTestimonials*/
+				testmnlListPrint = testimonialList;
+				
 				for (int i = 0; i < testimonialList.size(); i++) {
 
 					testimonialList.get(i).setExVar1(
@@ -885,6 +943,138 @@ public class ConfigurationFilterController {
 		}
 		return mav;
 	}
+	
+
+	List<Long> testimnlIds = new ArrayList<Long>();
+	@RequestMapping(value = "/getHmPgTesmnlPrint", method = RequestMethod.GET)
+	public @ResponseBody List<HomePageTestimonial> getElementIds(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+		
+		try {
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));			
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+		
+			
+			int compId = (int) session.getAttribute("companyId");
+			
+			testimnlIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			
+			for (int i = 0; i < testimnlIds.size(); i++) {
+				
+				if(testimnlIds.get(i)==1)
+					rowData.add("Sr No");
+				
+				if(testimnlIds.get(i)==2)
+				rowData.add("Name");
+				
+				if(testimnlIds.get(i)==3)
+				rowData.add("Caption");
+				
+				if(testimnlIds.get(i)==4)
+				rowData.add("Designation");
+				
+				if(testimnlIds.get(i)==5)
+				rowData.add("Message");
+				
+				if(testimnlIds.get(i)==6)
+				rowData.add("Franchise");
+				
+				if(testimnlIds.get(i)==7)
+				rowData.add("Sort No.");
+				
+				if(testimnlIds.get(i)==8)
+				rowData.add("Active");
+			}
+			expoExcel.setRowData(rowData);
+			
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < testmnlListPrint.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				
+				for (int j = 0; j < testimnlIds.size(); j++) {
+				
+					if(testimnlIds.get(j)==1) 
+					rowData.add(" "+srno);
+					
+					if(testimnlIds.get(j)==2)
+					rowData.add(" " + testmnlListPrint.get(i).getName());
+					
+					if(testimnlIds.get(j)==3)
+					rowData.add(" " + testmnlListPrint.get(i).getCaptionName());
+					
+					if(testimnlIds.get(j)==4)
+					rowData.add(" " + testmnlListPrint.get(i).getDesiName());
+					
+					if(testimnlIds.get(j)==5)
+					rowData.add(" " + testmnlListPrint.get(i).getMessages());
+					
+					if(testimnlIds.get(j)==6)
+					rowData.add(" " + testmnlListPrint.get(i).getFranchise());
+					
+					if(testimnlIds.get(j)==7)
+					rowData.add(" " + testmnlListPrint.get(i).getSortNo());
+				
+					if(testimnlIds.get(j)==8)
+					rowData.add(testmnlListPrint.get(i).getIsActive() == 1 ? "Yes" : "NO");
+										
+				}
+				srno = srno + 1;
+				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "HomePageTestimonialList");
+			session.setAttribute("reportNameNew", "Home Page Testimonial List");
+			session.setAttribute("searchByNew", " All");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Home Page Testimonial List Excel");
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return testmnlListPrint;
+	}
+	
+	@RequestMapping(value = "pdf/getHmPgTesmnlListPdf", method = RequestMethod.GET)
+	public String getProductListPdf(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		try {
+			HttpSession session = request.getSession();
+			CompMaster company = (CompMaster) session.getAttribute("company");
+			
+			
+				model.addAttribute("testmnlListPrint", testmnlListPrint);
+				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("testimnlIds", testimnlIds);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "pdfs/hmPgTestmnlListPdf";
+		
+	}
+	
 
 	// Created By :- Mahendra Singh
 	// Created On :- 22-09-2020

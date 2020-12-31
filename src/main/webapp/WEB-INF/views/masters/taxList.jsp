@@ -50,7 +50,7 @@
 			<div class="content">
 				<!-- ColReorder integration -->
 				<div class="card">
-						<div class="card-body">
+						
 					<div
 						class="card-header bg-blue text-white d-flex justify-content-between">
 						<span
@@ -68,7 +68,7 @@
 
 					<div class="form-group row"></div>
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
-
+					<div class="card-body">
 					<table class="table datatable-header-basic" id="printtable">
 			
 					
@@ -140,13 +140,13 @@
 				</div>
 				
 				<!-- /colReorder integration -->
-
+<jsp:include page="/WEB-INF/views/include/footer.jsp"></jsp:include>
 			</div>
 			<!-- /content area -->
 
 
 			<!-- Footer -->
-			<jsp:include page="/WEB-INF/views/include/footer.jsp"></jsp:include>
+			
 			<!-- /footer -->
 
 		</div>
@@ -157,7 +157,7 @@
 
 
 	<script type="text/javascript">
-	$(document).ready(
+	 $(document).ready(
 
 			function() {
 
@@ -167,7 +167,7 @@
 									.prop('checked', this.checked);
 
 						});
-			});
+			}); 
 		//Custom bootbox dialog
 		$('.bootbox_custom')
 				.on(
@@ -198,7 +198,7 @@
 									});
 						});
 	</script>
-	<script >
+	<script>
 	function deletSelctd(){	
 		var isError = false;
 		var checked = $("#printtable input:checked").length > 0;
@@ -286,14 +286,14 @@
 									<thead>
 										<tr>
 											<th width="15">Sr.No.
-											<input type="checkbox" name="selAll" id="selAll"/>
+											<input type="checkbox" name="selAll" id="selAllChk"/>
 											</th>
 											<th>Headers</th>
 										</tr>
 									</thead>
 									<tbody></tbody>
 								</table>
-								<span class="validation-invalid-label" id="error_chks"
+								<span class="validation-invalid-label" id="error_modelchks"
 										style="display: none;">Select Check Box.</span>
 							</div>
 
@@ -309,7 +309,7 @@
 					$('#modelTable td').remove();
 				var thArray = [];
 	
-				$('#printtable2 > thead > tr > th').each(function(){
+				$('#printtable > thead > tr > th').each(function(){
 				    thArray.push($(this).text())
 				})
 				//console.log(thArray[0]);
@@ -334,7 +334,7 @@
 
 						function() {
 
-							$("#selAll").click(
+							$("#selAllChk").click(
 									function() {
 										$('#modelTable tbody input[type="checkbox"]')
 												.prop('checked', this.checked);
@@ -343,6 +343,18 @@
 						});
 				
 				  function getIdsReport(val) {
+					  var isError = false;
+						var checked = $("#modal_theme_primary input:checked").length > 0;
+					
+						if (!checked) {
+							$("#error_modelchks").show()
+							isError = true;
+						} else {
+							$("#error_modelchks").hide()
+							isError = false;
+						}
+
+						if(!isError){
 					  var elemntIds = [];										
 								
 								$(".chkcls:checkbox:checked").each(function() {
@@ -359,6 +371,7 @@
 								},
 								function(data) {
 									if(data!=null){
+										$('#selAllChk').prop('checked', false);
 										$("#modal_theme_primary").modal('hide');
 										if(val==1){
 											window.open("${pageContext.request.contextPath}/exportToExcelNew");
@@ -368,7 +381,8 @@
 										}
 									}
 								});
-					}		
+					}	
+				  }
 				</script>
 </body>
 </html>
