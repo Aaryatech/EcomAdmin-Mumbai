@@ -1139,7 +1139,7 @@
 				.fileinput(
 						{
 							browseLabel : 'Browse',
-							uploadUrl : "http://198.12.156.31:8080/ecomAdmin/ajaxImageUploadOffer/"+offerId, // server upload action
+							uploadUrl : "http://107.180.72.86:8080/ecomAdmin/ajaxImageUploadOffer/"+offerId, // server upload action
  							uploadAsync : false,
 							maxFileCount : 100,
 							initialPreview : [],
