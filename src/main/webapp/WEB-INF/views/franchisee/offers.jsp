@@ -402,7 +402,7 @@
 												value="${offerId}">
 
 
-											<div class="form-group row">
+											<div class="form-group row" style="display: none;">
 												<label class="col-form-label font-weight-bold col-lg-2">Type
 													<span class="text-danger">* </span>:
 												</label>
@@ -650,6 +650,62 @@
 													</div>
 
 
+
+												</div>
+												
+												<div class="form-group row">
+
+													<label class="col-form-label font-weight-bold col-lg-2">Bill Wise Type : </label>
+
+													<div class="col-lg-10">
+														<c:choose>
+															<c:when test="${offer.offerType==1}">
+																<div class="form-check form-check-inline">
+																	<label class="form-check-label"> <input
+																		type="radio" id="couponwise_radio"
+																		class="form-input-styled" name="billTypeWise" checked
+																		data-fouc value="0"
+																		${offerDetailList[0].exInt2 == 0 ? 'checked':''}>
+																		Coupon Wise Offer
+																	</label>
+																</div>
+
+																<div class="form-check form-check-inline">
+																	<label class="form-check-label"> <input
+																		type="radio" id="custwise_radio"
+																		class="form-input-styled" name="billTypeWise"
+																		data-fouc value="1"
+																		${offerDetailList[0].exInt2 == 1 ?'checked':''}>
+																		Customer Wise Offer
+																	</label>
+																</div>																
+															</c:when>
+															<c:otherwise>
+															
+															<div class="form-check form-check-inline">
+																	<label class="form-check-label"> <input
+																		type="radio" id="couponwise_radio"
+																		class="form-input-styled" name="billTypeWise" checked
+																		data-fouc value="0"
+																		${offerDetailList[0].exInt2 == 0 ? 'checked':''}>
+																		Coupon Wise Offer
+																	</label>
+																</div>
+
+																<div class="form-check form-check-inline">
+																	<label class="form-check-label"> <input
+																		type="radio" id="custwise_radio"
+																		class="form-input-styled" name="billTypeWise"
+																		data-fouc value="1"
+																		${offerDetailList[0].exInt2 == 1 ?'checked':''}>
+																		Customer Wise Offer
+																	</label>
+																</div>
+															</c:otherwise>
+														</c:choose>
+													</div>
+
+													<div class="col-lg-6"></div>
 
 												</div>
 

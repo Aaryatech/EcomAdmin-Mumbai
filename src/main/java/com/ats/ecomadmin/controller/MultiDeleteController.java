@@ -1202,6 +1202,51 @@ public class MultiDeleteController {
 							}
 							
 							
+							
+							// Created By :- Akhilesh
+							// Created On :- 30-12-2020
+							// Modified By :- NA
+							// Modified On :- NA
+							// Description :- Delete Selected Delivery Slots  
+							@RequestMapping(value = "/deleteSelMultiSlots", method = RequestMethod.GET)
+							public @ResponseBody Info deleteSelMultiSlots(HttpServletRequest request, HttpServletResponse response) {
+								System.err.println("in deleteSelMultiSlots ");
+								Info info = new Info();
+								MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+								try {
+
+									map.add("tableName", "m_delivery_slots");
+									map.add("columnName", "del_status");
+									map.add("value", 0);
+									map.add("id", "deli_slot_id");
+
+									String routeTypedArr = request.getParameter("slotIds");
+
+									routeTypedArr = routeTypedArr.substring(1, routeTypedArr.length() - 1);
+									routeTypedArr = routeTypedArr.replaceAll("\"", "");
+
+									System.out.println(routeTypedArr);
+									map.add("cityIdArr", routeTypedArr);
+									info = Constants.getRestTemplate().postForObject(Constants.url + "multiDelete", map, Info.class);
+									if (info.isError()) {
+										info.setError(true);
+										info.setMsg("Unable To Delete Delivery Slots");
+									} else {
+										info.setError(true);
+										info.setMsg("Delivery Slots Deleted");
+									}
+									
+								} catch (Exception e) {
+									info.setError(true);
+									info.setMsg("Unable To Delete Delivery Slots  Exception Occuered");
+									System.out.println("Execption in /deleteSelMultiSlots : " + e.getMessage());
+									e.printStackTrace();
+								}
+								return info;
+
+							}
+							
+							
 	
 
 }
