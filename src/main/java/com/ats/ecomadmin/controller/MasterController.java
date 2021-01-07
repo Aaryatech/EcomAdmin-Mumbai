@@ -3,9 +3,11 @@ package com.ats.ecomadmin.controller;
 import java.io.FileNotFoundException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +44,7 @@ import com.ats.ecomadmin.model.CompMaster;
 import com.ats.ecomadmin.model.DeliveryInstruction;
 import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.FilterTypes;
+import com.ats.ecomadmin.model.FrEmpMaster;
 import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.GetProdList;
 import com.ats.ecomadmin.model.GrievencesInstruction;
@@ -966,8 +969,6 @@ public class MasterController {
 			int userId = Integer.parseInt(request.getParameter("user_id"));
 
 			btnVal = request.getParameter("btnVal");
-
-			System.err.println("Btn---------->" + btnVal);
 
 			if (userId > 0) {
 
@@ -2454,7 +2455,7 @@ public class MasterController {
 							map, Franchise.class);
 
 					model.addAttribute("franchise", franchise);
-
+					model.addAttribute("isEdit", 1);
 				} else {
 					Franchise franchise = new Franchise();
 
@@ -2479,6 +2480,7 @@ public class MasterController {
 					franchise.setFrCode(getFrCode);
 
 					model.addAttribute("franchise", franchise);
+					model.addAttribute("isEdit", 0);
 					
 				}
 				model.addAttribute("title", "Add Franchise");
@@ -2514,6 +2516,8 @@ public class MasterController {
 
 			Info info = new Info();
 			int companyId = (int) session.getAttribute("companyId");
+			
+			int frEdit = Integer.parseInt(request.getParameter("isEdit"));
 
 			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
 
@@ -2552,7 +2556,7 @@ public class MasterController {
 					franchise.setEditDateTime(sf.format(date));
 				} else {
 					String password = request.getParameter("pass");
-					System.out.println("Password----------->" + password);
+					
 					MessageDigest md = MessageDigest.getInstance("MD5");
 					byte[] messageDigest = md.digest(password.getBytes());
 					BigInteger number = new BigInteger(1, messageDigest);
@@ -2641,6 +2645,13 @@ public class MasterController {
 						Franchise.class);
 
 				if (res.getFrId() > 0) {
+					
+					if(frEdit==0) {
+						Info inf = addFranchiseEmp(request, res.getFrId());
+						System.out.println("Fr Emp Res = "+inf.getMsg());
+					}
+					
+					
 					savedFrId = res.getFrId();
 					if (frId == 0)
 						session.setAttribute("successMsg", "Franchise Saved Sucessfully");
@@ -5821,4 +5832,59 @@ public class MasterController {
 			return model;
 			
 		}
+		
+		
+	public Info addFranchiseEmp(HttpServletRequest request, int frid) throws NoSuchAlgorithmException {
+
+		HttpSession session = request.getSession();
+
+		Date date = new Date();
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat sfd = new SimpleDateFormat("yyyy-MM-dd ");
+
+		FrEmpMaster saveEmp = new FrEmpMaster();
+		
+		Info info = new Info();
+			try {
+				FrEmpMaster emp = new FrEmpMaster();
+			
+
+				emp.setFrEmpId(0);
+				emp.setCurrentBillAmt(0);
+				emp.setDelStatus(1);
+				emp.setDesignation(1);
+				emp.setEmpCode("000");
+				emp.setExInt1(0);
+				emp.setExInt2(0);
+				emp.setExInt3(0);
+				emp.setExVar1("NA");
+				emp.setExVar2("NA");
+				emp.setExVar3("NA");
+				emp.setFrEmpAddress("NA");
+				emp.setFrEmpContact("0123456789");				
+				emp.setFrEmpJoiningDate(sfd.format(date));
+				emp.setFrEmpName("ATS User");
+				emp.setFrId(frid);
+				emp.setFromDate(sfd.format(date));
+				emp.setToDate(sfd.format(date));
+				emp.setIsActive(1);
+				emp.setPassword("1234");
+				emp.setTotalLimit(0);
+				emp.setUpdateDatetime(sf.format(date));
+
+				saveEmp = Constants.getRestTemplate().postForObject(Constants.url + "/saveFrEmpDetails", emp, FrEmpMaster.class);
+				if(saveEmp.getFrEmpId()>0) {
+					info.setError(false);
+					info.setMsg("Franchise employee saved successfully");
+				}else {
+					info.setError(true);
+					info.setMsg("Failed to save franchise employee");
+				}
+			}catch (Exception e) {
+			System.out.println("Excep in addFranchiseEmp() : "+e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+
+	}
 }

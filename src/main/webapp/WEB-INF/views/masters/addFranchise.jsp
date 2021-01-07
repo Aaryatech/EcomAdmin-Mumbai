@@ -100,6 +100,10 @@
 													<input type="hidden" class="form-control" name="frId"
 														id="frId" value="${frId}">
 												</div>
+												<div class="col-lg-4">
+												<input type="text" class="form-control" name="isEdit"
+														id="isEdit" value="${isEdit}">
+												</div>
 											</div>
 
 
