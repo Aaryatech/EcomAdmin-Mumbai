@@ -377,5 +377,15 @@ public class HomeController {
 		}
 		return info;
 	}
+	
+	public static String getCompName(int compId) {
+		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+		map.add("compId", compId);
+
+		String comp = Constants.getRestTemplate()
+				.postForObject(Constants.url + "getCompanyNameyId", map, String.class);
+		return comp;
+	}
+	
 
 }

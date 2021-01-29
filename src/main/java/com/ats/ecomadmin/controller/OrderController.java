@@ -356,6 +356,127 @@ public class OrderController {
 		return BigDecimal.valueOf(d).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
 	}
 	
+//	private Dimension format = PD4Constants.A4;
+//	private boolean landscapeValue = false;
+//	private int topValue = 8;
+//	private int leftValue = 0;
+//	private int rightValue = 0;
+//	private int bottomValue = 8;
+//	private String unitsValue = "m";
+//	private String proxyHost = "";
+//	private int proxyPort = 0;
+//
+//	private int userSpaceWidth = 750;
+//	private static int BUFFER_SIZE = 1024;
+//	
+//	@RequestMapping(value = "/pdfReport", method = RequestMethod.GET)
+//	public void showPDF(HttpServletRequest request, HttpServletResponse response) {
+//		System.out.println("Inside PDf For Report URL ");
+//		String url = request.getParameter("url");
+//		System.out.println("URL " + url);
+//
+//		File f = new File(Constants.REPORT_PATH);
+//
+//		try {
+//			runConverter(Constants.ReportURL + url, f, request, response);
+//			// runConverter("www.google.com", f,request,response);
+//
+//		} catch (IOException e) {
+//			System.out.println("Pdf conversion exception " + e.getMessage());
+//			e.printStackTrace();
+//		}
+//
+//		// get absolute path of the application
+//		ServletContext context = request.getSession().getServletContext();
+//		String appPath = context.getRealPath("");
+//		String filePath = Constants.REPORT_PATH;
+//
+//		// construct the complete absolute path of the file
+//		String fullPath = appPath + filePath;
+//		File downloadFile = new File(filePath);
+//		FileInputStream inputStream = null;
+//		try {
+//			inputStream = new FileInputStream(downloadFile);
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//		try {
+//			// get MIME type of the file
+//			String mimeType = context.getMimeType(fullPath);
+//			if (mimeType == null) {
+//				// set to binary type if MIME mapping not found
+//				mimeType = "application/pdf";
+//			}
+//			System.out.println("MIME type: " + mimeType);
+//
+//			String headerKey = "Content-Disposition";
+//
+//			// response.addHeader("Content-Disposition", "attachment;filename=report.pdf");
+//			response.setContentType("application/pdf");
+//
+//			OutputStream outStream;
+//
+//			outStream = response.getOutputStream();
+//
+//			byte[] buffer = new byte[BUFFER_SIZE];
+//			int bytesRead = -1;
+//
+//			while ((bytesRead = inputStream.read(buffer)) != -1) {
+//				outStream.write(buffer, 0, bytesRead);
+//			}
+//
+//			inputStream.close();
+//			outStream.close();
+//
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+//
+//	private void runConverter(String urlstring, File output, HttpServletRequest request, HttpServletResponse response)
+//			throws IOException {
+//
+//		if (urlstring.length() > 0) {
+//			if (!urlstring.startsWith("http://") && !urlstring.startsWith("file:")) {
+//				urlstring = "http://" + urlstring;
+//			}
+//			System.out.println("PDF URL " + urlstring);
+//			java.io.FileOutputStream fos = new java.io.FileOutputStream(output);
+//
+//			PD4ML pd4ml = new PD4ML();
+//
+//			try {
+//
+//				Dimension landscapeA4 = pd4ml.changePageOrientation(PD4Constants.A4);
+//				pd4ml.setPageSize(landscapeA4);
+//				pd4ml.enableSmartTableBreaks(true);
+//
+//				PD4PageMark footer = new PD4PageMark();
+//
+//				footer.setPageNumberTemplate("Page $[page] of $[total]");
+//				footer.setPageNumberAlignment(PD4PageMark.RIGHT_ALIGN);
+//				footer.setFontSize(10);
+//				footer.setAreaHeight(20);
+//
+//				pd4ml.setPageFooter(footer);
+//
+//			} catch (Exception e) {
+//				System.out.println("Pdf conversion method excep " + e.getMessage());
+//			}
+//
+//			if (unitsValue.equals("mm")) {
+//				pd4ml.setPageInsetsMM(new Insets(topValue, leftValue, bottomValue, rightValue));
+//			} else {
+//				pd4ml.setPageInsets(new Insets(topValue, leftValue, bottomValue, rightValue));
+//			}
+//
+//			pd4ml.setHtmlWidth(userSpaceWidth);
+//
+//			pd4ml.render(urlstring, fos);
+//		}
+//	}
+	
 	private Dimension format = PD4Constants.A4;
 	private boolean landscapeValue = false;
 	private int topValue = 8;
@@ -368,20 +489,22 @@ public class OrderController {
 
 	private int userSpaceWidth = 750;
 	private static int BUFFER_SIZE = 1024;
-	
+
 	@RequestMapping(value = "/pdfReport", method = RequestMethod.GET)
 	public void showPDF(HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("Inside PDf For Report URL ");
+
 		String url = request.getParameter("url");
 		System.out.println("URL " + url);
+		
+		// File f = new File("/home/ats-12/bill.pdf");
+		File f = new File(Constants.REPORT_PATH);		
 
-		File f = new File(Constants.REPORT_PATH);
-
+		System.out.println("I am here " + f.toString());
 		try {
+			
 			runConverter(Constants.ReportURL + url, f, request, response);
-			// runConverter("www.google.com", f,request,response);
-
-		} catch (IOException e) {
+			System.out.println("Come on lets get ");
+		} catch (IOException e) {		
 			System.out.println("Pdf conversion exception " + e.getMessage());
 			e.printStackTrace();
 		}
@@ -389,7 +512,11 @@ public class OrderController {
 		// get absolute path of the application
 		ServletContext context = request.getSession().getServletContext();
 		String appPath = context.getRealPath("");
+		String filename = "ordermemo221.pdf";
+		// String filePath = "/home/ats-12/bill.pdf";
 		String filePath = Constants.REPORT_PATH;
+		// String filePath =
+		// "/Users/MIRACLEINFOTAINMENT/ATS/uplaods/reports/ordermemo221.pdf";
 
 		// construct the complete absolute path of the file
 		String fullPath = appPath + filePath;
@@ -398,6 +525,7 @@ public class OrderController {
 		try {
 			inputStream = new FileInputStream(downloadFile);
 		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
@@ -414,12 +542,15 @@ public class OrderController {
 			// response.addHeader("Content-Disposition", "attachment;filename=report.pdf");
 			response.setContentType("application/pdf");
 
+			// get output stream of the response
 			OutputStream outStream;
 
 			outStream = response.getOutputStream();
 
 			byte[] buffer = new byte[BUFFER_SIZE];
 			int bytesRead = -1;
+
+			// write bytes read from the input stream into the output stream
 
 			while ((bytesRead = inputStream.read(buffer)) != -1) {
 				outStream.write(buffer, 0, bytesRead);
@@ -445,24 +576,28 @@ public class OrderController {
 			java.io.FileOutputStream fos = new java.io.FileOutputStream(output);
 
 			PD4ML pd4ml = new PD4ML();
-
+			pd4ml.enableSmartTableBreaks(true);
 			try {
 
-				Dimension landscapeA4 = pd4ml.changePageOrientation(PD4Constants.A4);
-				pd4ml.setPageSize(landscapeA4);
-				pd4ml.enableSmartTableBreaks(true);
-
 				PD4PageMark footer = new PD4PageMark();
-
-				footer.setPageNumberTemplate("Page $[page] of $[total]");
+				footer.setPageNumberTemplate("page $[page] of $[total]");
+				// footer.setTitleTemplate("This Is A Computer Generated Invoice Does Not
+				// Require Signature");
+				footer.setTitleAlignment(PD4PageMark.CENTER_ALIGN);
 				footer.setPageNumberAlignment(PD4PageMark.RIGHT_ALIGN);
-				footer.setFontSize(10);
-				footer.setAreaHeight(20);
+				footer.setInitialPageNumber(1);
+				footer.setFontSize(8);
+				footer.setAreaHeight(15);
 
 				pd4ml.setPageFooter(footer);
 
 			} catch (Exception e) {
 				System.out.println("Pdf conversion method excep " + e.getMessage());
+			}
+			try {
+				pd4ml.setPageSize(landscapeValue ? pd4ml.changePageOrientation(format) : format);
+			} catch (Exception e) {
+				System.out.println("Pdf conversion ethod excep " + e.getMessage());
 			}
 
 			if (unitsValue.equals("mm")) {
@@ -472,7 +607,6 @@ public class OrderController {
 			}
 
 			pd4ml.setHtmlWidth(userSpaceWidth);
-
 			pd4ml.render(urlstring, fos);
 		}
 	}

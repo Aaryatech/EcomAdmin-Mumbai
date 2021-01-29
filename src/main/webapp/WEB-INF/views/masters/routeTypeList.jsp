@@ -110,7 +110,7 @@
 					</table>
 					<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
-
+						<input type="hidden" value="${compId}" id="compId">
 						<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd()">
@@ -266,8 +266,10 @@
 	}
 
 	function genPdf() {
+		var compId = $("#compId").val();
+		
 		window
-				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getRouteTpyePdf");
+				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getRouteTpyePdf/"+compId);
 	}
 	</script>
 </body>

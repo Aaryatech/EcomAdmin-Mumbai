@@ -20,14 +20,19 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
+import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.Info;
+import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
 import com.ats.ecomadmin.model.cms.ContactUs;
+import com.ats.ecomadmin.model.cms.TermsAndCondtn;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
@@ -346,5 +351,248 @@ public class CMSController {
 		
 		return "redirect:/configContactUs";
 		
+	}
+	
+	
+	/******************************************************************************************/
+	@RequestMapping(value = "/TAndCList", method = RequestMethod.GET)
+	public String showUomList(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();		
+		try {
+
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("TAndCList", "TAndCList", "1", "0", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "cms/t&cList";
+
+				int compId = (int) session.getAttribute("companyId");
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("companyId", compId);
+				
+				TermsAndCondtn[] tncArr = Constants.getRestTemplate().postForObject(Constants.url + "getTermsAndCondtns", map,
+						TermsAndCondtn[].class);
+				List<TermsAndCondtn> tncList = new ArrayList<TermsAndCondtn>(Arrays.asList(tncArr));
+				for (int i = 0; i < tncList.size(); i++) {
+
+					tncList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(tncList.get(i).getTermsId())));
+				}
+					
+				
+				model.addAttribute("tncList", tncList);	
+				model.addAttribute("title", "Terms & Conditions List");
+
+				Info add = AccessControll.checkAccess("TAndCList", "TAndCList", "0", "1", "0", "0", newModuleList);
+				Info edit = AccessControll.checkAccess("TAndCList", "TAndCList", "0", "0", "1", "0", newModuleList);
+				Info delete = AccessControll.checkAccess("TAndCList", "TAndCList", "0", "0", "0", "1",
+						newModuleList);
+				
+				// export To Excel
+//				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+//
+//				ExportToExcel expoExcel = new ExportToExcel();
+//				List<String> rowData = new ArrayList<String>();
+
+//				rowData.add("Sr No");
+//				rowData.add("UOM");
+//				rowData.add("Status");
+//
+//				expoExcel.setRowData(rowData);
+//				int srno = 1;
+//				exportToExcelList.add(expoExcel);
+//				for (int i = 0; i < uomList.size(); i++) {
+//					expoExcel = new ExportToExcel();
+//					rowData = new ArrayList<String>();
+//
+//					rowData.add(" " + srno);
+//					rowData.add(" " + uomList.get(i).getUomName());
+//					rowData.add(uomList.get(i).getIsActive() == 1 ? "Active" : "In-Active");
+//					
+//					srno=srno+1;
+//					expoExcel.setRowData(rowData);
+//					exportToExcelList.add(expoExcel);
+//
+//				}
+//				session.setAttribute("exportExcelListNew", exportToExcelList);
+//				session.setAttribute("excelNameNew", "UOM");
+//				session.setAttribute("reportNameNew", "UOM List");
+//				 session.setAttribute("searchByNew", "NA");
+//				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+//				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+//
+//				session.setAttribute("exportExcelList", exportToExcelList);
+//				session.setAttribute("excelName", "UOM Excel");
+
+				if (add.isError() == false) {
+					model.addAttribute("addAccess", 0);
+				}
+				if (edit.isError() == false) {
+					model.addAttribute("editAccess", 0);
+				}
+				if (delete.isError() == false) {
+					model.addAttribute("deleteAccess", 0);
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println("Execption in /TAndCList : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return mav;
+	}
+	
+	@RequestMapping(value = "/termsAndCondtn", method = RequestMethod.GET)
+	public String termsAndCondtn(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String mav = new String();
+		try {
+
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("termsAndCondtn", "TAndCList", "0", "1", "0", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "cms/addT&C";
+				TermsAndCondtn tnc = new TermsAndCondtn();
+				
+				model.addAttribute("tnc", tnc);
+				model.addAttribute("title", "Add Terms And Conditions");
+
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /termsAndCondtn : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+	
+	
+	@RequestMapping(value = "/addTermsAndCondtnDtl", method = RequestMethod.POST)
+	public @ResponseBody String addTermsAndCondtnDtl(HttpServletRequest request, HttpServletResponse response, Model model) {
+		
+		try {
+			System.out.println("Here");
+			HttpSession session = request.getSession();
+			
+			int compId = (int) session.getAttribute("companyId");
+			int termsId = Integer.parseInt(request.getParameter("termsId"));
+			
+			TermsAndCondtn tnc = new TermsAndCondtn();
+			
+			tnc.setCompanyId(compId);			
+			tnc.setDelStatus(1);
+			tnc.setExInt1(0);
+			tnc.setExInt2(0);
+			tnc.setExVar1("NA");
+			tnc.setExVar2("NA");
+			tnc.setSectionTxt("NA");
+			tnc.setTermsId(termsId);
+			tnc.setTermsTxt(request.getParameter("termsCond"));
+			
+			TermsAndCondtn newTnc = Constants.getRestTemplate().postForObject(Constants.url + "addTermsAndConditions", tnc,
+					TermsAndCondtn.class);
+			
+			if(newTnc.getTermsId()>0) {
+					if (termsId == 0)
+						session.setAttribute("successMsg", "T&C Saved Sucessfully");
+					else
+						session.setAttribute("successMsg", "T&C  Update Sucessfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Save T&C");
+				}
+			
+		}catch (Exception e) {
+			System.out.println("Excep in /addTermsAndCondtnDtl : "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+			return "redirect:/termsAndCondtn";
+				
+	}
+	
+	
+	@RequestMapping(value = "/editTerms", method = RequestMethod.GET)
+	public String editUom(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("editTerms", "TAndCList", "0", "0", "1", "0", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				mav = "cms/addT&C";
+
+				String base64encodedString = request.getParameter("termsId");
+				String termsId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				map.add("termId",Integer.parseInt(termsId));
+
+				TermsAndCondtn tnc = Constants.getRestTemplate().postForObject(Constants.url + "getTermsAndCondtnById", map,
+						TermsAndCondtn.class);
+				model.addAttribute("tnc", tnc);
+				
+				model.addAttribute("title", "Edit Terms And Conditions");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /editTerms : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+	
+	
+	
+	@RequestMapping(value = "/deleteTerms", method = RequestMethod.GET)
+	public String deleteUom(HttpServletRequest request, HttpServletResponse response) {
+
+		String mav = new String();
+		try {
+			HttpSession session = request.getSession();
+			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+			Info view = AccessControll.checkAccess("deleteTerms", "TAndCList", "0", "0", "0", "1", newModuleList);
+
+			if (view.isError() == true) {
+
+				mav = "accessDenied";
+
+			} else {
+				String base64encodedString = request.getParameter("termsId");
+				String termsId = FormValidation.DecodeKey(base64encodedString);
+
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			
+					map.add("termsId", Integer.parseInt(termsId));
+					Info info = Constants.getRestTemplate().postForObject(Constants.url + "deleteTermsAndCondtnId", map,
+							Info.class);
+
+					if (!info.isError()) {
+						session.setAttribute("successMsg", info.getMsg());
+					} else {
+						session.setAttribute("errorMsg", info.getMsg());
+					}				
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /deleteUom : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/TAndCList";
 	}
 }

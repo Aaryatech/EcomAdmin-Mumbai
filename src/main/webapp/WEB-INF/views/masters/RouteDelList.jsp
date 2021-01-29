@@ -112,6 +112,8 @@
 										style="display: none;">Select Check Box.</span>
 
 						<div class="text-center">
+							<input type="hidden" value="${compId}" id="compId">
+						
 							<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd()">
 								Delete <i class="far fa-trash-alt"></i>
@@ -264,8 +266,10 @@
 	}
 
 	function genPdf() {
+		var compId = $("#compId").val();
+		
 		window
-				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getRouteDelvrPdf");
+				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getRouteDelvrPdf/"+compId);
 	}
 	
 	</script>

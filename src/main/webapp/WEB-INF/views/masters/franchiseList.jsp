@@ -595,6 +595,7 @@
 							</div>
 
 							<div class="modal-footer">
+								<input type="hidden" value="${compId}" id="compId">
 								<button type="button" class="btn bg-primary" id="expExcel" onclick="getIdsReport(1)">Excel</button>
 								<button type="button" class="btn bg-primary" onclick="getIdsReport(2)">Pdf</button>
 							</div>
@@ -673,7 +674,8 @@
 											window.open("${pageContext.request.contextPath}/exportToExcelNew");
 											document.getElementById("expExcel").disabled = true;
 										}else{
-											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getFranchiseIdsListPdf');
+											var compId = $("#compId").val();
+											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getFranchiseIdsListPdf/'+compId+"/"+elemntIds.join());
 										}
 									}
 								});
