@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.Uom;
 import com.ats.ecomadmin.model.User;
@@ -378,12 +379,12 @@ public class HomeController {
 		return info;
 	}
 	
-	public static String getCompName(int compId) {
+	public static CompanyContactInfo getCompName(int compId) {
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 		map.add("compId", compId);
 
-		String comp = Constants.getRestTemplate()
-				.postForObject(Constants.url + "getCompanyNameyId", map, String.class);
+		CompanyContactInfo comp = Constants.getRestTemplate()
+				.postForObject(Constants.url + "getCompanyInfoById", map, CompanyContactInfo.class);
 		return comp;
 	}
 	

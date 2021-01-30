@@ -112,6 +112,16 @@
 										style="display: none;">Select Check Box.</span>
 						<input type="hidden" value="${compId}" id="compId">
 						<div class="text-center">
+							<div class="form-check form-check-switchery form-check-inline">
+
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>
+						
+						<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd()">
 								Delete <i class="far fa-trash-alt"></i>
@@ -267,9 +277,15 @@
 
 	function genPdf() {
 		var compId = $("#compId").val();
+		var showHead = 0;
+		if($("#chkPdf").is(":checked")){
+			showHead = 1;
+		}else{
+			showHead = 0;
+		}
 		
 		window
-				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getRouteTpyePdf/"+compId);
+				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getRouteTpyePdf/"+compId+"/"+showHead);
 	}
 	</script>
 </body>

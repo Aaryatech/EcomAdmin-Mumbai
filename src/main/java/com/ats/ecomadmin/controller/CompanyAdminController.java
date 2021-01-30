@@ -35,6 +35,7 @@ import com.ats.ecomadmin.model.BannerPage;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.Customer;
 import com.ats.ecomadmin.model.CustomerAddDetail;
 import com.ats.ecomadmin.model.CustomerDetailInfo;
@@ -3104,9 +3105,10 @@ public class CompanyAdminController {
 		return routeListPrint;
 	}
 	
-	@RequestMapping(value = "pdf/getRouteListPdf/{compId}/{selctId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getRouteListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getRouteListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model, @PathVariable int compId,@PathVariable String selctId ) {
+			HttpServletResponse response, Model model, @PathVariable int compId,@PathVariable String selctId,
+			@PathVariable int showHead) {
 		try {
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("compId", compId);
@@ -3121,8 +3123,14 @@ public class CompanyAdminController {
 			        .collect(Collectors.toList());			
 		
 				model.addAttribute("routeListPrint", routeListPrint);
-				model.addAttribute("company", HomeController.getCompName(compId));
 				model.addAttribute("routeIds", routeIds);
+				
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -3403,9 +3411,9 @@ public class CompanyAdminController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getRouteTpyePdf/{compId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getRouteTpyePdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getRouteTpyePdf(HttpServletRequest request,
-			HttpServletResponse response, @PathVariable int compId) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/routeTypePdf");
 		try {
 			
@@ -3415,7 +3423,12 @@ public class CompanyAdminController {
 			
 			model.addObject("routeList", routeList);
 			
-			model.addObject("company", HomeController.getCompName(compId));
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -3731,9 +3744,9 @@ public class CompanyAdminController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getRouteDelvrPdf/{compId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getRouteDelvrPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getRouteDelvrPdf(HttpServletRequest request,
-			HttpServletResponse response, @PathVariable int compId) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/routeDelvrPdf");
 		try {			
 			RouteDelivery[] routeArr = Constants.getRestTemplate()
@@ -3741,7 +3754,12 @@ public class CompanyAdminController {
 			List<RouteDelivery> routeDelList = new ArrayList<RouteDelivery>(Arrays.asList(routeArr));
 			
 			model.addObject("routeDelList", routeDelList);
-			model.addObject("company", HomeController.getCompName(compId));
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

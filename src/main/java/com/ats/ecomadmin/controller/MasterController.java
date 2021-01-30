@@ -42,6 +42,7 @@ import com.ats.ecomadmin.model.AreaCityList;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.DeliveryInstruction;
 import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.FilterTypes;
@@ -386,6 +387,7 @@ public class MasterController {
 				mav = "masters/taxList";
 
 				int compId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", compId);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
@@ -554,19 +556,25 @@ public class MasterController {
 		return taxPrintList;
 	}
 	
-	@RequestMapping(value = "pdf/getTaxListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getTaxListPdf/{compId}/{selctId}", method = RequestMethod.GET)
 	public ModelAndView getTaxListPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId,@PathVariable String selctId) {
 		ModelAndView model = new ModelAndView("pdfs/taxListPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
 			
-			System.out.println("taxIds Found-----------"+taxIds);
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			Tax[] taxArr = Constants.getRestTemplate().postForObject(Constants.url + "getTaxes", map, Tax[].class);
+			taxPrintList = new ArrayList<Tax>(Arrays.asList(taxArr));
+			
+			taxIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
 				model.addObject("taxList", taxPrintList);
 				model.addObject("taxIds", taxIds);
-				model.addObject("company", company.getCompanyName());
+				model.addObject("company", HomeController.getCompName(compId));
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -3426,9 +3434,9 @@ public class MasterController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getCityListPdf/{compId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getCityListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getProductConfigPdf(HttpServletRequest request,
-			HttpServletResponse response, @PathVariable int compId) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/cityPdf");
 		try {
 			HttpSession session = request.getSession();
@@ -3442,7 +3450,13 @@ public class MasterController {
 			List<City> cityList = new ArrayList<City>(Arrays.asList(cityArr));
 			
 			model.addObject("cityList", cityList);
-			model.addObject("company", HomeController.getCompName(compId));
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
+			
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -5825,9 +5839,9 @@ public class MasterController {
 			return printFrList;
 		}
 		
-		@RequestMapping(value = "pdf/getFranchiseIdsListPdf/{compId}/{selctId}", method = RequestMethod.GET)
+		@RequestMapping(value = "pdf/getFranchiseIdsListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 		public ModelAndView getFranchiseIdsListPdf(HttpServletRequest request,
-				HttpServletResponse response, @PathVariable String selctId ,@PathVariable int compId) {
+				HttpServletResponse response, @PathVariable String selctId ,@PathVariable int compId, @PathVariable int showHead) {
 			ModelAndView model = new ModelAndView("pdfs/franchiseListPdf");
 			try {
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -5844,7 +5858,13 @@ public class MasterController {
 				
 					model.addObject("printFrList", printFrList);
 					model.addObject("printFrIds", printFrIds);
-					model.addObject("company", HomeController.getCompName(compId));
+					
+					CompanyContactInfo dtl = HomeController.getCompName(compId);
+					if(showHead==1) {
+						model.addObject("compName", dtl.getCompanyName());
+						model.addObject("compAddress", dtl.getCompAddress());
+						model.addObject("compContact", dtl.getCompContactNo());	
+					}
 			}catch (Exception e) {
 				e.printStackTrace();
 			}

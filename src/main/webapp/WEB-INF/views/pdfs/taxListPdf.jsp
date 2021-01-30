@@ -34,8 +34,8 @@ table {
 }
 
 table th {
-  background-color: #f44336 !important;
-  color: black;
+  background-color: #ee558f !important;
+  color: #fff;
 }
 
 
@@ -57,7 +57,7 @@ color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
 							style="text-align: center; font-size: 18px; margin-top: 20px; margin-bottom: 5px;">
 			
 								 <h3
-									style="color: #000; text-align: center; margin: 0px;">${company}</h3> 
+									style="color: #000; text-align: center; margin: 0px;">${compName}</h3> 
 							
 						
 
