@@ -604,7 +604,8 @@ public class FranchiseConfigurationController {
 				mav = "masters/delvrBoyList";
 
 				int compId = (int) session.getAttribute("companyId");
-
+				model.addAttribute("compId", compId);
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
@@ -687,16 +688,20 @@ public class FranchiseConfigurationController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getDeliveBoyPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getDeliveBoyPdf/{compId}", method = RequestMethod.GET)
 	public ModelAndView getDeliveBoyPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId) {
 		ModelAndView model = new ModelAndView("pdfs/delvrBoyPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			DeliveryBoy[] uomArr = Constants.getRestTemplate().postForObject(Constants.url + "getDeliveryBoysList",
+					map, DeliveryBoy[].class);
+			ArrayList<DeliveryBoy> delBoyList = new ArrayList<DeliveryBoy>(Arrays.asList(uomArr));
 			
 				model.addObject("delBoyList", delBoyList);
-				model.addObject("company", company.getCompanyName());
+				model.addObject("company", HomeController.getCompName(compId));
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
