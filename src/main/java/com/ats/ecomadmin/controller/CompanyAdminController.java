@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ats.ecomadmin.HomeController;
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
@@ -2952,6 +2954,7 @@ public class CompanyAdminController {
 				List<GetRouteList> routeList = new ArrayList<GetRouteList>();
 
 				int companyId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", companyId);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
@@ -3095,15 +3098,24 @@ public class CompanyAdminController {
 		return routeListPrint;
 	}
 	
-	@RequestMapping(value = "pdf/getRouteListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getRouteListPdf/{compId}/{selctId}", method = RequestMethod.GET)
 	public String getRouteListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId,@PathVariable String selctId ) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			GetRouteList[] routeArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllRouteByCompId", map, GetRouteList[].class);
+			routeListPrint = new ArrayList<GetRouteList>(Arrays.asList(routeArr));
+			
+			routeIds = new ArrayList<Long>();
+			routeIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());			
 		
 				model.addAttribute("routeListPrint", routeListPrint);
-				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("company", HomeController.getCompName(compId));
 				model.addAttribute("routeIds", routeIds);
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -3304,6 +3316,8 @@ public class CompanyAdminController {
 
 				mav = "masters/routeTypeList";
 				int companyId = (int) session.getAttribute("companyId");
+				
+				model.addAttribute("compId", companyId);
 
 				RouteType[] routeArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllRouteType",
 						RouteType[].class);
@@ -3383,16 +3397,19 @@ public class CompanyAdminController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getRouteTpyePdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getRouteTpyePdf/{compId}", method = RequestMethod.GET)
 	public ModelAndView getRouteTpyePdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId) {
 		ModelAndView model = new ModelAndView("pdfs/routeTypePdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
-						
+			
+			RouteType[] routeArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllRouteType",
+					RouteType[].class);
+			List<RouteType> routeList = new ArrayList<RouteType>(Arrays.asList(routeArr));
+			
 			model.addObject("routeList", routeList);
-			model.addObject("company", company.getCompanyName());
+			
+			model.addObject("company", HomeController.getCompName(compId));
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -3627,6 +3644,7 @@ public class CompanyAdminController {
 
 				mav = "masters/RouteDelList";
 				int companyId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", companyId);
 
 				RouteDelivery[] routeArr = Constants.getRestTemplate()
 						.getForObject(Constants.url + "getAllRouteDelivery", RouteDelivery[].class);
@@ -3707,18 +3725,17 @@ public class CompanyAdminController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getRouteDelvrPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getRouteDelvrPdf/{compId}", method = RequestMethod.GET)
 	public ModelAndView getRouteDelvrPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId) {
 		ModelAndView model = new ModelAndView("pdfs/routeDelvrPdf");
-		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+		try {			
+			RouteDelivery[] routeArr = Constants.getRestTemplate()
+					.getForObject(Constants.url + "getAllRouteDelivery", RouteDelivery[].class);
+			List<RouteDelivery> routeDelList = new ArrayList<RouteDelivery>(Arrays.asList(routeArr));
 			
-			System.out.println("proIds Found-----------"+routeDelList);
-			
-				model.addObject("routeDelList", routeDelList);
-				model.addObject("company", company.getCompanyName());
+			model.addObject("routeDelList", routeDelList);
+			model.addObject("company", HomeController.getCompName(compId));
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

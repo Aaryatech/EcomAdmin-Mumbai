@@ -260,6 +260,7 @@
 										</button>
 									</div>
 								</form>
+								<input type="hidden" value="${compId}" id="compId">
 							</div>
 						</div>
 						<!-- /a legend -->
@@ -599,7 +600,11 @@
 											window.open("${pageContext.request.contextPath}/exportToExcelNew");
 											document.getElementById("expExcel").disabled = true;
 										}else{
-											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getConfigFrListPdf');
+											var compId = $("#compId").val();
+											var frIds = $("#frId").val();
+											var configIds = $("#configId").val();
+											var orderBy = $("#orderBy").val();
+						window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getConfigFrListPdf/'+compId+'/'+elemntIds.join()+'/'+frIds+'/'+configIds+'/'+orderBy);
 										}
 									}
 								});

@@ -19,11 +19,11 @@
 <div class="navbar navbar-expand-md navbar-dark bg-indigo navbar-static"
 	style="padding: 0px; background: #2a3042;">
 	<div class="navbar-brand" style="padding: 10px; width: 10%;">
-		<a href="${pageContext.request.contextPath}/home"
+		<%-- <a href="${pageContext.request.contextPath}/home"
 			class="d-inline-block"> <img
 			src="${pageContext.request.contextPath}/resources/images/logo.png"
 			alt="" style="width: 70%; height: 100%; padding-left: 10px;">
-		</a>
+		</a> --%>
 	</div>
 
 	<div class="d-md-none">

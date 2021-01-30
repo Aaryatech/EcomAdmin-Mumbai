@@ -111,6 +111,13 @@ rel="stylesheet" type="text/css">
     
 
 </script> 
+
+<!-- Theme JS files -->
+	<script src="${pageContext.request.contextPath}/resources/global_assets/js/plugins/editors/summernote/summernote.min.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/global_assets/js/plugins/forms/styling/uniform.min.js"></script>
+	<script src="${pageContext.request.contextPath}/resources/global_assets/js/demo_pages/editor_summernote.js"></script>
+	<!-- /theme JS files -->
+
 <!-- /theme JS files -->
 
 

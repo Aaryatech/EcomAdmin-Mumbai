@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,6 +25,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ats.ecomadmin.HomeController;
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
@@ -251,7 +253,10 @@ public class FranchiseConfigurationController {
 				String itemsFr = null;
 
 				int orderBy = 0;
+				
 				int companyId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", companyId);
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				List<Franchise> frList = new ArrayList<>();
 				List<ItemConfHeader> list = new ArrayList<ItemConfHeader>();
@@ -455,17 +460,28 @@ public class FranchiseConfigurationController {
 		return frConfigPrintList;
 	}
 	
-@RequestMapping(value = "pdf/getConfigFrListPdf", method = RequestMethod.GET)
+@RequestMapping(value = "pdf/getConfigFrListPdf/{compId}/{selctId}/{frIds}/{configIds}/{orderBy}", method = RequestMethod.GET)
 	public ModelAndView getSubCategoryPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId,@PathVariable String selctId, 
+			@PathVariable String frIds, @PathVariable String configIds, @PathVariable int orderBy) {
 		ModelAndView model = new ModelAndView("pdfs/frConfigPrintPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("frIds", frIds);
+			map.add("configIds", configIds);
+			map.add("orderBy", orderBy);
+		
+			GetFrConfigList[] confArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getFranchiseConfigList", map, GetFrConfigList[].class);
+			List<GetFrConfigList> frConfigList = new ArrayList<GetFrConfigList>(Arrays.asList(confArr));
 			
-				model.addObject("frConfigPrintList", frConfigPrintList);
+			frConfigIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+				model.addObject("frConfigPrintList", frConfigList);
 				model.addObject("frConfigIds", frConfigIds);
-				model.addObject("company", company.getCompanyName());
+				model.addObject("company", HomeController.getCompName(compId));
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -588,7 +604,8 @@ public class FranchiseConfigurationController {
 				mav = "masters/delvrBoyList";
 
 				int compId = (int) session.getAttribute("companyId");
-
+				model.addAttribute("compId", compId);
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
@@ -671,16 +688,20 @@ public class FranchiseConfigurationController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getDeliveBoyPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getDeliveBoyPdf/{compId}", method = RequestMethod.GET)
 	public ModelAndView getDeliveBoyPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId) {
 		ModelAndView model = new ModelAndView("pdfs/delvrBoyPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			DeliveryBoy[] uomArr = Constants.getRestTemplate().postForObject(Constants.url + "getDeliveryBoysList",
+					map, DeliveryBoy[].class);
+			ArrayList<DeliveryBoy> delBoyList = new ArrayList<DeliveryBoy>(Arrays.asList(uomArr));
 			
 				model.addObject("delBoyList", delBoyList);
-				model.addObject("company", company.getCompanyName());
+				model.addObject("company", HomeController.getCompName(compId));
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

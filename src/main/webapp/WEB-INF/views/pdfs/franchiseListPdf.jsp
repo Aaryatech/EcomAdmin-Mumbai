@@ -10,7 +10,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- <title>Production List</title> -->
-<jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
 <style type="text/css">
 @media print {
 	.no-break {
@@ -34,10 +33,9 @@ table {
 }
 
 table th {
-  background-color: #f44336 !important;
-  color: black;
+  background-color: #ee558f !important;
+  color: #fff;
 }
-
 
 .footer_btm{position: fixed; text-align: center; padding: 10px; bottom: 0; left:0; font-size: 12px; 
 color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}

@@ -24,7 +24,7 @@
 </head>
 
 <body class="sidebar-xs">
-<c:url value="/deleteSelCitys" var="deleteSelCitys"/>
+<c:url value="deleteSelMultiUOM" var="deleteSelMultiUOM"></c:url>
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -48,7 +48,6 @@
 			<div class="content">
 				<!-- ColReorder integration -->
 				<div class="card">
-				
 					<div class="card-body">
 					<div
 						class="card-header bg-blue text-white d-flex justify-content-between">
@@ -59,48 +58,40 @@
 						<c:if test="${addAccess==0}">
 							<span class="font-size-sm text-uppercase font-weight-semibold"><a
 								class="card-title"
-								href="${pageContext.request.contextPath}/addNewCity"
+								href="${pageContext.request.contextPath}/termsAndCondtn"
 								style="color: white;"><i class="icon-add-to-list ml-2"
-									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add City</a></span>
+									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Add Terms & Conditions</a></span>
 						</c:if>
 					</div>
 
 					<div class="form-group row"></div>
-					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>					
+					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
+
+					
 					<table class="table datatable-header-basic" id="printtable">
 						<thead>
 							<tr>
-								<th width="13%">Sr. No. &nbsp; <input type="checkbox" name="selAll" id="selAll"/></th>
-								<th>City Code</th>
-								<th>City Name</th>
-								<th>Status</th>
+								<th width="10%">Sr. No.&nbsp; <!-- <input type="checkbox" name="selAll" id="selAll"/> --></th>
+								<th>Section</th>
+								<th style="display: none;"></th>
 								<th style="display: none;"></th>
 								<th style="display: none;"></th>
 								<th class="text-center">Actions</th>
 							</tr>
 						</thead>
 						<tbody>
-							<c:forEach items="${cityList}" var="cityList" varStatus="count">
+							<c:forEach items="${tncList}" var="tncList" varStatus="count">
 								<tr>
 									<td>${count.index+1}   &nbsp;
-									<input type="checkbox" id="city${cityList.cityId}" value="${cityList.cityId}" name="cityId" class="chkcls"></td>
-									<td>${cityList.cityCode}</td>
-									<td>${cityList.cityName}</td>
-									<c:set value="" var="status" />
-									<c:if test="${cityList.isActive==1}">
-										<c:set value="Active" var="status" />
-									</c:if>
-									<c:if test="${cityList.isActive==0}">
-										<c:set value="In-Active" var="status" />
-									</c:if>
-									<td>${status}</td>
+									<%-- <input type="checkbox" id="${tncList.termsId}" value="${tncList.termsId}" name="cityId" class="chkcls"> --%></td>
+									<td>${tncList.sectionTxt}</td>
 									<td style="display: none;"></td>
 									<td style="display: none;"></td>
 									<td style="display: none;"></td>
 									<td class="text-center"><c:if test="${editAccess==0}">
 											<div class="list-icons">
 												<a
-													href="${pageContext.request.contextPath}/editCity?cityId=${cityList.exVar1}"
+													href="${pageContext.request.contextPath}/editTerms?termsId=${tncList.exVar1}"
 													class="list-icons-item" title="Edit"> <i
 													class="icon-database-edit2"></i>
 												</a>
@@ -109,25 +100,26 @@
 											<div class="list-icons">
 												<a href="javascript:void(0)"
 													class="list-icons-item text-danger-600 bootbox_custom"
-													data-uuid="${cityList.exVar1}" data-popup="tooltip"
-													title="" data-original-title="Delete"><i
-													class="icon-trash"></i></a>
+													data-uuid="${tncList.exVar1}" data-popup="tooltip" title=""
+													data-original-title="Delete"><i class="icon-trash"></i></a>
 											</div>
 										</c:if></td>
 								</tr>
 							</c:forEach>
 						</tbody>
 					</table>
-						<span class="validation-invalid-label" id="error_chks"
+
+					<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
-										<input type="hidden" value="${compId}" id="compId">
+									
+							
+					
 
-						<div class="text-center">
-							<button type="submit" class="btn btn-primary" id="submtbtn"
+					
+					<!-- <div class="text-center">
+					<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd()">
-								Delete <i class="far fa-trash-alt"></i>
-							</button>
-
+								Delete <i class="far fa-trash-alt"></i></button>
 							<button type="button" class="btn btn-primary" id="submtbtn"
 								onclick="exportToExcel()">
 								Excel <i class="far fa-file-excel"></i>
@@ -137,10 +129,12 @@
 								Pdf<i class="fas fa-file-pdf"></i>
 							</button>
 						
-						</div>					
-					</div>
-				<!-- /colReorder integration -->
+						</div>	 -->
+
+						</div>
 				</div>
+				<!-- /colReorder integration -->
+
 			</div>
 			<!-- /content area -->
 
@@ -190,15 +184,26 @@
 										},
 										callback : function(result) {
 											if (result) {
-												location.href = "${pageContext.request.contextPath}/deleteCity?cityId="
+												location.href = "${pageContext.request.contextPath}/deleteTerms?termsId="
 														+ uuid;
 
 											}
 										}
 									});
 						});
+		
+		
+		function exportToExcel() {
+			window.open("${pageContext.request.contextPath}/exportToExcelNew");
+			document.getElementById("expExcel").disabled = true;
+		}
+
+		function genPdf() {
+			window
+					.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getUomPdf");
+		}
 	</script>
-	<script>
+	<script >
 	function deletSelctd(){	
 		var isError = false;
 		var checked = $("#printtable input:checked").length > 0;
@@ -238,26 +243,27 @@
 										.attr(
 												"disabled",
 												true);								
-										var cityIds = [];
+										var uomIds = [];
 										$(".chkcls:checkbox:checked").each(function() {
-											cityIds.push($(this).val());
+											uomIds.push($(this).val());
 										});
 										
-										alert(cityIds)
+										alert(uomIds)
 																
 								$
 								.getJSON(
-										'${deleteSelCitys}',
+										'${deleteSelMultiUOM}',
 										{
-											cityIds : JSON.stringify(cityIds),
+											uomIds : JSON.stringify(uomIds),
 											ajax : 'true'
 										},
 										function(data) {
-											if(!data.error){
+											//alert(data.error);
+									 if(!data.error){
 												window.location.reload();
 											}else{
 												window.location.reload();
-											}
+											} 
 											
 										});
 							}
@@ -268,16 +274,7 @@
 		}//end of if !isError
 	}
 	
-	function exportToExcel() {
-		window.open("${pageContext.request.contextPath}/exportToExcelNew");
-		document.getElementById("expExcel").disabled = true;
-	}
-
-	function genPdf() {
-		var compId = $("#compId").val();
-		window
-				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getCityListPdf/"+compId);
-	}
+	
 	</script>
 </body>
 </html>

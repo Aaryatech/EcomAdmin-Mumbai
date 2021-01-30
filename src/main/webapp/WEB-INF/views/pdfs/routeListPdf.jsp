@@ -34,8 +34,8 @@ table {
 }
 
 table th {
-  background-color: #f44336 !important;
-  color: black;
+  background-color: #ee558f !important;
+  color: #fff;
 }
 
 

@@ -10,7 +10,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- <title>Production List</title> -->
-<jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
+<%-- <jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include> --%>
 <style type="text/css">
 @media print {
 	.no-break {
