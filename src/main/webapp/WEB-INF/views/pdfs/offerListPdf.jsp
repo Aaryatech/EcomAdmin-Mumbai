@@ -10,8 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<!-- <title>Production List</title> -->
-<jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
+<title>Offer List</title>
 <style type="text/css">
 @media print {
 	.no-break {
@@ -35,18 +34,13 @@ table {
 }
 
 table th {
-  background-color: #f44336 !important;
-  color: black;
+  background-color: #ee558f !important;
+  color: #fff;
 }
-
 
 .footer_btm{position: fixed; text-align: center; padding: 10px; bottom: 0; left:0; font-size: 12px; 
 color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
-.footer_lft{position: fixed; left:6px; bottom:6px; width: 20px; height: 20px;}
-.footer_lft img{width: 100%;}
-.footer_right{position: fixed; right:6px; bottom:6px; }
-.footer_right span{display: inline-block; margin: 0 3px 0 0; font-size: 12px; }
-.footer_right img{width: 20px; height: 20px;}
+
 
 
 </style>
@@ -57,16 +51,18 @@ color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
 							<div
 							style="text-align: center; font-size: 18px; margin-top: 20px; margin-bottom: 5px;">
 			
-								 <h3
-									style="color: #000; text-align: center; margin: 0px;">${company}</h3> 
-							
-						
+								<h3
+									style="color: #000; text-align: center; margin: 0px;">${compName}</h3> 
+								<h5
+									style="color: #000; text-align: center; margin: 0px;">${compAddress}</h5> 
+									<h5
+									style="color: #000; text-align: center; margin: 0px;">${compContact}</h5>
 
 						<div
 							style="text-align: center; font-size: 18px;">
 
 							<h4
-								style="color: #000; font-size: 16px; text-align: center; margin: 0px;">Offer List Pdf</h4>							
+								style="color: #000; font-size: 16px; text-align: center; margin: 0px;">Offer List</h4>							
 								<%-- <p
 									style="color: #000; font-size: 15px; text-align: center; font-weight: bold;">
 									Date : ${fromDate}&nbsp;&nbsp; to &nbsp;&nbsp;${toDate}</p> --%>

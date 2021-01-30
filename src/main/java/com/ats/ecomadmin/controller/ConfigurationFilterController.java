@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,12 +30,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ats.ecomadmin.HomeController;
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.CategoryProduct;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.CompanyTestomonials;
 import com.ats.ecomadmin.model.ConfigHomePageProduct;
 import com.ats.ecomadmin.model.Designation;
@@ -1411,7 +1414,8 @@ public class ConfigurationFilterController {
 				mav = "product/prdctEventList";
 
 				int compId = (int) session.getAttribute("companyId");
-
+				model.addAttribute("compId", compId);
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
@@ -1550,17 +1554,30 @@ public class ConfigurationFilterController {
 	}
 
 
-	@RequestMapping(value = "pdf/getConfigEvntPrdctPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getConfigEvntPrdctPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getConfigEvntPrdctPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/festiveEvntPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+			
+			FestiveEvent[] festiveEventArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getFestiveEventAndProductsList", map, FestiveEvent[].class);
+			festiveEventList = new ArrayList<FestiveEvent>(Arrays.asList(festiveEventArr));
+			
+			configEvntIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
 			model.addObject("festiveEventList", festiveEventList);
 			model.addObject("configEvntIds", configEvntIds);
-			model.addObject("company", company.getCompanyName());
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

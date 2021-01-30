@@ -33,10 +33,12 @@ import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ats.ecomadmin.HomeController;
 import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.User;
@@ -561,6 +563,7 @@ public class OfferController {
 
 		HttpSession session = request.getSession();
 		int compId = (int) session.getAttribute("companyId");
+		model.addObject("compId", compId);
 
 		MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("compId", compId);
@@ -701,16 +704,30 @@ public class OfferController {
 		return offerPrintList;
 	}
 	
-	@RequestMapping(value = "pdf/getOfferListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getOfferListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getOfferListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model,@PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			OfferHeader[] arr = Constants.getRestTemplate().postForObject(Constants.url + "getAllOfferHeaderListByCompId",
+					map, OfferHeader[].class);
+			List<OfferHeader> offerList = new ArrayList<OfferHeader>(Arrays.asList(arr));
 			
-				model.addAttribute("offerPrintList", offerPrintList);
-				model.addAttribute("company", company.getCompanyName());
-				model.addAttribute("offerIds", offerIds);
+			offerIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			model.addAttribute("offerPrintList", offerList);
+			model.addAttribute("offerIds", offerIds);
+
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addAttribute("compName", dtl.getCompanyName());
+				model.addAttribute("compAddress", dtl.getCompAddress());
+				model.addAttribute("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

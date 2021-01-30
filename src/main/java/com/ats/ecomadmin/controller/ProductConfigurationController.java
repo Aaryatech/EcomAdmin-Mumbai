@@ -17,18 +17,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ats.ecomadmin.HomeController;
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.CategoryProduct;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.GetRelatedProductConfig;
 import com.ats.ecomadmin.model.GetRequreProduct;
@@ -315,8 +318,11 @@ public class ProductConfigurationController {
 
 				mav = "product/relProConfigList";
 				model.addAttribute("title", "Related Product Configuration");
+				model.addAttribute("compId", session.getAttribute("companyId"));
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", session.getAttribute("companyId"));
+				
 				GetRelatedProductConfig[] userArr1 = Constants.getRestTemplate()
 						.postForObject(Constants.url + "getRelProConfigByCompId", map, GetRelatedProductConfig[].class);
 				ArrayList<GetRelatedProductConfig> catProList = new ArrayList<GetRelatedProductConfig>(
@@ -398,18 +404,26 @@ public class ProductConfigurationController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getRelatedPrdctConfigPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getRelatedPrdctConfigPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getCategoryPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response,@PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/relPrdctConfigPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
 			
-			System.out.println("proIds Found-----------"+relProList);
+			GetRelatedProductConfig[] userArr1 = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getRelProConfigByCompId", map, GetRelatedProductConfig[].class);
+			ArrayList<GetRelatedProductConfig> catProList = new ArrayList<GetRelatedProductConfig>(
+					Arrays.asList(userArr1));			
 			
-				model.addObject("relProList", relProList);
-				model.addObject("company", company.getCompanyName());
+				model.addObject("relProList", catProList);
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addObject("compName", dtl.getCompanyName());
+					model.addObject("compAddress", dtl.getCompAddress());
+					model.addObject("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

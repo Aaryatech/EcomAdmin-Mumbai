@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ats.ecomadmin.HomeController;
 import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.Franchise;
 import com.ats.ecomadmin.model.User;
@@ -61,6 +63,8 @@ public class ReportsController {
 			todaysDate = date.format(formatters);
 			model.addObject("todaysDate", todaysDate);
 
+			model.addObject("compId", userObj.getCompanyId());
+			
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("compId", userObj.getCompanyId());
 
@@ -206,10 +210,10 @@ public class ReportsController {
 
 		return dateBillRep;
 	}
-	@RequestMapping(value = "pdf/getDateWiseBillPdf/{fromDate}/{toDate}/{frId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getDateWiseBillPdf/{fromDate}/{toDate}/{frId}/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getDateWiseBillPdf(@PathVariable("fromDate") String fromDate,
-			@PathVariable("toDate") String toDate, @PathVariable("frId") String frId, HttpServletRequest request,
-			HttpServletResponse response) {
+			@PathVariable("toDate") String toDate, @PathVariable("frId") String frId, @PathVariable int compId, @PathVariable int showHead,
+			HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView model = null;
 		
 		try {
@@ -230,6 +234,12 @@ public class ReportsController {
 			
 			model.addObject("fromDate", fromDate);
 			model.addObject("toDate", toDate);
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		} catch (
 
 		Exception e) {
@@ -373,6 +383,8 @@ public class ReportsController {
 			model.addObject("frommonth",fromDate);
 			model.addObject("tomonth", toDate);
 			
+			model.addObject("compId", userObj.getCompanyId());
+			
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("compId", userObj.getCompanyId());
 
@@ -510,10 +522,10 @@ public class ReportsController {
 			return monthlyBillRep;
 		}
 		
-		@RequestMapping(value = "pdf/getMonthWiseBillPdf/{fromDate}/{toDate}/{frId}", method = RequestMethod.GET)
+		@RequestMapping(value = "pdf/getMonthWiseBillPdf/{fromDate}/{toDate}/{frId}/{compId}/{showHead}", method = RequestMethod.GET)
 		public ModelAndView getMonthWiseBillPdf(@PathVariable("fromDate") String fromDate,
-				@PathVariable("toDate") String toDate, @PathVariable("frId") String frId, HttpServletRequest request,
-				HttpServletResponse response) {
+				@PathVariable("toDate") String toDate, @PathVariable("frId") String frId,@PathVariable int compId, @PathVariable int showHead,
+				HttpServletRequest request, HttpServletResponse response) {
 			ModelAndView model = null;
 			
 			try {
@@ -539,6 +551,13 @@ public class ReportsController {
 				
 				model.addObject("fromMonth", frmDateStr[1]+"-"+frmDateStr[2]);
 				model.addObject("toMonth", dateStr[1]+"-"+dateStr[2]);
+				
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addObject("compName", dtl.getCompanyName());
+					model.addObject("compAddress", dtl.getCompAddress());
+					model.addObject("compContact", dtl.getCompContactNo());	
+				}
 			} catch (
 
 			Exception e) {
@@ -565,6 +584,8 @@ public class ReportsController {
 				DateTimeFormatter formatters = DateTimeFormatter.ofPattern("d-MM-uuuu");
 				todaysDate = date.format(formatters);
 				HttpSession ses = request.getSession();
+				
+				model.addObject("compId", userObj.getCompanyId());
 				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", userObj.getCompanyId());
@@ -801,10 +822,10 @@ public class ReportsController {
 			return custPrchDtlList;
 		}
 
-		@RequestMapping(value = "pdf/getCustWiseReportPdf/{frId}/{fromDate}/{toDate}", method = RequestMethod.GET)
+		@RequestMapping(value = "pdf/getCustWiseReportPdf/{frId}/{fromDate}/{toDate}/{compId}/{showHead}", method = RequestMethod.GET)
 		public ModelAndView getCustWiseBillPdf( HttpServletRequest request,
 				HttpServletResponse response, @PathVariable("frId") String frId, @PathVariable("fromDate") String fromDate,
-				@PathVariable("toDate") String toDate) {
+				@PathVariable("toDate") String toDate,@PathVariable int compId, @PathVariable int showHead) {
 			ModelAndView model = null;
 			
 			try {
@@ -819,12 +840,19 @@ public class ReportsController {
 				GetCustomerWisReport[] orderRepArr = Constants.getRestTemplate()
 						.postForObject(Constants.url + "/getCustPurchaseRepByFrId", map, GetCustomerWisReport[].class);
 
-				List<GetCustomerWisReport> custRepList = new ArrayList<GetCustomerWisReport>(Arrays.asList(orderRepArr));
-				System.out.println("custRepList----"+custRepList);
+				List<GetCustomerWisReport> custRepList = new ArrayList<GetCustomerWisReport>(Arrays.asList(orderRepArr));				
+
 				model.addObject("custRepList", custRepList);
 				
 				model.addObject("fromDate", fromDate);
 				model.addObject("toDate", toDate);
+				
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addObject("compName", dtl.getCompanyName());
+					model.addObject("compAddress", dtl.getCompAddress());
+					model.addObject("compContact", dtl.getCompContactNo());	
+				}
 				
 			} catch (
 
