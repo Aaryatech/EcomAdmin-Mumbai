@@ -90,7 +90,8 @@ public class MasterController {
 				mav = "masters/uomList";
 
 				int compId = (int) session.getAttribute("companyId");
-
+				model.addAttribute("compId", compId);
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
@@ -164,16 +165,25 @@ public class MasterController {
 		return mav;
 	}	
 	
-	@RequestMapping(value = "pdf/getUomPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getUomPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getUomPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/uomPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			Uom[] uomArr = Constants.getRestTemplate().postForObject(Constants.url + "getUoms", map, Uom[].class);
+			uomList = new ArrayList<Uom>(Arrays.asList(uomArr));
 			
 			model.addObject("uomList", uomList);
-			model.addObject("company", company.getCompanyName());
+			
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1942,10 +1952,9 @@ public class MasterController {
 
 			} else {
 				int companyId = (int) session.getAttribute("companyId");
-
-				mav = "masters/filterList";
-
+				model.addAttribute("compId", companyId);
 				
+				mav = "masters/filterList";				
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 
@@ -1956,6 +1965,7 @@ public class MasterController {
 
 				model.addAttribute("title", filterType.getFilterTypeName() + " List");
 				model.addAttribute("filterType", filterType.getFilterTypeName());
+				model.addAttribute("filterTypeStr", FormValidation.Encrypt(filterType.getFilterTypeName()));
 				model.addAttribute("filterTypeId", filterTypeId);
 
 				map = new LinkedMultiValueMap<>();
@@ -2095,18 +2105,35 @@ public class MasterController {
 		return filterList;
 	}
 	
-	@RequestMapping(value = "pdf/getFilterTypeListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getFilterTypeListPdf/{compId}/{selctId}/{showHead}/{filterTypeId}/{filterCol}", method = RequestMethod.GET)
 	public ModelAndView getFilterTypeListPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead,
+			@PathVariable int filterTypeId, @PathVariable String filterCol) {
 		ModelAndView model = new ModelAndView("pdfs/filterTypesPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+			map.add("filterTypeId", filterTypeId);
+
+			MFilter[] filterArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getFiltersListByTypeId", map, MFilter[].class);
+			filterList = new ArrayList<MFilter>(Arrays.asList(filterArr));
+		
+			filtersIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			String filterStr = FormValidation.DecodeKey(filterCol);			
 			
 			model.addObject("filterList", filterList);
 			model.addObject("filtersIds", filtersIds);
-			model.addObject("filterCol", filterCol);
-			model.addObject("company", company.getCompanyName());
+			model.addObject("filterCol", filterStr);
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
