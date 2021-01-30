@@ -157,6 +157,8 @@
 								</tbody>
 							</table>
 							<div class="text-center">
+							<input type="hidden" value="${compId}" id="compId">
+							
 							<button type="button" class="btn btn-primary" id="submtbtn"
 								onclick="exportToExcel()">
 								Excel <i class="far fa-file-excel"></i>
@@ -249,8 +251,11 @@
 		}
 
 		function genPdf() {
+			var compId = $("#compId").val();
+			var catId = $("#cat_id").val();
+
 			window
-					.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getProductConfigPdf");
+					.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getProductConfigPdf/"+compId+"/"+catId);
 		}
 	</script>
 </body>

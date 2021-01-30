@@ -167,7 +167,7 @@
 								onclick="deletSelctd()">
 								Delete <i class="far fa-trash-alt"></i>
 							</button> -->
-
+							<input type="hidden" value="${compId}" id="compId">
 							<button type="button" class="btn btn-primary" id="submtbtn1"
 							data-toggle="modal" data-target="#modal_theme_primary" onclick="getHeaders()">
 								Pdf/Excel <i class="fas fa-file-pdf"></i>
@@ -285,7 +285,8 @@
 											window.open("${pageContext.request.contextPath}/exportToExcelNew");
 											document.getElementById("expExcel").disabled = true;
 										}else{
-											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getProductListPdf');
+											var compId = $("#compId").val();
+											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getProductListPdf/'+compId+"/"+elemntIds.join());
 										}
 									}
 								});

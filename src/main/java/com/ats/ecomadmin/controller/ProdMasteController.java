@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ats.ecomadmin.HomeController;
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
@@ -641,6 +642,7 @@ public class ProdMasteController {
 				}
 				List<GetProdList> prodList = new ArrayList<GetProdList>();
 				int compId = (int) session.getAttribute("companyId");
+				model.addObject("compId", compId);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
@@ -1496,6 +1498,7 @@ public class ProdMasteController {
 
 			} else {
 				int compId = (int) session.getAttribute("companyId");
+				model.addObject("compId", compId);
 
 				List<Category> catList = new ArrayList<>();
 
@@ -1580,16 +1583,22 @@ public class ProdMasteController {
 		return model;
 	}
 	
-	@RequestMapping(value = "pdf/getProductConfigPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getProductConfigPdf/{compId}/{catId}", method = RequestMethod.GET)
 	public ModelAndView getProductConfigPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int catId) {
 		ModelAndView model = new ModelAndView("pdfs/productConfigPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("companyId", compId);
+			map.add("catIdList", catId);
+
+			GetItemConfHead[] confHeadArray = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getProdConfList", map, GetItemConfHead[].class);
+			confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));			
 			
 			model.addObject("confHeadList", confHeadList);
-			model.addObject("company", company.getCompanyName());
+			model.addObject("company", HomeController.getCompName(compId));
+
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2413,18 +2422,24 @@ public class ProdMasteController {
 		return prodListPrint;
 	}
 	
-	@RequestMapping(value = "pdf/getProductListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getProductListPdf/{compId}/{selctId}", method = RequestMethod.GET)
 	public String getProductListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable String selctId) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			GetProdList[] prodArr = Constants.getRestTemplate().postForObject(Constants.url + "getProdList", map,
+					GetProdList[].class);
+			prodListPrint = new ArrayList<GetProdList>(Arrays.asList(prodArr));
 			
-			System.out.println("proIds Found-----------"+proIds);
+			proIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
-				model.addAttribute("prodList", prodListPrint);
-				model.addAttribute("company", company.getCompanyName());
-				model.addAttribute("proIds", proIds);
+			model.addAttribute("prodList", prodListPrint);
+			model.addAttribute("company", HomeController.getCompName(compId));
+			model.addAttribute("proIds", proIds);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

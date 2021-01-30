@@ -1964,6 +1964,7 @@ public class CompanyAdminController {
 
 				mav = "masters/subCatList";
 				int compId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", compId);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
@@ -2049,16 +2050,21 @@ public class CompanyAdminController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getSubCategoryPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getSubCategoryPdf/{compId}", method = RequestMethod.GET)
 	public ModelAndView getSubCategoryPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId) {
 		ModelAndView model = new ModelAndView("pdfs/subCategoryPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
 			
-				model.addObject("subCatList", subCatList);
-				model.addObject("company", company.getCompanyName());
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			SubCategory[] subCatArray = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllActiveSubCategories", map, SubCategory[].class);
+			subCatList = new ArrayList<SubCategory>(Arrays.asList(subCatArray));
+			
+			model.addObject("subCatList", subCatList);
+			model.addObject("company", HomeController.getCompName(compId));
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -34,8 +34,8 @@ table {
 }
 
 table th {
-  background-color: #f44336 !important;
-  color: black;
+  background-color: #ee558f !important;
+  color: #fff;
 }
 
 
@@ -79,6 +79,7 @@ color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
 			style="border-top: 1px solid #313131;"
 			class="table datatable-header-basic">
 			<tr>
+				<th width="8">Sr.No.</th>
 				<th>Configuration Name</th>
 				<th>Category</th>
 				<th>Active/InActive</th>
@@ -87,7 +88,8 @@ color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
 
 			<c:forEach items="${confHeadList}" var="confHead" varStatus="count">
 				<tr>
-					<td>${count.index+1})${confHead.configName}</td>
+					<td>${count.index+1}</td>
+					<td>${confHead.configName}</td>
 					<td>${confHead.catName}</td>
 					<td>${confHead.isActive==0 ? 'In Active' :confHead.isActive==1 ? 'Active' : 'Active'}</td>
 				</tr>

@@ -10,7 +10,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- <title>Production List</title> -->
-<jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
 <style type="text/css">
 @media print {
 	.no-break {
@@ -34,8 +33,8 @@ table {
 }
 
 table th {
-  background-color: #f44336 !important;
-  color: black;
+  background-color: #ee558f !important;
+  color: #fff;
 }
 
 
@@ -79,6 +78,7 @@ color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
 			style="border-top: 1px solid #313131;"
 			class="table datatable-header-basic">
 			<tr>				
+				<th width="30">Sr. No.</th>
 				<c:forEach items="${proIds}" var="proIds">
 					<c:if test="${proIds==1}">
 						<th>Product Code</th>
@@ -117,9 +117,10 @@ color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
 
 			<c:forEach items="${prodList}" var="prod" varStatus="count">
 				<tr>
-					<c:forEach items="${proIds}" var="proIds">
+					<td>${count.index+1}</td>
+					<c:forEach items="${proIds}" var="proIds">					
 					<c:if test="${proIds==1}">
-						<td>${count.index+1})${prod.productCode}</td>
+						<td>${prod.productCode}</td>
 					</c:if>
 					
 					<c:if test="${proIds==2}">
