@@ -567,7 +567,6 @@
 	///////////////////////////////////////////
 	</script>
 	
-	</script>
 	 <!-- Primary modal -->
 				<div id="modal_theme_primary" class="modal fade" tabindex="-1">
 					<div class="modal-dialog">

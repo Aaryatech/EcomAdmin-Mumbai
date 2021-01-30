@@ -76,7 +76,7 @@
 					<table class="table datatable-header-basic" id="printtable2">
 						<thead>
 							<tr>
-								<th width="10%">Sr. No.&nbsp; <input type="checkbox" name="selAll" id="selAll"/></th>
+								<th width="10%">Sr. No.&nbsp; <input type="checkbox" name="selAll" id="selAll" class="selAllTab"/></th>
 								<th>${filterType} Name</th>
 								<%-- <th>${filterType}</th> --%>
 								<th>Status</th>
@@ -141,7 +141,7 @@
 			<!-- Footer -->
 			<jsp:include page="/WEB-INF/views/include/footer.jsp"></jsp:include>
 			<!-- /footer -->
-
+<script src="${pageContext.request.contextPath}/resources/assets/commanjs/checkAll.js"></script>
 		</div>
 		<!-- /main content -->
 
@@ -206,7 +206,7 @@
 									<thead>
 										<tr>
 											<th width="15">Sr.No.
-											<input type="checkbox" name="selAll2" id="selAll2" class="selAllTab"/>
+											<input type="checkbox" name="selAll2" id="selAll2" class="selAll2"/>
 											</th>
 											<th>Headers</th>
 										</tr>
@@ -262,7 +262,7 @@
 
 						function() {
 
-							$("#selAll").click(
+							$("#selAll2").click(
 									function() {
 										$('#modelTable tbody input[type="checkbox"]')
 												.prop('checked', this.checked);
@@ -306,6 +306,7 @@
 											}
 											var url = '${pageContext.request.contextPath}/pdfReport?url=pdf/getFilterTypeListPdf/'+compId+'/'+elemntIds.join()+'/'+showHead+'/'+filterTypeId+'/'+filterStr;
 											window.open(url);
+											$('#selAll2').prop('checked', false);
 										}
 									}
 								});
