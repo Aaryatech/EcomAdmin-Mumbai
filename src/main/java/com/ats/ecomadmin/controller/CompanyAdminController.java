@@ -2051,9 +2051,9 @@ public class CompanyAdminController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getSubCategoryPdf/{compId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getSubCategoryPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getSubCategoryPdf(HttpServletRequest request,
-			HttpServletResponse response, @PathVariable int compId) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/subCategoryPdf");
 		try {
 			
@@ -2065,7 +2065,12 @@ public class CompanyAdminController {
 			subCatList = new ArrayList<SubCategory>(Arrays.asList(subCatArray));
 			
 			model.addObject("subCatList", subCatList);
-			model.addObject("company", HomeController.getCompName(compId));
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

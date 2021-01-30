@@ -38,6 +38,7 @@ import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.GetItemConfHead;
 import com.ats.ecomadmin.model.GetProdList;
@@ -1583,9 +1584,9 @@ public class ProdMasteController {
 		return model;
 	}
 	
-	@RequestMapping(value = "pdf/getProductConfigPdf/{compId}/{catId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getProductConfigPdf/{compId}/{catId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getProductConfigPdf(HttpServletRequest request,
-			HttpServletResponse response, @PathVariable int compId, @PathVariable int catId) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int catId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/productConfigPdf");
 		try {
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -1597,7 +1598,13 @@ public class ProdMasteController {
 			confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));			
 			
 			model.addObject("confHeadList", confHeadList);
-			model.addObject("company", HomeController.getCompName(compId));
+			
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -2422,9 +2429,9 @@ public class ProdMasteController {
 		return prodListPrint;
 	}
 	
-	@RequestMapping(value = "pdf/getProductListPdf/{compId}/{selctId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getProductListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getProductListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable String selctId) {
+			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead) {
 		try {
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("compId", compId);
@@ -2438,8 +2445,13 @@ public class ProdMasteController {
 			        .collect(Collectors.toList());
 			
 			model.addAttribute("prodList", prodListPrint);
-			model.addAttribute("company", HomeController.getCompName(compId));
 			model.addAttribute("proIds", proIds);
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addAttribute("compName", dtl.getCompanyName());
+				model.addAttribute("compAddress", dtl.getCompAddress());
+				model.addAttribute("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

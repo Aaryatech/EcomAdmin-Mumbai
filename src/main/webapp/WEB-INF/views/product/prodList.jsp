@@ -197,7 +197,7 @@
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header bg-primary">
-								<h6 class="modal-title">Primary header</h6>
+								<h6 class="modal-title">Product List</h6>
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
 							</div>
 				
@@ -217,7 +217,15 @@
 								<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
 							</div>
+							<div class="text-center">
+							<div class="form-check form-check-switchery form-check-inline">
 
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>
 							<div class="modal-footer">
 								<button type="button" class="btn bg-primary" id="expExcel" onclick="getIdsReport(1)">Excel</button>
 								<button type="button" class="btn bg-primary" onclick="getIdsReport(2)">Pdf</button>
@@ -286,7 +294,13 @@
 											document.getElementById("expExcel").disabled = true;
 										}else{
 											var compId = $("#compId").val();
-											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getProductListPdf/'+compId+"/"+elemntIds.join());
+											var showHead = 0;
+											if($("#chkPdf").is(":checked")){
+												showHead = 1;
+											}else{
+												showHead = 0;
+											}
+											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getProductListPdf/'+compId+"/"+elemntIds.join()+'/'+showHead);
 										}
 									}
 								});

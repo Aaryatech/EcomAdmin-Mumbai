@@ -157,6 +157,15 @@
 								</tbody>
 							</table>
 							<div class="text-center">
+							<div class="form-check form-check-switchery form-check-inline">
+
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>
+							<div class="text-center">
 							<input type="hidden" value="${compId}" id="compId">
 							
 							<button type="button" class="btn btn-primary" id="submtbtn"
@@ -254,8 +263,15 @@
 			var compId = $("#compId").val();
 			var catId = $("#cat_id").val();
 
+			var showHead = 0;
+			if($("#chkPdf").is(":checked")){
+				showHead = 1;
+			}else{
+				showHead = 0;
+			}
+
 			window
-					.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getProductConfigPdf/"+compId+"/"+catId);
+					.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getProductConfigPdf/"+compId+"/"+catId+"/"+showHead);
 		}
 	</script>
 </body>

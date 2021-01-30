@@ -556,9 +556,9 @@ public class MasterController {
 		return taxPrintList;
 	}
 	
-	@RequestMapping(value = "pdf/getTaxListPdf/{compId}/{selctId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getTaxListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getTaxListPdf(HttpServletRequest request,
-			HttpServletResponse response, @PathVariable int compId,@PathVariable String selctId) {
+			HttpServletResponse response, @PathVariable int compId,@PathVariable String selctId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/taxListPdf");
 		try {
 			
@@ -574,7 +574,12 @@ public class MasterController {
 			
 				model.addObject("taxList", taxPrintList);
 				model.addObject("taxIds", taxIds);
-				model.addObject("company", HomeController.getCompName(compId));
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addObject("compName", dtl.getCompanyName());
+					model.addObject("compAddress", dtl.getCompAddress());
+					model.addObject("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1291,10 +1296,8 @@ public class MasterController {
 
 			} else {
 				int companyId = (int) session.getAttribute("companyId");
-
-				mav = "masters/categoryList";
-
-				
+				model.addAttribute("compId", companyId);
+				mav = "masters/categoryList";				
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
@@ -1375,18 +1378,24 @@ public class MasterController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getCategoryPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getCategoryPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getCategoryPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/categoryPdf");
-		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
-			
-			System.out.println("proIds Found-----------"+catList);
-			
-				model.addObject("catList", catList);
-				model.addObject("company", company.getCompanyName());
+		try {		
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+					Category[].class);
+			catList = new ArrayList<Category>(Arrays.asList(catArr));
+			model.addObject("catList", catList);
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
