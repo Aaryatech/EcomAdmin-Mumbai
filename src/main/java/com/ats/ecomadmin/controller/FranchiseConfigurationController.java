@@ -32,6 +32,7 @@ import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.FilterTypes;
 import com.ats.ecomadmin.model.Franchise;
@@ -460,10 +461,10 @@ public class FranchiseConfigurationController {
 		return frConfigPrintList;
 	}
 	
-@RequestMapping(value = "pdf/getConfigFrListPdf/{compId}/{selctId}/{frIds}/{configIds}/{orderBy}", method = RequestMethod.GET)
+@RequestMapping(value = "pdf/getConfigFrListPdf/{compId}/{selctId}/{frIds}/{configIds}/{orderBy}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getSubCategoryPdf(HttpServletRequest request,
 			HttpServletResponse response, @PathVariable int compId,@PathVariable String selctId, 
-			@PathVariable String frIds, @PathVariable String configIds, @PathVariable int orderBy) {
+			@PathVariable String frIds, @PathVariable String configIds, @PathVariable int orderBy, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/frConfigPrintPdf");
 		try {
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -481,7 +482,13 @@ public class FranchiseConfigurationController {
 			
 				model.addObject("frConfigPrintList", frConfigList);
 				model.addObject("frConfigIds", frConfigIds);
-				model.addObject("company", HomeController.getCompName(compId));
+				
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addObject("compName", dtl.getCompanyName());
+					model.addObject("compAddress", dtl.getCompAddress());
+					model.addObject("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -688,9 +695,9 @@ public class FranchiseConfigurationController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getDeliveBoyPdf/{compId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getDeliveBoyPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getDeliveBoyPdf(HttpServletRequest request,
-			HttpServletResponse response, @PathVariable int compId) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/delvrBoyPdf");
 		try {
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -701,7 +708,12 @@ public class FranchiseConfigurationController {
 			ArrayList<DeliveryBoy> delBoyList = new ArrayList<DeliveryBoy>(Arrays.asList(uomArr));
 			
 				model.addObject("delBoyList", delBoyList);
-				model.addObject("company", HomeController.getCompName(compId));
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addObject("compName", dtl.getCompanyName());
+					model.addObject("compAddress", dtl.getCompAddress());
+					model.addObject("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

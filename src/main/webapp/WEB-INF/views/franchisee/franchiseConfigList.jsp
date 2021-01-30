@@ -520,7 +520,15 @@
 								<span class="validation-invalid-label" id="error_modelchks"
 										style="display: none;">Select Check Box.</span>
 							</div>
+							<div class="text-center">
+							<div class="form-check form-check-switchery form-check-inline">
 
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>	
 							<div class="modal-footer">
 								<button type="button" class="btn bg-primary" id="expExcel" onclick="getIdsReport(1)">Excel</button>
 								<button type="button" class="btn bg-primary" onclick="getIdsReport(2)">Pdf</button>
@@ -604,7 +612,14 @@
 											var frIds = $("#frId").val();
 											var configIds = $("#configId").val();
 											var orderBy = $("#orderBy").val();
-						window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getConfigFrListPdf/'+compId+'/'+elemntIds.join()+'/'+frIds+'/'+configIds+'/'+orderBy);
+											
+											var showHead = 0;
+											if($("#chkPdf").is(":checked")){
+												showHead = 1;
+											}else{
+												showHead = 0;
+											}
+						window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getConfigFrListPdf/'+compId+'/'+elemntIds.join()+'/'+frIds+'/'+configIds+'/'+orderBy+'/'+showHead);
 										}
 									}
 								});
