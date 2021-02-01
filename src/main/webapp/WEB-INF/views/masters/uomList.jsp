@@ -114,9 +114,14 @@
 									
 							
 					
-
-					
-					<div class="text-center">
+				<c:choose>
+					<c:when test="${uomListSize<=0}">
+					<div style="text-align: center;margin: 0,auto;" >
+					<img src="${pageContext.request.contextPath}/resources/global_assets/images/norecordfound.jpg" alt="">
+					</div>
+					</c:when>
+					<c:otherwise>
+						<div class="text-center">
 					<input type="hidden" value="${compId}" id="compId">
 					<div class="text-center">
 							<div class="form-check form-check-switchery form-check-inline">
@@ -139,7 +144,12 @@
 								Pdf<i class="fas fa-file-pdf"></i>
 							</button>
 						
-						</div>	
+						</div>
+					</c:otherwise>
+					
+					</c:choose>
+					
+						
 
 						</div>
 				</div>

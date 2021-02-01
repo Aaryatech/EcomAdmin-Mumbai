@@ -103,7 +103,7 @@ public class MasterController {
 					uomList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(uomList.get(i).getUomId())));
 				}
 				model.addAttribute("uomList", uomList);
-
+				model.addAttribute("uomListSize", uomList.size());
 				model.addAttribute("title", "UOM List");
 
 				Info add = AccessControll.checkAccess("showUomList", "showUomList", "0", "1", "0", "0", newModuleList);
@@ -410,6 +410,8 @@ public class MasterController {
 					taxList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(taxList.get(i).getTaxId())));
 				}
 				model.addAttribute("taxList", taxList);
+				model.addAttribute("taxListSize", taxList.size());
+				
 
 				model.addAttribute("title", "Tax List");
 				Info add = AccessControll.checkAccess("showTaxList", "showTaxList", "0", "1", "0", "0", newModuleList);
