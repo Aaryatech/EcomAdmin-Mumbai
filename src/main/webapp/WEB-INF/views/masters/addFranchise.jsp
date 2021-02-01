@@ -471,7 +471,7 @@
 														class="form-control maxlength-badge-position"
 														name="latitude" id="latitude" maxlength="12"
 														autocomplete="off" onchange="trim(this)"
-														value="${franchise.shopsLatitude}"   onkeyup="this.value=this.value.replace(/[^\d]/,'')" > <span
+														value="${franchise.shopsLatitude}"    > <span
 														class="validation-invalid-label text-danger"
 														id="error_latitude" style="display: none;">This
 														field is required.</span>
@@ -480,14 +480,14 @@
 											
 												<label class="col-form-label font-weight-bold col-lg-2"
 													for="longitude">Longitude<span class="text-danger">*
-												</span>:
+											</span>:
 												</label>
 												<div class="col-lg-4">
 													<input type="text"
 														class="form-control maxlength-badge-position"
 														name="longitude" id="longitude" maxlength="12"
 														autocomplete="off" onchange="trim(this)"
-														value="${franchise.shopsLogitude}"  onkeyup="this.value=this.value.replace(/[^\d]/,'')"  > <span
+														value="${franchise.shopsLogitude}"  > <span
 														class="validation-invalid-label text-danger"
 														id="error_longitude" style="display: none;">This
 														field is required.</span>
@@ -698,6 +698,12 @@
 	    var input = $("#pass");
 	    input.attr('type') === 'password' ? input.attr('type','text') : input.attr('type','password')
 	});
+	$('#latitude').on('input', function() {
+		 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+		});	 
+	$('#longitude').on('input', function() {
+		 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+		});
 </script>
 	
 	<script
