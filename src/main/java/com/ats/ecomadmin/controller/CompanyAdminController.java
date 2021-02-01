@@ -377,6 +377,7 @@ public class CompanyAdminController {
 				}
 						
 				model.addAttribute("compList", userList);
+				model.addAttribute("compListSize", userList.size());
 				model.addAttribute("title", "Company List");
 
 				Info add = AccessControll.checkAccess("showCompanys", "showCompanys", "0", "1", "0", "0",
