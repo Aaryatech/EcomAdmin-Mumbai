@@ -2004,6 +2004,7 @@ public class CompanyAdminController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(subCatList.get(i).getSubCatId())));
 				}
 				model.addAttribute("subCatList", subCatList);
+				model.addAttribute("subCatListSize", subCatList.size());
 				model.addAttribute("title", "Sub Category List");
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 				
