@@ -1014,6 +1014,7 @@ public class CompanyAdminController {
 					userList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(userList.get(i).getCustId())));
 				}
 				model.addAttribute("custList", userList);
+				model.addAttribute("custListSize", userList.size());
 				model.addAttribute("title", "Customer List");
 
 				custPrintList = userList; 
