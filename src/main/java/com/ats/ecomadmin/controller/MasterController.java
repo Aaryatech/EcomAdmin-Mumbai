@@ -5084,6 +5084,7 @@ public class MasterController {
 					spDayList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(spDayList.get(i).getSpDayId())));
 				}
 				model.addAttribute("spDayList", spDayList);
+				model.addAttribute("spDayListSize", spDayList.size());
 				model.addAttribute("title", "Sp Day Home Page List");
 
 				Info add = AccessControll.checkAccess("showSpHomePages", "showSpHomePages", "0", "1", "0", "0",
