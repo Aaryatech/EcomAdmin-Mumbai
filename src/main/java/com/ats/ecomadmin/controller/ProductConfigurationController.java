@@ -337,6 +337,7 @@ public class ProductConfigurationController {
 							.setExVar2(FormValidation.Encrypt(String.valueOf(catProList.get(i).getPrimaryItemId())));
 				}
 				model.addAttribute("configList", catProList);
+				model.addAttribute("configListSize", catProList.size());
 
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
