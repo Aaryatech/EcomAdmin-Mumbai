@@ -922,8 +922,8 @@ public class ConfigurationFilterController {
 							FormValidation.Encrypt(String.valueOf(testimonialList.get(i).getTestimonialsId())));
 				}
 				model.addAttribute("testimonialList", testimonialList);
-
-				model.addAttribute("title", "Home Page Testimonial List");
+				model.addAttribute("testimonialListSize", testimonialList.size());
+				model.addAttribute("title", "Home Page Testimonial List");  
 
 				Info add = AccessControll.checkAccess("showHomePageTestimonial", "showHomePageTestimonial", "0", "1",
 						"0", "0", newModuleList);
