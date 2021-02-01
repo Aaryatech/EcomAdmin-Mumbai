@@ -572,7 +572,7 @@
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header bg-primary">
-								<h6 class="modal-title">Select Header</h6>
+								<h6 class="modal-title">Franchise List</h6>
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
 							</div>
 				
@@ -689,6 +689,7 @@
 												showHead = 0;
 											}
 											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getFranchiseIdsListPdf/'+compId+'/'+elemntIds.join()+'/'+showHead);
+											 $('#selAllChk').prop('checked', false);
 										}
 									}
 								});

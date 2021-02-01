@@ -258,13 +258,13 @@
 	}
 	
 	</script>
-	</script>
+
 	 <!-- Primary modal -->
 				<div id="modal_theme_primary" class="modal fade" tabindex="-1">
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header bg-primary">
-								<h6 class="modal-title">Select Header</h6>
+								<h6 class="modal-title">Route List</h6>
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
 							</div>
 				
@@ -381,6 +381,7 @@
 												showHead = 0;
 											}											
 											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getRouteListPdf/'+compId+'/'+elemntIds.join()+'/'+showHead);
+											 $('#selAllChk').prop('checked', false);
 										}
 									}
 								});

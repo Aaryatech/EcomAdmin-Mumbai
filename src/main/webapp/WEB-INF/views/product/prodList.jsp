@@ -301,6 +301,7 @@
 												showHead = 0;
 											}
 											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getProductListPdf/'+compId+"/"+elemntIds.join()+'/'+showHead);
+											 $('#selAll').prop('checked', false);
 										}
 									}
 								});
