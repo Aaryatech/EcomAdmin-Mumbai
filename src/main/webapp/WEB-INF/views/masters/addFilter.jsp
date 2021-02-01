@@ -109,17 +109,18 @@
 												style="display: none;">This field is required.</span>
 										</div>
 
-
-										<label class="col-form-label font-weight-bold col-lg-2"
+									
+										<label id="filtLable"  class="col-form-label font-weight-bold col-lg-2"
 											for="filterType">Filter Type<span class="text-danger">*
 										</span>:
 										</label>
-										<div class="col-lg-4">
-											<input type="text" class="form-control" value="${filterType}"
+										<div id="filType" class="col-lg-4">
+									<input type="text" class="form-control" value="${filterType}"
 												readonly="readonly"> <input type="hidden"
 												class="form-control" value="${filterTypeId}"
-												name="filterTypeId">
+												name="filterTypeId" id="filterTypeId">
 										</div>
+									
 									</div>
 
 									<div class="form-group row">
@@ -332,12 +333,12 @@
 									</div>
 
 
-									<div class="form-group row">
-										<label class="col-form-label font-weight-bold col-lg-2"
+									<div class="form-group row" >
+										<label id="descLbl" class="col-form-label font-weight-bold col-lg-2"
 											for="address">Description <span class="text-danger">
 										</span>:
 										</label>
-										<div class="col-lg-10">
+										<div id="descDiv" class="col-lg-10">
 											<input type="text"
 												class="form-control maxlength-badge-position"
 												maxlength="100" autocomplete="off" onchange="trim(this)"
@@ -349,6 +350,77 @@
 										</div>
 
 									</div>
+									
+									
+									<div class="form-group row"  >
+									<label  id="priceRangeLbl" class="col-form-label font-weight-bold col-lg-2"
+											for="filterName">Price Range<span
+											class="text-danger">* </span>:
+										</label>
+										<div id="priceRange1" class="col-lg-2">
+											<input type="text"
+												class="form-control maxlength-badge-position" maxlength="70"
+												autocomplete="off" onchange="trim(this)"
+												value="${fromPrice}" name="fromPrice" 
+												id="fromPrice"  > <span
+												class="validation-invalid-label" id="error_filterName"
+												style="display: none;">This field is required.</span>
+										</div>
+										<div class="col-lg-2" id="toDiv" style="text-align: center;" ><span >To</span></div>
+								
+										<div id="priceRange2" class="col-lg-2">
+											<input type="text"
+												class="form-control maxlength-badge-position" maxlength="70"
+												autocomplete="off" onchange="trim(this)"
+												value="${toPrice}" name="toPrice"
+												id="toPrice"> <span
+												class="validation-invalid-label" id="error_filterName"
+												style="display: none;">This field is required.</span>
+										</div>
+									</div>
+									
+									<div class="form-group row">
+											<label  id="isTaglabel"  class="col-form-label font-weight-bold col-lg-2"
+												for="adtotag_y">Add to Tag: <span
+												class="text-danger">* </span>:
+											</label>
+											<div  id="isTagDiv"  class="col-lg-4">
+												<c:choose>
+													<c:when test="${filter.filterId>0}">
+														<div class="form-check form-check-inline">
+															<label class="form-check-label"> <input
+																type="radio" class="form-check-input" checked value="1"
+																name="addToTag" id="adtotag_y"
+																${filter.isTagAdd==1 ? 'checked' : ''}> Yes
+															</label>
+														</div>
+
+														<div class="form-check form-check-inline">
+															<label class="form-check-label "> <input
+																type="radio" class="form-check-input" value="0"
+																name="addToTag" id="adtotag_n"
+																${filter.isTagAdd==0 ? 'checked' : ''}> No
+															</label>
+														</div>
+													</c:when>
+													<c:otherwise>
+														<div class="form-check form-check-inline">
+															<label class="form-check-label"> <input
+																type="radio" class="form-check-input" checked value="1"
+																name="addToTag" id="adtotag_y"> Yes
+															</label>
+														</div>
+
+														<div class="form-check form-check-inline">
+															<label class="form-check-label "> <input
+																type="radio" class="form-check-input" value="0"
+																name="addToTag" id="adtotag_n"> No
+															</label>
+														</div>
+													</c:otherwise>
+												</c:choose>
+											</div>
+										</div>
 									<div id="cost_div" style="display: none;">
 
 										<div class="form-group row">
@@ -389,48 +461,7 @@
 
 										</div>
 
-										<div class="form-group row">
-											<label class="col-form-label font-weight-bold col-lg-2"
-												for="adtotag_y">Add to Tag: <span
-												class="text-danger">* </span>:
-											</label>
-											<div class="col-lg-4">
-												<c:choose>
-													<c:when test="${filter.filterId>0}">
-														<div class="form-check form-check-inline">
-															<label class="form-check-label"> <input
-																type="radio" class="form-check-input" checked value="1"
-																name="addToTag" id="adtotag_y"
-																${filter.isTagAdd==1 ? 'checked' : ''}> Yes
-															</label>
-														</div>
-
-														<div class="form-check form-check-inline">
-															<label class="form-check-label "> <input
-																type="radio" class="form-check-input" value="0"
-																name="addToTag" id="adtotag_n"
-																${filter.isTagAdd==0 ? 'checked' : ''}> No
-															</label>
-														</div>
-													</c:when>
-													<c:otherwise>
-														<div class="form-check form-check-inline">
-															<label class="form-check-label"> <input
-																type="radio" class="form-check-input" checked value="1"
-																name="addToTag" id="adtotag_y"> Yes
-															</label>
-														</div>
-
-														<div class="form-check form-check-inline">
-															<label class="form-check-label "> <input
-																type="radio" class="form-check-input" value="0"
-																name="addToTag" id="adtotag_n"> No
-															</label>
-														</div>
-													</c:otherwise>
-												</c:choose>
-											</div>
-										</div>
+										
 									</div>
 									<input type="hidden" id="btnType" name="btnType"> <br>
 									<div class="text-center">
@@ -465,6 +496,47 @@
 
 	</div>
 	<!-- /page content -->
+	<script type="text/javascript">
+	$( document ).ready(function() {
+	  var filterId=document.getElementById('filterId').value;
+	  var filterTypeId=document.getElementById('filterTypeId').value;
+	  // alert(filterTypeId);
+	   if(filterId!=0){
+		   document.getElementById('filtLable').style.display = "none";
+		   document.getElementById('filType').style.display = "none";
+		}else {
+			 document.getElementById('filtLable').style.display = "block";
+			   document.getElementById('filType').style.display = "block";
+		}
+	   
+	   if(filterTypeId==7){  
+		   document.getElementById('isTagDiv').style.display = "none";
+		   document.getElementById('isTaglabel').style.display = "none";
+		   document.getElementById('addToTag').value=0;
+	   }else{
+		   document.getElementById('isTagDiv').style.display = "block"; 
+		   document.getElementById('isTaglabel').style.display = "block";
+	   }
+	      
+	   if(filterTypeId==16){
+		   document.getElementById('descDiv').style.display = "none";
+		   document.getElementById('descLbl').style.display = "none";
+		   document.getElementById('priceRangeLbl').style.display = "block";
+		   document.getElementById('priceRange1').style.display = "block";
+		   document.getElementById('priceRange2').style.display = "block";
+		   document.getElementById('toDiv').style.display = "block";
+	   }else{
+		   document.getElementById('descDiv').style.display = "block";
+		   document.getElementById('descLbl').style.display = "block";
+		   document.getElementById('priceRangeLbl').style.display = "none";
+		   document.getElementById('priceRange1').style.display = "none";
+		   document.getElementById('priceRange2').style.display = "none";
+		   document.getElementById('toDiv').style.display = "none";
+	   }
+
+	});
+	</script>
+	
 	<script type="text/javascript">
 		function changeCostEffect() {
 			var isCostEff = 0;

@@ -139,7 +139,7 @@
 										<div class="col-lg-4">
 											<input type="text"
 												class="form-control maxlength-badge-position" name="messages"
-												id="message" maxlength="100" autocomplete="off"
+												id="message" maxlength="800" autocomplete="off"
 												onchange="trim(this)" value="${testimonial.messages}">
 											<span class="validation-invalid-label text-danger"
 												id="error_message" style="display: none;">This field

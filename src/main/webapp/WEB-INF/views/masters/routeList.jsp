@@ -26,7 +26,7 @@
 <body class="sidebar-xs">
 <c:url value="deleteSelRoutes" var="deleteSelRoutes"/>
 <c:url value="getRouteIds" var="getRouteIds"/>
-
+<c:url value="/getRoutListAjax" var="getRoutListAjax"></c:url>
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->

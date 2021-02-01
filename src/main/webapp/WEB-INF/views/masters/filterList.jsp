@@ -118,7 +118,17 @@
 					<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
 					<input type="hidden" value="${compId}" id="compId">
-					<div class="text-center">
+				<c:choose>
+					<c:when test="${filListSize<=0}">
+					<div style="text-align: center;margin: 0,auto;" >
+					<img src="${pageContext.request.contextPath}/resources/global_assets/images/norecordfound.jpg" alt="">
+					</div>
+					
+					
+				
+					</c:when>
+					<c:otherwise>
+						<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd(${filterTypeId})">
 								Delete <i class="far fa-trash-alt"></i>
@@ -130,6 +140,10 @@
 							</button>
 						
 						</div>
+					
+					</c:otherwise>
+					
+					</c:choose>
 						</div>	
 				</div>
 				<!-- /colReorder integration -->

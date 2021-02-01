@@ -2942,6 +2942,10 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+	
+	
+	
+	
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 25-09-2020
@@ -3012,6 +3016,37 @@ public class CompanyAdminController {
 		}
 
 		return mav;
+	}
+	
+	
+	
+	
+
+@RequestMapping(value="/getRoutListAjax",method=RequestMethod.GET)
+	public @ResponseBody List<GetRouteList> getRoutListAjax(HttpServletRequest request,HttpServletResponse response){
+		System.err.println("In /getRoutListAjax");
+		List<GetRouteList> routeList=new ArrayList<>();
+		HttpSession session=request.getSession();
+		try {
+			int companyId = (int) session.getAttribute("companyId");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", companyId);
+			GetRouteList[] routeArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllRouteByCompId", map, GetRouteList[].class);
+			routeList = new ArrayList<GetRouteList>(Arrays.asList(routeArr));
+
+			for (int i = 0; i < routeList.size(); i++) {
+
+				routeList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouteId())));
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println("Exception Occuered In /getRoutListAjax");
+			e.printStackTrace();
+		}
+		return routeList;
 	}
 	
 	List<GetRouteList> routeListPrint = new ArrayList<GetRouteList>();
