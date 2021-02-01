@@ -626,7 +626,7 @@ public class FranchiseConfigurationController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(delBoyList.get(i).getDelBoyId())));
 				}
 				model.addAttribute("delBoyList", delBoyList);
-
+				model.addAttribute("delBoyListSize", delBoyList.size());
 				model.addAttribute("title", "Delivery Boy List");
 				
 				
