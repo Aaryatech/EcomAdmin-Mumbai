@@ -573,6 +573,7 @@ public class OfferController {
 		List<OfferHeader> offerList = new ArrayList<OfferHeader>(Arrays.asList(arr));
 		
 		model.addObject("offerList", offerList);
+		model.addObject("offerListSize", offerList.size());
 		
 		offerPrintList = offerList;
 			
