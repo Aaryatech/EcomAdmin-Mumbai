@@ -61,7 +61,7 @@ public class DeliverySlotController {
 				DeliverySlots[] delSlotArr=Constants.getRestTemplate().getForObject(Constants.url+"getAllDeliverySlots", DeliverySlots[].class);
 				delSlotList=new ArrayList<>(Arrays.asList(delSlotArr));
 				model.addObject("delSlotList", delSlotList);
-				
+				model.addObject("delSlotListSize", delSlotList.size());
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
 				ExportToExcel expoExcel = new ExportToExcel();

@@ -69,7 +69,7 @@ public class DeliveryChargesController {
 						chargeList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(chargeList.get(i).getChId())));
 					}
 					model.addObject("chargeList", chargeList);
-					
+					model.addObject("chargeListSize", chargeList.size());
 					int compId = (int) session.getAttribute("companyId");
 					model.addObject("compId", compId);
 					
