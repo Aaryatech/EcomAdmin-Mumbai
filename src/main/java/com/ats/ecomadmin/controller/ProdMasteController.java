@@ -658,6 +658,7 @@ public class ProdMasteController {
 				}
 
 				model.addObject("prodList", prodList);
+				model.addObject("prodListSize", prodList.size());
 
 			}
 
