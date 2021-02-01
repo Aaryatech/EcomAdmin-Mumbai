@@ -3103,7 +3103,7 @@ public class MasterController {
 				}
 
 				model.addAttribute("langList", langList);
-
+				model.addAttribute("langListSize", langList.size());
 				model.addAttribute("title", "Language List");
 				langPrintList = langList;
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
