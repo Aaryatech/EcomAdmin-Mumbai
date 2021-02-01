@@ -2635,6 +2635,7 @@ public class CompanyAdminController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(subCatList.get(i).getBannerId())));
 				}
 				model.addAttribute("bannerList", subCatList);
+				model.addAttribute("bannerListSize", subCatList.size());
 				model.addAttribute("title", "Banner List");
 
 				Info add = AccessControll.checkAccess("showBannerList", "showBannerList", "0", "1", "0", "0",
