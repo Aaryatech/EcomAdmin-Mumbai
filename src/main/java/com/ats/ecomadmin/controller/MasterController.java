@@ -4051,6 +4051,7 @@ public class MasterController {
 					delvList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(delvList.get(i).getInstruId())));
 				}
 				model.addAttribute("delvList", delvList);
+				model.addAttribute("delvListSize", delvList.size());
 				model.addAttribute("title", "Delivery Instruction List");
 				
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
