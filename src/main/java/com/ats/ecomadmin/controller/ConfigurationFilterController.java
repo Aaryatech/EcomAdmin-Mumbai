@@ -903,6 +903,9 @@ public class ConfigurationFilterController {
 			} else {
 
 				int compId = (int) session.getAttribute("companyId");
+				
+				model.addAttribute("compId", compId);
+				
 				mav = "product/testimonialList";
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -1060,16 +1063,28 @@ public class ConfigurationFilterController {
 		return testmnlListPrint;
 	}
 	
-	@RequestMapping(value = "pdf/getHmPgTesmnlListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getHmPgTesmnlListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getProductListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			HomePageTestimonial[] hmPgTestmonlArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getHomePgTestmnlExlPdf", map, HomePageTestimonial[].class);
+			List<HomePageTestimonial> testimonialList = new ArrayList<HomePageTestimonial>(Arrays.asList(hmPgTestmonlArr));
 			
+			testimnlIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
-				model.addAttribute("testmnlListPrint", testmnlListPrint);
-				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("testmnlListPrint", testimonialList);
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
 				model.addAttribute("testimnlIds", testimnlIds);
 		}catch (Exception e) {
 			e.printStackTrace();

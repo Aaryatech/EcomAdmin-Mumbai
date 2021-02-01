@@ -4035,7 +4035,8 @@ public class MasterController {
 				mav = "masters/delvInsructList";
 
 				User userObj = (User) session.getAttribute("userObj");
-
+				model.addAttribute("compId", userObj.getCompanyId());
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", userObj.getCompanyId());
 
@@ -4120,16 +4121,25 @@ public class MasterController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getDlvrInstListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getDlvrInstListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getSubCategoryPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/dlvrInstrtnPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			DeliveryInstruction[] delvArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllDeliveryInstructions", map, DeliveryInstruction[].class);
+			delvList = new ArrayList<DeliveryInstruction>(Arrays.asList(delvArr));
 			
 				model.addObject("delvList", delvList);
-				model.addObject("company", company.getCompanyName());
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addObject("compName", dtl.getCompanyName());
+					model.addObject("compAddress", dtl.getCompAddress());
+					model.addObject("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -5056,6 +5066,7 @@ public class MasterController {
 				mav = "masters/spDayHomePageList";
 
 				int companyId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", companyId);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
@@ -5222,16 +5233,31 @@ public class MasterController {
 		return spPageListPrint;
 	}
 	
-	@RequestMapping(value = "pdf/getSpHomePageListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getSpHomePageListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getSpHomePageListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model,@PathVariable int compId, @PathVariable String selctId,
+			 @PathVariable int showHead) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			SpDayHomePage[] grievArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllSpDayHomePagesExl", map, SpDayHomePage[].class);
+			spPageListPrint = new ArrayList<SpDayHomePage>(Arrays.asList(grievArr));
 			
-				model.addAttribute("spPageListPrint", spPageListPrint);
-				model.addAttribute("company", company.getCompanyName());
+			spIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+				model.addAttribute("spPageListPrint", spPageListPrint);				
 				model.addAttribute("spIds", spIds);
+				
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -2618,7 +2618,8 @@ public class CompanyAdminController {
 
 				mav = "masters/bannerList";
 				int compId = (int) session.getAttribute("companyId");
-
+				model.addAttribute("compId", compId);
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
@@ -2780,15 +2781,30 @@ public class CompanyAdminController {
 		return bannerPrintList;
 	}
 	
-	@RequestMapping(value = "pdf/getBannerListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getBannerListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getProductListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable String selctId ,@PathVariable int showHead) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			BannerPage[] bnrArray = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllBannerDtl", map, BannerPage[].class);
+			bannerPrintList = new ArrayList<BannerPage>(Arrays.asList(bnrArray));
+			
+			
+			bannerIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
 				model.addAttribute("bannerPrintList", bannerPrintList);
-				model.addAttribute("company", company.getCompanyName());
+
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addAttribute("compName", dtl.getCompanyName());
+				model.addAttribute("compAddress", dtl.getCompAddress());
+				model.addAttribute("compContact", dtl.getCompContactNo());	
+			}
 				model.addAttribute("bannerIds", bannerIds);
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -2796,7 +2812,6 @@ public class CompanyAdminController {
 		return "pdfs/bannerListPdf";
 		
 	}
-	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
