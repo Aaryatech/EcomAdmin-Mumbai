@@ -4385,6 +4385,7 @@ public class MasterController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(grievList.get(i).getGrevTypeId())));
 				}
 				model.addAttribute("grievList", grievList);
+				model.addAttribute("grievListSize", grievList.size());
 				model.addAttribute("title", "Grievances Type Instruction List");
 
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
