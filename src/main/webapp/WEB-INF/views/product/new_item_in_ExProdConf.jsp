@@ -195,11 +195,24 @@
 								</tbody>
 							</table>
 						</div>
-							<div class="form-group row mb-0">
+						
+						
+						<c:choose>
+					<c:when test="${tempProdConfListSize<=0}">
+					<div style="text-align: center;margin: 0,auto;" >
+					<img src="${pageContext.request.contextPath}/resources/global_assets/images/norecordfound.jpg" alt="">
+					</div>
+					</c:when>
+					<c:otherwise>
+						<div class="form-group row mb-0">
 	<div style="margin: 0 auto;">		
 								<button type="submit" id="submtbtn" class="btn bg-blue ml-3 legitRipple">Save (Adding New Products In Configuration)</button>
 							</div>
 						</div>
+					</c:otherwise>
+					
+					</c:choose>
+							
 					</form>
 					</div>
 					

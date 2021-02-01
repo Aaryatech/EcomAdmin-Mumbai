@@ -641,6 +641,7 @@ public class ProdConfController {
 				
 			}
 			model.addObject("tempProdConfList", tempProdConfList);
+			model.addObject("tempProdConfListSize", tempProdConfList.size());
 
 
 		} catch (Exception e) {
