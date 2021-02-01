@@ -112,6 +112,8 @@
 									</div>
 								</div>
 								<br>
+								<input type="hidden" value="${compId}" id="compId">
+							
 								<div class="text-center">
 									<button type="submit" class="btn btn-primary" id="submtbtn">
 										Search <i class="icon-paperplane ml-2"></i>
@@ -154,6 +156,15 @@
 							</table>
 
 							<br>
+							<div class="text-center">
+							<div class="form-check form-check-switchery form-check-inline">
+
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>
 
 							<div class="text-center">
 								  <button class="btn btn-primary" value="PDF" id="PDFButton"
@@ -511,12 +522,24 @@
 		var fromDate = res[0].trim();
 		var toDate = res[1].trim();
 		
+		var showHead = 0;
+		if($("#chkPdf").is(":checked")){
+			showHead = 1;
+		}else{
+			showHead = 0;
+		}
+		var compId = $("#compId").val();
+		
 	window.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getCustWiseReportPdf/"
 			+frId
 			+'/'
 			+fromDate
 			+'/'
-			+toDate);		
+			+toDate
+			+'/'
+			+compId
+			+'/'
+			+showHead);			
 	} 
 		
 	</script>

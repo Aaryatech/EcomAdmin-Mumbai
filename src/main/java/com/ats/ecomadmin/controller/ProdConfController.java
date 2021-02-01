@@ -641,6 +641,7 @@ public class ProdConfController {
 				
 			}
 			model.addObject("tempProdConfList", tempProdConfList);
+			model.addObject("tempProdConfListSize", tempProdConfList.size());
 
 
 		} catch (Exception e) {
@@ -931,7 +932,7 @@ String mav=new String();
 					}
 
 					model.addAttribute("frList", frList);
-
+					model.addAttribute("frListSize", frList.size());
 					model.addAttribute("title", "Franchise Data Sync");
 
 					

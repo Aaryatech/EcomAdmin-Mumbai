@@ -173,10 +173,20 @@
 							</table>
 
 							<br>
+							<input type="hidden" value="${compId}" id="compId">
 
 							<div class="text-center">
-								<!-- <button class="btn btn-primary" value="PDF" id="PDFButton"
-									onclick="genPdf()" disabled="disabled">PDF</button> -->
+							<div class="form-check form-check-switchery form-check-inline">
+
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>
+							<div class="text-center">
+								<button class="btn btn-primary" value="PDF" id="PDFButton"
+									onclick="genPdf()" disabled="disabled">PDF</button>
 
 								<input type="button" id="expExcel" class="btn btn-primary"
 									value="EXPORT TO Excel" onclick="exportToExcel();"
@@ -508,11 +518,11 @@
 												if (data == "") {
 													alert("No records found !!");
 													document.getElementById("expExcel").disabled = true;
-												//	document.getElementById("PDFButton").disabled = true;
+													document.getElementById("PDFButton").disabled = true;
 												}else{
 													
 													document.getElementById("expExcel").disabled = false;
-												//	document.getElementById("PDFButton").disabled = false;
+													document.getElementById("PDFButton").disabled = false;
 												}	
 												//alert(JSON.stringify(data));
 												$
@@ -920,7 +930,21 @@
 			document.getElementById("expExcel").disabled = true;
 	}
 	function genPdf(){		
-		window.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getOrderListPdf");		
+		var billDate = $("#dates").val();		
+		var dates = billDate.split("to");
+		
+		var datetype = $("#datetype").val();
+		var compId = $("#compId").val();
+		var status = $("#status").val();
+		
+		var showHead = 0;
+		if($("#chkPdf").is(":checked")){
+			showHead = 1;
+		}else{
+			showHead = 0;
+		}
+		
+		window.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getOrderListPdf/"+compId+"/"+status+"/"+dates[0].trim()+"/"+dates[1].trim()+"/"+datetype+"/"+showHead);		
 	} 
 		
 	</script>

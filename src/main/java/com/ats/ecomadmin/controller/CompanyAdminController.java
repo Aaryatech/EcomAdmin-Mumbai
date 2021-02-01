@@ -35,6 +35,7 @@ import com.ats.ecomadmin.model.BannerPage;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.Customer;
 import com.ats.ecomadmin.model.CustomerAddDetail;
 import com.ats.ecomadmin.model.CustomerDetailInfo;
@@ -360,6 +361,9 @@ public class CompanyAdminController {
 			} else {
 
 				mav = "masters/companyList";
+				User userObj = (User) session.getAttribute("userObj");
+
+				model.addAttribute("compId", userObj.getCompanyId());
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 
@@ -373,6 +377,7 @@ public class CompanyAdminController {
 				}
 						
 				model.addAttribute("compList", userList);
+				model.addAttribute("compListSize", userList.size());
 				model.addAttribute("title", "Company List");
 
 				Info add = AccessControll.checkAccess("showCompanys", "showCompanys", "0", "1", "0", "0",
@@ -613,18 +618,30 @@ public class CompanyAdminController {
 		return printCompList;
 	}
 	
-@RequestMapping(value = "pdf/getCompanyListPdf", method = RequestMethod.GET)
+@RequestMapping(value = "pdf/getCompanyListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getCompanyListPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response,@PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/companyListPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+			CompMaster[] userArr = Constants.getRestTemplate().getForObject(Constants.url + "getAllCompany",
+					CompMaster[].class);
+			printCompList = new ArrayList<CompMaster>(Arrays.asList(userArr));
+
+			compIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
 			
 				model.addObject("printCompList", printCompList);
 				model.addObject("compIds", compIds);
-				model.addObject("company", company.getCompanyName());
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addObject("compName", dtl.getCompanyName());
+					model.addObject("compAddress", dtl.getCompAddress());
+					model.addObject("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -984,9 +1001,9 @@ public class CompanyAdminController {
 				mav = "masters/customerList";
 
 				int compId = (int) session.getAttribute("companyId");
-
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				model.addAttribute("compId", compId);
 				
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();				
 
 				GetCustomerInfo[] userArr = Constants.getRestTemplate()
 						.getForObject(Constants.url + "getAllCustomerDetailInfo", GetCustomerInfo[].class);
@@ -998,6 +1015,7 @@ public class CompanyAdminController {
 					userList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(userList.get(i).getCustId())));
 				}
 				model.addAttribute("custList", userList);
+				model.addAttribute("custListSize", userList.size());
 				model.addAttribute("title", "Customer List");
 
 				custPrintList = userList; 
@@ -1134,16 +1152,26 @@ public class CompanyAdminController {
 		return custPrintList;
 	}
 	
-	@RequestMapping(value = "pdf/getCustomerListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getCustomerListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getCustomerListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model,@PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead) {
 		try {
-			System.out.println("custPrintList------------"+custPrintList);
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			GetCustomerInfo[] userArr = Constants.getRestTemplate()
+					.getForObject(Constants.url + "getAllCustomerDetailInfo", GetCustomerInfo[].class);
+			List<GetCustomerInfo> custPrintList = new ArrayList<GetCustomerInfo>(Arrays.asList(userArr));
+				
+			custIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
 				model.addAttribute("custPrintList", custPrintList);
-				model.addAttribute("company", company.getCompanyName());
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
+				
 				model.addAttribute("custIds", custIds);
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -1964,6 +1992,7 @@ public class CompanyAdminController {
 
 				mav = "masters/subCatList";
 				int compId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", compId);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
@@ -1977,6 +2006,7 @@ public class CompanyAdminController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(subCatList.get(i).getSubCatId())));
 				}
 				model.addAttribute("subCatList", subCatList);
+				model.addAttribute("subCatListSize", subCatList.size());
 				model.addAttribute("title", "Sub Category List");
 				model.addAttribute("imgPath", Constants.showDocSaveUrl);
 				
@@ -2049,16 +2079,26 @@ public class CompanyAdminController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getSubCategoryPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getSubCategoryPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getSubCategoryPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/subCategoryPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
 			
-				model.addObject("subCatList", subCatList);
-				model.addObject("company", company.getCompanyName());
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			SubCategory[] subCatArray = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllActiveSubCategories", map, SubCategory[].class);
+			subCatList = new ArrayList<SubCategory>(Arrays.asList(subCatArray));
+			
+			model.addObject("subCatList", subCatList);
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2581,7 +2621,8 @@ public class CompanyAdminController {
 
 				mav = "masters/bannerList";
 				int compId = (int) session.getAttribute("companyId");
-
+				model.addAttribute("compId", compId);
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
@@ -2594,6 +2635,7 @@ public class CompanyAdminController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(subCatList.get(i).getBannerId())));
 				}
 				model.addAttribute("bannerList", subCatList);
+				model.addAttribute("bannerListSize", subCatList.size());
 				model.addAttribute("title", "Banner List");
 
 				Info add = AccessControll.checkAccess("showBannerList", "showBannerList", "0", "1", "0", "0",
@@ -2743,15 +2785,30 @@ public class CompanyAdminController {
 		return bannerPrintList;
 	}
 	
-	@RequestMapping(value = "pdf/getBannerListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getBannerListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getProductListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable String selctId ,@PathVariable int showHead) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			BannerPage[] bnrArray = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllBannerDtl", map, BannerPage[].class);
+			bannerPrintList = new ArrayList<BannerPage>(Arrays.asList(bnrArray));
+			
+			
+			bannerIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
 				model.addAttribute("bannerPrintList", bannerPrintList);
-				model.addAttribute("company", company.getCompanyName());
+
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addAttribute("compName", dtl.getCompanyName());
+				model.addAttribute("compAddress", dtl.getCompAddress());
+				model.addAttribute("compContact", dtl.getCompContactNo());	
+			}
 				model.addAttribute("bannerIds", bannerIds);
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -2759,7 +2816,6 @@ public class CompanyAdminController {
 		return "pdfs/bannerListPdf";
 		
 	}
-	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
@@ -2905,6 +2961,10 @@ public class CompanyAdminController {
 		return mav;
 	}
 
+	
+	
+	
+	
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
 	// Created On :- 25-09-2020
@@ -2967,6 +3027,8 @@ public class CompanyAdminController {
 					routeList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouteId())));
 				}
 				model.addAttribute("routeList", routeList);
+				model.addAttribute("routeListSize", routeList.size());
+				
 			}
 
 		} catch (Exception e) {
@@ -2975,6 +3037,37 @@ public class CompanyAdminController {
 		}
 
 		return mav;
+	}
+	
+	
+	
+	
+
+@RequestMapping(value="/getRoutListAjax",method=RequestMethod.GET)
+	public @ResponseBody List<GetRouteList> getRoutListAjax(HttpServletRequest request,HttpServletResponse response){
+		System.err.println("In /getRoutListAjax");
+		List<GetRouteList> routeList=new ArrayList<>();
+		HttpSession session=request.getSession();
+		try {
+			int companyId = (int) session.getAttribute("companyId");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", companyId);
+			GetRouteList[] routeArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllRouteByCompId", map, GetRouteList[].class);
+			routeList = new ArrayList<GetRouteList>(Arrays.asList(routeArr));
+
+			for (int i = 0; i < routeList.size(); i++) {
+
+				routeList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouteId())));
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println("Exception Occuered In /getRoutListAjax");
+			e.printStackTrace();
+		}
+		return routeList;
 	}
 	
 	List<GetRouteList> routeListPrint = new ArrayList<GetRouteList>();
@@ -3098,9 +3191,10 @@ public class CompanyAdminController {
 		return routeListPrint;
 	}
 	
-	@RequestMapping(value = "pdf/getRouteListPdf/{compId}/{selctId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getRouteListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getRouteListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model, @PathVariable int compId,@PathVariable String selctId ) {
+			HttpServletResponse response, Model model, @PathVariable int compId,@PathVariable String selctId,
+			@PathVariable int showHead) {
 		try {
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("compId", compId);
@@ -3115,8 +3209,14 @@ public class CompanyAdminController {
 			        .collect(Collectors.toList());			
 		
 				model.addAttribute("routeListPrint", routeListPrint);
-				model.addAttribute("company", HomeController.getCompName(compId));
 				model.addAttribute("routeIds", routeIds);
+				
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -3329,6 +3429,7 @@ public class CompanyAdminController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouteTypeId())));
 				}
 				model.addAttribute("routeTypeList", routeList);
+				model.addAttribute("routeTypeListSize", routeList.size());
 				
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
@@ -3397,9 +3498,9 @@ public class CompanyAdminController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getRouteTpyePdf/{compId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getRouteTpyePdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getRouteTpyePdf(HttpServletRequest request,
-			HttpServletResponse response, @PathVariable int compId) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/routeTypePdf");
 		try {
 			
@@ -3409,7 +3510,12 @@ public class CompanyAdminController {
 			
 			model.addObject("routeList", routeList);
 			
-			model.addObject("company", HomeController.getCompName(compId));
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -3656,6 +3762,7 @@ public class CompanyAdminController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouidDelveryId())));
 				}
 				model.addAttribute("routeDelList", routeList);
+				model.addAttribute("routeDelListsize", routeList.size());
 				
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
@@ -3725,9 +3832,9 @@ public class CompanyAdminController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getRouteDelvrPdf/{compId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getRouteDelvrPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getRouteDelvrPdf(HttpServletRequest request,
-			HttpServletResponse response, @PathVariable int compId) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/routeDelvrPdf");
 		try {			
 			RouteDelivery[] routeArr = Constants.getRestTemplate()
@@ -3735,7 +3842,12 @@ public class CompanyAdminController {
 			List<RouteDelivery> routeDelList = new ArrayList<RouteDelivery>(Arrays.asList(routeArr));
 			
 			model.addObject("routeDelList", routeDelList);
-			model.addObject("company", HomeController.getCompName(compId));
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -115,6 +115,14 @@
 					<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
 
+						
+						<c:choose>
+					<c:when test="${testimonialListSize<=0}">
+					<div style="text-align: center;margin: 0,auto;" >
+					<img src="${pageContext.request.contextPath}/resources/global_assets/images/norecordfound.jpg" alt="">
+					</div>
+					</c:when>
+					<c:otherwise>
 						<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd()">
@@ -126,6 +134,11 @@
 								Pdf/Excel <i class="fas fa-file-pdf"></i>
 							</button>
 						</div>
+					</c:otherwise>
+					
+					</c:choose>
+						
+						
 					</div>
 				</div>
 				<!-- /colReorder integration -->
@@ -265,7 +278,7 @@
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header bg-primary">
-								<h6 class="modal-title">Select Header</h6>
+								<h6 class="modal-title">Home Page Testimonial List</h6>
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
 							</div>
 				
@@ -285,7 +298,17 @@
 								<span class="validation-invalid-label" id="error_modelchks"
 										style="display: none;">Select Check Box.</span>
 							</div>
+<input type="hidden" value="${compId}" id="compId">
 
+<div class="text-center">
+							<div class="form-check form-check-switchery form-check-inline">
+
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>
 							<div class="modal-footer">
 								<button type="button" class="btn bg-primary" id="expExcel" onclick="getIdsReport(1)">Excel</button>
 								<button type="button" class="btn bg-primary" onclick="getIdsReport(2)">Pdf</button>
@@ -366,7 +389,16 @@
 											window.open("${pageContext.request.contextPath}/exportToExcelNew");
 											document.getElementById("expExcel").disabled = true;
 										}else{
-											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getHmPgTesmnlListPdf');
+											var compId = $("#compId").val();	
+
+											var showHead = 0;
+											if($("#chkPdf").is(":checked")){
+												showHead = 1;
+											}else{
+												showHead = 0;
+											}
+											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getHmPgTesmnlListPdf/'+compId+"/"+elemntIds.join()+'/'+showHead);
+											 $('#selAllChk').prop('checked', false);
 										}
 									}
 								});

@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,12 +30,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ats.ecomadmin.HomeController;
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.CategoryProduct;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.CompanyTestomonials;
 import com.ats.ecomadmin.model.ConfigHomePageProduct;
 import com.ats.ecomadmin.model.Designation;
@@ -900,6 +903,9 @@ public class ConfigurationFilterController {
 			} else {
 
 				int compId = (int) session.getAttribute("companyId");
+				
+				model.addAttribute("compId", compId);
+				
 				mav = "product/testimonialList";
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -916,8 +922,8 @@ public class ConfigurationFilterController {
 							FormValidation.Encrypt(String.valueOf(testimonialList.get(i).getTestimonialsId())));
 				}
 				model.addAttribute("testimonialList", testimonialList);
-
-				model.addAttribute("title", "Home Page Testimonial List");
+				model.addAttribute("testimonialListSize", testimonialList.size());
+				model.addAttribute("title", "Home Page Testimonial List");  
 
 				Info add = AccessControll.checkAccess("showHomePageTestimonial", "showHomePageTestimonial", "0", "1",
 						"0", "0", newModuleList);
@@ -1057,16 +1063,28 @@ public class ConfigurationFilterController {
 		return testmnlListPrint;
 	}
 	
-	@RequestMapping(value = "pdf/getHmPgTesmnlListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getHmPgTesmnlListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getProductListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			HomePageTestimonial[] hmPgTestmonlArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getHomePgTestmnlExlPdf", map, HomePageTestimonial[].class);
+			List<HomePageTestimonial> testimonialList = new ArrayList<HomePageTestimonial>(Arrays.asList(hmPgTestmonlArr));
 			
+			testimnlIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
-				model.addAttribute("testmnlListPrint", testmnlListPrint);
-				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("testmnlListPrint", testimonialList);
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
 				model.addAttribute("testimnlIds", testimnlIds);
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -1411,7 +1429,8 @@ public class ConfigurationFilterController {
 				mav = "product/prdctEventList";
 
 				int compId = (int) session.getAttribute("companyId");
-
+				model.addAttribute("compId", compId);
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
@@ -1426,7 +1445,7 @@ public class ConfigurationFilterController {
 				}
 
 				model.addAttribute("eventList", festiveEventList);
-
+				model.addAttribute("eventListSize", festiveEventList.size());
 				model.addAttribute("title", "Configure Products And Festive Events");
 
 				Info add = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "0",
@@ -1550,17 +1569,30 @@ public class ConfigurationFilterController {
 	}
 
 
-	@RequestMapping(value = "pdf/getConfigEvntPrdctPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getConfigEvntPrdctPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getConfigEvntPrdctPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/festiveEvntPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+			
+			FestiveEvent[] festiveEventArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getFestiveEventAndProductsList", map, FestiveEvent[].class);
+			festiveEventList = new ArrayList<FestiveEvent>(Arrays.asList(festiveEventArr));
+			
+			configEvntIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
 			model.addObject("festiveEventList", festiveEventList);
 			model.addObject("configEvntIds", configEvntIds);
-			model.addObject("company", company.getCompanyName());
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2018,6 +2050,9 @@ public class ConfigurationFilterController {
 			} else {
 
 				int compId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", compId);
+
+				
 				mav = "product/compTestimonial";
 
 				CompanyTestomonials[] hmPgTestmonlArr = Constants.getRestTemplate()
@@ -2030,7 +2065,7 @@ public class ConfigurationFilterController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(testimonialList.get(i).getId())));
 				}
 				model.addAttribute("testimonialList", testimonialList);
-
+				model.addAttribute("testimonialListSize", testimonialList.size());
 				model.addAttribute("title", "Company Testimonial List");
 				
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
@@ -2100,17 +2135,22 @@ public class ConfigurationFilterController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getCompTestimonlListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getCompTestimonlListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getCompTestimonlListPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/compTestimnlPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
-			
+			CompanyTestomonials[] hmPgTestmonlArr = Constants.getRestTemplate()
+					.getForObject(Constants.url + "getCompanyTestomonialsList", CompanyTestomonials[].class);
+			testimonialList = new ArrayList<CompanyTestomonials>(Arrays.asList(hmPgTestmonlArr));
 			
 				model.addObject("testimonialList", testimonialList);
-				model.addObject("company", company.getCompanyName());
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addObject("compName", dtl.getCompanyName());
+					model.addObject("compAddress", dtl.getCompAddress());
+					model.addObject("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

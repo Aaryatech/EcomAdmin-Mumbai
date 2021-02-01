@@ -300,8 +300,8 @@
 
 															<td
 																	style="padding: 7px; line-height: 0; border-top: 1px solid #ddd;">
-																	<input type="text" readonly="readonly"
-																	value="${prod.productName}" >
+																	<!-- <input type="text" readonly="readonly"
+																	value="" > -->${prod.productName}
 																</td>
 																
 																<td style="padding: 7px; line-height:0; border-top: 1px solid #ddd; display: none;">

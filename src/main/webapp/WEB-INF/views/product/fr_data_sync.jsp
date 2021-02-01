@@ -122,11 +122,23 @@
 					<span class="validation-invalid-label" id="error_fr_check"
 												style="display: none;">Please select some franchise</span>
 				
+				
+				<c:choose>
+					<c:when test="${frListSize<=0}">
+					<div style="text-align: center;margin: 0,auto;" >
+					<img src="${pageContext.request.contextPath}/resources/global_assets/images/norecordfound.jpg" alt="">
+					</div>
+					</c:when>
+					<c:otherwise>
 						<div class="form-group row mb-0">
 	<div style="margin: 0 auto;">		
 								<button type="submit"  id="submtbtn" class="btn bg-blue ml-3 legitRipple">Sync Data</button>
 							</div>
 						</div>
+					</c:otherwise>
+					
+					</c:choose>
+						
 					</form>
 					</div>
 				</div>

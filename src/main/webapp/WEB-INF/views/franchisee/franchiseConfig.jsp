@@ -65,7 +65,7 @@
 									style="color: white;"><i class="icon-list2 ml-2"></i>&nbsp;&nbsp;&nbsp;&nbsp;View
 										List</a></span><!-- showOfferConfigurationList -->
 							</div>
-							<div class="form-group row"></div>
+							<!-- <div class="form-group row"></div> -->
 							<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 							<div class="card-body">														
@@ -77,11 +77,11 @@
 
 
 									<div class="form-group row">
-										<label class="col-form-label font-weight-bold col-lg-2"
+										<label class="col-form-label font-weight-bold col-lg-1"
 											for="catId">Category <span class="text-danger">*
 										</span>:
 										</label>
-										<div class="col-lg-4">
+										<div class="col-lg-3">
 											<select class="form-control select-search" data-fouc
 												name="catId" id="catId"
 												onchange="getConfiguration(this.value)">
@@ -103,13 +103,15 @@
 												is required.</span>
 										</div>
 
-
+										<div class="col-lg-1">
+										</div>
+										
 
 										<label class="col-form-label font-weight-bold col-lg-2"
-											for="configId">Configuration <span
+											for="configId">Configuration<span
 											class="text-danger">* </span>:
 										</label>
-										<div class="col-lg-4">
+										<div class="col-lg-2">
 											<select class="form-control select-search" data-fouc
 												name="configId" id="configId">
 
@@ -117,13 +119,19 @@
 												id="error_configId" style="display: none;">This field
 												is required.</span>
 										</div>
-									</div>									
-									
-									<div class="text-center">								
+										
+										<div class="col-lg-1">
+										</div>
+										
+										<div class="">								
 										<button type="submit" id="search_button" class="btn btn-primary">
 												Search <i class="icon-paperplane ml-2"></i>
 											</button>
 									</div>
+										
+									</div>									
+									
+									
 								</form>
 								</div>
 								
@@ -134,6 +142,38 @@
 									
 									
 									<input type="hidden" name="cfgId" id="cfgId" value="${configId}">
+									<!--Table-->
+									<table class="table ddatatable-header-basic" id="printtable1">
+										<thead>
+											<tr>
+												<th>Sel All<input type="checkbox" name="selAll" id="selAll"/></th>
+												<th>Sr.No.</th>
+												<th>Franchise Name</th>
+												<th>Franchise Code</th>
+												<th>City</th>
+												<th>Route</th>
+
+											</tr>
+										</thead>
+										<tbody>
+											<c:forEach items="${frList}" var="frList" varStatus="count">
+
+												<tr>
+													<td><input type="checkbox" id="frId${frList.frId}"
+														value="${frList.frId}" name="frId" class="select_all"></td>
+													<td>${count.index+1})</td>
+													<td>${frList.frName}</td>
+													<td>${frList.frCode}</td>
+													<td>${frList.frCity}</td>
+													<td>${frList.route}</td>
+													
+													
+											 
+												</tr>
+											</c:forEach>
+										</tbody>
+									</table>
+									<br>
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="displayRate">Display Rate<span
@@ -178,42 +218,6 @@
 												required.</span>
 										</div>
 									</div>
-
-
-
-
-
-									<!--Table-->
-									<table class="table ddatatable-header-basic" id="printtable1">
-										<thead>
-											<tr>
-												<th>Sel All<input type="checkbox" name="selAll" id="selAll"/></th>
-												<th>Sr.No.</th>
-												<th>Franchise Name</th>
-												<th>Franchise Code</th>
-												<th>City</th>
-												<th>Route</th>
-
-											</tr>
-										</thead>
-										<tbody>
-											<c:forEach items="${frList}" var="frList" varStatus="count">
-
-												<tr>
-													<td><input type="checkbox" id="frId${frList.frId}"
-														value="${frList.frId}" name="frId" class="select_all"></td>
-													<td>${count.index+1})</td>
-													<td>${frList.frName}</td>
-													<td>${frList.frCode}</td>
-													<td>${frList.frCity}</td>
-													<td>${frList.route}</td>
-													
-													
-											 
-												</tr>
-											</c:forEach>
-										</tbody>
-									</table>
 									<input type="hidden" id="btnType" name="btnType">
 									
 									<span class="validation-invalid-label" id="error_chks"

@@ -71,10 +71,12 @@
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 					<div class="card-body">
 					<input type="hidden" value="${filterType}" id="filterCol">
+					<input type="hidden" value="${filterTypeStr}" id="filterTypeStr">
+					<input type="hidden" value="${filterTypeId}" id="filter_type_id">
 					<table class="table datatable-header-basic" id="printtable2">
 						<thead>
 							<tr>
-								<th width="10%">Sr. No.&nbsp; <input type="checkbox" name="selAll" id="selAll"/></th>
+								<th width="10%">Sr. No.&nbsp; <input type="checkbox" name="selAll" id="selAll" class="selAllTab"/></th>
 								<th>${filterType} Name</th>
 								<%-- <th>${filterType}</th> --%>
 								<th>Status</th>
@@ -115,7 +117,18 @@
 					</table>
 					<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
-					<div class="text-center">
+					<input type="hidden" value="${compId}" id="compId">
+				<c:choose>
+					<c:when test="${filListSize<=0}">
+					<div style="text-align: center;margin: 0,auto;" >
+					<img src="${pageContext.request.contextPath}/resources/global_assets/images/norecordfound.jpg" alt="">
+					</div>
+					
+					
+				
+					</c:when>
+					<c:otherwise>
+						<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd(${filterTypeId})">
 								Delete <i class="far fa-trash-alt"></i>
@@ -127,6 +140,10 @@
 							</button>
 						
 						</div>
+					
+					</c:otherwise>
+					
+					</c:choose>
 						</div>	
 				</div>
 				<!-- /colReorder integration -->
@@ -138,7 +155,7 @@
 			<!-- Footer -->
 			<jsp:include page="/WEB-INF/views/include/footer.jsp"></jsp:include>
 			<!-- /footer -->
-
+<script src="${pageContext.request.contextPath}/resources/assets/commanjs/checkAll.js"></script>
 		</div>
 		<!-- /main content -->
 
@@ -193,7 +210,7 @@
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header bg-primary">
-								<h6 class="modal-title">Primary header</h6>
+								<h6 class="modal-title">${filterType} List</h6>
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
 							</div>
 				
@@ -203,7 +220,7 @@
 									<thead>
 										<tr>
 											<th width="15">Sr.No.
-											<input type="checkbox" name="selAll2" id="selAll2" class="selAllTab"/>
+											<input type="checkbox" name="selAll2" id="selAll2" class="selAll2"/>
 											</th>
 											<th>Headers</th>
 										</tr>
@@ -213,7 +230,15 @@
 								<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
 							</div>
+							<div class="text-center">
+							<div class="form-check form-check-switchery form-check-inline">
 
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>
 							<div class="modal-footer">
 								<button type="button" class="btn bg-primary" id="expExcel" onclick="getIdsReport(1)">Excel</button>
 								<button type="button" class="btn bg-primary" onclick="getIdsReport(2)">Pdf</button>
@@ -251,7 +276,7 @@
 
 						function() {
 
-							$("#selAll").click(
+							$("#selAll2").click(
 									function() {
 										$('#modelTable tbody input[type="checkbox"]')
 												.prop('checked', this.checked);
@@ -283,7 +308,19 @@
 											window.open("${pageContext.request.contextPath}/exportToExcelNew");
 											document.getElementById("expExcel").disabled = true;
 										}else{
-											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getFilterTypeListPdf');
+											var compId = $("#compId").val();
+											var filterTypeId = $("#filter_type_id").val();
+											var filterStr = $("#filterTypeStr").val();
+											
+											var showHead = 0;
+											if($("#chkPdf").is(":checked")){
+												showHead = 1;
+											}else{
+												showHead = 0;
+											}
+											var url = '${pageContext.request.contextPath}/pdfReport?url=pdf/getFilterTypeListPdf/'+compId+'/'+elemntIds.join()+'/'+showHead+'/'+filterTypeId+'/'+filterStr;
+											window.open(url);
+											$('#selAll2').prop('checked', false);
 										}
 									}
 								});

@@ -110,7 +110,23 @@
 					</table>
 					<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
+						<div class="text-center">
+							<div class="form-check form-check-switchery form-check-inline">
 
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>
+						
+						<c:choose>
+					<c:when test="${routeDelListsize<=0}">
+					<div style="text-align: center;margin: 0,auto;" >
+					<img src="${pageContext.request.contextPath}/resources/global_assets/images/norecordfound.jpg" alt="">
+					</div>
+					</c:when>
+					<c:otherwise>
 						<div class="text-center">
 							<input type="hidden" value="${compId}" id="compId">
 						
@@ -129,6 +145,11 @@
 							</button>
 						
 						</div>
+					</c:otherwise>
+					
+					</c:choose>
+						
+						
 					</div>
 				</div>
 				<!-- /colReorder integration -->
@@ -267,9 +288,15 @@
 
 	function genPdf() {
 		var compId = $("#compId").val();
+		var showHead = 0;
+		if($("#chkPdf").is(":checked")){
+			showHead = 1;
+		}else{
+			showHead = 0;
+		}
 		
 		window
-				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getRouteDelvrPdf/"+compId);
+				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getRouteDelvrPdf/"+compId+"/"+showHead);
 	}
 	
 	</script>

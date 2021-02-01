@@ -26,7 +26,7 @@
 <body class="sidebar-xs">
 <c:url value="deleteSelRoutes" var="deleteSelRoutes"/>
 <c:url value="getRouteIds" var="getRouteIds"/>
-
+<c:url value="/getRoutListAjax" var="getRoutListAjax"></c:url>
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
 	<!-- /main navbar -->
@@ -123,7 +123,13 @@
 					</table>
 					<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
-
+					<c:choose>
+					<c:when test="${routeListSize<=0}">
+					<div style="text-align: center;margin: 0,auto;" >
+					<img src="${pageContext.request.contextPath}/resources/global_assets/images/norecordfound.jpg" alt="">
+					</div>
+					</c:when>
+					<c:otherwise>
 						<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd()">
@@ -136,6 +142,12 @@
 							</button>
 						
 						</div>
+					</c:otherwise>
+					
+					</c:choose>
+
+						
+						
 						
 						</div>
 				</div>
@@ -258,13 +270,13 @@
 	}
 	
 	</script>
-	</script>
+
 	 <!-- Primary modal -->
 				<div id="modal_theme_primary" class="modal fade" tabindex="-1">
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header bg-primary">
-								<h6 class="modal-title">Select Header</h6>
+								<h6 class="modal-title">Route List</h6>
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
 							</div>
 				
@@ -284,7 +296,15 @@
 								<span class="validation-invalid-label" id="error_modelchks"
 										style="display: none;">Select Check Box.</span>
 							</div>
+							<div class="text-center">
+							<div class="form-check form-check-switchery form-check-inline">
 
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>
 							<div class="modal-footer">
 							<input type="hidden" value="${compId}" id="compId">
 								<button type="button" class="btn bg-primary" id="expExcel" onclick="getIdsReport(1)">Excel</button>
@@ -366,8 +386,14 @@
 											document.getElementById("expExcel").disabled = true;
 										}else{
 											var compId = $("#compId").val();
-											
-											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getRouteListPdf/'+compId+"/"+elemntIds.join());
+											var showHead = 0;
+											if($("#chkPdf").is(":checked")){
+												showHead = 1;
+											}else{
+												showHead = 0;
+											}											
+											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getRouteListPdf/'+compId+'/'+elemntIds.join()+'/'+showHead);
+											 $('#selAllChk').prop('checked', false);
 										}
 									}
 								});

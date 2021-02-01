@@ -156,7 +156,34 @@
 									</c:forEach>
 								</tbody>
 							</table>
+					
 							<div class="text-center">
+							<div class="form-check form-check-switchery form-check-inline">
+
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>
+								
+						</div>
+						
+						<div class="form-group row mb-0" style="display: none;">
+					<div style="margin: 0 auto;">
+								<button type="submit" class="btn blue_btn ml-3 legitRipple">Save</button>
+							</div>
+							</div>
+						<c:choose>
+					<c:when test="${confHeadListSize<=0}">
+					<div style="text-align: center;margin: 0,auto;" >
+					<img src="${pageContext.request.contextPath}/resources/global_assets/images/norecordfound.jpg" alt="">
+					</div>
+					</c:when>
+					<c:otherwise>
+						<div class="text-center">
+							<input type="hidden" value="${compId}" id="compId">
+							
 							<button type="button" class="btn btn-primary" id="submtbtn"
 								onclick="exportToExcel()">
 								Excel <i class="far fa-file-excel"></i>
@@ -166,15 +193,10 @@
 								Pdf<i class="fas fa-file-pdf"></i>
 							</button>
 						
-						</div>	
 						</div>
-						
-						<div class="form-group row mb-0" style="display: none;">
-					<div style="margin: 0 auto;">
-								<button type="submit" class="btn blue_btn ml-3 legitRipple">Save</button>
-							</div>
-							</div>
-						
+					</c:otherwise>
+					
+					</c:choose>
 					</form>
 					</div>
 					
@@ -249,8 +271,18 @@
 		}
 
 		function genPdf() {
+			var compId = $("#compId").val();
+			var catId = $("#cat_id").val();
+
+			var showHead = 0;
+			if($("#chkPdf").is(":checked")){
+				showHead = 1;
+			}else{
+				showHead = 0;
+			}
+
 			window
-					.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getProductConfigPdf");
+					.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getProductConfigPdf/"+compId+"/"+catId+"/"+showHead);
 		}
 	</script>
 </body>

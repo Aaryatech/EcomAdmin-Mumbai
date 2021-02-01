@@ -5,6 +5,12 @@
 <html lang="en">
 <head>
 <style type="text/css">
+.tog_icn{
+	    position: absolute !important;
+    top: 13px !important;
+    right: 23px;
+}
+
 .daterangepicker {
 	width: 100%;
 }
@@ -174,9 +180,9 @@
 												</span>:
 												</label>
 												<div class="col-lg-4">
-													<input type="email" placeholder="@gmail.com"
+												<input type="email" placeholder="@gmail.com"
 														class="form-control maxlength-badge-position" name="email"
-														id="email" maxlength="80" autocomplete="off"
+								  						id="email" maxlength="80" autocomplete="false"
 														onchange="trim(this)" value="${franchise.frEmailId}">
 													<span class="validation-invalid-label text-danger"
 														id="error_email" style="display: none;">This field
@@ -266,8 +272,9 @@
 													<div class="col-lg-4">
 														<input type="password"
 															class="form-control maxlength-badge-position" name="pass"
-															id="pass" maxlength="30" autocomplete="off"
-															onchange="trim(this)" placeholder="Enter new password if you want to change"> <span
+															id="pass" maxlength="30" autocomplete="false"
+															onchange="trim(this)" placeholder="Enter new password if you want to change">
+														<span toggle="#password-field" class="fa fa-fw fa-eye field_icon toggle-pass tog_icn"></span> <span
 															class="validation-invalid-label text-danger"
 															id="error_password" style="display: none;">This
 															field is required.</span>
@@ -361,7 +368,7 @@
 											<input type="hidden" id="btnType" name="btnType">
 											<br>
 											<div class="text-center">
-												<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
+												<button style="display: none;" type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
 										
@@ -390,14 +397,14 @@
 
 											<div class="form-group row">
 												<label class="col-form-label font-weight-bold col-lg-2"
-													for="fdaNo">FDA No.<span class="text-danger">*
+													for="fdaNo">FDA NO.<span class="text-danger">*
 												</span>:
 												</label>
 												<div class="col-lg-4">
 													<input type="text"
 														class="form-control maxlength-badge-position" name="fdaNo"
 														id="fdaNo" maxlength="14" autocomplete="off"
-														onchange="trim(this)" value="${franchise.fdaNumber}">
+														onchange="trim(this)" value="${franchise.fdaNumber}" style="text-transform:uppercase" >
 													<span class="validation-invalid-label text-danger"
 														id="error_fdaNo" style="display: none;">This field
 														is required.</span>
@@ -447,7 +454,7 @@
 													<input type="text"
 														class="form-control maxlength-badge-position" name="gstNo"
 														id="gstNo" maxlength="15" autocomplete="off"
-														onchange="trim(this)" value="${franchise.gstNumber}">
+														onchange="trim(this)" value="${franchise.gstNumber}" style="text-transform:uppercase" >
 													<span class="validation-invalid-label text-danger"
 														id="error_gstNo" style="display: none;">This field
 														is required.</span>
@@ -455,22 +462,7 @@
 											</div>
 
 											<div class="form-group row">
-												<label class="col-form-label font-weight-bold col-lg-2"
-													for="longitude">Longitude<span class="text-danger">*
-												</span>:
-												</label>
-												<div class="col-lg-4">
-													<input type="text"
-														class="form-control maxlength-badge-position"
-														name="longitude" id="longitude" maxlength="12"
-														autocomplete="off" onchange="trim(this)"
-														value="${franchise.shopsLogitude}"> <span
-														class="validation-invalid-label text-danger"
-														id="error_longitude" style="display: none;">This
-														field is required.</span>
-												</div>
-
-												<label class="col-form-label font-weight-bold col-lg-2"
+											<label class="col-form-label font-weight-bold col-lg-2"
 													for="latitude">Latitude<span class="text-danger">*
 												</span>:
 												</label>
@@ -479,9 +471,25 @@
 														class="form-control maxlength-badge-position"
 														name="latitude" id="latitude" maxlength="12"
 														autocomplete="off" onchange="trim(this)"
-														value="${franchise.shopsLatitude}"> <span
+														value="${franchise.shopsLatitude}"    > <span
 														class="validation-invalid-label text-danger"
 														id="error_latitude" style="display: none;">This
+														field is required.</span>
+												</div>
+											
+											
+												<label class="col-form-label font-weight-bold col-lg-2"
+													for="longitude">Longitude<span class="text-danger">*
+											</span>:
+												</label>
+												<div class="col-lg-4">
+													<input type="text"
+														class="form-control maxlength-badge-position"
+														name="longitude" id="longitude" maxlength="12"
+														autocomplete="off" onchange="trim(this)"
+														value="${franchise.shopsLogitude}"  > <span
+														class="validation-invalid-label text-danger"
+														id="error_longitude" style="display: none;">This
 														field is required.</span>
 												</div>
 											</div>
@@ -520,7 +528,7 @@
 											<input type="hidden" id="btnType2" name="btnType">
 											<br>
 											<div class="text-center">
-												<button type="submit" class="btn btn-primary" id="submtbtn" onclick="pressBtn2(0)">
+												<button type="submit" style="display: none;" class="btn btn-primary" id="submtbtn" onclick="pressBtn2(0)">
 											Save <i class="icon-paperplane ml-2"></i>
 										</button>
 										
@@ -648,7 +656,7 @@
 													<input type="text"
 														class="form-control maxlength-badge-position" name="panNo"
 														id="panNo" maxlength="10" autocomplete="off"
-														onchange="trim(this)" value="${franchise.panNo}">
+														onchange="trim(this)" value="${franchise.panNo}" style="text-transform:uppercase" >
 													<span class="validation-invalid-label text-danger"
 														id="error_panNo" style="display: none;">This field
 														is required.</span>
@@ -682,6 +690,22 @@
 
 	</div>
 	<%-- <script type="text/javascript" src="${pageContext.request.contextPath}/WEB-INF/views/include/cmn.js"></script> --%>
+	<script type="text/javascript">
+	$(document).on('click', '.toggle-pass', function() {
+
+	    $(this).toggleClass("fa-eye fa-eye-slash");
+	    
+	    var input = $("#pass");
+	    input.attr('type') === 'password' ? input.attr('type','text') : input.attr('type','password')
+	});
+	$('#latitude').on('input', function() {
+		 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+		});	 
+	$('#longitude').on('input', function() {
+		 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+		});
+</script>
+	
 	<script
 		src="${pageContext.request.contextPath}/resources/assets/js/scrolltable.js"></script>
 	<!-- /page content -->
@@ -953,7 +977,7 @@
 												var isError = false;
 												var errMsg = "";
 
-												if (!$("#coBankName").val()) {
+												/* if (!$("#coBankName").val()) {
 													isError = true;
 													$("#error_coBankName")
 															.show()
@@ -987,7 +1011,7 @@
 													$("#accNo").focus();
 												} else {
 													$("#error_accNo").hide()
-												}
+												} */
 
 												if (!$("#paymentGateWay").val()) {
 													isError = true;
@@ -1093,6 +1117,7 @@
 			};
 		}
 		function init() {
+			
 			var text = document.getElementById('address');
 			function resize() {
 				text.style.height = 'auto';

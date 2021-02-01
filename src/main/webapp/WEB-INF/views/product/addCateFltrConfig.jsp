@@ -219,6 +219,7 @@
 
 	</div>
 	<!-- /page content -->
+	
 	<script>
 	
 		function getFilters(cateId){

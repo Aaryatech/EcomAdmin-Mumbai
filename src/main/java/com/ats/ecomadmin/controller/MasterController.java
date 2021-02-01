@@ -42,6 +42,7 @@ import com.ats.ecomadmin.model.AreaCityList;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.DeliveryInstruction;
 import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.FilterTypes;
@@ -89,7 +90,8 @@ public class MasterController {
 				mav = "masters/uomList";
 
 				int compId = (int) session.getAttribute("companyId");
-
+				model.addAttribute("compId", compId);
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
@@ -101,7 +103,7 @@ public class MasterController {
 					uomList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(uomList.get(i).getUomId())));
 				}
 				model.addAttribute("uomList", uomList);
-
+				model.addAttribute("uomListSize", uomList.size());
 				model.addAttribute("title", "UOM List");
 
 				Info add = AccessControll.checkAccess("showUomList", "showUomList", "0", "1", "0", "0", newModuleList);
@@ -163,16 +165,25 @@ public class MasterController {
 		return mav;
 	}	
 	
-	@RequestMapping(value = "pdf/getUomPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getUomPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getUomPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/uomPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			Uom[] uomArr = Constants.getRestTemplate().postForObject(Constants.url + "getUoms", map, Uom[].class);
+			uomList = new ArrayList<Uom>(Arrays.asList(uomArr));
 			
 			model.addObject("uomList", uomList);
-			model.addObject("company", company.getCompanyName());
+			
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -386,6 +397,7 @@ public class MasterController {
 				mav = "masters/taxList";
 
 				int compId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", compId);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
@@ -398,6 +410,8 @@ public class MasterController {
 					taxList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(taxList.get(i).getTaxId())));
 				}
 				model.addAttribute("taxList", taxList);
+				model.addAttribute("taxListSize", taxList.size());
+				
 
 				model.addAttribute("title", "Tax List");
 				Info add = AccessControll.checkAccess("showTaxList", "showTaxList", "0", "1", "0", "0", newModuleList);
@@ -554,19 +568,30 @@ public class MasterController {
 		return taxPrintList;
 	}
 	
-	@RequestMapping(value = "pdf/getTaxListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getTaxListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getTaxListPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId,@PathVariable String selctId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/taxListPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
 			
-			System.out.println("taxIds Found-----------"+taxIds);
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			Tax[] taxArr = Constants.getRestTemplate().postForObject(Constants.url + "getTaxes", map, Tax[].class);
+			taxPrintList = new ArrayList<Tax>(Arrays.asList(taxArr));
+			
+			taxIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
 				model.addObject("taxList", taxPrintList);
 				model.addObject("taxIds", taxIds);
-				model.addObject("company", company.getCompanyName());
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addObject("compName", dtl.getCompanyName());
+					model.addObject("compAddress", dtl.getCompAddress());
+					model.addObject("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1283,10 +1308,8 @@ public class MasterController {
 
 			} else {
 				int companyId = (int) session.getAttribute("companyId");
-
-				mav = "masters/categoryList";
-
-				
+				model.addAttribute("compId", companyId);
+				mav = "masters/categoryList";				
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
@@ -1367,18 +1390,24 @@ public class MasterController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getCategoryPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getCategoryPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getCategoryPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/categoryPdf");
-		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
-			
-			System.out.println("proIds Found-----------"+catList);
-			
-				model.addObject("catList", catList);
-				model.addObject("company", company.getCompanyName());
+		try {		
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
+					Category[].class);
+			catList = new ArrayList<Category>(Arrays.asList(catArr));
+			model.addObject("catList", catList);
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1940,6 +1969,7 @@ public class MasterController {
 				model.addAttribute("title", filterType.getFilterTypeName() + " List");
 				model.addAttribute("filterType", filterType.getFilterTypeName());
 				model.addAttribute("filterTypeId", filterTypeId);
+				
 
 				map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
@@ -1956,7 +1986,7 @@ public class MasterController {
 				}
 
 				model.addAttribute("filterList", filterList);
-
+				model.addAttribute("filListSize", filterList.size());
 				Info add = AccessControll.checkAccess("showFilter/" + filterTypeId, "showFilter/" + filterTypeId, "0",
 						"1", "0", "0", newModuleList);
 				Info edit = AccessControll.checkAccess("showFilter/" + filterTypeId, "showFilter/" + filterTypeId, "0",
@@ -2078,18 +2108,35 @@ public class MasterController {
 		return filterList;
 	}
 	
-	@RequestMapping(value = "pdf/getFilterTypeListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getFilterTypeListPdf/{compId}/{selctId}/{showHead}/{filterTypeId}/{filterCol}", method = RequestMethod.GET)
 	public ModelAndView getFilterTypeListPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead,
+			@PathVariable int filterTypeId, @PathVariable String filterCol) {
 		ModelAndView model = new ModelAndView("pdfs/filterTypesPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+			map.add("filterTypeId", filterTypeId);
+
+			MFilter[] filterArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getFiltersListByTypeId", map, MFilter[].class);
+			filterList = new ArrayList<MFilter>(Arrays.asList(filterArr));
+		
+			filtersIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+			String filterStr = FormValidation.DecodeKey(filterCol);			
 			
 			model.addObject("filterList", filterList);
 			model.addObject("filtersIds", filtersIds);
-			model.addObject("filterCol", filterCol);
-			model.addObject("company", company.getCompanyName());
+			model.addObject("filterCol", filterStr);
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2146,154 +2193,166 @@ public class MasterController {
 		return mav;
 	}
 
-	// Created By :- Mahendra Singh
-	// Created On :- 14-09-2020
-	// Modified By :- NA-Sachin
-	// Modified On :- NA 20-10-2020
-	// Description :- Insert Filter database
-	@RequestMapping(value = "/insertFilter", method = RequestMethod.POST)
-	public String insertFilter(HttpServletRequest request, HttpServletResponse response) {
-		int filterTypeId = 0;
-		try {
+		// Created By :- Mahendra Singh
+		// Created On :- 14-09-2020
+		// Modified By :- NA-Sachin
+		// Modified On :- NA 20-10-2020
+		// Description :- Insert Filter database
+		@RequestMapping(value = "/insertFilter", method = RequestMethod.POST)
+		public String insertFilter(HttpServletRequest request, HttpServletResponse response) {
+			int filterTypeId = 0;
+			try {
 
-			HttpSession session = request.getSession();
+				HttpSession session = request.getSession();
 
-			int filterId = Integer.parseInt(request.getParameter("filterId"));
-			filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
-			int compId = (int) session.getAttribute("companyId");
+				int filterId = Integer.parseInt(request.getParameter("filterId"));
+				filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
+				int compId = (int) session.getAttribute("companyId");
 
-			MFilter filter = new MFilter();
+				MFilter filter = new MFilter();
 
-			filter.setFilterId(filterId);
-			filter.setFilterTypeId(filterTypeId);
-			filter.setIsParent(Integer.parseInt(request.getParameter("isParent")));
-			filter.setAllowToCopy(Integer.parseInt(request.getParameter("allowCopy")));
-			filter.setIsActive(Integer.parseInt(request.getParameter("isActive")));
-			filter.setCostAffect(Integer.parseInt(request.getParameter("isCostAffect")));
-			filter.setUsedForFilter(Integer.parseInt(request.getParameter("isUsedFilter")));
-			filter.setFilterName(request.getParameter("filterName"));
-			filter.setFilterDesc(request.getParameter("description"));
-			filter.setUsedForDescription(Integer.parseInt(request.getParameter("isUsedDesc")));
-			filter.setSortNo(Integer.parseInt(request.getParameter("sortNo")));
-
-			filter.setCompanyId(compId);
-			filter.setDelStatus(1);
-			filter.setExInt1(0);
-			filter.setExInt2(0);
-			filter.setExInt3(0);
-			filter.setExVar1("NA");
-			filter.setExVar2("NA");
-			filter.setExVar3("NA");
-
-			if (filter.getCostAffect() == 1) {
-				try {
-					filter.setAddOnType(Integer.parseInt(request.getParameter("costEffectType")));
-					filter.setAddOnRs(Float.parseFloat(request.getParameter("add_on_rs")));
-
-					filter.setIsTagAdd(Integer.parseInt(request.getParameter("addToTag")));
-					filter.setTagId(0);
-					String type = "One Time";
-					if (filter.getAddOnType() == 1) {
-						type = "One Time";
-					} else {
-						type = "Per UOM";
-					}
-					String adminName = filter.getFilterName() + "_" + type + " " + filter.getAddOnRs();
-					filter.setAdminName(filter.getFilterName());
-					filter.setFilterName(adminName);
-				} catch (Exception e) {
-
+				filter.setFilterId(filterId);
+				filter.setFilterTypeId(filterTypeId);
+				filter.setIsParent(Integer.parseInt(request.getParameter("isParent")));
+				filter.setAllowToCopy(Integer.parseInt(request.getParameter("allowCopy")));
+				filter.setIsActive(Integer.parseInt(request.getParameter("isActive")));
+				filter.setCostAffect(Integer.parseInt(request.getParameter("isCostAffect")));
+				filter.setUsedForFilter(Integer.parseInt(request.getParameter("isUsedFilter")));
+				filter.setFilterName(request.getParameter("filterName"));
+				if(filterTypeId==Constants.priceTypeFilter) {
+					filter.setFilterDesc(request.getParameter("fromPrice")+"-"+request.getParameter("toPrice"));
+				}else {
+					filter.setFilterDesc(request.getParameter("description"));
 				}
-			} else {
-				filter.setAddOnType(0);
-				filter.setAddOnRs(0);
-				filter.setIsTagAdd(0);
-				filter.setTagId(0);
-				filter.setAdminName(filter.getFilterName());
-			}
+				filter.setUsedForDescription(Integer.parseInt(request.getParameter("isUsedDesc")));
+				filter.setSortNo(Integer.parseInt(request.getParameter("sortNo")));
 
-			MFilter res = Constants.getRestTemplate().postForObject(Constants.url + "saveFilter", filter,
-					MFilter.class);
+				filter.setCompanyId(compId);
+				filter.setDelStatus(1);
+				filter.setExInt1(0);
+				filter.setExInt2(0);
+				filter.setExInt3(0);
+				filter.setExVar1("NA");
+				filter.setExVar2("NA");
+				filter.setExVar3("NA");
+				
+				if (filter.getCostAffect() == 1) {
+					try {
+						filter.setAddOnType(Integer.parseInt(request.getParameter("costEffectType")));
+						filter.setAddOnRs(Float.parseFloat(request.getParameter("add_on_rs")));
+						filter.setIsTagAdd(Integer.parseInt(request.getParameter("addToTag")));
+						
+						filter.setTagId(0);
+						String type = "One Time";
+						if (filter.getAddOnType() == 1) {
+							type = "One Time";
+						} else {
+							type = "Per UOM";
+						}
+						String adminName = filter.getFilterName() + "_" + type + " " + filter.getAddOnRs();
+						filter.setAdminName(filter.getFilterName());
+						filter.setFilterName(adminName);
+					} catch (Exception e) {
 
-			if (res.getFilterId() > 0) {
-				if (filterId == 0)
-					session.setAttribute("successMsg", "Filter Saved Sucessfully");
-				else
-					session.setAttribute("successMsg", "Filter Updated Sucessfully");
-			} else {
-				session.setAttribute("errorMsg", "Failed to Save Filter Type");
-			}
+					}
+				} else {
+					filter.setAddOnType(0);
+					filter.setAddOnRs(0);
+					filter.setIsTagAdd(0);
+					filter.setTagId(0);
+					filter.setAdminName(filter.getFilterName());
+					filter.setIsTagAdd(Integer.parseInt(request.getParameter("addToTag")));
+				}
 
-		} catch (Exception e) {
-			System.out.println("Execption in /insertFilterType : " + e.getMessage());
-			e.printStackTrace();
-		}
-		int btnVal = Integer.parseInt(request.getParameter("btnType"));
-		if(btnVal==0)
-			return "redirect:/showFilter/" + filterTypeId;
-		else
-			return "redirect:/newFilter/" + filterTypeId;
-		
-
-	}
-
-	// Created By :- Mahendra Singh
-	// Created On :- 14-09-2020
-	// Modified By :- NA
-	// Modified On :- NA
-	// Description :- Update Filter
-	@RequestMapping(value = "/editFilter", method = RequestMethod.GET)
-	public String editFilter(HttpServletRequest request, HttpServletResponse response, Model model) {
-
-		String mav = new String();
-
-		try {
-			int filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
-			HttpSession session = request.getSession();
-			List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
-			Info view = AccessControll.checkAccess("editFilter", "showFilter/" + filterTypeId, "0", "0", "1", "0",
-					newModuleList);
-
-			if (view.isError() == true) {
-
-				mav = "accessDenied";
-
-			} else {
-				mav = "masters/addFilter";
-
-				int companyId = (int) session.getAttribute("companyId");
-
-				String base64encodedString = request.getParameter("filterId");
-				String filterId = FormValidation.DecodeKey(base64encodedString);
-
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-
-				map = new LinkedMultiValueMap<>();
-				map.add("filterId", Integer.parseInt(filterId));
-
-				MFilter filter = Constants.getRestTemplate().postForObject(Constants.url + "getFilterById", map,
+				MFilter res = Constants.getRestTemplate().postForObject(Constants.url + "saveFilter", filter,
 						MFilter.class);
 
-				model.addAttribute("filter", filter);
-				model.addAttribute("filterTypeId", filterTypeId);
+				if (res.getFilterId() > 0) {
+					if (filterId == 0)
+						session.setAttribute("successMsg", "Filter Saved Sucessfully");
+					else
+						session.setAttribute("successMsg", "Filter Updated Sucessfully");
+				} else {
+					session.setAttribute("errorMsg", "Failed to Save Filter Type");
+				}
 
-				map = new LinkedMultiValueMap<>();
-				map.add("filterTypeId", filterTypeId);
-
-				FilterTypes filterType = Constants.getRestTemplate().postForObject(Constants.url + "getFilterTypeById",
-						map, FilterTypes.class);
-
-				model.addAttribute("title", "Edit " + filterType.getFilterTypeName());
-
-				model.addAttribute("filterType", filterType.getFilterTypeName());
-
+			} catch (Exception e) {
+				System.out.println("Execption in /insertFilterType : " + e.getMessage());
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			System.out.println("Execption in /editFilter : " + e.getMessage());
-			e.printStackTrace();
+			int btnVal = Integer.parseInt(request.getParameter("btnType"));
+			if(btnVal==0)
+				return "redirect:/showFilter/" + filterTypeId;
+			else
+				return "redirect:/newFilter/" + filterTypeId;
+			
+
 		}
-		return mav;
-	}
+
+		// Created By :- Mahendra Singh
+		// Created On :- 14-09-2020
+		// Modified By :- NA
+		// Modified On :- NA
+		// Description :- Update Filter
+		@RequestMapping(value = "/editFilter", method = RequestMethod.GET)
+		public String editFilter(HttpServletRequest request, HttpServletResponse response, Model model) {
+
+			String mav = new String();
+
+			try {
+				int filterTypeId = Integer.parseInt(request.getParameter("filterTypeId"));
+				HttpSession session = request.getSession();
+				List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
+				Info view = AccessControll.checkAccess("editFilter", "showFilter/" + filterTypeId, "0", "0", "1", "0",
+						newModuleList);
+
+				if (view.isError() == true) {
+
+					mav = "accessDenied";
+
+				} else {
+					mav = "masters/addFilter";
+
+					int companyId = (int) session.getAttribute("companyId");
+
+					String base64encodedString = request.getParameter("filterId");
+					String filterId = FormValidation.DecodeKey(base64encodedString);
+
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+
+					map = new LinkedMultiValueMap<>();
+					map.add("filterId", Integer.parseInt(filterId));
+
+					MFilter filter = Constants.getRestTemplate().postForObject(Constants.url + "getFilterById", map,
+							MFilter.class);
+					if(filter.getFilterTypeId()==Constants.priceTypeFilter) {
+						String[] priceReange=filter.getFilterDesc().split("-");
+						 
+						model.addAttribute("fromPrice",priceReange[0] );
+						model.addAttribute("toPrice", priceReange[1] );
+						
+					}
+
+					model.addAttribute("filter", filter);
+					model.addAttribute("filterTypeId", filterTypeId);
+
+					map = new LinkedMultiValueMap<>();
+					map.add("filterTypeId", filterTypeId);
+
+					FilterTypes filterType = Constants.getRestTemplate().postForObject(Constants.url + "getFilterTypeById",
+							map, FilterTypes.class);
+
+					model.addAttribute("title", "Edit " + filterType.getFilterTypeName());
+
+					model.addAttribute("filterType", filterType.getFilterTypeName());
+
+				}
+			} catch (Exception e) {
+				System.out.println("Execption in /editFilter : " + e.getMessage());
+				e.printStackTrace();
+			}
+			return mav;
+		}
 
 	// Created By :- Mahendra Singh
 	// Created On :- 14-09-2020
@@ -2384,7 +2443,7 @@ public class MasterController {
 				}
 
 				model.addAttribute("frList", frList);
-
+				model.addAttribute("frListSize", frList.size());
 				model.addAttribute("title", "Franchise List");
 				
 				FrCharges charges = new FrCharges();
@@ -3030,7 +3089,8 @@ public class MasterController {
 				mav = "masters/languageList";
 
 				User userObj = (User) session.getAttribute("userObj");
-
+				model.addAttribute("compId", userObj.getCompanyId());
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", userObj.getCompanyId());
 				Language[] langArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllLanguages", map,
@@ -3043,7 +3103,7 @@ public class MasterController {
 				}
 
 				model.addAttribute("langList", langList);
-
+				model.addAttribute("langListSize", langList.size());
 				model.addAttribute("title", "Language List");
 				langPrintList = langList;
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
@@ -3110,15 +3170,23 @@ public class MasterController {
 	}
 	
 	
-	@RequestMapping(value = "pdf/getLanguageListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getLanguageListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public String getLanguageListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable int showHead) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+			Language[] langArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllLanguages", map,
+					Language[].class);
+			List<Language> langList = new ArrayList<Language>(Arrays.asList(langArr));
 			
-				model.addAttribute("langPrintList", langPrintList);
-				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("langPrintList", langList);
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -3361,9 +3429,9 @@ public class MasterController {
 
 					cityList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(cityList.get(i).getCityId())));
 				}
-
+				
 				model.addAttribute("cityList", cityList);
-
+				model.addAttribute("cityListSize", cityList.size());
 				model.addAttribute("title", "City List");
 				
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
@@ -3426,9 +3494,9 @@ public class MasterController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getCityListPdf/{compId}", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getCityListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getProductConfigPdf(HttpServletRequest request,
-			HttpServletResponse response, @PathVariable int compId) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/cityPdf");
 		try {
 			HttpSession session = request.getSession();
@@ -3442,7 +3510,13 @@ public class MasterController {
 			List<City> cityList = new ArrayList<City>(Arrays.asList(cityArr));
 			
 			model.addObject("cityList", cityList);
-			model.addObject("company", HomeController.getCompName(compId));
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
+			
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -3963,7 +4037,8 @@ public class MasterController {
 				mav = "masters/delvInsructList";
 
 				User userObj = (User) session.getAttribute("userObj");
-
+				model.addAttribute("compId", userObj.getCompanyId());
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", userObj.getCompanyId());
 
@@ -3976,6 +4051,7 @@ public class MasterController {
 					delvList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(delvList.get(i).getInstruId())));
 				}
 				model.addAttribute("delvList", delvList);
+				model.addAttribute("delvListSize", delvList.size());
 				model.addAttribute("title", "Delivery Instruction List");
 				
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
@@ -4048,16 +4124,25 @@ public class MasterController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getDlvrInstListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getDlvrInstListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getSubCategoryPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/dlvrInstrtnPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			DeliveryInstruction[] delvArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllDeliveryInstructions", map, DeliveryInstruction[].class);
+			delvList = new ArrayList<DeliveryInstruction>(Arrays.asList(delvArr));
 			
 				model.addObject("delvList", delvList);
-				model.addObject("company", company.getCompanyName());
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addObject("compName", dtl.getCompanyName());
+					model.addObject("compAddress", dtl.getCompAddress());
+					model.addObject("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -4284,6 +4369,8 @@ public class MasterController {
 				mav = "masters/grievanceTypeList";
 
 				User userObj = (User) session.getAttribute("userObj");
+				
+				model.addAttribute("compId", userObj.getCompanyId());
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", userObj.getCompanyId());
@@ -4299,6 +4386,7 @@ public class MasterController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(grievList.get(i).getGrevTypeId())));
 				}
 				model.addAttribute("grievList", grievList);
+				model.addAttribute("grievListSize", grievList.size());
 				model.addAttribute("title", "Grievances Type Instruction List");
 
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
@@ -4364,15 +4452,25 @@ public class MasterController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getGrievInstListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getGrievInstListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public String getGrievInstListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable int showHead) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			GrievencesTypeInstructn[] grievArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllGrievTypeInstruct", map, GrievencesTypeInstructn[].class);
+			grievList = new ArrayList<GrievencesTypeInstructn>(
+					Arrays.asList(grievArr));
 			
 				model.addAttribute("grievList", grievList);
-				model.addAttribute("company", company.getCompanyName());
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -4610,6 +4708,7 @@ public class MasterController {
 				mav = "masters/grievanceList";
 
 				int companyId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", companyId);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
@@ -4625,6 +4724,7 @@ public class MasterController {
 				}
 
 				model.addAttribute("grievList", grievList);
+				model.addAttribute("grievListSize", grievList.size());
 				model.addAttribute("title", "Grievances Instruction List");
 				
 				grievPrintList = grievList;
@@ -4693,15 +4793,26 @@ public class MasterController {
 		return mav;
 	}
 
-	@RequestMapping(value = "pdf/getGrievListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getGrievListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public String getGrievListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId, 
+			@PathVariable int showHead){
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			GrievencesInstruction[] grievArr = Constants.getRestTemplate().postForObject(
+					Constants.url + "getAllGrievancesInstructns", map, GrievencesInstruction[].class);
+			List<GrievencesInstruction> grievList = new ArrayList<GrievencesInstruction>(Arrays.asList(grievArr));
+
 			
-				model.addAttribute("grievPrintList", grievPrintList);
-				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("grievPrintList", grievList);
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -4960,6 +5071,7 @@ public class MasterController {
 				mav = "masters/spDayHomePageList";
 
 				int companyId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", companyId);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
@@ -4973,6 +5085,7 @@ public class MasterController {
 					spDayList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(spDayList.get(i).getSpDayId())));
 				}
 				model.addAttribute("spDayList", spDayList);
+				model.addAttribute("spDayListSize", spDayList.size());
 				model.addAttribute("title", "Sp Day Home Page List");
 
 				Info add = AccessControll.checkAccess("showSpHomePages", "showSpHomePages", "0", "1", "0", "0",
@@ -5126,16 +5239,31 @@ public class MasterController {
 		return spPageListPrint;
 	}
 	
-	@RequestMapping(value = "pdf/getSpHomePageListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getSpHomePageListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getSpHomePageListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model,@PathVariable int compId, @PathVariable String selctId,
+			 @PathVariable int showHead) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			SpDayHomePage[] grievArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllSpDayHomePagesExl", map, SpDayHomePage[].class);
+			spPageListPrint = new ArrayList<SpDayHomePage>(Arrays.asList(grievArr));
 			
-				model.addAttribute("spPageListPrint", spPageListPrint);
-				model.addAttribute("company", company.getCompanyName());
+			spIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
+			
+				model.addAttribute("spPageListPrint", spPageListPrint);				
 				model.addAttribute("spIds", spIds);
+				
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -5825,9 +5953,9 @@ public class MasterController {
 			return printFrList;
 		}
 		
-		@RequestMapping(value = "pdf/getFranchiseIdsListPdf/{compId}/{selctId}", method = RequestMethod.GET)
+		@RequestMapping(value = "pdf/getFranchiseIdsListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 		public ModelAndView getFranchiseIdsListPdf(HttpServletRequest request,
-				HttpServletResponse response, @PathVariable String selctId ,@PathVariable int compId) {
+				HttpServletResponse response, @PathVariable String selctId ,@PathVariable int compId, @PathVariable int showHead) {
 			ModelAndView model = new ModelAndView("pdfs/franchiseListPdf");
 			try {
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -5844,7 +5972,13 @@ public class MasterController {
 				
 					model.addObject("printFrList", printFrList);
 					model.addObject("printFrIds", printFrIds);
-					model.addObject("company", HomeController.getCompName(compId));
+					
+					CompanyContactInfo dtl = HomeController.getCompName(compId);
+					if(showHead==1) {
+						model.addObject("compName", dtl.getCompanyName());
+						model.addObject("compAddress", dtl.getCompAddress());
+						model.addObject("compContact", dtl.getCompContactNo());	
+					}
 			}catch (Exception e) {
 				e.printStackTrace();
 			}

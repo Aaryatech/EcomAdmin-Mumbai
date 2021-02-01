@@ -31,12 +31,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ats.ecomadmin.HomeController;
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.Category;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.GetItemConfHead;
 import com.ats.ecomadmin.model.GetProdList;
@@ -641,6 +643,7 @@ public class ProdMasteController {
 				}
 				List<GetProdList> prodList = new ArrayList<GetProdList>();
 				int compId = (int) session.getAttribute("companyId");
+				model.addObject("compId", compId);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
@@ -655,6 +658,7 @@ public class ProdMasteController {
 				}
 
 				model.addObject("prodList", prodList);
+				model.addObject("prodListSize", prodList.size());
 
 			}
 
@@ -1157,6 +1161,8 @@ public class ProdMasteController {
 			// upto
 			System.err.println("tempProdConfList " + tempProdConfList.toString());
 			model.addObject("tempProdConfList", tempProdConfList);
+			model.addObject("tempProdConfListSize", tempProdConfList.size());
+			
 			model.addObject("catId", catId);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1496,6 +1502,7 @@ public class ProdMasteController {
 
 			} else {
 				int compId = (int) session.getAttribute("companyId");
+				model.addObject("compId", compId);
 
 				List<Category> catList = new ArrayList<>();
 
@@ -1533,6 +1540,7 @@ public class ProdMasteController {
 				confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));
 
 				model.addObject("confHeadList", confHeadList);
+				model.addObject("confHeadListSize", confHeadList.size());
 				
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
@@ -1580,16 +1588,28 @@ public class ProdMasteController {
 		return model;
 	}
 	
-	@RequestMapping(value = "pdf/getProductConfigPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getProductConfigPdf/{compId}/{catId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getProductConfigPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int catId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/productConfigPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("companyId", compId);
+			map.add("catIdList", catId);
+
+			GetItemConfHead[] confHeadArray = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getProdConfList", map, GetItemConfHead[].class);
+			confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));			
 			
 			model.addObject("confHeadList", confHeadList);
-			model.addObject("company", company.getCompanyName());
+			
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
+
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2413,18 +2433,29 @@ public class ProdMasteController {
 		return prodListPrint;
 	}
 	
-	@RequestMapping(value = "pdf/getProductListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getProductListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getProductListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			GetProdList[] prodArr = Constants.getRestTemplate().postForObject(Constants.url + "getProdList", map,
+					GetProdList[].class);
+			prodListPrint = new ArrayList<GetProdList>(Arrays.asList(prodArr));
 			
-			System.out.println("proIds Found-----------"+proIds);
+			proIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
-				model.addAttribute("prodList", prodListPrint);
-				model.addAttribute("company", company.getCompanyName());
-				model.addAttribute("proIds", proIds);
+			model.addAttribute("prodList", prodListPrint);
+			model.addAttribute("proIds", proIds);
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addAttribute("compName", dtl.getCompanyName());
+				model.addAttribute("compAddress", dtl.getCompAddress());
+				model.addAttribute("compContact", dtl.getCompContactNo());	
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

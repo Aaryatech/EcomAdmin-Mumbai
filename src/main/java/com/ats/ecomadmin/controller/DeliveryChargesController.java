@@ -15,15 +15,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ats.ecomadmin.HomeController;
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.DeliveryCharges;
 import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.Info;
@@ -42,10 +45,9 @@ public class DeliveryChargesController {
 		public ModelAndView showDeliveryChargesList(HttpServletRequest request, HttpServletResponse response) {
 
 			ModelAndView model = null;
-		
-			try {
+			HttpSession session = request.getSession();
+			try {			
 				
-				HttpSession session = request.getSession();
 				List<ModuleJson> newModuleList = (List<ModuleJson>)session.getAttribute("newModuleList");
 				Info view = AccessControll.checkAccess("showDeliveryChargesList", "showDeliveryChargesList", "1", "0", "0", "0",
 						newModuleList);
@@ -56,14 +58,8 @@ public class DeliveryChargesController {
 				} else {
 					
 					model = new ModelAndView("delvrChargList");
-					model.addObject("title", "Delivery Charges List");
-
-					//HttpSession session = request.getSession();
-					User userDetail = (User) session.getAttribute("UserDetail");
-
-//					MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-//					map.add("compId", userDetail.getUser().getCompanyId());
-
+					model.addObject("title", "Delivery Charges List");	
+					
 					DeliveryCharges[] chargeArr = Constants.getRestTemplate()
 							.getForObject(Constants.url + "getAllDeliveryCharges", DeliveryCharges[].class);
 					chargeList = new ArrayList<DeliveryCharges>(Arrays.asList(chargeArr));
@@ -73,6 +69,9 @@ public class DeliveryChargesController {
 						chargeList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(chargeList.get(i).getChId())));
 					}
 					model.addObject("chargeList", chargeList);
+					model.addObject("chargeListSize", chargeList.size());
+					int compId = (int) session.getAttribute("companyId");
+					model.addObject("compId", compId);
 					
 					List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
@@ -126,22 +125,28 @@ public class DeliveryChargesController {
 			return model;
 		}
 		
-		@RequestMapping(value = "pdf/getDelvrChrgListPdf", method = RequestMethod.GET)
+
+@RequestMapping(value = "pdf/getDelvrChrgListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 		public String getProductListPdf(HttpServletRequest request,
-				HttpServletResponse response, Model model) {
+				HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable int showHead) {
 			try {
-				HttpSession session = request.getSession();
-				CompMaster company = (CompMaster) session.getAttribute("company");
+				DeliveryCharges[] chargeArr = Constants.getRestTemplate()
+						.getForObject(Constants.url + "getAllDeliveryCharges", DeliveryCharges[].class);
+				chargeList = new ArrayList<DeliveryCharges>(Arrays.asList(chargeArr));
 				
 					model.addAttribute("chargeList", chargeList);
-					model.addAttribute("company", company.getCompanyName());
+					CompanyContactInfo dtl = HomeController.getCompName(compId);
+					if(showHead==1) {
+						model.addAttribute("compName", dtl.getCompanyName());
+						model.addAttribute("compAddress", dtl.getCompAddress());
+						model.addAttribute("compContact", dtl.getCompContactNo());	
+					}
 			}catch (Exception e) {
 				e.printStackTrace();
 			}
 			return "pdfs/devrChrgListPdf";
 			
 		}
-		
 		
 		
 		@RequestMapping(value = "/addDeliveryCharge", method = RequestMethod.GET)
