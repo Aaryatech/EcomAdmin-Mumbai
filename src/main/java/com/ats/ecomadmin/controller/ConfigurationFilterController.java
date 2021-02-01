@@ -1445,7 +1445,7 @@ public class ConfigurationFilterController {
 				}
 
 				model.addAttribute("eventList", festiveEventList);
-
+				model.addAttribute("eventListSize", festiveEventList.size());
 				model.addAttribute("title", "Configure Products And Festive Events");
 
 				Info add = AccessControll.checkAccess("showConfigProductAndEvents", "showConfigProductAndEvents", "0",
