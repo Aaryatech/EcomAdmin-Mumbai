@@ -344,6 +344,7 @@ public class FranchiseConfigurationController {
 				frConfigPrintList = frConfigList;
 				
 				model.addAttribute("frConfigList", frConfigList);
+				model.addAttribute("frConfigListSize", frConfigList.size());
 
 				Info delete = AccessControll.checkAccess("configFranchiseList", "configFranchiseList", "0", "0", "0",
 						"1", newModuleList);
