@@ -2219,7 +2219,7 @@ public class MasterController {
 				filter.setCostAffect(Integer.parseInt(request.getParameter("isCostAffect")));
 				filter.setUsedForFilter(Integer.parseInt(request.getParameter("isUsedFilter")));
 				filter.setFilterName(request.getParameter("filterName"));
-				if(filterTypeId==16) {
+				if(filterTypeId==Constants.priceTypeFilter) {
 					filter.setFilterDesc(request.getParameter("fromPrice")+"-"+request.getParameter("toPrice"));
 				}else {
 					filter.setFilterDesc(request.getParameter("description"));
@@ -2325,7 +2325,7 @@ public class MasterController {
 
 					MFilter filter = Constants.getRestTemplate().postForObject(Constants.url + "getFilterById", map,
 							MFilter.class);
-					if(filter.getFilterTypeId()==16) {
+					if(filter.getFilterTypeId()==Constants.priceTypeFilter) {
 						String[] priceReange=filter.getFilterDesc().split("-");
 						 
 						model.addAttribute("fromPrice",priceReange[0] );
