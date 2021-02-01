@@ -3427,9 +3427,9 @@ public class MasterController {
 
 					cityList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(cityList.get(i).getCityId())));
 				}
-
+				
 				model.addAttribute("cityList", cityList);
-
+				model.addAttribute("cityListSize", cityList.size());
 				model.addAttribute("title", "City List");
 				
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
