@@ -2065,7 +2065,7 @@ public class ConfigurationFilterController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(testimonialList.get(i).getId())));
 				}
 				model.addAttribute("testimonialList", testimonialList);
-
+				model.addAttribute("testimonialListSize", testimonialList.size());
 				model.addAttribute("title", "Company Testimonial List");
 				
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();

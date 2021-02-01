@@ -121,8 +121,15 @@
 								</label>
 							</div>
 						</div>
-
-							<div class="text-center">
+						
+						<c:choose>
+					<c:when test="${testimonialListSize<=0}">
+					<div style="text-align: center;margin: 0,auto;" >
+					<img src="${pageContext.request.contextPath}/resources/global_assets/images/norecordfound.jpg" alt="">
+					</div>
+					</c:when>
+					<c:otherwise>
+						<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd()">
 								Delete <i class="far fa-trash-alt"></i>
@@ -143,6 +150,11 @@
 							</a>
 
 						</div>
+					</c:otherwise>
+					
+					</c:choose>
+
+							
 					</div>
 				</div>
 				<!-- /colReorder integration -->
