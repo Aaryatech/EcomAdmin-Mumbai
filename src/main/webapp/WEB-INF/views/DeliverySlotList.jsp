@@ -139,18 +139,33 @@
 							</c:forEach>
 						</tbody>
 					</table>
+					
 					<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
+<input type="hidden" value="${compId}" id="compId">
 
+<div class="text-center">
+							<div class="form-check form-check-switchery form-check-inline">
+
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>
 						<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd()">
 								Delete <i class="far fa-trash-alt"></i>
 							</button>
 							
-							<button type="button" class="btn btn-primary" id="submtbtn1"
-							data-toggle="modal" data-target="#modal_theme_primary" onclick="getHeaders()">
-								Pdf/Excel <i class="fas fa-file-pdf"></i>
+							<button type="button" class="btn btn-primary" id="submtbtn"
+								onclick="exportToExcel()">
+								Excel <i class="far fa-file-excel"></i>
+							</button> 
+
+							<button type="button" class="btn btn-primary" id="submtbtn1"  onclick="genPdf()">
+								Pdf<i class="fas fa-file-pdf"></i>
 							</button>
 					</div>
 				</div>
@@ -284,40 +299,6 @@
 	}
 	
 	</script>
-	
-	 <!-- Primary modal -->
-		<div id="modal_theme_primary" class="modal fade" tabindex="-1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header bg-primary">
-						<h6 class="modal-title">Select Header</h6>
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-		
-					<div class="modal-body">
-						<table class="table table-bordered table-hover table-striped"
-								width="100%" id="modelTable">
-							<thead>
-								<tr>
-									<th width="15">Sr.No.
-									<input type="checkbox" name="selAll" id="selAllChk"/>
-									</th>
-									<th>Headers</th>
-								</tr>
-							</thead>
-							<tbody></tbody>
-						</table>
-						<span class="validation-invalid-label" id="error_modelchks"
-								style="display: none;">Select Check Box.</span>
-					</div>
-
-					<div class="modal-footer">
-						<button type="button" class="btn bg-primary" id="expExcel" onclick="getIdsReport(1)">Excel</button>
-						<button type="button" class="btn bg-primary" onclick="getIdsReport(2)">Pdf</button>
-					</div>
-				</div>
-			</div>
-		</div>
 <script>
 		function getHeaders(){
 			$('#modelTable td').remove();
@@ -356,46 +337,23 @@
 							});
 				});
 		
-		  function getIdsReport(val) {
-			  var isError = false;
-				var checked = $("#modal_theme_primary input:checked").length > 0;
-			
-				if (!checked) {
-					$("#error_modelchks").show()
-					isError = true;
-				} else {
-					$("#error_modelchks").hide()
-					isError = false;
-				}
+		function exportToExcel() {
+			window.open("${pageContext.request.contextPath}/exportToExcelNew");
+			document.getElementById("expExcel").disabled = true;
+		}
 
-				if(!isError){
-			  var elemntIds = [];										
-						
-						$(".chkcls:checkbox:checked").each(function() {
-							elemntIds.push($(this).val());
-						}); 
-												
-				$
-				.getJSON(
-						'${getCustomerPrintIds}',
-						{
-							elemntIds : JSON.stringify(elemntIds),
-							val : val,
-							ajax : 'true'
-						},
-						function(data) {
-							if(data!=null){
-								$("#modal_theme_primary").modal('hide');
-								if(val==1){
-									window.open("${pageContext.request.contextPath}/exportToExcelNew");
-									document.getElementById("expExcel").disabled = true;
-								}else{
-									 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getCustomerListPdf');
-								}
-							}
-						});
-				}
-			}		
+		function genPdf() {
+			var compId = $("#compId").val();
+			var showHead = 0;
+			if($("#chkPdf").is(":checked")){
+				showHead = 1;
+			}else{
+				showHead = 0;
+			}
+				
+			window
+					.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getDelvrSlotListPdf/"+compId+"/"+showHead);
+		}
 		</script>
 </body>
 </html>

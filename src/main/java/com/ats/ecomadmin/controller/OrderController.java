@@ -35,10 +35,12 @@ import org.zefer.pd4ml.PD4Constants;
 import org.zefer.pd4ml.PD4ML;
 import org.zefer.pd4ml.PD4PageMark;
 
+import com.ats.ecomadmin.HomeController;
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.CommonUtility;
 import com.ats.ecomadmin.commons.Constants;
 import com.ats.ecomadmin.commons.FormValidation;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.GetOrderDetailDisplay;
 import com.ats.ecomadmin.model.GetOrderHeaderDisplay;
@@ -77,7 +79,8 @@ public class OrderController {
 				mav = "order/orderList";
 
 				int compId = (int) session.getAttribute("companyId");
-
+				model.addAttribute("compId", compId);
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", compId);
 
@@ -283,15 +286,39 @@ public class OrderController {
 
 	}
 	
-	@RequestMapping(value = "pdf/getOrderListPdf", method = RequestMethod.GET)
-	public ModelAndView getOrdrListPdf(HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
+	@RequestMapping(value = "pdf/getOrderListPdf/{compId}/{status}/{fromDate}/{toDate}/{datetype}/{showHead}", method = RequestMethod.GET)
+	public ModelAndView getOrdrListPdf(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable int compId, @PathVariable String status, @PathVariable String fromDate, @PathVariable String toDate, @PathVariable int datetype,
+			@PathVariable int showHead) throws FileNotFoundException {
 		ModelAndView model = null;
 		try {
-			model = new ModelAndView("order/orderListPdf");
-		
-		
-		//	System.err.println("Orde PDF List------------"+orderList);
+			model = new ModelAndView("order/orderListPdf");			
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+			map.add("fromDate", CommonUtility.convertToYMD(fromDate));
+			map.add("toDate", CommonUtility.convertToYMD(toDate));
+			map.add("status", status);
+			map.add("compId", compId);
+			map.add("dateType", datetype);
+
+			GetOrderHeaderDisplay[] orderRepArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "/getOrderListByDates", map, GetOrderHeaderDisplay[].class);
+
+			orderList = new ArrayList<GetOrderHeaderDisplay>(Arrays.asList(orderRepArr));
 			model.addObject("orderList",  orderList);
+			
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
+			model.addObject("fromDate", fromDate);	
+			model.addObject("toDate", toDate);	
+			if(datetype==1) 
+				model.addObject("reportName", "Delivery Date Wise Order List");	
+			else
+				model.addObject("reportName", "Production Date Wise Order List");	
 			}catch (Exception e) {
 				System.out.println("Excep in /getOrdrComFrmGrpByPdf "+e.getMessage());
 			}

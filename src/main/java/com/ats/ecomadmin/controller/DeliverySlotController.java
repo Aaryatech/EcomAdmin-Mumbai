@@ -14,14 +14,19 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ats.ecomadmin.HomeController;
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
+import com.ats.ecomadmin.model.City;
 import com.ats.ecomadmin.model.CompMaster;
+import com.ats.ecomadmin.model.CompanyContactInfo;
 import com.ats.ecomadmin.model.DeliverySlots;
+import com.ats.ecomadmin.model.ExportToExcel;
 import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.User;
 import com.ats.ecomadmin.model.acrights.ModuleJson;
@@ -50,9 +55,51 @@ public class DeliverySlotController {
 				model = new ModelAndView( "accessDenied");
 
 			}else {
+				int compId = (int) session.getAttribute("companyId");
+				model.addObject("compId", compId);
+				
 				DeliverySlots[] delSlotArr=Constants.getRestTemplate().getForObject(Constants.url+"getAllDeliverySlots", DeliverySlots[].class);
 				delSlotList=new ArrayList<>(Arrays.asList(delSlotArr));
 				model.addObject("delSlotList", delSlotList);
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+				rowData.add("Sr No.");													
+				rowData.add("Delivery Slot Name");		
+				rowData.add("From Time");
+				rowData.add("To Time");
+				rowData.add("Status");
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < delSlotList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					
+					rowData.add(" "+srno);
+					rowData.add(" " + delSlotList.get(i).getDeliverySlotName());	
+					rowData.add(" " + delSlotList.get(i).getFromTime());
+					rowData.add(" " + delSlotList.get(i).getToTime());
+					rowData.add(delSlotList.get(i).getIsActive() == 1 ? "Active" : "In-Active");					
+					srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "Delivery Slot");
+				session.setAttribute("reportNameNew", "Delivery Slot List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Delivery Slot Excel");
 				
 				
 				
@@ -219,7 +266,29 @@ public class DeliverySlotController {
 		return model;
 	}
 	
-	
+	@RequestMapping(value = "pdf/getDelvrSlotListPdf/{compId}/{showHead}", method = RequestMethod.GET)
+	public ModelAndView getProductConfigPdf(HttpServletRequest request,
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
+		ModelAndView model = new ModelAndView("pdfs/delvrSlotPdf");
+		try {
+			DeliverySlots[] delSlotArr=Constants.getRestTemplate().getForObject(Constants.url+"getAllDeliverySlots", DeliverySlots[].class);
+			List<DeliverySlots> delSlotList=new ArrayList<>(Arrays.asList(delSlotArr));
+			
+			model.addObject("delSlotList", delSlotList);
+			CompanyContactInfo dtl = HomeController.getCompName(compId);
+			if(showHead==1) {
+				model.addObject("compName", dtl.getCompanyName());
+				model.addObject("compAddress", dtl.getCompAddress());
+				model.addObject("compContact", dtl.getCompContactNo());	
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+		
+	}
+
 	
 
 }

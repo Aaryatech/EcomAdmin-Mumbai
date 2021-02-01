@@ -2035,6 +2035,9 @@ public class ConfigurationFilterController {
 			} else {
 
 				int compId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", compId);
+
+				
 				mav = "product/compTestimonial";
 
 				CompanyTestomonials[] hmPgTestmonlArr = Constants.getRestTemplate()
@@ -2117,17 +2120,22 @@ public class ConfigurationFilterController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getCompTestimonlListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getCompTestimonlListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public ModelAndView getCompTestimonlListPdf(HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, @PathVariable int compId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/compTestimnlPdf");
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
-			
+			CompanyTestomonials[] hmPgTestmonlArr = Constants.getRestTemplate()
+					.getForObject(Constants.url + "getCompanyTestomonialsList", CompanyTestomonials[].class);
+			testimonialList = new ArrayList<CompanyTestomonials>(Arrays.asList(hmPgTestmonlArr));
 			
 				model.addObject("testimonialList", testimonialList);
-				model.addObject("company", company.getCompanyName());
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addObject("compName", dtl.getCompanyName());
+					model.addObject("compAddress", dtl.getCompAddress());
+					model.addObject("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

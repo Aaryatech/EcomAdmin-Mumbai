@@ -9,8 +9,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Delivery Charges List</title>
-<jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include>
+<title>Delivery Slot List</title>
+<%-- <jsp:include page="/WEB-INF/views/include/metacssjs.jsp"></jsp:include> --%>
 <style type="text/css">
 @media print {
 	.no-break {
@@ -38,37 +38,37 @@ table th {
   color: #fff;
 }
 
+
 .footer_btm{position: fixed; text-align: center; padding: 10px; bottom: 0; left:0; font-size: 12px; 
 color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
-
-
 </style>
 </head>
 <body>
 					<div class="no-break">
 						 
 							<div
-							style="text-align: center; font-size: 18px; margin-top: 20px; margin-bottom: 5px;">
+							style="text-align: center; font-size: 18px; margin-top: 20px; margin-bottom: 3px;">
 			
-								<h3
+								 <h3
 									style="color: #000; text-align: center; margin: 0px;">${compName}</h3> 
-								<h5
+									<h5
 									style="color: #000; text-align: center; margin: 0px;">${compAddress}</h5> 
 									<h5
-									style="color: #000; text-align: center; margin: 0px;">${compContact}</h5>
-						</div>  
+									style="color: #000; text-align: center; margin: 0px;">${compContact}</h5> 
+							
+						</div>
 
 						<div
 							style="text-align: center; font-size: 18px;">
 
 							<h4
-								style="color: #000; font-size: 16px; text-align: center; margin: 0px;">Delivery Charges List</h4>							
+								style="color: #000; font-size: 16px; text-align: center; margin: 0px;">Delivery Slot List</h4>							
 								<%-- <p
 									style="color: #000; font-size: 15px; text-align: center; font-weight: bold;">
 									Date : ${fromDate}&nbsp;&nbsp; to &nbsp;&nbsp;${toDate}</p> --%>
 							
+						</div>  
 						
-						</div>
 
 
 
@@ -77,32 +77,29 @@ color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
 			class="table datatable-header-basic">
 			<tr>
 				<th width="10%">Sr. No.</th>
-				<th>Group Name</th>
-				<th>MIN Km.</th>
-				<th>MAX Km.</th>
-				<th>Amt. 1</th>
-				<th>Amt. 2</th>
+				<th>Delivery Slot Name</th>
+				<th>From Time</th>
+				<th>To Time</th>
+				<th>Status</th>
 			</tr>
 
 
-			<c:forEach items="${chargeList}" var="chargeList" varStatus="count">
+			<c:forEach items="${delSlotList}" var="delSlotList" varStatus="count">
 				<tr>
 					<td>${count.index+1}</td>
-					<td>${chargeList.groupName}</td>
-					<td>${chargeList.minKm}</td>
-					<td>${chargeList.maxKm}</td>
-					<td>${chargeList.amt1}</td>
-					<td>${chargeList.amt2}</td>
+					<td>${delSlotList.deliverySlotName}</td>
+					<td>${delSlotList.fromTime}</td>
+					<td>${delSlotList.toTime}</td>									
+					<td>${delSlotList.isActive==1 ? 'Active' : 'In-Active'}</td>
 				</tr>
 			</c:forEach>
 		</table>
 	</div>
+		<div style="page-break-after: auto;"></div>
 	<div class="footer_btm" style="display: inline-block; width: 100%; text-align: center; position: absolute; bottom:0; margin: 20px 0 0 0;">
 	<img alt="" src="${pageContext.request.contextPath}/resources/global_assets/images/mongi.png" height="20px;" style="float: left; vertical-align: middle;">
 	<span style="display: inline-block; float:left; text-align: center; width: 70%; vertical-align: middle; font-size: 12px;  ">******</span>
 	<img alt="" src="${pageContext.request.contextPath}/resources/global_assets/images/powerd_logo.png" height="10px;" style="float: right; vertical-align: top;">
 	</div>
-		<div style="page-break-after: auto;"></div>
-	
 </body>
 </html>
