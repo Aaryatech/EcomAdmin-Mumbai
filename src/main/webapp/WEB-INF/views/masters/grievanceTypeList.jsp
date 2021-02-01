@@ -115,6 +115,16 @@
 					</table>
 					<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
+					<input type="hidden" value="${compId}" id="compId">
+					<div class="text-center">
+							<div class="form-check form-check-switchery form-check-inline">
+
+								<label class="form-check-label"> <input type="checkbox" id="chkPdf"
+									class="form-check-input-switchery" checked data-fouc>
+									Click For show or hide header on pdf.
+								</label>
+							</div>
+						</div>
 					<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd()">
@@ -266,8 +276,16 @@ $('.bootbox_custom')
 	}
 
 	function genPdf() {
+		var compId = $("#compId").val();
+		
+		var showHead = 0;
+		if($("#chkPdf").is(":checked")){
+			showHead = 1;
+		}else{
+			showHead = 0;
+		}
 		window
-				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getGrievInstListPdf");
+				.open("${pageContext.request.contextPath}/pdfReport?url=pdf/getGrievInstListPdf/"+compId+"/"+showHead);
 	}
 	</script>
 </body>

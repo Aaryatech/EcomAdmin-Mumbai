@@ -4334,6 +4334,8 @@ public class MasterController {
 				mav = "masters/grievanceTypeList";
 
 				User userObj = (User) session.getAttribute("userObj");
+				
+				model.addAttribute("compId", userObj.getCompanyId());
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", userObj.getCompanyId());
@@ -4414,15 +4416,25 @@ public class MasterController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "pdf/getGrievInstListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getGrievInstListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public String getGrievInstListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable int showHead) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			GrievencesTypeInstructn[] grievArr = Constants.getRestTemplate()
+					.postForObject(Constants.url + "getAllGrievTypeInstruct", map, GrievencesTypeInstructn[].class);
+			grievList = new ArrayList<GrievencesTypeInstructn>(
+					Arrays.asList(grievArr));
 			
 				model.addAttribute("grievList", grievList);
-				model.addAttribute("company", company.getCompanyName());
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -4660,6 +4672,7 @@ public class MasterController {
 				mav = "masters/grievanceList";
 
 				int companyId = (int) session.getAttribute("companyId");
+				model.addAttribute("compId", companyId);
 
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", companyId);
@@ -4743,15 +4756,26 @@ public class MasterController {
 		return mav;
 	}
 
-	@RequestMapping(value = "pdf/getGrievListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getGrievListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public String getGrievListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId, 
+			@PathVariable int showHead){
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+
+			GrievencesInstruction[] grievArr = Constants.getRestTemplate().postForObject(
+					Constants.url + "getAllGrievancesInstructns", map, GrievencesInstruction[].class);
+			List<GrievencesInstruction> grievList = new ArrayList<GrievencesInstruction>(Arrays.asList(grievArr));
+
 			
-				model.addAttribute("grievPrintList", grievPrintList);
-				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("grievPrintList", grievList);
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
