@@ -300,10 +300,10 @@
 								},
 								function(data) {
 									if(data!=null){
-										$("#modal_theme_primary").modal('hide');
+										//$("#modal_theme_primary").modal('hide');
 										if(val==1){
 											window.open("${pageContext.request.contextPath}/exportToExcelNew");
-											document.getElementById("expExcel").disabled = true;
+											//document.getElementById("expExcel").disabled = true;
 										}else{
 											var compId = $("#compId").val();
 											var showHead = 0;

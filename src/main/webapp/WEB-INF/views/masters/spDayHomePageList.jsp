@@ -295,10 +295,10 @@ $('.bootbox_custom')
 								},
 								function(data) {
 									if(data!=null){
-										$("#modal_theme_primary").modal('hide');
+										//$("#modal_theme_primary").modal('hide');
 										if(val==1){
 											window.open("${pageContext.request.contextPath}/exportToExcelNew");
-											document.getElementById("expExcel").disabled = true;
+											//document.getElementById("expExcel").disabled = true;
 										}else{
 											var showHead = 0;
 											if($("#chkPdf").is(":checked")){
