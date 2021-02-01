@@ -118,6 +118,13 @@
 					<span class="validation-invalid-label" id="error_chks"
 										style="display: none;">Select Check Box.</span>
 
+						<c:choose>
+					<c:when test="${frListSize<=0}">
+					<div style="text-align: center;margin: 0,auto;" >
+					<img src="${pageContext.request.contextPath}/resources/global_assets/images/norecordfound.jpg" alt="">
+					</div>
+					</c:when>
+					<c:otherwise>
 						<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submtbtn"
 								onclick="deletSelctd()">
@@ -130,6 +137,10 @@
 							</button>
 						
 						</div>
+					</c:otherwise>
+					
+					</c:choose>
+						
 					</div>
 				</div>
 				<table class="table datatable-header-basic" id="printtable2" style="display: none;">

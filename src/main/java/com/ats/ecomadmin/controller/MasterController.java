@@ -2441,7 +2441,7 @@ public class MasterController {
 				}
 
 				model.addAttribute("frList", frList);
-
+				model.addAttribute("frListSize", frList.size());
 				model.addAttribute("title", "Franchise List");
 				
 				FrCharges charges = new FrCharges();
