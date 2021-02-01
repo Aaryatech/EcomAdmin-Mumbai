@@ -1161,6 +1161,8 @@ public class ProdMasteController {
 			// upto
 			System.err.println("tempProdConfList " + tempProdConfList.toString());
 			model.addObject("tempProdConfList", tempProdConfList);
+			model.addObject("tempProdConfListSize", tempProdConfList.size());
+			
 			model.addObject("catId", catId);
 		} catch (Exception e) {
 			e.printStackTrace();

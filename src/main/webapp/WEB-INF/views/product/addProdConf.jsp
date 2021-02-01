@@ -168,11 +168,22 @@ s .table caption+thead tr:first-child td, .table caption+thead tr:first-child th
 												style="display: none;">Configuration price not set for any combination</span>
 				
 						</div>
-							<div class="form-group row mb-0">
-	<div style="margin: 0 auto;">		
+						<c:choose>
+					<c:when test="${tempProdConfListSize<=0}">
+					<div style="text-align: center;margin: 0,auto;" >
+					<img src="${pageContext.request.contextPath}/resources/global_assets/images/norecordfound.jpg" alt="">
+					</div>
+					</c:when>
+					<c:otherwise>
+						<div class="form-group row mb-0">
+							<div style="margin: 0 auto;">		
 								<button type="submit"  id="submtbtn" class="btn bg-blue ml-3 legitRipple">Save Configuration</button>
 							</div>
 						</div>
+					</c:otherwise>
+					
+					</c:choose>
+							
 					</form>
 					</div>
 					<!-- /colReorder integration -->
