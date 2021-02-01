@@ -3023,6 +3023,8 @@ public class CompanyAdminController {
 					routeList.get(i).setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouteId())));
 				}
 				model.addAttribute("routeList", routeList);
+				model.addAttribute("routeListSize", routeList.size());
+				
 			}
 
 		} catch (Exception e) {
@@ -3423,6 +3425,7 @@ public class CompanyAdminController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouteTypeId())));
 				}
 				model.addAttribute("routeTypeList", routeList);
+				model.addAttribute("routeTypeListSize", routeList.size());
 				
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
