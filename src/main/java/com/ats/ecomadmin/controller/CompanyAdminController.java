@@ -3758,6 +3758,7 @@ public class CompanyAdminController {
 							.setExVar1(FormValidation.Encrypt(String.valueOf(routeList.get(i).getRouidDelveryId())));
 				}
 				model.addAttribute("routeDelList", routeList);
+				model.addAttribute("routeDelListsize", routeList.size());
 				
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
