@@ -1540,6 +1540,7 @@ public class ProdMasteController {
 				confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));
 
 				model.addObject("confHeadList", confHeadList);
+				model.addObject("confHeadListSize", confHeadList.size());
 				
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
