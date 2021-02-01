@@ -3074,7 +3074,8 @@ public class MasterController {
 				mav = "masters/languageList";
 
 				User userObj = (User) session.getAttribute("userObj");
-
+				model.addAttribute("compId", userObj.getCompanyId());
+				
 				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 				map.add("compId", userObj.getCompanyId());
 				Language[] langArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllLanguages", map,
@@ -3154,15 +3155,23 @@ public class MasterController {
 	}
 	
 	
-	@RequestMapping(value = "pdf/getLanguageListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getLanguageListPdf/{compId}/{showHead}", method = RequestMethod.GET)
 	public String getLanguageListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable int showHead) {
 		try {
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);
+			Language[] langArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllLanguages", map,
+					Language[].class);
+			List<Language> langList = new ArrayList<Language>(Arrays.asList(langArr));
 			
-				model.addAttribute("langPrintList", langPrintList);
-				model.addAttribute("company", company.getCompanyName());
+				model.addAttribute("langPrintList", langList);
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

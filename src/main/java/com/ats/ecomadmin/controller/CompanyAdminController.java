@@ -985,9 +985,9 @@ public class CompanyAdminController {
 				mav = "masters/customerList";
 
 				int compId = (int) session.getAttribute("companyId");
-
-				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+				model.addAttribute("compId", compId);
 				
+				MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();				
 
 				GetCustomerInfo[] userArr = Constants.getRestTemplate()
 						.getForObject(Constants.url + "getAllCustomerDetailInfo", GetCustomerInfo[].class);
@@ -1135,16 +1135,26 @@ public class CompanyAdminController {
 		return custPrintList;
 	}
 	
-	@RequestMapping(value = "pdf/getCustomerListPdf", method = RequestMethod.GET)
+	@RequestMapping(value = "pdf/getCustomerListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
 	public String getCustomerListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+			HttpServletResponse response, Model model,@PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead) {
 		try {
-			System.out.println("custPrintList------------"+custPrintList);
-			HttpSession session = request.getSession();
-			CompMaster company = (CompMaster) session.getAttribute("company");
+			GetCustomerInfo[] userArr = Constants.getRestTemplate()
+					.getForObject(Constants.url + "getAllCustomerDetailInfo", GetCustomerInfo[].class);
+			List<GetCustomerInfo> custPrintList = new ArrayList<GetCustomerInfo>(Arrays.asList(userArr));
+				
+			custIds =  Stream.of(selctId.split(","))
+			        .map(Long::parseLong)
+			        .collect(Collectors.toList());
 			
 				model.addAttribute("custPrintList", custPrintList);
-				model.addAttribute("company", company.getCompanyName());
+				CompanyContactInfo dtl = HomeController.getCompName(compId);
+				if(showHead==1) {
+					model.addAttribute("compName", dtl.getCompanyName());
+					model.addAttribute("compAddress", dtl.getCompAddress());
+					model.addAttribute("compContact", dtl.getCompContactNo());	
+				}
+				
 				model.addAttribute("custIds", custIds);
 		}catch (Exception e) {
 			e.printStackTrace();
