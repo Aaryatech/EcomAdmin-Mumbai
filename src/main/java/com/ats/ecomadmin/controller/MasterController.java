@@ -4723,6 +4723,7 @@ public class MasterController {
 				}
 
 				model.addAttribute("grievList", grievList);
+				model.addAttribute("grievListSize", grievList.size());
 				model.addAttribute("title", "Grievances Instruction List");
 				
 				grievPrintList = grievList;
