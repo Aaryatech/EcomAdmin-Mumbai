@@ -931,7 +931,7 @@ String mav=new String();
 					}
 
 					model.addAttribute("frList", frList);
-
+					model.addAttribute("frListSize", frList.size());
 					model.addAttribute("title", "Franchise Data Sync");
 
 					
