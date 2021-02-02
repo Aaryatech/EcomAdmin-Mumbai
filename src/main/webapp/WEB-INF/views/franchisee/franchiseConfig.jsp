@@ -25,6 +25,7 @@
 
 <body class="sidebar-xs">
 	<c:url value="/getConfigByCatId" var="getConfigByCatId"></c:url>
+	<c:url value="/configFranchiseAJAX" var="configFranchiseAJAX"></c:url>
 
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
@@ -112,7 +113,7 @@
 											class="text-danger">* </span>:
 										</label>
 										<div class="col-lg-2">
-											<select class="form-control select-search" data-fouc
+									<select class="form-control select-search" data-fouc
 												name="configId" id="configId">
 
 											</select> <span class="validation-invalid-label text-danger"
@@ -124,7 +125,7 @@
 										</div>
 										
 										<div class="">								
-										<button type="submit" id="search_button" class="btn btn-primary">
+										<button onclick="SearchBtn()" type="button" id="search_button" class="btn btn-primary">
 												Search <i class="icon-paperplane ml-2"></i>
 											</button>
 									</div>
@@ -158,7 +159,7 @@
 										<tbody>
 											<c:forEach items="${frList}" var="frList" varStatus="count">
 
-												<tr>
+												<%-- <tr>
 													<td><input type="checkbox" id="frId${frList.frId}"
 														value="${frList.frId}" name="frId" class="select_all"></td>
 													<td>${count.index+1})</td>
@@ -169,7 +170,7 @@
 													
 													
 											 
-												</tr>
+												</tr> --%>
 											</c:forEach>
 										</tbody>
 									</table>
@@ -255,6 +256,43 @@
 
 	</div>
 	<!-- /page content -->
+	
+	<script type="text/javascript">
+	function SearchBtn() {
+		//alert("Asdf");		 
+		var catId=document.getElementById("catId").value;
+		var configId=document.getElementById("configId").value;
+		//alert(catId+"Asdf"+compId);
+		$.getJSON(
+				'${configFranchiseAJAX}',
+				{
+					catId : catId,
+					configId : configId,
+					ajax : 'true',
+				},
+
+				function(data) {
+					$('#printtable1 td').remove();
+					//alert("Data " + JSON.stringify(data));
+					$.each(data,function(key, config) {
+						var tr = $('<tr></tr>');
+						var catCheckbox="<input type=checkbox id='"+config.frId+"' value='"+config.frId+"' name=frId class=select_all >"
+						tr.append($('<td></td>').html(catCheckbox));
+						tr.append($('<td></td>').html(key+1));
+						tr.append($('<td></td>').html(config.frName));
+						tr.append($('<td></td>').html(config.frCode));
+						tr.append($('<td></td>').html(config.frCity));
+						tr.append($('<td></td>').html(config.route));
+						
+						$('#printtable1 tbody').append(tr);
+					
+					});
+					
+				});
+	}
+	</script>
+	
+	
 
 	<script>
 	function pressBtn(btnVal){
