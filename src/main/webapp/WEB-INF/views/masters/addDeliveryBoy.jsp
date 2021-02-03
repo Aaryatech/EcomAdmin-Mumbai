@@ -199,10 +199,10 @@
 										  <div class="col-lg-4">
 											<input type="text"
 												class="form-control maxlength-badge-position"
-												name="deliveryBoyY/NLicenNo" id="Delivery Boy Y/N Licen No" maxlength="20"
+												name="deliveryBoyY/NLicenNo" id="licenseNo" maxlength="20"
 												autocomplete="off" onchange="trim(this)" value="${delvrBoy.deliveryBoyLicenseNo} ">
 												 <span class="validation-invalid-label text-danger"
-												id="error_Delivery Boy Y/N Licen No" style="display: none;">This
+												id="error_licenseNo" style="display: none;">This
 												field is required.</span>
 												
 												 <span
@@ -240,11 +240,11 @@
 										  <div class="col-lg-4">
 											<input type="text"
 												class="form-control maxlength-badge-position"
-												name="vehicalNo" id="Vahocal  No" maxlength="10"
+												name="vehicalNo" id="vehicalNo" maxlength="10"
 												autocomplete="off" onchange="trim(this)"
 												value="${delvrBoy.vehicleNo}"> <span
 												class="validation-invalid-label text-danger"
-												id="error_Vahocal  No" style="display: none;">This
+												id="error_vehicalNo" style="display: none;">This
 												field is required.</span>												
 												 <span
 												class="validation-invalid-label text-danger"
@@ -291,11 +291,11 @@
 										<div class="col-lg-4">
 											<input type="text"
 												class="form-control maxlength-badge-position"
-												name="ownerOfVehical" id="owner Of Vehical" maxlength="50"
+												name="ownerOfVehical" id="ownerOfVehical" maxlength="50"
 												autocomplete="off" onchange="trim(this)"
 												value="${delvrBoy.ownerOfVehicle}"> <span
 												class="validation-invalid-label text-danger"
-												id="error_Owner Of Vehical" style="display: none;">This
+												id="error_ownerOfVehical" style="display: none;">This
 												field is required.</span>
 										</div>
 										</div>
@@ -473,16 +473,13 @@
 															.hide()
 												}
 												
-												if (!$("#Delivery Boy Y/N Licen No").val()
-														|| !validateMobile($(
-																"#Delivery Boy Y/N Licen No")
-																.val())) {
+												if (!$("#licenseNo").val()) {
 													isError = true;
-													$("#Delivery Boy Y/N Licen No").focus();
-													$("#error_Delivery Boy Y/N Licen No")
+													$("#licenseNo").focus();
+													$("#error_licenseNo")
 															.show()
 												} else {
-													$("#error_Delivery Boy Y/N Licen No")
+													$("#error_licenseNo")
 															.hide()
 												}
 												
@@ -494,6 +491,25 @@
 													$("#error_joiningDate")
 															.hide()
 												}
+												
+												if (!$("#vehicalNo").val()) {
+													isError = true;
+													$("#error_vehicalNo")
+															.show()
+												} else {
+													$("#error_vehicalNo")
+															.hide()
+												}
+												
+												if (!$("#ownerOfVehical").val()) {
+													isError = true;
+													$("#error_ownerOfVehical")
+															.show()
+												} else {
+													$("#error_ownerOfVehical")
+															.hide()
+												}
+												
 												
 												if (!$("#address").val()) {
 													isError = true;
@@ -526,8 +542,8 @@
 																		$(".btn").attr("disabled", true);
 																		var form = document
 																				.getElementById("submitInsert")
-																		form
-																				.submit();
+																		 form
+																				.submit(); 
 																	}
 																}
 															});
@@ -572,8 +588,8 @@
 
 				if (data.error == false) {
 					$("#unq_licenseNo").show();
-					$("#Delivery Boy Y/N Licen No").val('');
-					$("#Delivery Boy Y/N Licen No").focus();
+					$("#licenseNo").val('');
+					$("#licenseNo").focus();
 				} else {
 					$("#unq_licenseNo").hide();
 				}
