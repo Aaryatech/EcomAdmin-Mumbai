@@ -1359,8 +1359,6 @@ public class FranchiseConfigurationController {
 					frCharge.setRoundOffAmt(Float.parseFloat(request.getParameter("exVar7"+frId[i])));
 					
 					frChargesList.add(frCharge);
-					
-				
 				
 				//System.err.println("frids-->"+frId[i]);
 				//System.err.println("exVar3"+frId[i]);
