@@ -142,7 +142,7 @@
 									id="submitInsert" method="post">
 									
 									
-									<input type="text" name="cfgId" id="cfgId" value="${configId}">
+									<input type="hidden" name="cfgId" id="cfgId" value="${configId}">
 									<!--Table-->
 									<table class="table ddatatable-header-basic" id="printtable1">
 										<thead>

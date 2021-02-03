@@ -208,7 +208,7 @@
 											varStatus="count">
 											<tr>
 												<td>${count.index+1}</td>
-												<td>${list.firstName}${list.lastName}</td>
+												<td>${list.firstName} ${list.lastName}</td>
 												<td>${list.exInt2}</td>
 											</tr>
 										</c:forEach>
