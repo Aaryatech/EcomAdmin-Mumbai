@@ -5934,8 +5934,7 @@ public class MasterController {
 							rowData.add(" " + printFrList.get(i).getExFloat5());	
 						
 					}
-					srno = srno + 1;
-					
+					srno = srno + 1;					
 					expoExcel.setRowData(rowData);
 					exportToExcelList.add(expoExcel);
 
@@ -5944,7 +5943,7 @@ public class MasterController {
 				session.setAttribute("exportExcelListNew", exportToExcelList);				
 				session.setAttribute("excelNameNew", "Franchise");
 				session.setAttribute("reportNameNew", "Franchise List");
-				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("searchByNew", "NA");
 				session.setAttribute("mergeUpto1", "$A$1:$L$1");
 				session.setAttribute("mergeUpto2", "$A$2:$L$2");
 
