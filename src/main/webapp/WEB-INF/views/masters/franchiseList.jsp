@@ -676,8 +676,41 @@
 								$(".chkcls:checkbox:checked").each(function() {
 									elemntIds.push($(this).val());
 								}); 
-														
-						$
+											
+								 var formData = {elemntIds : JSON.stringify(elemntIds), val : val}; //Array 
+
+								  $.ajax({
+								      url : "${pageContext.request.contextPath}/getFranchisePrintIds",
+								      type: "POST", 
+								      data : formData,
+								    async : false, 
+								      success: function(response, textStatus, jqXHR) {
+								      	console.log(response);
+								      	
+								      	if(val==1){											
+											window.open("${pageContext.request.contextPath}/exportToExcelNew");
+											//document.getElementById("expExcel").disabled = true;												
+										
+										}else{
+											var compId = $("#compId").val();
+											var showHead = 0;
+											if($("#chkPdf").is(":checked")){
+												showHead = 1;
+											}else{
+												showHead = 0;
+											}
+											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getFranchiseIdsListPdf/'+compId+'/'+elemntIds.join()+'/'+showHead);
+											 $('#selAllChk').prop('checked', false);
+										}
+								      },
+								      error: function (jqXHR, textStatus, errorThrown) {
+								  		console.log(jqXHR);
+								        	console.log(textStatus);
+								        	console.log(errorThrown);
+								      }
+								  });
+								
+						/* $
 						.getJSON(
 								'${getFranchisePrintIds}',
 								{
@@ -689,8 +722,10 @@
 									if(data!=null){
 										//$("#modal_theme_primary").modal('hide');
 										if(val==1){
+										
 											window.open("${pageContext.request.contextPath}/exportToExcelNew");
-											//document.getElementById("expExcel").disabled = true;
+											//document.getElementById("expExcel").disabled = true;												
+										
 										}else{
 											var compId = $("#compId").val();
 											var showHead = 0;
@@ -703,9 +738,12 @@
 											 $('#selAllChk').prop('checked', false);
 										}
 									}
-								});
+								}); */
 						}
 					}		
+				  
+				 
+
 				</script>
 </body>
 </html>

@@ -341,7 +341,7 @@ tr.highlight {
 		    	var exvar7="exVar7"+unique[fl];
 		    	var tr_tb="tr_tb"+unique[fl];
 		    	var exvar2 ="exVar2"+unique[fl];
-		    	alert(exvar2);
+		    	//alert(exvar2);
 		     //document.body.append(checkbox.value + ' ');
 		     var name=  document.getElementById(""+name).innerHTML;
 		 var sur=  document.getElementById(""+exvar3).value;
@@ -353,7 +353,7 @@ tr.highlight {
 		 // alert(name);
 		
 		  var sel ='<td><input type="checkbox" id="frId'+unique[fl]+'" value="'+unique[fl]+'" name="frId" class="select_all"><input type="hidden" id="exVar2'+unique[fl]+'" name="exVar2'+unique[fl]+'" value="'+exvar2+'" ></td>';
-		  var sr = '\''+ fl +'\'';
+		  var sr = ''+ (fl+1) +'';
 		  var fName= '<td ><input type="text" id="name'+unique[fl]+'" name="name'+unique[fl]+'" value="'+name+'" ></td>';
 		  var sCharge= '<td><input type="text" id="exVar3'+unique[fl]+'" name="exVar3'+unique[fl]+'" value="'+sur+'"></td>';
 		  var packCh= '<td ><input type="text" id="exVar4'+unique[fl]+'" name="exVar4'+unique[fl]+'" value="'+pack+'"></td>';

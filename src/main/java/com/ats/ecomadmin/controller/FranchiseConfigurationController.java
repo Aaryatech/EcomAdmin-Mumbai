@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.servlet.ModelAndView;
@@ -92,7 +93,7 @@ public class FranchiseConfigurationController {
 				} catch (Exception e) {
 					configId = 0;
 				}
-
+				System.out.println("Config Ids-----------------"+catId+" "+configId);
 				model.addAttribute("catId", catId);
 				model.addAttribute("configId", configId);
 				int compId = (int) session.getAttribute("companyId");
@@ -828,11 +829,23 @@ public class FranchiseConfigurationController {
 			delBoy.setJoiningDate(request.getParameter("joiningDate"));
 			delBoy.setLastName(request.getParameter("lastName"));
 			delBoy.setMobileNo(request.getParameter("mobNo"));
-			delBoy.setVehicleNo("NA");
+			delBoy.setOwnVehicle(Integer.parseInt(request.getParameter("ownVehicle")));
 			delBoy.setIsActive(Integer.parseInt(request.getParameter("activeStat")));
+			delBoy.setDeliveryBoyLicenseNo(request.getParameter("deliveryBoyY/NLicenNo"));
+			delBoy.setVehicleNo(request.getParameter("vehicalNo"));
+			delBoy.setLicenseExpiryDate(request.getParameter("licenExpiryDate"));
+			delBoy.setInsuranceExpiryDate(request.getParameter("insuranceExpiryDate"));
+			delBoy.setOwnerOfVehicle(request.getParameter("ownerOfVehical"));
+			delBoy.setPucExpiryDate(request.getParameter("pucExpiryDate"));
 
-			DeliveryBoy res = Constants.getRestTemplate().postForObject(Constants.url + "saveDeliveryBoy", delBoy,
-					DeliveryBoy.class);
+			System.out.println(delBoy);
+			DeliveryBoy res = null;
+			try {
+				res = Constants.getRestTemplate().postForObject(Constants.url + "saveDeliveryBoy", delBoy,
+						DeliveryBoy.class);
+			} catch (HttpClientErrorException e) {
+				System.err.println("saveDeliveryBoy exce " + e.getResponseBodyAsString());
+			}
 
 			if (res.getDelBoyId() > 0) {
 				if (delBoyId == 0)
@@ -1346,8 +1359,6 @@ public class FranchiseConfigurationController {
 					frCharge.setRoundOffAmt(Float.parseFloat(request.getParameter("exVar7"+frId[i])));
 					
 					frChargesList.add(frCharge);
-					
-				
 				
 				//System.err.println("frids-->"+frId[i]);
 				//System.err.println("exVar3"+frId[i]);

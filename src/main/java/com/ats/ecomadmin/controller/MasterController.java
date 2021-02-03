@@ -5691,7 +5691,7 @@ public class MasterController {
 		
 		List<Franchise> printFrList =new ArrayList<Franchise>();
 		List<Long> printFrIds = new ArrayList<Long>();
-		@RequestMapping(value = "/getFranchisePrintIds", method = RequestMethod.GET)
+		@RequestMapping(value = "/getFranchisePrintIds", method = RequestMethod.POST)
 		@ResponseBody
 		public List<Franchise> getFranchisePrintIds(HttpServletRequest request, HttpServletResponse response) {
 
@@ -5706,7 +5706,7 @@ public class MasterController {
 				printFrIds =  Stream.of(selctId.split(","))
 				        .map(Long::parseLong)
 				        .collect(Collectors.toList());
-				
+								
 				HttpSession session = request.getSession();
 				int companyId = (int) session.getAttribute("companyId");
 				
@@ -5877,7 +5877,7 @@ public class MasterController {
 							rowData.add(" " + printFrList.get(i).getFdaLicenseDateExp());
 						
 						if(printFrIds.get(j)==15)
-							rowData.add(printFrList.get(i).getGstType().equals("1")? "Regular": printFrList.get(i).getGstType().equals("2")? "Composite" : "Non-Register");
+							rowData.add(printFrList.get(i).getGstType().equals("1") ? "Regular" : printFrList.get(i).getGstType().equals("2")? "Composite" : "Non-Register");
 						
 						if(printFrIds.get(j)==16)
 							rowData.add(" " + printFrList.get(i).getGstNumber());
@@ -5934,26 +5934,25 @@ public class MasterController {
 							rowData.add(" " + printFrList.get(i).getExFloat5());	
 						
 					}
-					srno = srno + 1;
-					
+					srno = srno + 1;					
 					expoExcel.setRowData(rowData);
 					exportToExcelList.add(expoExcel);
 
 				}
-				session.setAttribute("exportExcelListNew", exportToExcelList);
+				
+				session.setAttribute("exportExcelListNew", exportToExcelList);				
 				session.setAttribute("excelNameNew", "Franchise");
 				session.setAttribute("reportNameNew", "Franchise List");
-				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("searchByNew", "NA");
 				session.setAttribute("mergeUpto1", "$A$1:$L$1");
 				session.setAttribute("mergeUpto2", "$A$2:$L$2");
 
 				session.setAttribute("exportExcelList", exportToExcelList);
-				session.setAttribute("excelName", "Franchise Excel");
-				
-				
+				session.setAttribute("excelName", "Franchise Excel");		
 				
 			}catch (Exception e) {
-				// TODO: handle exception
+				System.out.println("Excep in /getFranchisePrintIds : "+e.getMessage());
+				e.printStackTrace();
 			}
 			return printFrList;
 		}
