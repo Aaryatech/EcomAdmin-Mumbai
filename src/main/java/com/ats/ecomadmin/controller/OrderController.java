@@ -484,6 +484,7 @@ public class OrderController {
 			java.io.FileOutputStream fos = new java.io.FileOutputStream(output);
 
 			PD4ML pd4ml = new PD4ML();
+			pd4ml.setPageSize(format);
 			pd4ml.enableSmartTableBreaks(true);
 			try {
 				SimpleDateFormat pdfSdf = new SimpleDateFormat("dd-MM-yyyy");
