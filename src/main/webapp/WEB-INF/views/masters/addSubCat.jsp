@@ -98,7 +98,7 @@
 										</label>
 										<div class="col-lg-4">
 											<select class="form-control select-search" data-fouc onchange="getSubCatCode(this.value)"
-												name="catId" id="catId" data-placholder="Select Category" disabled="true">
+												name="catId" id="catId" data-placholder="Select Category">
 
 												<c:forEach items="${catList}" var="list" varStatus="count">
 													<c:choose>
@@ -294,7 +294,7 @@
 	<!-- /page content -->
 	<script type="text/javascript">
 	// A $( document ).ready() block.
-	$( document ).ready(function() {
+	/* $( document ).ready(function() {
 	   var subCatid=document.getElementById('subCatId').value;
 	   if(subCatid>0){  	
 		   $('#catId').prop('disabled', true); 
@@ -303,7 +303,7 @@
 		 $('#catId').prop('disabled', false); 
 		   $('#subCatCode').prop('disabled', false); 
 	}
-	});
+	}); */
 	</script>
 	<script type="text/javascript">
 		var loadFile = function(event) {

@@ -109,7 +109,7 @@
 												style="display: none;">This field is required.</span>
 										</div>
 
-									
+									<div style="display: none;"> 
 										<label id="filtLable"  class="col-form-label font-weight-bold col-lg-2"
 											for="filterType">Filter Type<span class="text-danger">*
 										</span>:
@@ -119,6 +119,7 @@
 												readonly="readonly"> <input type="hidden"
 												class="form-control" value="${filterTypeId}"
 												name="filterTypeId" id="filterTypeId">
+										</div>
 										</div>
 									
 									</div>
@@ -500,14 +501,32 @@
 	$( document ).ready(function() {
 	  var filterId=document.getElementById('filterId').value;
 	  var filterTypeId=document.getElementById('filterTypeId').value;
-	  // alert(filterTypeId);
-	   if(filterId!=0){
+	   alert(filterTypeId);
+	    if(filterId!=0){
 		   document.getElementById('filtLable').style.display = "none";
 		   document.getElementById('filType').style.display = "none";
 		}else {
 			 document.getElementById('filtLable').style.display = "block";
 			   document.getElementById('filType').style.display = "block";
-		}
+		} 
+	    
+	    if(filterTypeId==16){
+			   
+			   document.getElementById('descDiv').style.display = "none";
+			   document.getElementById('descLbl').style.display = "none";
+			   document.getElementById('priceRangeLbl').style.display = "block";
+			   document.getElementById('priceRange1').style.display = "block";
+			   document.getElementById('priceRange2').style.display = "block";
+			   document.getElementById('toDiv').style.display = "block";
+		   }else{
+			   
+			   document.getElementById('descDiv').style.display = "block";
+			   document.getElementById('descLbl').style.display = "block";
+			   document.getElementById('priceRangeLbl').style.display = "none";
+			   document.getElementById('priceRange1').style.display = "none";
+			   document.getElementById('priceRange2').style.display = "none";
+			   document.getElementById('toDiv').style.display = "none";
+		   }
 	   
 	   if(filterTypeId==7){  
 		   document.getElementById('isTagDiv').style.display = "none";
@@ -518,21 +537,7 @@
 		   document.getElementById('isTaglabel').style.display = "block";
 	   }
 	      
-	   if(filterTypeId==16){
-		   document.getElementById('descDiv').style.display = "none";
-		   document.getElementById('descLbl').style.display = "none";
-		   document.getElementById('priceRangeLbl').style.display = "block";
-		   document.getElementById('priceRange1').style.display = "block";
-		   document.getElementById('priceRange2').style.display = "block";
-		   document.getElementById('toDiv').style.display = "block";
-	   }else{
-		   document.getElementById('descDiv').style.display = "block";
-		   document.getElementById('descLbl').style.display = "block";
-		   document.getElementById('priceRangeLbl').style.display = "none";
-		   document.getElementById('priceRange1').style.display = "none";
-		   document.getElementById('priceRange2').style.display = "none";
-		   document.getElementById('toDiv').style.display = "none";
-	   }
+	 
 
 	});
 	</script>
