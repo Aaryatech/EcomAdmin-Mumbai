@@ -216,13 +216,15 @@
 																						
 																								
 										 <div class="form-check form-check-inline"> 
-										  <input type="radio"	name="ownVehicle" id="yes"  class="form-check-input" checked value="1" >
+										  <input type="radio"	name="ownVehicle" id="yes"  class="form-check-input" checked value="1"
+										   ${delvrBoy.ownVehicle==1 ? 'checked' : ''} >
 										   <label class="form-check-label">Yes</label>
 											</div>	
 											
 											
 										 <div class="form-check form-check-inline"> 										
-										   <input type="radio" name="ownVehicle" id="no"  class="form-check-input" value="0" >
+										   <input type="radio" name="ownVehicle" id="no"  class="form-check-input" value="0" 
+										   ${delvrBoy.ownVehicle==0 ? 'checked' : ''}>
 										   <label class="form-check-label">No	</label>
 										   </div>
 										
@@ -258,7 +260,7 @@
 											<input type="text"
 												class="form-control datepickerclass maxlength-badge-position"
 												name="licenExpiryDate" id="Licen Expiry Date" maxlength="10"
-												autocomplete="off" onchange="trim(this)" value=""> <span
+												autocomplete="off" onchange="trim(this)" value="${delvrBoy.licenseExpiryDate}"> <span
 												class="validation-invalid-label text-danger"
 												id="error_joiningDate" style="display: none;">This
 												field is required.</span>
@@ -275,7 +277,7 @@
 											<input type="text"
 												class="form-control datepickerclass maxlength-badge-position"
 												name="insuranceExpiryDate" id="Insurance Expiry Date" maxlength="10"
-												autocomplete="off" onchange="trim(this)" value=""> <span
+												autocomplete="off" onchange="trim(this)" value="${delvrBoy.insuranceExpiryDate}"> <span
 												class="validation-invalid-label text-danger"
 												id="error_Insurance Expiry Date" style="display: none;">This
 												field is required.</span>
@@ -307,7 +309,7 @@
 											<input type="text"
 												class="form-control datepickerclass maxlength-badge-position"
 												name="pucExpiryDate" id="PUC Expiry Date" maxlength="10"
-												autocomplete="off" onchange="trim(this)" value=""> <span
+												autocomplete="off" onchange="trim(this)" value="${delvrBoy.pucExpiryDate}"> <span
 												class="validation-invalid-label text-danger"
 												id="error_PUC Expiry Date" style="display: none;">This
 												field is required.</span>
