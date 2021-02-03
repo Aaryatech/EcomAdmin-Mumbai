@@ -188,15 +188,139 @@
 												id="error_joiningDate" style="display: none;">This
 												field is required.</span>
 										</div>
-									</div>
+										</div>
+										
+										 <div class="form-group row">
+										   <label class="col-form-label font-weight-bold col-lg-2"
+											for="Delivery Boy Y/N Licen No">Delivery Boy License No<span
+											class="text-danger">*</span>:
+										   </label>
+										   
+										  <div class="col-lg-4">
+											<input type="text"
+												class="form-control maxlength-badge-position"
+												name="deliveryBoyY/NLicenNo" id="Delivery Boy Y/N Licen No" maxlength="20"
+												autocomplete="off" onchange="trim(this)" value="${delvrBoy.deliveryBoyLicenseNo} ">
+												 <span class="validation-invalid-label text-danger"
+												id="error_Delivery Boy Y/N Licen No" style="display: none;">This
+												field is required.</span>
+												
+												 <span
+												class="validation-invalid-label text-danger"
+												id="unq_licenseNo" style="display: none;">License No. Already Exist</span>
+										  </div>
+																								
+																										
+											
+										   <label class="col-form-label font-weight-bold col-lg-2">Own Vehicle</label>
+																						
+																								
+										 <div class="form-check form-check-inline"> 
+										  <input type="radio"	name="ownVehicle" id="yes"  class="form-check-input" checked value="1" >
+										   <label class="form-check-label">Yes</label>
+											</div>	
+											
+											
+										 <div class="form-check form-check-inline"> 										
+										   <input type="radio" name="ownVehicle" id="no"  class="form-check-input" value="0" >
+										   <label class="form-check-label">No	</label>
+										   </div>
+										
+										</div>	
 									
-									<div class="form-group row">
+										
+										 <div class="form-group row">
+										  <label class="col-form-label font-weight-bold col-lg-2"
+											for="Vahocal  No">Vehicle  No.<span
+											class="text-danger">*</span>:
+										  </label>
+
+										  <div class="col-lg-4">
+											<input type="text"
+												class="form-control maxlength-badge-position"
+												name="vehicalNo" id="Vahocal  No" maxlength="10"
+												autocomplete="off" onchange="trim(this)"
+												value="${delvrBoy.vehicleNo}"> <span
+												class="validation-invalid-label text-danger"
+												id="error_Vahocal  No" style="display: none;">This
+												field is required.</span>												
+												 <span
+												class="validation-invalid-label text-danger"
+												id="unq_mobNo" style="display: none;">Vehicle  No Already Exist</span>
+										  </div>
+										
+										
+										  <label class="col-form-label font-weight-bold col-lg-2"
+											for="Licen Expiry Date">License Expiry Date<span
+											class="text-danger">*</span>:
+										  </label>
+										<div class="col-lg-4">
+											<input type="text"
+												class="form-control datepickerclass maxlength-badge-position"
+												name="licenExpiryDate" id="Licen Expiry Date" maxlength="10"
+												autocomplete="off" onchange="trim(this)" value=""> <span
+												class="validation-invalid-label text-danger"
+												id="error_joiningDate" style="display: none;">This
+												field is required.</span>
+										</div>	
+										</div>	
+										
+										
+										<div class="form-group row">
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="Licen Expiry Date">Insurance Expiry Date<span
+											class="text-danger">*</span>:
+										</label>
+										<div class="col-lg-4">
+											<input type="text"
+												class="form-control datepickerclass maxlength-badge-position"
+												name="insuranceExpiryDate" id="Insurance Expiry Date" maxlength="10"
+												autocomplete="off" onchange="trim(this)" value=""> <span
+												class="validation-invalid-label text-danger"
+												id="error_Insurance Expiry Date" style="display: none;">This
+												field is required.</span>
+										</div>	
+										
+										
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="owner Of Vehical">Owner Of Vehical<span class="text-danger">*
+										</span>:
+										</label>
+										<div class="col-lg-4">
+											<input type="text"
+												class="form-control maxlength-badge-position"
+												name="ownerOfVehical" id="owner Of Vehical" maxlength="50"
+												autocomplete="off" onchange="trim(this)"
+												value="${delvrBoy.ownerOfVehicle}"> <span
+												class="validation-invalid-label text-danger"
+												id="error_Owner Of Vehical" style="display: none;">This
+												field is required.</span>
+										</div>
+										</div>
+										
+										<div class="form-group row">
+										<label class="col-form-label font-weight-bold col-lg-2"
+											for="PUC Expiry Date">PUC Expiry Date<span
+											class="text-danger">*</span>:
+										</label>
+										<div class="col-lg-4">
+											<input type="text"
+												class="form-control datepickerclass maxlength-badge-position"
+												name="pucExpiryDate" id="PUC Expiry Date" maxlength="10"
+												autocomplete="off" onchange="trim(this)" value=""> <span
+												class="validation-invalid-label text-danger"
+												id="error_PUC Expiry Date" style="display: none;">This
+												field is required.</span>
+										</div>	
+									
+								
+								
 										<label class="col-form-label font-weight-bold col-lg-2"
 											for="mobNo">Address<span
 											class="text-danger">*</span>:
 										</label>
 
-										<div class="col-lg-10">
+										<div class="col-lg-4">
 											<textarea type="text"
 												class="form-control maxlength-badge-position"
 												name="address" id="address" maxlength="250"
@@ -206,7 +330,12 @@
 												field is required.</span>
 										</div>										
 									</div>
-
+									
+									
+																																															
+									
+																							                                     
+																																																						
 
 									<div class="form-group row">
 										<label class="col-form-label font-weight-bold col-lg-2"
@@ -342,6 +471,19 @@
 															.hide()
 												}
 												
+												if (!$("#Delivery Boy Y/N Licen No").val()
+														|| !validateMobile($(
+																"#Delivery Boy Y/N Licen No")
+																.val())) {
+													isError = true;
+													$("#Delivery Boy Y/N Licen No").focus();
+													$("#error_Delivery Boy Y/N Licen No")
+															.show()
+												} else {
+													$("#error_Delivery Boy Y/N Licen No")
+															.hide()
+												}
+												
 												if (!$("#joiningDate").val()) {
 													isError = true;
 													$("#error_joiningDate")
@@ -415,6 +557,27 @@
 			});
 		});
 
+		$("#Delivery Boy Y/N Licen No").change(function() { // 1st
+			var DeliveryBoyYNLicenNo = $("#Delivery Boy Y/N Licen No").val();
+			var delBoyId = $("#delBoyId").val();
+			//alert(code)
+
+			$.getJSON('${getDelvrBoyInfoBydeliveryBoyLicenseNo}', {
+				DeliveryBoyYNLicenNo : DeliveryBoyYNLicenNo,
+				delBoyId : delBoyId,
+				ajax : 'true',
+			}, function(data) {
+
+				if (data.error == false) {
+					$("#unq_licenseNo").show();
+					$("#Delivery Boy Y/N Licen No").val('');
+					$("#Delivery Boy Y/N Licen No").focus();
+				} else {
+					$("#unq_licenseNo").hide();
+				}
+			});
+		});
+		
 	</script>
 	<script>
 		function trim(el) {

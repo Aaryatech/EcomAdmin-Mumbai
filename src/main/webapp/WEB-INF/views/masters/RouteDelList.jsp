@@ -135,7 +135,7 @@
 								Delete <i class="far fa-trash-alt"></i>
 							</button>
 
-							<button type="button" class="btn btn-primary" id="submtbtn"
+							<button type="button" class="btn btn-primary" id="expExcel"
 								onclick="exportToExcel()">
 								Excel <i class="far fa-file-excel"></i>
 							</button> 

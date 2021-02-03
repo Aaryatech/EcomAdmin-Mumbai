@@ -1,5 +1,7 @@
 package com.ats.ecomadmin.model.offer;
 
+import java.util.Date;
+
 public class DeliveryBoy {
 	
 	
@@ -20,7 +22,15 @@ public class DeliveryBoy {
 	private String exVar2;	
 	private int delStatus;
 	private int isActive;
-
+	
+	private String deliveryBoyLicenseNo;
+	private int ownVehicle;
+	private String licenseExpiryDate;
+	private String insuranceExpiryDate;
+	private String ownerOfVehicle;
+	private String pucExpiryDate;
+	
+	
 	public int getDelBoyId() {
 		return delBoyId;
 	}
@@ -157,13 +167,64 @@ public class DeliveryBoy {
 		this.isActive = isActive;
 	}
 
+	public String getDeliveryBoyLicenseNo() {
+		return deliveryBoyLicenseNo;
+	}
+
+	public void setDeliveryBoyLicenseNo(String deliveryBoyLicenseNo) {
+		this.deliveryBoyLicenseNo = deliveryBoyLicenseNo;
+	}
+
+	public int getOwnVehicle() {
+		return ownVehicle;
+	}
+
+	public void setOwnVehicle(int ownVehicle) {
+		this.ownVehicle = ownVehicle;
+	}
+
+	public String getLicenseExpiryDate() {
+		return licenseExpiryDate;
+	}
+
+	public void setLicenseExpiryDate(String licenseExpiryDate) {
+		this.licenseExpiryDate = licenseExpiryDate;
+	}
+
+	public String getInsuranceExpiryDate() {
+		return insuranceExpiryDate;
+	}
+
+	public void setInsuranceExpiryDate(String insuranceExpiryDate) {
+		this.insuranceExpiryDate = insuranceExpiryDate;
+	}
+
+	public String getOwnerOfVehicle() {
+		return ownerOfVehicle;
+	}
+
+	public void setOwnerOfVehicle(String ownerOfVehicle) {
+		this.ownerOfVehicle = ownerOfVehicle;
+	}
+
+	public String getPucExpiryDate() {
+		return pucExpiryDate;
+	}
+
+	public void setPucExpiryDate(String pucExpiryDate) {
+		this.pucExpiryDate = pucExpiryDate;
+	}
+
 	@Override
 	public String toString() {
 		return "DeliveryBoy [delBoyId=" + delBoyId + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", mobileNo=" + mobileNo + ", dateOfBirth=" + dateOfBirth + ", joiningDate=" + joiningDate
 				+ ", address=" + address + ", empCode=" + empCode + ", emailId=" + emailId + ", compId=" + compId
 				+ ", vehicleNo=" + vehicleNo + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1
-				+ ", exVar2=" + exVar2 + ", delStatus=" + delStatus + ", isActive=" + isActive + "]";
+				+ ", exVar2=" + exVar2 + ", delStatus=" + delStatus + ", isActive=" + isActive
+				+ ", deliveryBoyLicenseNo=" + deliveryBoyLicenseNo + ", ownVehicle=" + ownVehicle
+				+ ", licenseExpiryDate=" + licenseExpiryDate + ", insuranceExpiryDate=" + insuranceExpiryDate
+				+ ", ownerOfVehicle=" + ownerOfVehicle + ", pucExpiryDate=" + pucExpiryDate + "]";
 	}
 
 }
