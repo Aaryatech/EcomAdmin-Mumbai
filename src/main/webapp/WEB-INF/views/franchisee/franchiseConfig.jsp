@@ -142,7 +142,7 @@
 									id="submitInsert" method="post">
 									
 									
-									<input type="hidden" name="cfgId" id="cfgId" value="${configId}">
+									<input type="text" name="cfgId" id="cfgId" value="${configId}">
 									<!--Table-->
 									<table class="table ddatatable-header-basic" id="printtable1">
 										<thead>
@@ -262,7 +262,7 @@
 		//alert("Asdf");		 
 		var catId=document.getElementById("catId").value;
 		var configId=document.getElementById("configId").value;
-		//alert(catId+"Asdf"+compId);
+	//	alert(catId+"Asdf"+configId);
 		$.getJSON(
 				'${configFranchiseAJAX}',
 				{
@@ -288,6 +288,7 @@
 					
 					});
 					
+					$("#cfgId").val(configId);
 				});
 	}
 	</script>

@@ -93,7 +93,7 @@ public class FranchiseConfigurationController {
 				} catch (Exception e) {
 					configId = 0;
 				}
-
+				System.out.println("Config Ids-----------------"+catId+" "+configId);
 				model.addAttribute("catId", catId);
 				model.addAttribute("configId", configId);
 				int compId = (int) session.getAttribute("companyId");
