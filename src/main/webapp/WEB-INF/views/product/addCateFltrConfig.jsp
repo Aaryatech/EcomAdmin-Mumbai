@@ -184,6 +184,8 @@
 										<div class="col-lg-10">
 											<span class="validation-invalid-label" id="error_checkbox"
 												style="display: none;">Check Minimum One Checkbox</span>
+												<span class="validation-invalid-label" id="error_Maxcheckbox"
+												style="display: none;">Max. 5 Checkbox Can Be Selected.!!!</span>
 										</div>
 									</div>
 									<br>
@@ -386,7 +388,8 @@
 				}
 
 				var checkboxes = $("input[type='checkbox']");
-
+				var Checked = $('input:checkbox:checked').length;
+			
 				if (!checkboxes.is(":checked")) {
 
 					isError = true;
@@ -396,6 +399,17 @@
 				} else {
 					$("#error_checkbox").hide()
 				}
+				
+				if(Checked>5){
+					isError = true;
+
+					$("#error_Maxcheckbox").show()
+
+				} else {
+					$("#error_Maxcheckbox").hide()
+				}
+				
+				
 
 				if (!isError) {
 

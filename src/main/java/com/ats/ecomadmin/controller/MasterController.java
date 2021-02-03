@@ -2618,12 +2618,12 @@ public class MasterController {
 				} else {
 					String password = request.getParameter("pass");
 					
-					MessageDigest md = MessageDigest.getInstance("MD5");
+					/*MessageDigest md = MessageDigest.getInstance("MD5");
 					byte[] messageDigest = md.digest(password.getBytes());
 					BigInteger number = new BigInteger(1, messageDigest);
-					String hashtext = number.toString(16);
+					String hashtext = number.toString(16);*/
 
-					franchise.setFrPassword(hashtext);
+					franchise.setFrPassword(password);
 					franchise.setAddDateTime(sf.format(date));
 				}
 
@@ -3557,6 +3557,11 @@ public class MasterController {
 		}
 		return mav;
 	}
+	
+	
+
+	
+	
 
 	@RequestMapping(value = "/getCityInfoByCode", method = RequestMethod.GET)
 	@ResponseBody

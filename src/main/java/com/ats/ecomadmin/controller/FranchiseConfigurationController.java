@@ -108,7 +108,7 @@ public class FranchiseConfigurationController {
 				catList = new ArrayList<Category>(Arrays.asList(catArr));
 				model.addAttribute("catList", catList);
 
-				if (catId > 0) {
+			/*	if (catId > 0) {
 
 					map = new LinkedMultiValueMap<>();
 					map.add("catId", catId);
@@ -123,7 +123,7 @@ public class FranchiseConfigurationController {
 						session.removeAttribute("errorMsg");
 					}
 				}
-				model.addAttribute("frList", frList);
+				model.addAttribute("frList", frList);*/
 
 			} catch (Exception e) {
 				System.out.println("Execption in /configFranchise : " + e.getMessage());
@@ -132,6 +132,35 @@ public class FranchiseConfigurationController {
 		}
 		return mav;
 	}
+	
+	
+	@RequestMapping(value="/configFranchiseAJAX",method=RequestMethod.GET)
+	public @ResponseBody List<GetFrForConfig> configFranchiseAJAX(HttpServletRequest request,HttpServletResponse response){
+		System.err.println("In configFranchise AJAX Call");
+		List<GetFrForConfig> frList=new ArrayList<>();
+		MultiValueMap<String, Object> map=new LinkedMultiValueMap<>();
+		HttpSession session=request.getSession();
+		try {
+			int compId = (int) session.getAttribute("companyId");
+		 int	catId = Integer.parseInt(request.getParameter("catId"));
+		int	configId = Integer.parseInt(request.getParameter("configId"));
+		map = new LinkedMultiValueMap<>();
+		map.add("catId", catId);
+		map.add("companyId", compId);
+		GetFrForConfig[] frArr = Constants.getRestTemplate()
+				.postForObject(Constants.url + "getFranchiseForConfig", map, GetFrForConfig[].class);
+		frList = new ArrayList<GetFrForConfig>(Arrays.asList(frArr));
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println("Exception Occuered In /configFranchiseAJAX");
+			e.printStackTrace();
+		}
+		return frList;
+		
+	}
+	
+	
 
 	/*--------------------------------------------------------------------------------*/
 	// Created By :- Harsha Patil
