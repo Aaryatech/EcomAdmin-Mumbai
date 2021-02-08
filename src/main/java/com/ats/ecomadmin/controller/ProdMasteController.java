@@ -47,6 +47,7 @@ import com.ats.ecomadmin.model.Info;
 import com.ats.ecomadmin.model.ItemConfDetail;
 import com.ats.ecomadmin.model.ItemConfHeader;
 import com.ats.ecomadmin.model.MFilter;
+import com.ats.ecomadmin.model.ProdListExl;
 import com.ats.ecomadmin.model.ProductMaster;
 import com.ats.ecomadmin.model.SubCategory;
 import com.ats.ecomadmin.model.Tax;
@@ -2439,17 +2440,18 @@ public class ProdMasteController {
 		try {
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("compId", compId);
-
-			GetProdList[] prodArr = Constants.getRestTemplate().postForObject(Constants.url + "getProdList", map,
-					GetProdList[].class);
-			prodListPrint = new ArrayList<GetProdList>(Arrays.asList(prodArr));
+			List<ProdListExl> prdList = new ArrayList<ProdListExl>();
+			
+			ProdListExl[] prdArr = Constants.getRestTemplate().postForObject(Constants.url + "getProductListExcl", map, ProdListExl[].class);
+			prdList = new ArrayList<ProdListExl>(Arrays.asList(prdArr));
 			
 			proIds =  Stream.of(selctId.split(","))
 			        .map(Long::parseLong)
 			        .collect(Collectors.toList());
 			
-			model.addAttribute("prodList", prodListPrint);
+			model.addAttribute("prodList", prdList);
 			model.addAttribute("proIds", proIds);
+			
 			CompanyContactInfo dtl = HomeController.getCompName(compId);
 			if(showHead==1) {
 				model.addAttribute("compName", dtl.getCompanyName());
@@ -2462,6 +2464,294 @@ public class ProdMasteController {
 		return "pdfs/productListPdf";
 		
 	}
-	
+	@RequestMapping(value = "/showProductExlList", method = RequestMethod.GET)
+	public @ResponseBody List<ProdListExl> showProductExlList(HttpServletRequest request, HttpServletResponse response) {
+
+		List<ProdListExl> prdList = new ArrayList<ProdListExl>();		
+		try {			
+			HttpSession session = request.getSession();
+			
+			int val = Integer.parseInt(request.getParameter("val"));			
+			String selctId = request.getParameter("elemntIds");
+
+			selctId = selctId.substring(1, selctId.length() - 1);
+			selctId = selctId.replaceAll("\"", "");
+		
+			int compId = (int) session.getAttribute("companyId");
+
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("compId", compId);			
+
+				ProdListExl[] prdArr = Constants.getRestTemplate().postForObject(Constants.url + "getProductListExcl", map, ProdListExl[].class);
+				prdList = new ArrayList<ProdListExl>(Arrays.asList(prdArr));
+				
+				proIds =  Stream.of(selctId.split(","))
+				        .map(Long::parseLong)
+				        .collect(Collectors.toList());				
+				
+				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+				ExportToExcel expoExcel = new ExportToExcel();
+				List<String> rowData = new ArrayList<String>();
+
+				rowData.add("Sr No");
+				for (int i = 0; i < proIds.size(); i++) {
+					
+					if(proIds.get(i)==1)
+					rowData.add("Product Code");
+					
+					if(proIds.get(i)==2)
+					rowData.add("Name");
+					
+					if(proIds.get(i)==3)
+					rowData.add("Short Name");
+					
+					if(proIds.get(i)==4)
+					rowData.add("Category");
+					
+					if(proIds.get(i)==5)
+					rowData.add("Sub Category ");
+					
+					if(proIds.get(i)==6)
+					rowData.add("Tax");
+					
+					if(proIds.get(i)==7)
+					rowData.add("Sort No.");
+					
+					if(proIds.get(i)==8)
+					rowData.add("Min Qty.");
+					
+					if(proIds.get(i)==9)
+						rowData.add("Shelf Life");					
+					
+					if(proIds.get(i)==10)
+						rowData.add("Return Allowed");
+					
+					if(proIds.get(i)==11)
+						rowData.add("Return %");
+					
+					if(proIds.get(i)==12)
+						rowData.add("UOM");
+					
+					if(proIds.get(i)==13)
+						rowData.add("Shape");
+					
+					if(proIds.get(i)==14)
+						rowData.add("Product Type");
+					
+					if(proIds.get(i)==15)
+						rowData.add("Default Shape");
+					
+					if(proIds.get(i)==16)
+						rowData.add("Flavour");
+					
+					if(proIds.get(i)==17)
+						rowData.add("Product Status");
+					
+					if(proIds.get(i)==18)
+						rowData.add("Default Flavour");
+					
+					if(proIds.get(i)==19)
+						rowData.add("Veg/Non-Veg");
+					
+					if(proIds.get(i)==20)
+						rowData.add("Book Before Days");
+					
+					if(proIds.get(i)==21)
+						rowData.add("Default Veg/Non-Veg");
+					
+					if(proIds.get(i)==22)
+						rowData.add("Alphabats Limit");
+					
+					if(proIds.get(i)==23)
+						rowData.add("No. Alphabats");
+					
+					if(proIds.get(i)==24)
+						rowData.add("No. Of Msg Character");
+					
+					if(proIds.get(i)==25)
+						rowData.add("Bread Type");
+					
+					if(proIds.get(i)==26)
+						rowData.add("Cream Type");
+					
+					if(proIds.get(i)==27)
+						rowData.add("Layering Cream");
+					
+					if(proIds.get(i)==28)
+						rowData.add("Topping Cream");
+					
+					if(proIds.get(i)==29)
+						rowData.add("Applicable Tags");
+					
+					if(proIds.get(i)==30)
+						rowData.add("Product Desc");
+					
+					if(proIds.get(i)==31)
+						rowData.add("Ingredient");
+					
+					if(proIds.get(i)==32)
+						rowData.add("Preparation Time");
+					
+					if(proIds.get(i)==33)
+						rowData.add("Rate Setting Type");
+					
+					if(proIds.get(i)==34)
+						rowData.add("Max Weight");
+					
+					if(proIds.get(i)==35)
+						rowData.add("Available Weights");
+					
+					if(proIds.get(i)==36)
+						rowData.add("Basic Product MRP");
+					
+					if(proIds.get(i)==37)
+						rowData.add("Active");
+					
+				}
+				expoExcel.setRowData(rowData);
+				
+				exportToExcelList.add(expoExcel);
+				int srno = 1;
+				for (int i = 0; i < prdList.size(); i++) {
+					expoExcel = new ExportToExcel();
+					rowData = new ArrayList<String>();
+					rowData.add(" "+srno);
+					for (int j = 0; j < proIds.size(); j++) {
+					
+						if(proIds.get(j)==1)
+						rowData.add(" " + prdList.get(i).getProductCode());
+						
+						if(proIds.get(j)==2)
+						rowData.add(" " + prdList.get(i).getProductName());
+						
+						if(proIds.get(j)==3)
+						rowData.add(" " + prdList.get(i).getShortName());
+						
+						if(proIds.get(j)==4)
+						rowData.add(" " + prdList.get(i).getCatName());
+						
+						if(proIds.get(j)==5)
+						rowData.add(" " + prdList.get(i).getSubCatName());
+						
+						if(proIds.get(j)==6)
+						rowData.add(" " + prdList.get(i).getTaxName());
+					
+						if(proIds.get(j)==7)
+						rowData.add(" " + prdList.get(i).getSortId());
+						
+						if(proIds.get(j)==8)
+						rowData.add(" " + prdList.get(i).getMinQty());
+						
+						if(proIds.get(j)==9)
+							rowData.add(" " + prdList.get(i).getShelfLife());						
+						
+						if(proIds.get(j)==10)
+							rowData.add(prdList.get(i).getIsReturnAllow() == 1 ? "Yes" : "No");
+						
+						if(proIds.get(j)==11)
+							rowData.add(" "+prdList.get(i).getRetPer());
+						
+						if(proIds.get(j)==12)
+							rowData.add(" "+prdList.get(i).getUomShowName());
+						
+						if(proIds.get(j)==13)
+							rowData.add(" "+prdList.get(i).getShapeNames());
+						
+						if(proIds.get(j)==14)
+							rowData.add(" "+prdList.get(i).getProdTypeName());
+						
+						if(proIds.get(j)==15)
+							rowData.add(" "+prdList.get(i).getDefaultShapeName());
+						
+						if(proIds.get(j)==16)
+							rowData.add(" "+prdList.get(i).getFlavorNames());
+						
+						if(proIds.get(j)==17)
+							rowData.add(" "+prdList.get(i).getProdStatusName());
+						
+						if(proIds.get(j)==18)
+							rowData.add(" "+prdList.get(i).getDefaultFlavorName());
+						
+						if(proIds.get(j)==19)
+							rowData.add(" "+prdList.get(i).getVegNonvegName());
+						
+						if(proIds.get(j)==20)
+							rowData.add(" "+prdList.get(i).getBookBefore());
+						
+						if(proIds.get(j)==21)
+							rowData.add(" "+prdList.get(i).getDefaultVegNonvegName());
+						
+						if(proIds.get(j)==22)
+							rowData.add(+prdList.get(i).getIsCharLimit() == 1 ?"Yes" : "No");
+						
+						if(proIds.get(j)==23)
+							rowData.add(" "+prdList.get(i).getNoOfCharsForAlphaCake());
+						
+						if(proIds.get(j)==24)
+							rowData.add(" "+prdList.get(i).getNoOfCharsOnCake());
+						
+						if(proIds.get(j)==25)
+							rowData.add(" "+prdList.get(i).getBreadTypeName());
+						
+						if(proIds.get(j)==26)
+							rowData.add(" "+prdList.get(i).getCreamTypeName());
+						
+						if(proIds.get(j)==27)
+							rowData.add(" "+prdList.get(i).getLayeringCreamNames());
+						
+						if(proIds.get(j)==28)
+							rowData.add(" "+prdList.get(i).getToppingCreamNames());
+						
+						if(proIds.get(j)==29)
+							rowData.add(" "+prdList.get(i).getAppliTagNames());
+						
+						if(proIds.get(j)==30)
+							rowData.add(" "+prdList.get(i).getProductDesc());						
+						
+						if(proIds.get(j)==31)
+							rowData.add(" "+prdList.get(i).getIngerdiants());
+						
+						if(proIds.get(j)==32)
+							rowData.add(" "+prdList.get(i).getPrepTime());
+						
+						if(proIds.get(j)==33)
+							rowData.add(prdList.get(i).getRateSettingType() == 0 ? "Per UOM" : prdList.get(i).getRateSettingType() == 1 ? "Per Kg" : "As of Filter");
+						
+						if(proIds.get(j)==34)
+							rowData.add(" "+prdList.get(i).getMaxWt());
+						
+						if(proIds.get(j)==35)
+							rowData.add(" "+prdList.get(i).getAvailInWeights());
+						
+						if(proIds.get(j)==36)
+							rowData.add(" "+prdList.get(i).getActualRate());
+						
+						if(proIds.get(j)==37)
+							rowData.add(prdList.get(i).getIsHomePageProd() == 1 ? "Yes" : "No");
+					}
+					srno = srno + 1;
+					
+					expoExcel.setRowData(rowData);
+					exportToExcelList.add(expoExcel);
+
+				}
+				session.setAttribute("exportExcelListNew", exportToExcelList);
+				session.setAttribute("excelNameNew", "Products");
+				session.setAttribute("reportNameNew", "Products List");
+				session.setAttribute("searchByNew", " NA");
+				session.setAttribute("mergeUpto1", "$A$1:$L$1");
+				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+				session.setAttribute("exportExcelList", exportToExcelList);
+				session.setAttribute("excelName", "Products Excel");
+				
+				
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return prdList;
+
+	}
 
 }

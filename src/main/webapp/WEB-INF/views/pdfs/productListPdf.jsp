@@ -86,26 +86,143 @@ color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
 					</c:if>
 					
 					<c:if test="${proIds==3}">
-					<th>Category</th>
+					<th>Short Name</th>
 					</c:if>
 					
 					<c:if test="${proIds==4}">
-					<th>Sub Category</th>
+					<th>Category</th>
 					</c:if>
 					
 					<c:if test="${proIds==5}">
-					<th>UOM</th>
+					<th>Category</th>
 					</c:if>
 					
 					<c:if test="${proIds==6}">
-					<th>Book Before</th>
+					<th>Tax</th>
 					</c:if>
 					
 					<c:if test="${proIds==7}">
-					<th>Status</th>
+					<th>Sort No.</th>
 					</c:if>
 					
 					<c:if test="${proIds==8}">
+					<th>Min Qty.</th>
+					</c:if>
+					
+					<c:if test="${proIds==9}">
+					<th>Shelf Life</th>
+					</c:if>
+					
+					<c:if test="${proIds==10}">
+					<th>Return Allowed</th>
+					</c:if>
+					
+					<c:if test="${proIds==11}">
+					<th>Return %</th>
+					</c:if>
+					
+					<c:if test="${proIds==12}">
+					<th>UOM</th>
+					</c:if>
+					
+					<c:if test="${proIds==13}">
+					<th>Shape</th>
+					</c:if>
+					
+					<c:if test="${proIds==14}">
+					<th>Product Type</th>
+					</c:if>
+					
+					<c:if test="${proIds==15}">
+					<th>Default Shape</th>
+					</c:if>
+					
+					
+					<c:if test="${proIds==16}">
+					<th>Flavour</th>
+					</c:if>
+					
+					<c:if test="${proIds==17}">
+					<th>Product Status</th>
+					</c:if>
+					
+					<c:if test="${proIds==18}">
+					<th>Default Flavour</th>
+					</c:if>
+					
+					<c:if test="${proIds==19}">
+					<th>Veg/Non-Veg</th>
+					</c:if>
+					
+					<c:if test="${proIds==20}">
+					<th>Book Before Days</th>
+					</c:if>
+					
+					<c:if test="${proIds==21}">
+					<th>Default Veg/Non-Veg</th>
+					</c:if>
+					
+					<c:if test="${proIds==22}">
+					<th>Alphabats Limit</th>
+					</c:if>
+					
+					<c:if test="${proIds==23}">
+					<th>No. Alphabats</th>
+					</c:if>
+					
+					<c:if test="${proIds==24}">
+					<th>No. Of Msg Character</th>
+					</c:if>
+					
+					<c:if test="${proIds==25}">
+					<th>Bread Type</th>
+					</c:if>
+					
+					<c:if test="${proIds==26}">
+					<th>Cream Type</th>
+					</c:if>
+					
+					<c:if test="${proIds==27}">
+					<th>Layering Cream</th>
+					</c:if>
+					
+					<c:if test="${proIds==28}">
+					<th>Topping Cream</th>
+					</c:if>					
+					
+					<c:if test="${proIds==29}">
+					<th>Applicable Tags</th>
+					</c:if>
+					
+					<c:if test="${proIds==30}">
+					<th>Product Desc</th>
+					</c:if>
+					
+					<c:if test="${proIds==31}">
+					<th>Ingredient</th>
+					</c:if>
+					
+					<c:if test="${proIds==32}">
+					<th>Preparation Time</th>
+					</c:if>
+					
+					<c:if test="${proIds==33}">
+					<th>Rate Setting Type</th>
+					</c:if>
+					
+					<c:if test="${proIds==34}">
+					<th>"Max Weight</th>
+					</c:if>
+					
+					<c:if test="${proIds==35}">
+					<th>Available Weights</th>
+					</c:if>
+					
+					<c:if test="${proIds==36}">
+					<th>Basic Product MRP</th>
+					</c:if>
+					
+					<c:if test="${proIds==37}">
 					<th>Active</th>
 					</c:if>
 				</c:forEach>
@@ -129,24 +246,141 @@ color:#333; width: 100%; background: #f5f5f5; min-height: 35px;}
 					</c:if>
 					
 					<c:if test="${proIds==4}">
-					<td>${prod.subCatName}</td>
+					<td>${prod.catName}</td>
 					</c:if>
 					
 					<c:if test="${proIds==5}">
-					<td>${prod.uomShowName}</td>
+					<td>${prod.subCatName}</td>
 					</c:if>
 					
 					<c:if test="${proIds==6}">
-					<td>${prod.bookBefore}</td>
+					<td>${prod.taxName}</td>
 					</c:if>
 					
 					<c:if test="${proIds==7}">
-					<td>${prod.prodStatus}</td>
+					<td>${prod.sortId}</td>
 					</c:if>
 					
 					<c:if test="${proIds==8}">
-						<td>${prod.isActive==1 ? 'Yes' : 'No'}</td>
+						<td>${prod.minQty}</td>
 					</c:if>
+					
+					<c:if test="${proIds==9}">
+						<td>${prod.shelfLife}</td>
+					</c:if>
+					
+					<c:if test="${proIds==10}">
+						<td>${prod.isReturnAllow == 1 ? 'Yes' : 'No'}</td>
+					</c:if>
+					
+					<c:if test="${proIds==11}">
+						<td>${prod.retPer}</td>
+					</c:if>
+					
+					<c:if test="${proIds==12}">
+						<td>${prod.uomShowName}</td>
+					</c:if>
+					
+					<c:if test="${proIds==13}">
+						<td>${prod.shapeNames}</td>
+					</c:if>
+					
+					<c:if test="${proIds==14}">
+						<td>${prod.prodTypeName}</td>
+					</c:if>
+					
+					<c:if test="${proIds==15}">
+						<td>${prod.defaultShapeName}</td>
+					</c:if>
+					
+					<c:if test="${proIds==16}">
+						<td>${prod.flavorNames}</td>
+					</c:if>
+					
+					<c:if test="${proIds==17}">
+						<td>${prod.prodStatusName}</td>
+					</c:if>
+					
+					<c:if test="${proIds==18}">
+						<td>${prod.defaultFlavorName}</td>
+					</c:if>
+					
+					<c:if test="${proIds==19}">
+						<td>${prod.vegNonvegName}</td>
+					</c:if>
+					
+					<c:if test="${proIds==20}">
+						<td>${prod.bookBefore}</td>
+					</c:if>
+					
+					<c:if test="${proIds==21}">
+						<td>${prod.defaultVegNonvegName}</td>
+					</c:if>
+					
+					<c:if test="${proIds==22}">
+						<td>${prod.isCharLimit == 1 ? 'Yes' : 'No'}</td>
+					</c:if>
+					
+					<c:if test="${proIds==23}">
+						<td>${prod.noOfCharsForAlphaCake}</td>
+					</c:if>
+					
+					<c:if test="${proIds==24}">
+						<td>${prod.noOfCharsOnCake}</td>
+					</c:if>
+					
+					<c:if test="${proIds==25}">
+						<td>${prod.breadTypeName}</td>
+					</c:if>
+					
+					<c:if test="${proIds==26}">
+						<td>${prod.creamTypeName}</td>
+					</c:if>
+					
+					<c:if test="${proIds==27}">
+						<td>${prod.layeringCreamNames}</td>
+					</c:if>					
+					
+					<c:if test="${proIds==28}">
+						<td>${prod.toppingCreamNames}</td>
+					</c:if>
+					
+					<c:if test="${proIds==29}">
+						<td>${prod.appliTagNames}</td>
+					</c:if>
+					
+					<c:if test="${proIds==30}">
+						<td>${prod.productDesc}</td>
+					</c:if>
+					
+					<c:if test="${proIds==31}">
+						<td>${prod.ingerdiants}</td>
+					</c:if>
+					
+					<c:if test="${proIds==32}">
+						<td>${prod.prepTime}</td>
+					</c:if>
+					
+					<c:if test="${proIds==33}">
+						<td>${prod.rateSettingType == 0 ? 'Per UOM' : prod.rateSettingType == 1 ? 'Per Kg' : 'As of Filter'}</td>
+					</c:if>
+					
+					<c:if test="${proIds==34}">
+						<td>${prod.maxWt}</td>
+					</c:if>
+					
+					<c:if test="${proIds==35}">
+						<td>${prod.availInWeights}</td>
+					</c:if>
+					
+					<c:if test="${proIds==36}">
+						<td>${prod.actualRate}</td>
+					</c:if>
+					
+					<c:if test="${proIds==37}">
+						<td>${prod.isHomePageProd}</td>
+					</c:if>
+					
 					</c:forEach>
 				</tr>
 			</c:forEach>
