@@ -831,14 +831,14 @@ public class FranchiseConfigurationController {
 			delBoy.setMobileNo(request.getParameter("mobNo"));
 			delBoy.setOwnVehicle(Integer.parseInt(request.getParameter("ownVehicle")));
 			delBoy.setIsActive(Integer.parseInt(request.getParameter("activeStat")));
-			delBoy.setDeliveryBoyLicenseNo(request.getParameter("deliveryBoyY/NLicenNo"));
+			delBoy.setDeliveryBoyLicenseNo(request.getParameter("deliveryBoyLicenseNo"));
 			delBoy.setVehicleNo(request.getParameter("vehicalNo"));
 			delBoy.setLicenseExpiryDate(request.getParameter("licenExpiryDate"));
 			delBoy.setInsuranceExpiryDate(request.getParameter("insuranceExpiryDate"));
 			delBoy.setOwnerOfVehicle(request.getParameter("ownerOfVehical"));
 			delBoy.setPucExpiryDate(request.getParameter("pucExpiryDate"));
 
-			System.out.println(delBoy);
+			
 			DeliveryBoy res = null;
 			try {
 				res = Constants.getRestTemplate().postForObject(Constants.url + "saveDeliveryBoy", delBoy,
@@ -984,6 +984,52 @@ public class FranchiseConfigurationController {
 		}
 		return info;
 	}
+	
+	/*---------------------------------------------------------------------------------------*/
+
+	// Created By :- Shubham Vitore
+	// Created On :- 9-02-2021
+	// Modified By :- NA
+	// Modified On :- NA
+	// Descriprion :- Validate LicenseNo
+	@RequestMapping(value ="/getDelvrBoyInfoBydeliveryBoyLicenseNo", method = RequestMethod.GET)
+	@ResponseBody
+	public Info getCityInfoByCod(HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("Enter ");
+		Info info = new Info();
+		try {
+			String delBoyId = request.getParameter("delBoyId");
+			String deliveryBoyLicenseNo = request.getParameter("deliveryBoyLicenseNo");
+
+			delBoyId = delBoyId.substring(1, delBoyId.length() - 1);
+			delBoyId = delBoyId.replaceAll("\"", "");
+		
+
+			deliveryBoyLicenseNo = deliveryBoyLicenseNo.substring(1, deliveryBoyLicenseNo.length() - 1);
+			deliveryBoyLicenseNo = deliveryBoyLicenseNo.replaceAll("\"", "");
+			
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("delBoyId", delBoyId);
+			map.add("deliveryBoyLicenseNo", deliveryBoyLicenseNo);
+
+			DeliveryBoy res = Constants.getRestTemplate().postForObject(Constants.url + "getDeliveryBoyBydeliveryBoyLicenseNo", map,
+					DeliveryBoy.class);
+
+			if (res != null) {
+				info.setError(false);
+				info.setMsg("Delivery Boy Found");
+			} else {
+				info.setError(true);
+				info.setMsg("Delivery Boy Not Found");
+			}
+		} catch (Exception e) {
+			System.out.println("Execption in /getDelvrBoyInfoByMobNo : " + e.getMessage());
+			e.printStackTrace();
+		}
+		return info;
+	}
+	
+	
 	/*---------------------------------------------------------------------------------------*/
 
 	// Created By :- Mahendra Singh

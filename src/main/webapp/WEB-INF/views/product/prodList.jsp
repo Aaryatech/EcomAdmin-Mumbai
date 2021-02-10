@@ -30,6 +30,7 @@
  -->
 
 <c:url value="/getElementIds" var="getElementIds"/>
+<c:url value="/showProductExlList" var="showProductExlList"/>
 
 	<!-- Main navbar -->
 	<jsp:include page="/WEB-INF/views/include/header.jsp"></jsp:include>
@@ -76,7 +77,7 @@
 					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 					<div class="table-responsive">
 						<table class="table datatable-fixed-left_custom  table-bordered table-hover table-striped"
-										width="100%" id="printtable2">
+										width="100%" id="printtable">
 										
 						<thead>
 							<tr>
@@ -191,6 +192,55 @@
 				<!-- /colReorder integration -->
 
 			</div>
+			
+			<table class="table datatable-fixed-left_custom  table-bordered table-hover table-striped"
+										width="100%" id="printtable2" style="display: none;">										
+						<thead>
+							<tr>
+								<th>Product Code</th>
+								<th>Name</th>
+								<th>Short Name</th>
+								<th>Category</th>
+								<th>Sub Category</th>
+								<th>Tax</th>
+								<th>Sort No.</th>
+								<th>Min Qty.</th>
+								<th>Shelf Life</th>
+								<th>Retrn Allowed</th>
+								
+								<th>Return%</th>
+								<th>UOM</th>								
+								<th>Shape</th>
+								<th>Product Type</th>
+								<th>Default Shape</th>
+								<th>Flavour</th>
+								<th>Product Status</th>
+								<th>Default Flavour</th>
+								<th>Veg/Non-Veg</th>
+								<th>Book Before Days</th>
+								
+								<th>Default Veg/Non-Veg</th>
+								<th>Alphabats Limit</th>								
+								<th>No. Alphabats</th>
+								<th>No. Of Msg Character</th>
+								<th>Bread Type</th>
+								<th>Cream Type</th>
+								<th>Layering Cream</th>
+								<th>Topping Cream</th>
+								<th>Applicable Tags</th>
+								<th>Product Desc</th>
+								
+								
+								<th>Ingredient</th>
+								<th>Preparation Time</th>								
+								<th>Rate Setting Type</th>
+								<th>Max Weight</th>
+								<th>Available Weights</th>	
+								<th>Basic Product MRP</th>								
+								<th>Active</th>
+							</tr>
+							</thead>
+							</table>
 			<!-- /content area -->
 
 
@@ -256,7 +306,7 @@
 				//console.log(thArray[0]);
 					
 				var seq = 0;
-					for (var i = 0; i < thArray.length-1; i++) {
+					for (var i = 0; i < thArray.length; i++) {
 						seq=i+1;					
 						var tr1 = $('<tr></tr>');
 						tr1.append($('<td style="padding: 7px; line-height:0; border-top:0px;"></td>').html('<input type="checkbox" class="chkcls" name="chkcls'
@@ -289,34 +339,38 @@
 								$(".chkcls:checkbox:checked").each(function() {
 									elemntIds.push($(this).val());
 								}); 
+									
+											 $
+											.getJSON(
+													'${showProductExlList}',
+													{
+														elemntIds : JSON.stringify(elemntIds),
+														val : val,
+														ajax : 'true'
+													},
+													function(data) {														
 														
-						$
-						.getJSON(
-								'${getElementIds}',
-								{
-									elemntIds : JSON.stringify(elemntIds),
-									val : val,
-									ajax : 'true'
-								},
-								function(data) {
-									if(data!=null){
-										//$("#modal_theme_primary").modal('hide');
-										if(val==1){
-											window.open("${pageContext.request.contextPath}/exportToExcelNew");
-											//document.getElementById("expExcel").disabled = true;
-										}else{
-											var compId = $("#compId").val();
-											var showHead = 0;
-											if($("#chkPdf").is(":checked")){
-												showHead = 1;
-											}else{
-												showHead = 0;
-											}
-											 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getProductListPdf/'+compId+"/"+elemntIds.join()+'/'+showHead);
-											 $('#selAll').prop('checked', false);
-										}
-									}
-								});
+														if(data!=null){
+															$("#modal_theme_primary").modal('hide');
+															if(val==1){
+															
+																window.open("${pageContext.request.contextPath}/exportToExcelNew");
+																//document.getElementById("expExcel").disabled = true;												
+															
+															}else{
+																var compId = $("#compId").val();
+																var showHead = 0;
+																if($("#chkPdf").is(":checked")){
+																	showHead = 1;
+																}else{
+																	showHead = 0;
+																}
+																 window.open('${pageContext.request.contextPath}/pdfReport?url=pdf/getProductListPdf/'+compId+"/"+elemntIds.join()+'/'+showHead);
+																 $('#selAll').prop('checked', false);
+															}
+														}
+													}); 
+									
 					}		
 				</script>
 				<!-- /primary modal -->
