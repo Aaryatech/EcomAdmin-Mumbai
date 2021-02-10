@@ -304,7 +304,7 @@
 	
 	function setIsChange(uuid,prodId){
 		//r1
-		alert(uuid);
+		//alert(uuid);
 		document.getElementById("is_change"+uuid+""+prodId).value=1111;
 	}
 	

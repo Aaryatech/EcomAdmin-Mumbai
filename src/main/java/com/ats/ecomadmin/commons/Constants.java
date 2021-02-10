@@ -4,32 +4,68 @@ import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
 public class Constants {
-	public static final String url = "http://localhost:8094/";
-   //public static final String url ="http://198.12.156.31:8080/EcomAPI/";
+	//public static final String url = "http://localhost:8094/";
+	/*
+	 * public static final String url = "http://localhost:8094/"; //public static
+	 * //final String url ="http://198.12.156.31:8080/EcomAPI/";
+	 * 
+	 * public static String[] imageAndDocFileExtension = { "txt", "doc", "docx",
+	 * "pdf", "xls", "xlsx","jpg", "jpeg", "gif", "png" }; public static String[]
+	 * imageFileExtensions = {"jpg", "jpeg", "gif", "png" };
+	 * 
+	 * public static String REPORT_SAVE =
+	 * "/opt/apache-tomcat-8.5.39/webapps/OFFER_IMG_UP/Report.pdf"; public static
+	 * final String ReportURL = "http://198.12.156.31:8080/ecomAdmin/";
+	 * 
+	 * public static final String UPLOAD_URL =
+	 * "/opt/apache-tomcat-8.5.39/webapps/OFFER_IMG_UP/"; //public static final
+	 * String UPLOAD_URL =
+	 * "/home/ubuntu/Documents/apache-tomcat-8.51.38/webapps/PROD_IMG_UP/";
+	 * 
+	 * public static final Object IMAGE_URL =
+	 * "http://198.12.156.31:8080/OFFER_IMG_UP/";
+	 * 
+	 * public static final String
+	 * PROD_IMG_UPLOAD_URL="/opt/apache-tomcat-8.5.39/webapps/PROD_IMG_UP/"; public
+	 * static final String PROD_IMG_VIEW_URL =
+	 * "http://198.12.156.31:8080/PROD_IMG_UP/";
+	 * 
+	 * 
+	 * public static final String REPORT_PATH =
+	 * "/opt/apache-tomcat-8.5.39/webapps/PROD_IMG_UP/report.pdf";
+	 * 
+	 * public static final String
+	 * VIEW_UPLOAD_URL="/opt/apache-tomcat-8.5.39/webapps/OFFER_IMG_UP/"; public
+	 * static final String VIEW_URL = "http://198.12.156.31:8080/OFFER_IMG_UP/";
+	 */
+	 
+	
+	 
+	//ATS Server 16GB
+	public static final String url ="http://107.180.72.86:8080/EcomAPI/";
+    
 	public static String[] imageAndDocFileExtension = { "txt", "doc", "docx", "pdf", "xls", "xlsx","jpg", "jpeg", "gif", "png" }; 
 	public static String[] imageFileExtensions = {"jpg", "jpeg", "gif", "png" };
 	
-	public static String REPORT_SAVE =  "/opt/apache-tomcat-8.5.39/webapps/OFFER_IMG_UP/Report.pdf";//"/home/lenovo/Documents/pdf/Report.pdf";
-	public static final String ReportURL = "http://198.12.156.31:8080/ecomAdmin/";
+	public static String REPORT_SAVE =  "/opt/cpanel/ea-tomcat85/webapps/uploads/ecomAdmin/OFFER_IMG_UP/Report.pdf";//"/home/lenovo/Documents/pdf/Report.pdf";
+	public static final String ReportURL = "http://107.180.72.86:8080/ecomAdmin/";
 	
-	public static final String UPLOAD_URL = "/opt/apache-tomcat-8.5.39/webapps/OFFER_IMG_UP/";
-//public static final String UPLOAD_URL = "/home/ubuntu/Documents/apache-tomcat-8.51.38/webapps/PROD_IMG_UP/";
+	public static final String UPLOAD_URL = "/opt/cpanel/ea-tomcat85/webapps/uploads/ecomAdmin/OFFER_IMG_UP/";
 
-	public static final Object IMAGE_URL = "http://198.12.156.31:8080/OFFER_IMG_UP/";
+	public static final Object IMAGE_URL = "http://107.180.72.86:8080/uploads/ecomAdmin/OFFER_IMG_UP/";
 	
-	public static final String PROD_IMG_UPLOAD_URL="/opt/apache-tomcat-8.5.39/webapps/PROD_IMG_UP/";
-	public static final String PROD_IMG_VIEW_URL = "http://198.12.156.31:8080/PROD_IMG_UP/";
+	public static final String PROD_IMG_UPLOAD_URL="/opt/cpanel/ea-tomcat85/webapps/uploads/ecomAdmin/PROD_IMG_UP/";
+	public static final String PROD_IMG_VIEW_URL = "http://107.180.72.86:8080/uploads/ecomAdmin/PROD_IMG_UP/";
 	
-//	public static final String PROD_IMG_UPLOAD_URL = "/home/ubuntu/Documents/apache-tomcat-8.51.38/webapps/PROD_IMG_UP/";
-//	public static final String PROD_IMG_VIEW_URL = "http://localhost:8080/PROD_IMG_UP/";
-//	
-	public static final String REPORT_PATH = "/opt/apache-tomcat-8.5.39/webapps/PROD_IMG_UP/report.pdf";
+
+	public static final String REPORT_PATH = "/opt/cpanel/ea-tomcat85/webapps/uploads/ecomAdmin/PROD_IMG_UP/report.pdf";
 	
-	public static final String VIEW_UPLOAD_URL="/opt/apache-tomcat-8.5.39/webapps/OFFER_IMG_UP/";
-	public static final String VIEW_URL = "http://198.12.156.31:8080/OFFER_IMG_UP/";
+	public static final String VIEW_UPLOAD_URL="/opt/cpanel/ea-tomcat85/webapps/uploads/ecomAdmin/OFFER_IMG_UP/";
+	public static final String VIEW_URL = "http://107.180.72.86:8080/uploads/ecomAdmin/OFFER_IMG_UP/";
 	
-	
-	
+	 
+	 
+	 
 
 	
 	// local
@@ -129,7 +165,9 @@ public class Constants {
 	 * public static String empLoanAgrDocSaveUrl;
 	 */
 	public static RestTemplate rest = new RestTemplate();
-	public static String showDocSaveUrl="http://198.12.156.31:8080/OFFER_IMG_UP/";;
+	public static String showDocSaveUrl="http://107.180.72.86:8080//uploads/ecomAdmin/OFFER_IMG_UP/";
+
+	public static int priceTypeFilter=16;
 	
 	public static RestTemplate getRestTemplate() {
 		rest = new RestTemplate();
