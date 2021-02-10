@@ -77,7 +77,33 @@ var DatatableBasic = function() {
             "order": [],
             "bInfo": false,
             "lengthChange": false,
-            "bPaginate": false
+            "bPaginate": true,
+            scrollX : true,
+    		scrollY : '65vh',
+    		scrollCollapse : true,
+    		order:[],
+    		paging : true,
+    		fixedColumns: true,
+    		   responsive: true,
+    		/*fixedColumns : {
+    			leftColumns : 1,
+    			rightColumns : 0
+    		}*/
+    		 dom: '<"datatable-header dt-buttons-right"fB><"datatable-scroll"tS><"datatable-footer"i>',
+             buttons: {
+                 dom: {
+                     button: {
+                         className: 'btn btn-light'
+                     }
+                 },
+                 buttons: [
+                     {extend: 'copy'},
+                     {extend: 'csv'},
+                     {extend: 'excel'},
+                     {extend: 'pdf'},
+                     {extend: 'print'}
+                 ]
+             }
         });
 
         // Resize scrollable table when sidebar width changes
