@@ -367,6 +367,9 @@ public class ProdMasteController {
 				try {
 					if (is_used.equalsIgnoreCase("on")) {
 						prod.setIsUsed(1);
+						prod.setIsActive(1);
+					}else {
+						prod.setIsActive(0);
 					}
 				} catch (Exception e) {
 					// TODO: handle exception
