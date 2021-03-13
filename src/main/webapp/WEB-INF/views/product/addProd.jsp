@@ -53,20 +53,21 @@
 						</div> -->
 						<!-- /title -->
 						<div class="card">
-						<div
-						class="card-header bg-blue text-white d-flex justify-content-between">
-						<span
-							class="font-size-sm text-uppercase font-weight-semibold card-title">
-							Add Product</span>
-						<!--  -->
-						<c:if test="${viewAccess==1}">
-							<span class="font-size-sm text-uppercase font-weight-semibold"><a
-								class="card-title"
-								href="${pageContext.request.contextPath}/showProdList"
-								style="color: white;"><i class="icon-add-to-list ml-2"
-									style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Product List</a></span>
-						</c:if>
-					</div>
+							<div
+								class="card-header bg-blue text-white d-flex justify-content-between">
+								<span
+									class="font-size-sm text-uppercase font-weight-semibold card-title">
+									Add Product</span>
+								<!--  -->
+								<c:if test="${viewAccess==1}">
+									<span class="font-size-sm text-uppercase font-weight-semibold"><a
+										class="card-title"
+										href="${pageContext.request.contextPath}/showProdList"
+										style="color: white;"><i class="icon-add-to-list ml-2"
+											style="font-size: 23px;"></i>&nbsp;&nbsp;&nbsp;&nbsp;Product
+											List</a></span>
+								</c:if>
+							</div>
 							<div class="card-header header-elements-inline">
 								<%-- <table width="100%">
 									<tr width="100%">
@@ -83,25 +84,24 @@
 							</div>
 
 							<div class="card-body">
-					<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
+								<jsp:include page="/WEB-INF/views/include/response_msg.jsp"></jsp:include>
 
 								<form
 									action="${pageContext.request.contextPath}/submitProductSave"
-									id="submitProdForm" enctype="multipart/form-data" method="post"
-									>
+									id="submitProdForm" enctype="multipart/form-data" method="post">
 									<div class="form-group row">
 										<label class="col-form-label col-lg-2" for="cat_id">
 											Select Category <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-2">
-										 	<select
+											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												 data-placeholder="Select Category" id="cat_id" name="cat_id"
+												data-placeholder="Select Category" id="cat_id" name="cat_id"
 												onchange="setSubCatList()">
 												<option selected disabled value="">Select Category</option>
 												<c:forEach items="${catList}" var="catList"
-												varStatus="count">
-												<option value="${catList.catId}">${catList.catName}</option>
+													varStatus="count">
+													<option value="${catList.catId}">${catList.catName}</option>
 												</c:forEach>
 											</select> <span class="validation-invalid-label" id="error_cat_id"
 												style="display: none;">This field is required.</span>
@@ -114,9 +114,9 @@
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
-												placeholder="Select Sub Category" id="sub_cat_id" name="sub_cat_id"
-												onchange="getSubCatPrefixData()">
-											</select> <span class="validation-invalid-label"  id="error_sub_cat_id"
+												placeholder="Select Sub Category" id="sub_cat_id"
+												name="sub_cat_id" onchange="getSubCatPrefixData()">
+											</select> <span class="validation-invalid-label" id="error_sub_cat_id"
 												style="display: none;">This field is required.</span>
 										</div>
 
@@ -137,9 +137,10 @@
 											Product Name <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input  type="text" class="form-control maxlength-badge-position"
-												placeholder="Product Name" maxlength="60" id="prod_name" name="prod_name"
-												autocomplete="off"> <span
+											<input type="text"
+												class="form-control maxlength-badge-position"
+												placeholder="Product Name" maxlength="60" id="prod_name"
+												name="prod_name" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_prod_name"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -149,7 +150,8 @@
 											Short Name <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="30" class="form-control maxlength-badge-position"
+											<input type="text" maxlength="30"
+												class="form-control maxlength-badge-position"
 												placeholder="Product Short Name" id="short_name"
 												name="short_name" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_short_name"
@@ -165,13 +167,13 @@
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Tax" id="tax_id" name="tax_id">
-												
+
 												<option selected disabled value="">Select Tax</option>
 												<c:forEach items="${taxList}" var="taxList"
-												varStatus="count">
-												<option value="${taxList.taxId}">${taxList.taxName}</option>
+													varStatus="count">
+													<option value="${taxList.taxId}">${taxList.taxName}</option>
 												</c:forEach>
-												
+
 											</select> <span class="validation-invalid-label" id="error_tax_id"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -180,9 +182,10 @@
 											Sort No <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="4" class="form-control numbersOnly maxlength-badge-position"
-												placeholder="Product Sort No" value="1" id="sort_no" name="sort_no"
-												autocomplete="off"> <span
+											<input type="text" maxlength="4"
+												class="form-control numbersOnly maxlength-badge-position"
+												placeholder="Product Sort No" value="1" id="sort_no"
+												name="sort_no" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_sort_no"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -193,18 +196,21 @@
 											Min Quantity <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="5" value="1" class="form-control numbersOnly maxlength-badge-position"
+											<input type="text" maxlength="5" value="1"
+												class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Minimum Order Quantity" id="min_qty"
 												name="min_qty" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_min_qty"
-												style="display: none;">This field is required. (min value 1)</span>
+												style="display: none;">This field is required. (min
+												value 1)</span>
 										</div>
 
 										<label class="col-form-label col-lg-2" for="shelf_life">
 											Shelf Life <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="3" class="form-control numbersOnly maxlength-badge-position"
+											<input type="text" maxlength="3"
+												class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Product Shelf Life" id="shelf_life"
 												name="shelf_life" autocomplete="off" value="1"> <span
 												class="validation-invalid-label" id="error_shelf_life"
@@ -218,10 +224,11 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data-placeholder="Return Allowed" id="is_return_allow"
+												data-fouc="" aria-hidden="true"
+												data-placeholder="Return Allowed" id="is_return_allow"
 												name="is_return_allow">
-												<option  value="1">Yes</option>
-												<option selected  value="0">No</option>
+												<option value="1">Yes</option>
+												<option selected value="0">No</option>
 											</select> <span class="validation-invalid-label"
 												id="error_is_return_allow" style="display: none;">This
 												field is required.</span>
@@ -231,11 +238,13 @@
 											Return % <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="5" class="form-control floatOnly maxlength-badge-position"
+											<input type="text" maxlength="5"
+												class="form-control floatOnly maxlength-badge-position"
 												placeholder="Product Return %" id="return_per"
 												name="return_per" autocomplete="off" value="0"> <span
 												class="validation-invalid-label" id="error_return_per"
-												style="display: none;">This field is required (range(1 to 100)).</span>
+												style="display: none;">This field is required
+												(range(1 to 100)).</span>
 										</div>
 									</div>
 
@@ -248,15 +257,14 @@
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select UOM" id="uom_id" name="uom_id">
-											
-											<option selected disabled value="">Select UOM</option>
+
+												<option selected disabled value="">Select UOM</option>
 												<c:forEach items="${uomList}" var="uomList"
-												varStatus="count">
-												<option value="${uomList.uomId}">${uomList.uomShowName}</option>
+													varStatus="count">
+													<option value="${uomList.uomId}">${uomList.uomShowName}</option>
 												</c:forEach>
-											</select> <span class="validation-invalid-label"
-												id="error_uom_id" style="display: none;">This
-												field is required.</span>
+											</select> <span class="validation-invalid-label" id="error_uom_id"
+												style="display: none;">This field is required.</span>
 										</div>
 
 										<label class="col-form-label col-lg-2" for="shape_id">
@@ -265,7 +273,9 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" onchange="getDefaultShape()" aria-hidden="true" multiple="multiple" data-Placeholder="Select Shape" id="shape_id" name="shape_id">
+												data-fouc="" onchange="getDefaultShape()" aria-hidden="true"
+												multiple="multiple" data-Placeholder="Select Shape"
+												id="shape_id" name="shape_id">
 											</select> <span class="validation-invalid-label" id="error_shape_id"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -298,8 +308,9 @@
 												data-fouc="" aria-hidden="true" multiple data
 												placeholder="Select Same Day Time Slot"
 												id="sameDay_timeSlot" name="sameDay_timeSlot">
-											</select> <span class="validation-invalid-label" id="error_sameDay_timeSlot"
-												style="display: none;">This field is required.</span>
+											</select> <span class="validation-invalid-label"
+												id="error_sameDay_timeSlot" style="display: none;">This
+												field is required.</span>
 										</div>
 									</div>
 
@@ -311,24 +322,26 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data-placeholder="Select Product Type" id="prod_type_id"
+												data-fouc="" aria-hidden="true"
+												data-placeholder="Select Product Type" id="prod_type_id"
 												name="prod_type_id">
-												
+
 											</select> <span class="validation-invalid-label"
 												id="error_prod_type_id" style="display: none;">This
 												field is required.</span>
 										</div>
-<label class="col-form-label col-lg-2" for="def_shape">
+										<label class="col-form-label col-lg-2" for="def_shape">
 											Default Shape <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data placeholder="Default Shape" id="def_shape" name="def_shape">
+												data-fouc="" aria-hidden="true" data
+												placeholder="Default Shape" id="def_shape" name="def_shape">
 											</select> <span class="validation-invalid-label" id="error_def_shape"
 												style="display: none;">This field is required.</span>
 										</div>
-										
+
 									</div>
 
 
@@ -339,9 +352,10 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" multiple aria-hidden="true" onchange="getFlav();" data
-												placeholder="Select Flavors" id="flav_ids" name="flav_ids">
-											
+												data-fouc="" multiple aria-hidden="true"
+												onchange="getFlav();" data placeholder="Select Flavors"
+												id="flav_ids" name="flav_ids">
+
 											</select> <span class="validation-invalid-label" id="error_flav_ids"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -350,7 +364,7 @@
 											Product Status <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<select 
+											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Status" id="prod_status"
@@ -360,7 +374,7 @@
 												field is required.</span>
 										</div>
 									</div>
-									
+
 									<div class="form-group row">
 										<label class="col-form-label col-lg-2" for="def_flav">
 											Default Flavor <span style="color: red">* </span>:
@@ -368,50 +382,58 @@
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data placeholder="Default Flavor" id="def_flav" name="def_flav">
-											
+												data-fouc="" aria-hidden="true" data
+												placeholder="Default Flavor" id="def_flav" name="def_flav">
+
 											</select> <span class="validation-invalid-label" id="error_def_flav"
 												style="display: none;">This field is required.</span>
 										</div>
-										
-<label class="col-form-label col-lg-2" for="is_veg">
+
+										<label class="col-form-label col-lg-2" for="is_veg">
 											Veg/Non Veg <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" onchange="getDefaultvegNonVeg()" aria-hidden="true" multiple data-placeholder="Select Veg Non Veg" id="is_veg" name="is_veg">
-											<!-- <option value="0">Veg</option>
+												data-fouc="" onchange="getDefaultvegNonVeg()"
+												aria-hidden="true" multiple
+												data-placeholder="Select Veg Non Veg" id="is_veg"
+												name="is_veg">
+												<!-- <option value="0">Veg</option>
 												<option value="1">Non Veg</option>
-											    <option value="2">Both</option> --></select> <span class="validation-invalid-label" id="error_is_veg"
+											    <option value="2">Both</option> -->
+											</select> <span class="validation-invalid-label" id="error_is_veg"
 												style="display: none;">This field is required.</span>
-										</div>										
-										
 										</div>
+
+									</div>
 
 									<div class="form-group row">
 										<label class="col-form-label col-lg-2" for="book_b4">
 											Book before Days <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="2" class="form-control numbersOnly maxlength-badge-position"
+											<input type="text" maxlength="2"
+												class="form-control numbersOnly maxlength-badge-position"
 												placeholder="Book before days" id="book_b4" name="book_b4"
 												autocomplete="off" value="1"> <span
 												class="validation-invalid-label" id="error_book_b4"
-												style="display: none;">This field is required. (min value 1)</span>
+												style="display: none;">This field is required. (min
+												value 1)</span>
 										</div>
-<label class="col-form-label col-lg-2" for="def_vnv">
+										<label class="col-form-label col-lg-2" for="def_vnv">
 											Default Veg NonVeg <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data placeholder="Default Veg NonVeg" id="def_vnv" name="def_vnv">
-											
+												data-fouc="" aria-hidden="true" data
+												placeholder="Default Veg NonVeg" id="def_vnv" name="def_vnv">
+
 											</select> <span class="validation-invalid-label" id="error_def_vnv"
 												style="display: none;">This field is required.</span>
 										</div>
-										
+
 									</div>
 
 									<div class="form-group row">
@@ -424,9 +446,9 @@
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Limit Yes No" id="char_limit_yn"
 												name="char_limit_yn">
-												<option  value="1">Yes</option>
+												<option value="1">Yes</option>
 												<option selected value="0">No</option>
-												
+
 											</select> <span class="validation-invalid-label"
 												id="error_char_limit_yn" style="display: none;">This
 												field is required.</span>
@@ -436,7 +458,8 @@
 											No of Alphabets <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="2" value="0" class="form-control numbersOnly maxlength-badge-position"
+											<input type="text" maxlength="2" value="0"
+												class="form-control numbersOnly maxlength-badge-position"
 												placeholder="No of Alphabets" id="no_of_alpha"
 												name="no_of_alpha" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_no_of_alpha"
@@ -448,48 +471,53 @@
 									<div class="form-group row">
 										<div class="col-lg-2">
 											<input type="checkbox" class="form-control" id="is_cover_ph"
-												  name="is_cover_ph" autocomplete="off">
+												name="is_cover_ph" autocomplete="off">
 										</div>
 
 										<div class="col-lg-2">
 											<input type="checkbox" class="form-control" id="is_base_ph"
-												  name="is_base_ph" autocomplete="off">
+												name="is_base_ph" autocomplete="off">
 										</div>
 
 										<div class="col-lg-2">
 											<input type="checkbox" class="form-control" id="is_sp_inst"
-												  name="is_sp_inst" autocomplete="off">
+												name="is_sp_inst" autocomplete="off">
 										</div>
 
 										<div class="col-lg-2">
 											<input type="checkbox" checked class="form-control"
-												id="is_msg_on_cake" name="is_msg_on_cake"
-												autocomplete="off">
+												id="is_msg_on_cake" name="is_msg_on_cake" autocomplete="off">
 										</div>
 
 										<div class="col-lg-2">
 											<input type="checkbox" class="form-control" id="is_slot_used"
-												  name="is_slot_used" autocomplete="off">
+												name="is_slot_used" autocomplete="off">
 										</div>
 										<div class="col-lg-2">
 											<input type="checkbox" class="form-control" id="is_used"
-												  name="is_used" autocomplete="off">
+												name="is_used" autocomplete="off">
 										</div>
 									</div>
 
 									<div class="form-group row">
-										<label style="text-align: center;" class="col-form-label col-lg-2" for="is_cover_ph">
+										<label style="text-align: center;"
+											class="col-form-label col-lg-2" for="is_cover_ph">
 											Cover Photo Upload <span style="color: red">* </span>:
-										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_base_ph">
+										</label> <label style="text-align: center;"
+											class="col-form-label col-lg-2" for="is_base_ph">
 											Base Photo Upload <span style="color: red">* </span>:
-										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_sp_inst">
+										</label> <label style="text-align: center;"
+											class="col-form-label col-lg-2" for="is_sp_inst">
 											Special Instruction <span style="color: red">* </span>:
-										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_msg_on_cake">
+										</label> <label style="text-align: center;"
+											class="col-form-label col-lg-2" for="is_msg_on_cake">
 											Message On Cake <span style="color: red">* </span>:
-										</label> <label class="col-form-label col-lg-2" style="text-align: center;" for="is_slot_used">
-											    Is Slot Used <span style="color: red">* </span>:
-										</label> <label style="text-align: center;" class="col-form-label col-lg-2" for="is_used">
-											Is Active <span style="color: red">* </span>:
+										</label> <label class="col-form-label col-lg-2"
+											style="text-align: center;" for="is_slot_used"> Is
+											Slot Used <span style="color: red">* </span>:
+										</label> <label style="text-align: center;"
+											class="col-form-label col-lg-2" for="is_used"> Is
+											Active <span style="color: red">* </span>:
 										</label>
 									</div>
 
@@ -498,18 +526,19 @@
 											No of Msg Characters <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="4" class="form-control numbersOnly maxlength-badge-position"
+											<input type="text" maxlength="4"
+												class="form-control numbersOnly maxlength-badge-position"
 												placeholder="No of Message Characters" id="no_of_msg_char"
-												name="no_of_msg_char" autocomplete="off" value="10"> <span
-												class="validation-invalid-label" id="error_no_of_msg_char"
-												style="display: none;">This field is required.</span>
+												name="no_of_msg_char" autocomplete="off" value="10">
+											<span class="validation-invalid-label"
+												id="error_no_of_msg_char" style="display: none;">This
+												field is required.</span>
 										</div>
-										
+
 										<label class="col-form-label col-lg-2" for="no_of_msg_char">
-											 <span style="color: red"> </span>
+											<span style="color: red"> </span>
 										</label>
-										<div class="col-lg-4">
-										</div>
+										<div class="col-lg-4"></div>
 									</div>
 
 									<div class="form-group row">
@@ -521,7 +550,7 @@
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
 												placeholder="Select Bread" id="bread_id" name="bread_id">
-											
+
 											</select> <span class="validation-invalid-label" id="error_bread_id"
 												style="display: none;">This field is required.</span>
 										</div>
@@ -583,8 +612,7 @@
 												data-fouc="" multiple aria-hidden="true" data
 												placeholder="Select Applicable Tags" id="appl_tags"
 												name="appl_tags">
-												</select> <span
-												class="validation-invalid-label" id="error_appl_tags"
+											</select> <span class="validation-invalid-label" id="error_appl_tags"
 												style="display: none;">This field is required.</span>
 										</div>
 
@@ -592,7 +620,8 @@
 											Product Desc <span style="color: red"> </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text" maxlength="90" class="form-control maxlength-badge-position"
+											<input type="text" maxlength="90"
+												class="form-control maxlength-badge-position"
 												placeholder="Product Description" id="prod_desc"
 												name="prod_desc" autocomplete="off" value="-"> <span
 												class="validation-invalid-label" id="error_prod_desc"
@@ -608,28 +637,31 @@
 											Ingredients<span style="color: red"> </span>:
 										</label>
 										<div class="col-lg-4">
-											<textarea maxlength="150" class="form-control maxlength-badge-position"
+											<textarea maxlength="150"
+												class="form-control maxlength-badge-position"
 												placeholder="Ingredients" id="Ingredients"
-												name="Ingredients" autocomplete="off" >-</textarea> <span
-												class="validation-invalid-label" id="error_Ingredients"
+												name="Ingredients" autocomplete="off">-</textarea>
+											<span class="validation-invalid-label" id="error_Ingredients"
 												style="display: none;">This field is required.</span>
 										</div>
 
-										<label class="col-form-label col-lg-2" for="prep_time" title="Prep Time in minutes">
-											Preparation Time <span style="color: red">* </span>:
+										<label class="col-form-label col-lg-2" for="prep_time"
+											title="Prep Time in minutes"> Preparation Time <span
+											style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text"  class="form-control numbersOnly maxlength-badge-position"
-												placeholder="Preparation Time in Minutes" maxlength="3" id="prep_time" name="prep_time"
-												autocomplete="off" value="0"> <span
-												class="validation-invalid-label" id="error_prep_time"
+											<input type="text"
+												class="form-control numbersOnly maxlength-badge-position"
+												placeholder="Preparation Time in Minutes" maxlength="3"
+												id="prep_time" name="prep_time" autocomplete="off" value="0">
+											<span class="validation-invalid-label" id="error_prep_time"
 												style="display: none;">This field is required.</span>
 										</div>
 
 									</div>
 
 
-<div class="form-group row">
+									<div class="form-group row">
 										<label class="col-form-label col-lg-2" for="event_ids">
 											Select Events <span style="color: red">* </span>:
 										</label>
@@ -642,70 +674,79 @@
 												style="display: none;">This field is required.</span>
 										</div>
 
-										<label class="col-form-label col-lg-2"  title="Product rate setting" for="rate_setting_type">
+										<label class="col-form-label col-lg-2"
+											title="Product rate setting" for="rate_setting_type">
 											Rate Setting Type <span style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
 											<select
 												class="form-control form-control-select2 select2-hidden-accessible"
 												data-fouc="" aria-hidden="true" data
-												placeholder="Rate Setting Type" onchange="showWeightDiv()" id="rate_setting_type" name="rate_setting_type">
-												
+												placeholder="Rate Setting Type" onchange="showWeightDiv()"
+												id="rate_setting_type" name="rate_setting_type">
+
 												<option value="0">Per UOM</option>
 												<option value="1">Per Kg</option>
-											    <option value="2">As of Filter</option>
-												
-											</select> <span class="validation-invalid-label" id="error_rate_setting_type"
-												style="display: none;">This field is required.</span>
+												<option value="2">As of Filter</option>
+
+											</select> <span class="validation-invalid-label"
+												id="error_rate_setting_type" style="display: none;">This
+												field is required.</span>
 										</div>
 
-										
+
 									</div>
-									
+
 									<div class="col-lg-12" id="weight_div">
-									<div class="form-group row">
-									<label class="col-form-label col-lg-2" for="max_wt">
-											Max Weights <span style="color: red">* </span>:
-										</label>
-										<div class="col-lg-2">
-										<input type="text" class="form-control numbersOnly maxlength-badge-position"
-												placeholder="Maximum Weight Range" maxlength="3" id="max_wt" name="max_wt"
-												autocomplete="off" onkeyup="show_apply_weight()"> <span
-												class="validation-invalid-label" id="error_max_wt"
-												style="display: none;">This field is required.</span>
-								
+										<div class="form-group row">
+											<label class="col-form-label col-lg-2" for="max_wt">
+												Max Weights <span style="color: red">* </span>:
+											</label>
+											<div class="col-lg-2">
+												<input type="text"
+													class="form-control numbersOnly maxlength-badge-position"
+													placeholder="Maximum Weight Range" maxlength="3"
+													id="max_wt" name="max_wt" autocomplete="off"
+													onkeyup="show_apply_weight()"> <span
+													class="validation-invalid-label" id="error_max_wt"
+													style="display: none;">This field is required.</span>
+
+											</div>
+											<div class="col-lg-1">
+												<button type="button" onclick="show_apply_weight()"
+													class="btn btn-primary" id="11">Apply</button>
+											</div>
+											<div class="col-lg-1"></div>
+
+
 										</div>
-										<div class="col-lg-1">
-										<button type="button" onclick="show_apply_weight()"
-													class="btn btn-primary"
-													id="11" >Apply</button>
-										</div><div class="col-lg-1"></div>
-									
-									
-									</div>
-									<div class="form-group row">
-									<label class="col-form-label col-lg-2" for="weight_ids">
-											Available In Weights <span style="color: red">* </span>:
-										</label>
-										<div class="col-lg-10">
-											<select
-												class="form-control form-control-select2 select2-hidden-accessible"
-												data-fouc="" aria-hidden="true" data
-												placeholder="Select Weight" id="weight_ids"
-												name="weight_ids" multiple>
-											</select> <span class="validation-invalid-label" id="error_weight_ids"
-												style="display: none;">This field is required.</span>
+										<div class="form-group row">
+											<label class="col-form-label col-lg-2" for="weight_ids">
+												Available In Weights <span style="color: red">* </span>:
+											</label>
+											<div class="col-lg-10">
+												<select
+													class="form-control form-control-select2 select2-hidden-accessible"
+													data-fouc="" aria-hidden="true" data
+													placeholder="Select Weight" id="weight_ids"
+													name="weight_ids" multiple>
+												</select> <span class="validation-invalid-label"
+													id="error_weight_ids" style="display: none;">This
+													field is required.</span>
+											</div>
 										</div>
-									</div>
 									</div>
 									<div class="form-group row">
 										<label class="col-form-label col-lg-2" for="primary_img">
 											Primary Image: </label>
 										<div class="col-lg-4">
 											<div class="input-group-btn  ">
-												<img id="output" width="150" src="${prodImgUrl}"/>
-												<input type="file" class="btn btn-primary" accept="image/*" name="primary_img" id="primary_img" value="${asset.assetPurImage}" 
-												accept=".jpg,.png,.gif,.jpeg,.bmp" onchange="loadFile(event)"><span
+												<img id="output" width="150" src="${prodImgUrl}" /> <input
+													type="file" class="btn btn-primary" accept="image/*"
+													name="primary_img" id="primary_img"
+													value="${asset.assetPurImage}"
+													accept=".jpg,.png,.gif,.jpeg,.bmp"
+													onchange="loadFile(event)"><span
 													class="form-text text-muted">Only
 													.jpg,.png,.gif,.jpeg,.bmp</span>
 											</div>
@@ -713,32 +754,51 @@
 
 										</div>
 
-										
-										
-										<label class="col-form-label col-lg-2" for="prep_time" title="Product Basic MRP">
-											Basic MRP <span style="color: red">* </span>:
+
+
+										<label class="col-form-label col-lg-2" for="prep_time"
+											title="Product Basic MRP"> Basic MRP <span
+											style="color: red">* </span>:
 										</label>
 										<div class="col-lg-4">
-											<input type="text"  class="form-control floatOnly maxlength-badge-position"
-												placeholder="Basic Product MRP" maxlength="5" id="basic_mrp" name="basic_mrp"
-												autocomplete="off"> <span
+											<input type="text"
+												class="form-control floatOnly maxlength-badge-position"
+												placeholder="Basic Product MRP" maxlength="5" id="basic_mrp"
+												name="basic_mrp" autocomplete="off"> <span
 												class="validation-invalid-label" id="error_basic_mrp"
-												style="display: none;">This field is required. (min value 1)</span>
+												style="display: none;">This field is required. (min
+												value 1)</span>
 										</div>
+									</div>
+									<div class="form-group row">
+
+										<label class="col-form-label col-lg-2" for="similarProduct">
+											Select Similar Product : </label>
+										<div class="col-lg-4">
+											<select
+												class="form-control form-control-select2 select2-hidden-accessible"
+												data-fouc="" aria-hidden="true" multiple="multiple"
+												data-Placeholder="Select Similar Product"
+												id="similarProduct" name="similarProduct">
+											</select> <span class="validation-invalid-label"
+												id="error_similarProduct" style="display: none;">you
+												can select only 3 product.</span>
 										</div>
-									
+									</div>
 									<div class="form-group row mb-0">
-	<div style="margin: 0 auto;">											<!-- <button type="reset" class="btn btn-light legitRipple">Reset</button> -->
+										<div style="margin: 0 auto;">
+											<!-- <button type="reset" class="btn btn-light legitRipple">Reset</button> -->
 											<button type="submit" class="btn bg-blue ml-3 legitRipple"
 												id="submtbtn">
 												Save <i class="icon-paperplane ml-2"></i>
-											</button>&nbsp;
-											<button type="submit" onclick="changeValue()" class="btn bg-blue ml-3 legitRipple"
-												id="submtbtnnext">
-												Save & Next<i class="icon-paperplane ml-2"></i>
 											</button>
 											&nbsp;
-											<a href="${pageContext.request.contextPath}/showProdList"><button
+											<button type="submit" onclick="changeValue()"
+												class="btn bg-blue ml-3 legitRipple" id="submtbtnnext">
+												Save & Next<i class="icon-paperplane ml-2"></i>
+											</button>
+											&nbsp; <a
+												href="${pageContext.request.contextPath}/showProdList"><button
 													type="button" class="btn btn-primary">
 													<i class="${sessionScope.cancelIcon}" aria-hidden="true"></i>&nbsp;&nbsp;
 													Cancel
@@ -746,7 +806,7 @@
 										</div>
 									</div>
 									<input type="hidden" id="savenext" name="savenext" value="0">
-						
+
 								</form>
 							</div>
 						</div>
@@ -1119,10 +1179,53 @@ if(parseInt(rateType)==2||parseInt(rateType)==1){
 		$('#sub_cat_id').html(html);
 		$("#sub_cat_id").trigger("chosen:updated");
 		document.getElementById("prod_code").value="";
+		getSimilarProductList(catId);
 	}//end of function  
 	</script>
 
 	<script>
+	function getSimilarProductList(catId){
+		//alert("sdf")
+		var fd = new FormData();
+		fd.append('catId', catId);
+		$
+		.ajax({
+		url : '${pageContext.request.contextPath}/getProductListByCatId',
+		type : 'post',
+		dataType : 'json',
+		data : fd,
+		contentType : false,
+		processData : false,
+		success : function(data) 
+		{
+			 
+			var html = '<option disabled value="" > Select Similar Product </option>';
+ 
+			var len = data.length;
+			for (var i = 0; i < len; i++) {
+				 
+				html += '<option value="' + data[i].productId + '">'
+						+ data[i].productName + '</option>';
+				 
+			}//end of for loop
+
+			$('#similarProduct').html(html);
+			$("#similarProduct").trigger("chosen:updated");
+								
+		}
+		
+		});
+	}
+	
+	  
+	 $("#similarProduct").on('change', function(e) {
+		 
+		 $("#error_similarProduct").hide();
+		    if (Object.keys($(this).val()).length > 3) {
+		    	 $("#error_similarProduct").show();
+		        $('option[value="' + $(this).val().toString().split(',')[3] + '"]').prop('selected', false);
+		    }
+		});
 		function trim(el) {
 			el.value = el.value.replace(/(^\s*)|(\s*$)/gi, ""). // removes leading and trailing spaces
 			replace(/[ ]{2,}/gi, " "). // replaces multiple spaces with one space 

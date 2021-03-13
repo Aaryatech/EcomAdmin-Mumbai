@@ -124,7 +124,6 @@ public class ProdMasteController {
 				}
 				model.addObject("taxList", taxList);
 
-				
 				model.addObject("catId", 0);
 
 				MFilter[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFilter", map,
@@ -153,7 +152,7 @@ public class ProdMasteController {
 
 				map = new LinkedMultiValueMap<>();
 				map.add("compId", 1);
-				
+
 				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
 						Category[].class);
 				catList = new ArrayList<Category>(Arrays.asList(catArr));
@@ -164,7 +163,7 @@ public class ProdMasteController {
 				}
 
 				model.addObject("catList", catList);
-				
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -183,7 +182,8 @@ public class ProdMasteController {
 	@RequestMapping(value = "/submitProductSave", method = RequestMethod.POST)
 	public String submitProductSave(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("primary_img") MultipartFile prodImgFile) {
-		String returnPage = "redirect:/showProdList";;
+		String returnPage = "redirect:/showProdList";
+		;
 		int savenext = 0;
 		try {
 			// System.err.println("prodImgFile " + prodImgFile.getOriginalFilename());
@@ -255,6 +255,7 @@ public class ProdMasteController {
 				String[] flav_ids = request.getParameterValues("flav_ids");
 				String[] sameDay_timeSlot = request.getParameterValues("sameDay_timeSlot");
 				String[] is_veg = request.getParameterValues("is_veg"); // 0 veg 1 non veg 2 both
+				String similarProduct = request.getParameter("similarProduct");
 
 				// getCommaSepStringFromStrArray
 
@@ -291,7 +292,14 @@ public class ProdMasteController {
 				prod.setExVar1("v1");
 				prod.setExVar2("v2");
 				prod.setExVar3("v3");
-				prod.setExVar4("v4");
+
+				if (similarProduct != "" && similarProduct != null) {
+					String[] similar_id = request.getParameterValues("similarProduct");
+					prod.setExVar4(getCommaSepStringFromStrArray(similar_id));
+				} else {
+					prod.setExVar4("0");
+				}
+
 				String basicMrp = request.getParameter("basic_mrp");
 				try {
 					prod.setBasicMrp(Float.parseFloat(basicMrp));
@@ -368,7 +376,7 @@ public class ProdMasteController {
 					if (is_used.equalsIgnoreCase("on")) {
 						prod.setIsUsed(1);
 						prod.setIsActive(1);
-					}else {
+					} else {
 						prod.setIsActive(0);
 					}
 				} catch (Exception e) {
@@ -412,11 +420,11 @@ public class ProdMasteController {
 					prod.setAvailInWeights(weightString);
 					prod.setRateSettingType(2);
 				} else {
-					//prod.setAvailInWeights("0");
+					// prod.setAvailInWeights("0");
 					try {
-					String weightString = getCommaSepStringFromStrArray(weight_ids);
-					prod.setAvailInWeights(weightString);
-					}catch (Exception e) {
+						String weightString = getCommaSepStringFromStrArray(weight_ids);
+						prod.setAvailInWeights(weightString);
+					} catch (Exception e) {
 						prod.setAvailInWeights("1");
 					}
 					prod.setRateSettingType(Integer.parseInt(rate_setting_type));
@@ -471,8 +479,9 @@ public class ProdMasteController {
 				}
 // new ImageUploadController().saveUploadedFiles(files.get(i), 1, fileName);
 				prod.setProdImagePrimary(fileName);
-				try {//saveImgFiles //saveProdImgeWithResize
-					Info info = new ImageUploadController().saveImgFilesProdImg(prodImgFile,Constants.imageFileExtensions, fileName);
+				try {// saveImgFiles //saveProdImgeWithResize
+					Info info = new ImageUploadController().saveImgFilesProdImg(prodImgFile,
+							Constants.imageFileExtensions, fileName);
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
@@ -526,6 +535,29 @@ public class ProdMasteController {
 		}
 
 		return subCatPref;
+	}
+
+	@RequestMapping(value = "/getProductListByCatId", method = RequestMethod.POST)
+	public @ResponseBody List<GetProdList> getProductListByCatId(HttpServletRequest request,
+			HttpServletResponse response) {
+
+		List<GetProdList> prodListByCatId = new ArrayList<GetProdList>();
+
+		try {
+
+			int catId = Integer.parseInt(request.getParameter("catId"));
+			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("catId", catId);
+
+			GetProdList[] prodArr = Constants.getRestTemplate().postForObject(Constants.url + "getProdListByCatId", map,
+					GetProdList[].class);
+			prodListByCatId = new ArrayList<GetProdList>(Arrays.asList(prodArr));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return prodListByCatId;
 	}
 
 	public String getCommaSepStringFromStrArray(String[] strArray) {
@@ -921,7 +953,7 @@ public class ProdMasteController {
 		List<ModuleJson> newModuleList = (List<ModuleJson>) session.getAttribute("newModuleList");
 
 		Info view = AccessControll.checkAccess("showViewProdConfigHeader", "showViewProdConfigHeader", "1", "0", "0",
-		 		"0", newModuleList);
+				"0", newModuleList);
 		if (view.isError() == false) {
 
 			model.addObject("viewAccess", 1);
@@ -1028,7 +1060,7 @@ public class ProdMasteController {
 						if (vegTypeList.get(v).getAddOnType() == 2) {
 							vegPrice = vegTypeList.get(v).getAddOnRs() * weight;
 						}
-						//String shapeName = "Shape NA";
+						// String shapeName = "Shape NA";
 						String shapeName = "";
 
 						float shapePrice = 0;
@@ -1041,7 +1073,7 @@ public class ProdMasteController {
 								if (shapeIdList.get(s).getAddOnType() == 2) {
 									shapePrice = shapeIdList.get(s).getAddOnRs() * weight;
 								}
-								//String flvName = "Flavor NA";
+								// String flvName = "Flavor NA";
 								String flvName = "";
 								flavorPrice = 0;
 								if (!flavList.isEmpty()) {
@@ -1074,7 +1106,7 @@ public class ProdMasteController {
 								} // end of if flavList not empty
 								else {
 									// flavor Empty
-									//flvName = "NA Flavor";
+									// flvName = "NA Flavor";
 									flvName = "";
 									TempProdConfig config = new TempProdConfig();
 									UUID uuid = UUID.randomUUID();
@@ -1099,7 +1131,7 @@ public class ProdMasteController {
 							} // end of shapeIdList for S
 						} // end of if !shapeIdList.isEmpty()
 						else {
-							//shapeName = "Na";
+							// shapeName = "Na";
 							shapeName = "";
 							flavorPrice = 0;
 
@@ -1166,7 +1198,7 @@ public class ProdMasteController {
 			System.err.println("tempProdConfList " + tempProdConfList.toString());
 			model.addObject("tempProdConfList", tempProdConfList);
 			model.addObject("tempProdConfListSize", tempProdConfList.size());
-			
+
 			model.addObject("catId", catId);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1488,6 +1520,7 @@ public class ProdMasteController {
 	 * //Updated By(Devloper Name): Sachin
 	 ******************************/
 	List<GetItemConfHead> confHeadList = new ArrayList<GetItemConfHead>();
+
 	@RequestMapping(value = "/getViewProdConfigHeader", method = RequestMethod.POST)
 	public ModelAndView getViewProdConfigHeader(HttpServletRequest request, HttpServletResponse response) {
 
@@ -1545,31 +1578,31 @@ public class ProdMasteController {
 
 				model.addObject("confHeadList", confHeadList);
 				model.addObject("confHeadListSize", confHeadList.size());
-				
+
 				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
 				ExportToExcel expoExcel = new ExportToExcel();
 				List<String> rowData = new ArrayList<String>();
 
-				rowData.add("Sr No");													
-				rowData.add("Configuration Name");		
-				rowData.add("Category");	
+				rowData.add("Sr No");
+				rowData.add("Configuration Name");
+				rowData.add("Category");
 				rowData.add("Active");
 				expoExcel.setRowData(rowData);
-				
+
 				exportToExcelList.add(expoExcel);
 				int srno = 1;
 				for (int i = 0; i < confHeadList.size(); i++) {
 					expoExcel = new ExportToExcel();
 					rowData = new ArrayList<String>();
-					
-					rowData.add(" "+srno);
-					rowData.add(" " + confHeadList.get(i).getConfigName());	
-					rowData.add(" " + confHeadList.get(i).getCatName());						
+
+					rowData.add(" " + srno);
+					rowData.add(" " + confHeadList.get(i).getConfigName());
+					rowData.add(" " + confHeadList.get(i).getCatName());
 					rowData.add(confHeadList.get(i).getIsActive() == 1 ? "Active" : "In-Active");
-					
+
 					srno = srno + 1;
-					
+
 					expoExcel.setRowData(rowData);
 					exportToExcelList.add(expoExcel);
 
@@ -1583,7 +1616,7 @@ public class ProdMasteController {
 
 				session.setAttribute("exportExcelList", exportToExcelList);
 				session.setAttribute("excelName", "Configure Products Excel");
-				
+
 			}
 
 		} catch (Exception e) {
@@ -1591,10 +1624,10 @@ public class ProdMasteController {
 		}
 		return model;
 	}
-	
+
 	@RequestMapping(value = "pdf/getProductConfigPdf/{compId}/{catId}/{showHead}", method = RequestMethod.GET)
-	public ModelAndView getProductConfigPdf(HttpServletRequest request,
-			HttpServletResponse response, @PathVariable int compId, @PathVariable int catId, @PathVariable int showHead) {
+	public ModelAndView getProductConfigPdf(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable int compId, @PathVariable int catId, @PathVariable int showHead) {
 		ModelAndView model = new ModelAndView("pdfs/productConfigPdf");
 		try {
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -1603,22 +1636,22 @@ public class ProdMasteController {
 
 			GetItemConfHead[] confHeadArray = Constants.getRestTemplate()
 					.postForObject(Constants.url + "getProdConfList", map, GetItemConfHead[].class);
-			confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));			
-			
+			confHeadList = new ArrayList<GetItemConfHead>(Arrays.asList(confHeadArray));
+
 			model.addObject("confHeadList", confHeadList);
-			
+
 			CompanyContactInfo dtl = HomeController.getCompName(compId);
-			if(showHead==1) {
+			if (showHead == 1) {
 				model.addObject("compName", dtl.getCompanyName());
 				model.addObject("compAddress", dtl.getCompAddress());
-				model.addObject("compContact", dtl.getCompContactNo());	
+				model.addObject("compContact", dtl.getCompContactNo());
 			}
 
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return model;
-		
+
 	}
 
 	/*****************************
@@ -2072,7 +2105,6 @@ public class ProdMasteController {
 				}
 				model.addObject("taxList", taxList);
 
-				
 				model.addObject("catId", 0);
 
 				MFilter[] filterArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllFilter", map,
@@ -2109,8 +2141,8 @@ public class ProdMasteController {
 				model.addObject("editProd", editProd);
 				model.addObject("prodImgUrl", Constants.PROD_IMG_VIEW_URL);
 
-				 map = new LinkedMultiValueMap<>();
-					map.add("compId", 1);
+				map = new LinkedMultiValueMap<>();
+				map.add("compId", 1);
 				Category[] catArr = Constants.getRestTemplate().postForObject(Constants.url + "getAllCategories", map,
 						Category[].class);
 				catList = new ArrayList<Category>(Arrays.asList(catArr));
@@ -2121,7 +2153,7 @@ public class ProdMasteController {
 				}
 
 				model.addObject("catList", catList);
-				
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2216,8 +2248,10 @@ public class ProdMasteController {
 						String fileName = CommonUtility.getCurrentTimeStamp() + "_" + randomInt + "." + ext;
 						// new ImageUploadController().saveUploadedFiles(files.get(i), 1, fileName);
 //dsds
-						info=new ImageUploadController().saveImgFilesProdImg(files.get(i),Constants.imageFileExtensions, fileName);
-						//info = new ImageUploadController().saveProdImgeWithResize(files.get(i), fileName, 450, 250);
+						info = new ImageUploadController().saveImgFilesProdImg(files.get(i),
+								Constants.imageFileExtensions, fileName);
+						// info = new ImageUploadController().saveProdImgeWithResize(files.get(i),
+						// fileName, 450, 250);
 
 						if (filesList.isEmpty()) {
 
@@ -2315,24 +2349,22 @@ public class ProdMasteController {
 		}
 		return imgList;
 	}
-	
+
 	List<GetProdList> prodListPrint = new ArrayList<GetProdList>();
 	List<Long> proIds = new ArrayList<Long>();
+
 	@RequestMapping(value = "/getElementIds", method = RequestMethod.GET)
-	public @ResponseBody List<GetProdList> getElementIds(HttpServletRequest request,
-			HttpServletResponse response) {
-		
-		
+	public @ResponseBody List<GetProdList> getElementIds(HttpServletRequest request, HttpServletResponse response) {
+
 		try {
 			HttpSession session = request.getSession();
-			
-			int val = Integer.parseInt(request.getParameter("val"));			
+
+			int val = Integer.parseInt(request.getParameter("val"));
 			String selctId = request.getParameter("elemntIds");
 
 			selctId = selctId.substring(1, selctId.length() - 1);
 			selctId = selctId.replaceAll("\"", "");
-		
-			
+
 			int compId = (int) session.getAttribute("companyId");
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
@@ -2341,13 +2373,11 @@ public class ProdMasteController {
 			GetProdList[] prodArr = Constants.getRestTemplate().postForObject(Constants.url + "getProdList", map,
 					GetProdList[].class);
 			prodListPrint = new ArrayList<GetProdList>(Arrays.asList(prodArr));
-			
-			proIds =  Stream.of(selctId.split(","))
-			        .map(Long::parseLong)
-			        .collect(Collectors.toList());
-			
-			System.out.println(proIds+" --- "+val);
-			
+
+			proIds = Stream.of(selctId.split(",")).map(Long::parseLong).collect(Collectors.toList());
+
+			System.out.println(proIds + " --- " + val);
+
 			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
 
 			ExportToExcel expoExcel = new ExportToExcel();
@@ -2355,67 +2385,67 @@ public class ProdMasteController {
 
 			rowData.add("Sr No");
 			for (int i = 0; i < proIds.size(); i++) {
-				
-				if(proIds.get(i)==1)
-				rowData.add("Product Code");
-				
-				if(proIds.get(i)==2)
-				rowData.add("Name");
-				
-				if(proIds.get(i)==3)
-				rowData.add("Category");
-				
-				if(proIds.get(i)==4)
-				rowData.add("Sub Category");
-				
-				if(proIds.get(i)==5)
-				rowData.add("UOM");
-				
-				if(proIds.get(i)==6)
-				rowData.add("Book Before");
-				
-				if(proIds.get(i)==7)
-				rowData.add("Status");
-				
-				if(proIds.get(i)==8)
-				rowData.add("Active");
+
+				if (proIds.get(i) == 1)
+					rowData.add("Product Code");
+
+				if (proIds.get(i) == 2)
+					rowData.add("Name");
+
+				if (proIds.get(i) == 3)
+					rowData.add("Category");
+
+				if (proIds.get(i) == 4)
+					rowData.add("Sub Category");
+
+				if (proIds.get(i) == 5)
+					rowData.add("UOM");
+
+				if (proIds.get(i) == 6)
+					rowData.add("Book Before");
+
+				if (proIds.get(i) == 7)
+					rowData.add("Status");
+
+				if (proIds.get(i) == 8)
+					rowData.add("Active");
 			}
 			expoExcel.setRowData(rowData);
-			
+
 			exportToExcelList.add(expoExcel);
 			int srno = 1;
 			for (int i = 0; i < prodListPrint.size(); i++) {
 				expoExcel = new ExportToExcel();
 				rowData = new ArrayList<String>();
-				rowData.add(" "+srno);
+				rowData.add(" " + srno);
 				for (int j = 0; j < proIds.size(); j++) {
-				
-					if(proIds.get(j)==1)
-					rowData.add(" " + prodListPrint.get(i).getProductCode());
-					
-					if(proIds.get(j)==2)
-					rowData.add(" " + prodListPrint.get(i).getProductName());
-					
-					if(proIds.get(j)==3)
-					rowData.add(" " + prodListPrint.get(i).getCatName());
-					
-					if(proIds.get(j)==4)
-					rowData.add(" " + prodListPrint.get(i).getSubCatName());
-					
-					if(proIds.get(j)==5)
-					rowData.add(" " + prodListPrint.get(i).getUomShowName());
-					
-					if(proIds.get(j)==6)
-					rowData.add(" " + prodListPrint.get(i).getBookBefore());
-				
-					if(proIds.get(j)==7)
-					rowData.add(" " + prodListPrint.get(i).getProdStatus());
-					
-					if(proIds.get(j)==8)
-					rowData.add(prodListPrint.get(i).getIsActive() == 1 ? "Yes" : "NO");
+
+					if (proIds.get(j) == 1)
+						rowData.add(" " + prodListPrint.get(i).getProductCode());
+
+					if (proIds.get(j) == 2)
+						rowData.add(" " + prodListPrint.get(i).getProductName());
+
+					if (proIds.get(j) == 3)
+						rowData.add(" " + prodListPrint.get(i).getCatName());
+
+					if (proIds.get(j) == 4)
+						rowData.add(" " + prodListPrint.get(i).getSubCatName());
+
+					if (proIds.get(j) == 5)
+						rowData.add(" " + prodListPrint.get(i).getUomShowName());
+
+					if (proIds.get(j) == 6)
+						rowData.add(" " + prodListPrint.get(i).getBookBefore());
+
+					if (proIds.get(j) == 7)
+						rowData.add(" " + prodListPrint.get(i).getProdStatus());
+
+					if (proIds.get(j) == 8)
+						rowData.add(prodListPrint.get(i).getIsActive() == 1 ? "Yes" : "NO");
 				}
 				srno = srno + 1;
-				
+
 				expoExcel.setRowData(rowData);
 				exportToExcelList.add(expoExcel);
 
@@ -2429,327 +2459,326 @@ public class ProdMasteController {
 
 			session.setAttribute("exportExcelList", exportToExcelList);
 			session.setAttribute("excelName", "Products Excel");
-			
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return prodListPrint;
 	}
-	
+
 	@RequestMapping(value = "pdf/getProductListPdf/{compId}/{selctId}/{showHead}", method = RequestMethod.GET)
-	public String getProductListPdf(HttpServletRequest request,
-			HttpServletResponse response, Model model, @PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead) {
+	public String getProductListPdf(HttpServletRequest request, HttpServletResponse response, Model model,
+			@PathVariable int compId, @PathVariable String selctId, @PathVariable int showHead) {
 		try {
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("compId", compId);
 			List<ProdListExl> prdList = new ArrayList<ProdListExl>();
-			
-			ProdListExl[] prdArr = Constants.getRestTemplate().postForObject(Constants.url + "getProductListExcl", map, ProdListExl[].class);
+
+			ProdListExl[] prdArr = Constants.getRestTemplate().postForObject(Constants.url + "getProductListExcl", map,
+					ProdListExl[].class);
 			prdList = new ArrayList<ProdListExl>(Arrays.asList(prdArr));
-			
-			proIds =  Stream.of(selctId.split(","))
-			        .map(Long::parseLong)
-			        .collect(Collectors.toList());
-			
+
+			proIds = Stream.of(selctId.split(",")).map(Long::parseLong).collect(Collectors.toList());
+
 			model.addAttribute("prodList", prdList);
 			model.addAttribute("proIds", proIds);
-			
+
 			CompanyContactInfo dtl = HomeController.getCompName(compId);
-			if(showHead==1) {
+			if (showHead == 1) {
 				model.addAttribute("compName", dtl.getCompanyName());
 				model.addAttribute("compAddress", dtl.getCompAddress());
-				model.addAttribute("compContact", dtl.getCompContactNo());	
+				model.addAttribute("compContact", dtl.getCompContactNo());
 			}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return "pdfs/productListPdf";
-		
-	}
-	@RequestMapping(value = "/showProductExlList", method = RequestMethod.GET)
-	public @ResponseBody List<ProdListExl> showProductExlList(HttpServletRequest request, HttpServletResponse response) {
 
-		List<ProdListExl> prdList = new ArrayList<ProdListExl>();		
-		try {			
+	}
+
+	@RequestMapping(value = "/showProductExlList", method = RequestMethod.GET)
+	public @ResponseBody List<ProdListExl> showProductExlList(HttpServletRequest request,
+			HttpServletResponse response) {
+
+		List<ProdListExl> prdList = new ArrayList<ProdListExl>();
+		try {
 			HttpSession session = request.getSession();
-			
-			int val = Integer.parseInt(request.getParameter("val"));			
+
+			int val = Integer.parseInt(request.getParameter("val"));
 			String selctId = request.getParameter("elemntIds");
 
 			selctId = selctId.substring(1, selctId.length() - 1);
 			selctId = selctId.replaceAll("\"", "");
-		
+
 			int compId = (int) session.getAttribute("companyId");
 
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-			map.add("compId", compId);			
+			map.add("compId", compId);
 
-				ProdListExl[] prdArr = Constants.getRestTemplate().postForObject(Constants.url + "getProductListExcl", map, ProdListExl[].class);
-				prdList = new ArrayList<ProdListExl>(Arrays.asList(prdArr));
-				
-				proIds =  Stream.of(selctId.split(","))
-				        .map(Long::parseLong)
-				        .collect(Collectors.toList());				
-				
-				List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+			ProdListExl[] prdArr = Constants.getRestTemplate().postForObject(Constants.url + "getProductListExcl", map,
+					ProdListExl[].class);
+			prdList = new ArrayList<ProdListExl>(Arrays.asList(prdArr));
 
-				ExportToExcel expoExcel = new ExportToExcel();
-				List<String> rowData = new ArrayList<String>();
+			proIds = Stream.of(selctId.split(",")).map(Long::parseLong).collect(Collectors.toList());
 
-				rowData.add("Sr No");
-				for (int i = 0; i < proIds.size(); i++) {
-					
-					if(proIds.get(i)==1)
+			List<ExportToExcel> exportToExcelList = new ArrayList<ExportToExcel>();
+
+			ExportToExcel expoExcel = new ExportToExcel();
+			List<String> rowData = new ArrayList<String>();
+
+			rowData.add("Sr No");
+			for (int i = 0; i < proIds.size(); i++) {
+
+				if (proIds.get(i) == 1)
 					rowData.add("Product Code");
-					
-					if(proIds.get(i)==2)
+
+				if (proIds.get(i) == 2)
 					rowData.add("Name");
-					
-					if(proIds.get(i)==3)
+
+				if (proIds.get(i) == 3)
 					rowData.add("Short Name");
-					
-					if(proIds.get(i)==4)
+
+				if (proIds.get(i) == 4)
 					rowData.add("Category");
-					
-					if(proIds.get(i)==5)
+
+				if (proIds.get(i) == 5)
 					rowData.add("Sub Category ");
-					
-					if(proIds.get(i)==6)
+
+				if (proIds.get(i) == 6)
 					rowData.add("Tax");
-					
-					if(proIds.get(i)==7)
+
+				if (proIds.get(i) == 7)
 					rowData.add("Sort No.");
-					
-					if(proIds.get(i)==8)
+
+				if (proIds.get(i) == 8)
 					rowData.add("Min Qty.");
-					
-					if(proIds.get(i)==9)
-						rowData.add("Shelf Life");					
-					
-					if(proIds.get(i)==10)
-						rowData.add("Return Allowed");
-					
-					if(proIds.get(i)==11)
-						rowData.add("Return %");
-					
-					if(proIds.get(i)==12)
-						rowData.add("UOM");
-					
-					if(proIds.get(i)==13)
-						rowData.add("Shape");
-					
-					if(proIds.get(i)==14)
-						rowData.add("Product Type");
-					
-					if(proIds.get(i)==15)
-						rowData.add("Default Shape");
-					
-					if(proIds.get(i)==16)
-						rowData.add("Flavour");
-					
-					if(proIds.get(i)==17)
-						rowData.add("Product Status");
-					
-					if(proIds.get(i)==18)
-						rowData.add("Default Flavour");
-					
-					if(proIds.get(i)==19)
-						rowData.add("Veg/Non-Veg");
-					
-					if(proIds.get(i)==20)
-						rowData.add("Book Before Days");
-					
-					if(proIds.get(i)==21)
-						rowData.add("Default Veg/Non-Veg");
-					
-					if(proIds.get(i)==22)
-						rowData.add("Alphabats Limit");
-					
-					if(proIds.get(i)==23)
-						rowData.add("No. Alphabats");
-					
-					if(proIds.get(i)==24)
-						rowData.add("No. Of Msg Character");
-					
-					if(proIds.get(i)==25)
-						rowData.add("Bread Type");
-					
-					if(proIds.get(i)==26)
-						rowData.add("Cream Type");
-					
-					if(proIds.get(i)==27)
-						rowData.add("Layering Cream");
-					
-					if(proIds.get(i)==28)
-						rowData.add("Topping Cream");
-					
-					if(proIds.get(i)==29)
-						rowData.add("Applicable Tags");
-					
-					if(proIds.get(i)==30)
-						rowData.add("Product Desc");
-					
-					if(proIds.get(i)==31)
-						rowData.add("Ingredient");
-					
-					if(proIds.get(i)==32)
-						rowData.add("Preparation Time");
-					
-					if(proIds.get(i)==33)
-						rowData.add("Rate Setting Type");
-					
-					if(proIds.get(i)==34)
-						rowData.add("Max Weight");
-					
-					if(proIds.get(i)==35)
-						rowData.add("Available Weights");
-					
-					if(proIds.get(i)==36)
-						rowData.add("Basic Product MRP");
-					
-					if(proIds.get(i)==37)
-						rowData.add("Active");
-					
-				}
-				expoExcel.setRowData(rowData);
-				
-				exportToExcelList.add(expoExcel);
-				int srno = 1;
-				for (int i = 0; i < prdList.size(); i++) {
-					expoExcel = new ExportToExcel();
-					rowData = new ArrayList<String>();
-					rowData.add(" "+srno);
-					for (int j = 0; j < proIds.size(); j++) {
-					
-						if(proIds.get(j)==1)
+
+				if (proIds.get(i) == 9)
+					rowData.add("Shelf Life");
+
+				if (proIds.get(i) == 10)
+					rowData.add("Return Allowed");
+
+				if (proIds.get(i) == 11)
+					rowData.add("Return %");
+
+				if (proIds.get(i) == 12)
+					rowData.add("UOM");
+
+				if (proIds.get(i) == 13)
+					rowData.add("Shape");
+
+				if (proIds.get(i) == 14)
+					rowData.add("Product Type");
+
+				if (proIds.get(i) == 15)
+					rowData.add("Default Shape");
+
+				if (proIds.get(i) == 16)
+					rowData.add("Flavour");
+
+				if (proIds.get(i) == 17)
+					rowData.add("Product Status");
+
+				if (proIds.get(i) == 18)
+					rowData.add("Default Flavour");
+
+				if (proIds.get(i) == 19)
+					rowData.add("Veg/Non-Veg");
+
+				if (proIds.get(i) == 20)
+					rowData.add("Book Before Days");
+
+				if (proIds.get(i) == 21)
+					rowData.add("Default Veg/Non-Veg");
+
+				if (proIds.get(i) == 22)
+					rowData.add("Alphabats Limit");
+
+				if (proIds.get(i) == 23)
+					rowData.add("No. Alphabats");
+
+				if (proIds.get(i) == 24)
+					rowData.add("No. Of Msg Character");
+
+				if (proIds.get(i) == 25)
+					rowData.add("Bread Type");
+
+				if (proIds.get(i) == 26)
+					rowData.add("Cream Type");
+
+				if (proIds.get(i) == 27)
+					rowData.add("Layering Cream");
+
+				if (proIds.get(i) == 28)
+					rowData.add("Topping Cream");
+
+				if (proIds.get(i) == 29)
+					rowData.add("Applicable Tags");
+
+				if (proIds.get(i) == 30)
+					rowData.add("Product Desc");
+
+				if (proIds.get(i) == 31)
+					rowData.add("Ingredient");
+
+				if (proIds.get(i) == 32)
+					rowData.add("Preparation Time");
+
+				if (proIds.get(i) == 33)
+					rowData.add("Rate Setting Type");
+
+				if (proIds.get(i) == 34)
+					rowData.add("Max Weight");
+
+				if (proIds.get(i) == 35)
+					rowData.add("Available Weights");
+
+				if (proIds.get(i) == 36)
+					rowData.add("Basic Product MRP");
+
+				if (proIds.get(i) == 37)
+					rowData.add("Active");
+
+			}
+			expoExcel.setRowData(rowData);
+
+			exportToExcelList.add(expoExcel);
+			int srno = 1;
+			for (int i = 0; i < prdList.size(); i++) {
+				expoExcel = new ExportToExcel();
+				rowData = new ArrayList<String>();
+				rowData.add(" " + srno);
+				for (int j = 0; j < proIds.size(); j++) {
+
+					if (proIds.get(j) == 1)
 						rowData.add(" " + prdList.get(i).getProductCode());
-						
-						if(proIds.get(j)==2)
+
+					if (proIds.get(j) == 2)
 						rowData.add(" " + prdList.get(i).getProductName());
-						
-						if(proIds.get(j)==3)
+
+					if (proIds.get(j) == 3)
 						rowData.add(" " + prdList.get(i).getShortName());
-						
-						if(proIds.get(j)==4)
+
+					if (proIds.get(j) == 4)
 						rowData.add(" " + prdList.get(i).getCatName());
-						
-						if(proIds.get(j)==5)
+
+					if (proIds.get(j) == 5)
 						rowData.add(" " + prdList.get(i).getSubCatName());
-						
-						if(proIds.get(j)==6)
+
+					if (proIds.get(j) == 6)
 						rowData.add(" " + prdList.get(i).getTaxName());
-					
-						if(proIds.get(j)==7)
+
+					if (proIds.get(j) == 7)
 						rowData.add(" " + prdList.get(i).getSortId());
-						
-						if(proIds.get(j)==8)
+
+					if (proIds.get(j) == 8)
 						rowData.add(" " + prdList.get(i).getMinQty());
-						
-						if(proIds.get(j)==9)
-							rowData.add(" " + prdList.get(i).getShelfLife());						
-						
-						if(proIds.get(j)==10)
-							rowData.add(prdList.get(i).getIsReturnAllow() == 1 ? "Yes" : "No");
-						
-						if(proIds.get(j)==11)
-							rowData.add(" "+prdList.get(i).getRetPer());
-						
-						if(proIds.get(j)==12)
-							rowData.add(" "+prdList.get(i).getUomShowName());
-						
-						if(proIds.get(j)==13)
-							rowData.add(" "+prdList.get(i).getShapeNames());
-						
-						if(proIds.get(j)==14)
-							rowData.add(" "+prdList.get(i).getProdTypeName());
-						
-						if(proIds.get(j)==15)
-							rowData.add(" "+prdList.get(i).getDefaultShapeName());
-						
-						if(proIds.get(j)==16)
-							rowData.add(" "+prdList.get(i).getFlavorNames());
-						
-						if(proIds.get(j)==17)
-							rowData.add(" "+prdList.get(i).getProdStatusName());
-						
-						if(proIds.get(j)==18)
-							rowData.add(" "+prdList.get(i).getDefaultFlavorName());
-						
-						if(proIds.get(j)==19)
-							rowData.add(" "+prdList.get(i).getVegNonvegName());
-						
-						if(proIds.get(j)==20)
-							rowData.add(" "+prdList.get(i).getBookBefore());
-						
-						if(proIds.get(j)==21)
-							rowData.add(" "+prdList.get(i).getDefaultVegNonvegName());
-						
-						if(proIds.get(j)==22)
-							rowData.add(+prdList.get(i).getIsCharLimit() == 1 ?"Yes" : "No");
-						
-						if(proIds.get(j)==23)
-							rowData.add(" "+prdList.get(i).getNoOfCharsForAlphaCake());
-						
-						if(proIds.get(j)==24)
-							rowData.add(" "+prdList.get(i).getNoOfCharsOnCake());
-						
-						if(proIds.get(j)==25)
-							rowData.add(" "+prdList.get(i).getBreadTypeName());
-						
-						if(proIds.get(j)==26)
-							rowData.add(" "+prdList.get(i).getCreamTypeName());
-						
-						if(proIds.get(j)==27)
-							rowData.add(" "+prdList.get(i).getLayeringCreamNames());
-						
-						if(proIds.get(j)==28)
-							rowData.add(" "+prdList.get(i).getToppingCreamNames());
-						
-						if(proIds.get(j)==29)
-							rowData.add(" "+prdList.get(i).getAppliTagNames());
-						
-						if(proIds.get(j)==30)
-							rowData.add(" "+prdList.get(i).getProductDesc());						
-						
-						if(proIds.get(j)==31)
-							rowData.add(" "+prdList.get(i).getIngerdiants());
-						
-						if(proIds.get(j)==32)
-							rowData.add(" "+prdList.get(i).getPrepTime());
-						
-						if(proIds.get(j)==33)
-							rowData.add(prdList.get(i).getRateSettingType() == 0 ? "Per UOM" : prdList.get(i).getRateSettingType() == 1 ? "Per Kg" : "As of Filter");
-						
-						if(proIds.get(j)==34)
-							rowData.add(" "+prdList.get(i).getMaxWt());
-						
-						if(proIds.get(j)==35)
-							rowData.add(" "+prdList.get(i).getAvailInWeights());
-						
-						if(proIds.get(j)==36)
-							rowData.add(" "+prdList.get(i).getActualRate());
-						
-						if(proIds.get(j)==37)
-							rowData.add(prdList.get(i).getIsHomePageProd() == 1 ? "Yes" : "No");
-					}
-					srno = srno + 1;
-					
-					expoExcel.setRowData(rowData);
-					exportToExcelList.add(expoExcel);
 
+					if (proIds.get(j) == 9)
+						rowData.add(" " + prdList.get(i).getShelfLife());
+
+					if (proIds.get(j) == 10)
+						rowData.add(prdList.get(i).getIsReturnAllow() == 1 ? "Yes" : "No");
+
+					if (proIds.get(j) == 11)
+						rowData.add(" " + prdList.get(i).getRetPer());
+
+					if (proIds.get(j) == 12)
+						rowData.add(" " + prdList.get(i).getUomShowName());
+
+					if (proIds.get(j) == 13)
+						rowData.add(" " + prdList.get(i).getShapeNames());
+
+					if (proIds.get(j) == 14)
+						rowData.add(" " + prdList.get(i).getProdTypeName());
+
+					if (proIds.get(j) == 15)
+						rowData.add(" " + prdList.get(i).getDefaultShapeName());
+
+					if (proIds.get(j) == 16)
+						rowData.add(" " + prdList.get(i).getFlavorNames());
+
+					if (proIds.get(j) == 17)
+						rowData.add(" " + prdList.get(i).getProdStatusName());
+
+					if (proIds.get(j) == 18)
+						rowData.add(" " + prdList.get(i).getDefaultFlavorName());
+
+					if (proIds.get(j) == 19)
+						rowData.add(" " + prdList.get(i).getVegNonvegName());
+
+					if (proIds.get(j) == 20)
+						rowData.add(" " + prdList.get(i).getBookBefore());
+
+					if (proIds.get(j) == 21)
+						rowData.add(" " + prdList.get(i).getDefaultVegNonvegName());
+
+					if (proIds.get(j) == 22)
+						rowData.add(+prdList.get(i).getIsCharLimit() == 1 ? "Yes" : "No");
+
+					if (proIds.get(j) == 23)
+						rowData.add(" " + prdList.get(i).getNoOfCharsForAlphaCake());
+
+					if (proIds.get(j) == 24)
+						rowData.add(" " + prdList.get(i).getNoOfCharsOnCake());
+
+					if (proIds.get(j) == 25)
+						rowData.add(" " + prdList.get(i).getBreadTypeName());
+
+					if (proIds.get(j) == 26)
+						rowData.add(" " + prdList.get(i).getCreamTypeName());
+
+					if (proIds.get(j) == 27)
+						rowData.add(" " + prdList.get(i).getLayeringCreamNames());
+
+					if (proIds.get(j) == 28)
+						rowData.add(" " + prdList.get(i).getToppingCreamNames());
+
+					if (proIds.get(j) == 29)
+						rowData.add(" " + prdList.get(i).getAppliTagNames());
+
+					if (proIds.get(j) == 30)
+						rowData.add(" " + prdList.get(i).getProductDesc());
+
+					if (proIds.get(j) == 31)
+						rowData.add(" " + prdList.get(i).getIngerdiants());
+
+					if (proIds.get(j) == 32)
+						rowData.add(" " + prdList.get(i).getPrepTime());
+
+					if (proIds.get(j) == 33)
+						rowData.add(prdList.get(i).getRateSettingType() == 0 ? "Per UOM"
+								: prdList.get(i).getRateSettingType() == 1 ? "Per Kg" : "As of Filter");
+
+					if (proIds.get(j) == 34)
+						rowData.add(" " + prdList.get(i).getMaxWt());
+
+					if (proIds.get(j) == 35)
+						rowData.add(" " + prdList.get(i).getAvailInWeights());
+
+					if (proIds.get(j) == 36)
+						rowData.add(" " + prdList.get(i).getActualRate());
+
+					if (proIds.get(j) == 37)
+						rowData.add(prdList.get(i).getIsHomePageProd() == 1 ? "Yes" : "No");
 				}
-				session.setAttribute("exportExcelListNew", exportToExcelList);
-				session.setAttribute("excelNameNew", "Products");
-				session.setAttribute("reportNameNew", "Products List");
-				session.setAttribute("searchByNew", " NA");
-				session.setAttribute("mergeUpto1", "$A$1:$L$1");
-				session.setAttribute("mergeUpto2", "$A$2:$L$2");
+				srno = srno + 1;
 
-				session.setAttribute("exportExcelList", exportToExcelList);
-				session.setAttribute("excelName", "Products Excel");
-				
-				
+				expoExcel.setRowData(rowData);
+				exportToExcelList.add(expoExcel);
+
+			}
+			session.setAttribute("exportExcelListNew", exportToExcelList);
+			session.setAttribute("excelNameNew", "Products");
+			session.setAttribute("reportNameNew", "Products List");
+			session.setAttribute("searchByNew", " NA");
+			session.setAttribute("mergeUpto1", "$A$1:$L$1");
+			session.setAttribute("mergeUpto2", "$A$2:$L$2");
+
+			session.setAttribute("exportExcelList", exportToExcelList);
+			session.setAttribute("excelName", "Products Excel");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
