@@ -4,8 +4,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +22,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ats.ecomadmin.commons.AccessControll;
 import com.ats.ecomadmin.commons.Constants;
@@ -106,6 +110,7 @@ public class CMSController {
 						cus.setFooterEmail2(cusList.get(i).getFooterEmail2());
 						cus.setFooterPhone1(cusList.get(i).getFooterPhone1());
 						cus.setFooterPhone2(cusList.get(i).getFooterPhone2());
+						cus.setFooterImage(cusList.get(i).getFooterImage());
 					}
 				}
 				
@@ -233,7 +238,7 @@ public class CMSController {
 					cus.setFooterEmail2(cusList.get(i).getFooterEmail2());
 					cus.setFooterPhone1(cusList.get(i).getFooterPhone1());
 					cus.setFooterPhone2(cusList.get(i).getFooterPhone2());
-					
+					cus.setFooterImage(cusList.get(i).getFooterImage());
 					
 				}
 			}
@@ -275,11 +280,14 @@ public class CMSController {
 	}
 	
 	@RequestMapping(value = "/submitFooterDtl", method = RequestMethod.POST)
-	public String submitFooterDtl(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String submitFooterDtl(HttpServletRequest request, HttpServletResponse response, Model model,
+			@RequestParam("doc") MultipartFile doc) {
 		
 		try {
 			HttpSession session = request.getSession();
-			
+			Date date = new Date();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+			Info info = new Info();
 			ArrayList<ContactUs> cntctUsList = new ArrayList<ContactUs>();
 			ContactUs cus = new ContactUs();
 			
@@ -314,13 +322,27 @@ public class CMSController {
 					cus.setGoogleAcLink(cusList.get(i).getGoogleAcLink());
 				}
 			}
-			
+			String footerImage = new String();
+			if (!doc.getOriginalFilename().equalsIgnoreCase("")) {
+
+				footerImage = dateFormat.format(date) + "_" + doc.getOriginalFilename();
+
+				try {
+					// new ImageUploadController().saveUploadedFiles(doc, 1, profileImage);
+					info = ImageUploadController.saveImgFiles(doc, Constants.imageFileExtensions, footerImage);
+				} catch (Exception e) {
+				}
+
+			}else {
+				footerImage = request.getParameter("editImg");
+			}
 			
 			cus.setFooterAddress(request.getParameter("footerAddress"));
 			cus.setFooterEmail1(request.getParameter("footerEmail1"));		
 			cus.setFooterEmail2(request.getParameter("footerEmail2"));
 			cus.setFooterPhone1(request.getParameter("footerPhone1"));
 			cus.setFooterPhone2(request.getParameter("footerPhone2"));
+			cus.setFooterImage(footerImage);
 			
 			
 			cntctUsList.add(cus);

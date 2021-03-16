@@ -24,6 +24,7 @@ public class ContactUs {
 	private String footerPhone2;	
 	private String footerEmail1;
 	private String footerEmail2;
+	private String footerImage;
 	
 	public int getCompanyId() {
 		return companyId;
@@ -157,6 +158,12 @@ public class ContactUs {
 	public void setFooterEmail2(String footerEmail2) {
 		this.footerEmail2 = footerEmail2;
 	}
+	public String getFooterImage() {
+		return footerImage;
+	}
+	public void setFooterImage(String footerImage) {
+		this.footerImage = footerImage;
+	}
 	@Override
 	public String toString() {
 		return "ContactUs [companyId=" + companyId + ", pageHead=" + pageHead + ", subHeading=" + subHeading
@@ -166,7 +173,8 @@ public class ContactUs {
 				+ ", facebookLink=" + facebookLink + ", twitterLink=" + twitterLink + ", linkedInLink=" + linkedInLink
 				+ ", googleAcLink=" + googleAcLink + ", footerAddress=" + footerAddress + ", footerPhone1="
 				+ footerPhone1 + ", footerPhone2=" + footerPhone2 + ", footerEmail1=" + footerEmail1 + ", footerEmail2="
-				+ footerEmail2 + "]";
+				+ footerEmail2 + ", footerImage=" + footerImage + "]";
 	}
+	
 	
 }

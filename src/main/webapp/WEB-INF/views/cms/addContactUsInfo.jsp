@@ -391,7 +391,7 @@
 									<div class="tab-pane fade" id="bordered-tab3">
 										<form
 											action="${pageContext.request.contextPath}/submitFooterDtl"
-											id="submitFooterDtl" method="post">
+											id="submitFooterDtl" method="post" enctype="multipart/form-data">
 											
 											<div class="form-group row">
 												<label class="col-form-label font-weight-bold col-lg-2"
@@ -473,6 +473,27 @@
 														field is required.</span>
 												</div>
 											</div>
+											
+											<div class="form-group row">
+										<label class="col-form-label col-lg-2" for="primary_img">
+											Primary Image: </label>
+										<div class="col-lg-4">
+											<div class="input-group-btn  ">
+												<img id="output" width="150" src="${imgPath}${cus.footerImage}"/>
+												<%-- <input type="file" class="btn btn-primary" accept="image/*"  name="doc" id="doc" value="${cus.footerImage}" 
+												accept=".jpg,.png,.gif,.jpeg,.bmp" onchange="loadFile(event)"> --%>
+												
+												<input
+												type="file" class="form-control-uniform" data-fouc
+												onchange="loadFile(event)" name="doc" id="doc" accept="image/*" accept=".jpg,.png,.jpeg"><span
+													class="form-text text-muted">Only
+													.jpg,.png,.gif,.jpeg,.bmp</span>
+												<input
+												type="hidden" class="form-control-uniform" name="editImg"
+												id="editImg" value="${cus.footerImage}">
+											</div>
+										</div>										
+										</div>
 											<br>
 											<div class="text-center">
 												<button type="submit" class="btn btn-primary"
