@@ -180,7 +180,7 @@ public class CMSController {
 			String jsonStr = obj.writeValueAsString(cntctUsList);
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			
-			String JSON_SAVE_URL = "/home/maddy/ats-11/";
+			String JSON_SAVE_URL = Constants.JSON_FILES_PATH;
 			//Constants.getRestTemplate()
 			//		.getForObject(Constants.url + "getJsonPath", String.class);
 			
@@ -258,7 +258,7 @@ public class CMSController {
 			String jsonStr = obj.writeValueAsString(cntctUsList);
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			
-			String JSON_SAVE_URL = "/home/maddy/ats-11/";
+			String JSON_SAVE_URL = Constants.JSON_FILES_PATH;
 			//Constants.getRestTemplate()
 			//		.getForObject(Constants.url + "getJsonPath", String.class);
 			
@@ -354,7 +354,7 @@ public class CMSController {
 			String jsonStr = obj.writeValueAsString(cntctUsList);
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			
-			String JSON_SAVE_URL = "/home/maddy/ats-11/";
+			String JSON_SAVE_URL = Constants.JSON_FILES_PATH;
 			//Constants.getRestTemplate()
 			//		.getForObject(Constants.url + "getJsonPath", String.class);
 			
